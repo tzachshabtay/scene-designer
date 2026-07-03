@@ -27,6 +27,8 @@ export type SceneDesignerOptions = {
   title?: string;
   mount?: HTMLElement;
   defaultSceneId?: string;
+  onOpenChange?(isOpen: boolean): void;
+  onSceneChange?(sceneId: string, scene: SceneDefinition): void;
   onManifestChange?(manifest: SceneDesignerManifest): void;
   onSelectionChange?(selection: SceneSelection | undefined): void;
   onModeChange?(mode: SceneDesignerMode): void;
@@ -38,6 +40,7 @@ export type SceneDesigner = {
   root: HTMLDivElement;
   open(): void;
   close(): void;
+  isOpen(): boolean;
   destroy(): void;
   getManifest(): SceneDesignerManifest;
   getSceneId(): string;
@@ -90,6 +93,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
   const past: SceneDesignerManifest[] = [];
   const future: SceneDesignerManifest[] = [];
   const assetPathByObject = new Map<string, string[]>();
+  const expandedLayerIds = new Set<string>();
 
   if (!selectedSceneId) {
     const scene = createScene();
@@ -109,6 +113,9 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     },
     close() {
       setOpen(false);
+    },
+    isOpen() {
+      return elements.root.dataset.open === "true";
     },
     destroy() {
       window.removeEventListener("keydown", onKeyDown, true);
@@ -257,6 +264,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     mode = "select";
     render();
     emitSelection();
+    emitSceneChange();
     options.onModeChange?.(mode);
   });
   window.addEventListener("keydown", onKeyDown, true);
@@ -320,6 +328,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
         selection = { type: "scene", sceneId: scene.id };
       });
       emitSelection();
+      emitSceneChange();
     });
     promoteAllButton.addEventListener("click", () => void api.promote("Promoted all scene changes."));
 
@@ -384,13 +393,24 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
 
     const header = document.createElement("div");
     header.className = "scene-designer__layer-header";
+    const expanded = expandedLayerIds.has(layer.id);
+    wrapper.dataset.expanded = String(expanded);
+    const collapse = iconButton(expanded ? "▾" : "▸", expanded ? "Collapse layer" : "Expand layer");
     const nameInput = input(layer.name);
     const visibility = iconButton(layer.visible ? "👁" : "○", layer.visible ? "Hide layer" : "Show layer");
     const lock = iconButton(layer.locked ? "🔒" : "🔓", layer.locked ? "Unlock layer" : "Lock layer");
     const remove = iconButton("×", "Remove layer", true);
-    header.append(nameInput, visibility, lock, remove);
+    header.append(collapse, nameInput, visibility, lock, remove);
     wrapper.append(header);
 
+    collapse.addEventListener("click", () => {
+      if (expandedLayerIds.has(layer.id)) {
+        expandedLayerIds.delete(layer.id);
+      } else {
+        expandedLayerIds.add(layer.id);
+      }
+      render();
+    });
     nameInput.addEventListener("change", () => {
       commit(() => {
         layer.name = nameInput.value.trim() || "Layer";
@@ -412,8 +432,11 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
       emitSelection();
     });
 
-    wrapper.append(renderObjectList(scene, layer));
-    wrapper.append(renderAreaList(scene, layer));
+    const body = document.createElement("div");
+    body.className = "scene-designer__layer-body";
+    body.hidden = !expanded;
+    body.append(renderObjectList(scene, layer), renderAreaList(scene, layer));
+    wrapper.append(body);
     return wrapper;
   }
 
@@ -862,9 +885,15 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     options.onSelectionChange?.(selection ? { ...selection } as SceneSelection : undefined);
   }
 
+  function emitSceneChange(): void {
+    if (!selectedSceneId || !manifest.scenes[selectedSceneId]) return;
+    options.onSceneChange?.(selectedSceneId, manifest.scenes[selectedSceneId]);
+  }
+
   function setOpen(isOpen: boolean): void {
     elements.root.dataset.open = String(isOpen);
     elements.toggle.setAttribute("aria-expanded", String(isOpen));
+    options.onOpenChange?.(isOpen);
   }
 
   function setStatus(message: string, tone: StatusTone): void {
@@ -873,6 +902,8 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
   }
 
   function onKeyDown(event: KeyboardEvent): void {
+    if (!api.isOpen()) return;
+
     const isModifier = event.metaKey || event.ctrlKey;
     if (!isModifier) return;
     const key = event.key.toLowerCase();

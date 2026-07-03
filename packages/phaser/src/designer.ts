@@ -46,6 +46,14 @@ export function installPhaserSceneDesigner(
       options.onManifestChange?.(manifest);
       canvas?.sync(manifest);
     },
+    onOpenChange(isOpen) {
+      options.onOpenChange?.(isOpen);
+      canvas?.setOpen(isOpen);
+    },
+    onSceneChange(sceneId, sceneDefinition) {
+      options.onSceneChange?.(sceneId, sceneDefinition);
+      canvas?.sync(designer.getManifest());
+    },
     onSelectionChange(selection) {
       canvas?.setSelection(selection);
     },
@@ -63,6 +71,7 @@ export function installPhaserSceneDesigner(
     objectDepth: options.objectDepth,
     areaDepth: options.areaDepth
   });
+  canvas.setOpen(designer.isOpen());
 
   return {
     designer,

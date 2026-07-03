@@ -68,6 +68,7 @@ export class PhaserSceneDesignerCanvas {
   private readonly objects = new Map<string, Phaser.GameObjects.Sprite>();
   private readonly areaGraphics: Phaser.GameObjects.Graphics;
   private readonly overlay: Phaser.GameObjects.Graphics;
+  private isOpen = false;
   private hoverObjectId: string | undefined;
   private selectedVertexId: string | undefined;
   private drag: DragState | undefined;
@@ -83,6 +84,7 @@ export class PhaserSceneDesignerCanvas {
 
     this.bindInput();
     this.sync(options.manifest);
+    this.setOpen(options.designer.isOpen());
   }
 
   sync(manifest: SceneDesignerManifest): void {
@@ -103,6 +105,20 @@ export class PhaserSceneDesignerCanvas {
   setMode(mode: SceneDesignerMode): void {
     this.mode = mode;
     this.drawOverlay();
+  }
+
+  setOpen(isOpen: boolean): void {
+    this.isOpen = isOpen;
+    this.areaGraphics.setVisible(isOpen);
+    this.overlay.setVisible(isOpen);
+    if (!isOpen) {
+      this.hoverObjectId = undefined;
+      this.drag = undefined;
+      this.overlay.clear();
+    } else {
+      this.drawAreas();
+      this.drawOverlay();
+    }
   }
 
   destroy(): void {
@@ -169,6 +185,7 @@ export class PhaserSceneDesignerCanvas {
 
   private drawAreas(): void {
     this.areaGraphics.clear();
+    if (!this.isOpen) return;
     const scene = this.currentScene();
 
     scene.layers.forEach((layer) => {
@@ -190,6 +207,7 @@ export class PhaserSceneDesignerCanvas {
 
   private drawOverlay(): void {
     this.overlay.clear();
+    if (!this.isOpen) return;
     const selectedObject = this.selection?.type === "object"
       ? this.findObject(this.selection.objectId)?.object
       : undefined;
@@ -266,6 +284,8 @@ export class PhaserSceneDesignerCanvas {
   }
 
   private onPointerDown(pointer: Phaser.Input.Pointer): void {
+    if (!this.isOpen) return;
+
     const point = pointerPosition(pointer);
     const scene = this.currentScene();
 
@@ -358,6 +378,8 @@ export class PhaserSceneDesignerCanvas {
   }
 
   private onPointerMove(pointer: Phaser.Input.Pointer): void {
+    if (!this.isOpen) return;
+
     const point = pointerPosition(pointer);
 
     if (this.drag) {
@@ -371,6 +393,8 @@ export class PhaserSceneDesignerCanvas {
   }
 
   private onPointerUp(pointer: Phaser.Input.Pointer): void {
+    if (!this.isOpen) return;
+
     const point = pointerPosition(pointer);
     if (pointer.getDuration() < 320 && this.selection?.type === "area") {
       const area = this.findArea(this.selection.areaId)?.area;
@@ -384,6 +408,8 @@ export class PhaserSceneDesignerCanvas {
   }
 
   private onBackspace(event: KeyboardEvent): void {
+    if (!this.isOpen) return;
+
     if (!this.selection || this.selection.type !== "vertex") return;
     event.preventDefault();
     this.options.designer.removeAreaVertex(this.selection.areaId, this.selection.vertexId);
