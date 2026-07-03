@@ -14,6 +14,7 @@ import {
 } from "@scene-designer/core";
 import {
   applyObjectTransform,
+  type InstalledPhaserSceneDesigner,
   installPhaserSceneDesigner,
   SceneDesignerDebugClient
 } from "@scene-designer/phaser";
@@ -47,6 +48,7 @@ const paddlePointerHoldMs = 180;
 export class BreakoutScene extends Phaser.Scene {
   private aiRuntime!: AiAssetRuntime;
   private pixelCollision!: PixelCollision;
+  private sceneDesigner?: InstalledPhaserSceneDesigner;
   private sceneManifest: SceneDesignerManifest = scenes;
   private levelIndex = 0;
   private currentSceneId = levelIds[0];
@@ -95,11 +97,12 @@ export class BreakoutScene extends Phaser.Scene {
       onPreview: () => undefined
     });
 
-    installPhaserSceneDesigner({
+    this.sceneDesigner = installPhaserSceneDesigner({
       scene: this,
       manifest: this.sceneManifest,
       aiAssets: assets,
       client: new SceneDesignerDebugClient("http://127.0.0.1:4078"),
+      defaultSceneId: this.currentSceneId,
       renderSceneObjects: false,
       areaDepth: 4200,
       onSceneChange: (sceneId) => {
@@ -114,6 +117,7 @@ export class BreakoutScene extends Phaser.Scene {
     this.createDebugPauseButton();
     this.loadLevel(0);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.sceneDesigner?.destroy();
       this.debugPauseButton?.remove();
     });
   }
@@ -148,6 +152,7 @@ export class BreakoutScene extends Phaser.Scene {
     if (!this.sceneManifest.scenes[sceneId]) return;
     this.currentSceneId = sceneId;
     this.levelIndex = levelIds.indexOf(sceneId);
+    this.syncSceneDesignerToCurrentScene();
     this.clearLevel();
 
     const level = getScene(this.sceneManifest, this.currentSceneId);
@@ -402,6 +407,16 @@ export class BreakoutScene extends Phaser.Scene {
     this.reloadTimer?.remove(false);
     this.reloadTimer = this.time.delayedCall(250, () => {
       this.loadSceneById(this.currentSceneId);
+    });
+  }
+
+  private syncSceneDesignerToCurrentScene(): void {
+    const designer = this.sceneDesigner?.designer;
+    if (!designer || designer.getSceneId() === this.currentSceneId) return;
+
+    designer.select({
+      type: "scene",
+      sceneId: this.currentSceneId
     });
   }
 
