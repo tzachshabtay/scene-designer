@@ -1,0 +1,18 @@
+{
+  "id": "brick.gold",
+  "kind": "image",
+  "prompt": "A gold breakout brick with warm glow and beveled arcade styling, transparent background.",
+  "dimensions": { "width": 58, "height": 24 },
+  "settings": { "format": "svg", "background": "transparent" },
+  "activeVersion": "default",
+  "versions": {
+    "default": {
+      "name": "default",
+      "file": "/assets/brick.gold.default.svg",
+      "prompt": "A gold breakout brick with warm glow and beveled arcade styling, transparent background.",
+      "createdAt": "2026-07-03T00:00:00.000Z",
+      "model": "manual-svg"
+    }
+  },
+  "tags": ["brick"]
+}

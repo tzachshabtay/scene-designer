@@ -1,0 +1,34 @@
+{
+  "name": "@scene-designer/phaser",
+  "version": "0.1.0",
+  "description": "Phaser adapter and canvas editor for scene-designer.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@scene-designer/core": "0.1.0",
+    "@scene-designer/designer": "0.1.0"
+  },
+  "peerDependencies": {
+    "@ai-game-assets/core": "^0.5.2",
+    "@ai-game-assets/phaser": "^0.5.2",
+    "phaser": ">=4"
+  },
+  "devDependencies": {
+    "phaser": "^4.2.0"
+  }
+}

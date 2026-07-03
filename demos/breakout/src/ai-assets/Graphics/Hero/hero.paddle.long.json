@@ -1,0 +1,18 @@
+{
+  "id": "hero.paddle.long",
+  "kind": "image",
+  "prompt": "A long neon breakout paddle, broad and stable, cyan edge lights, transparent background.",
+  "dimensions": { "width": 156, "height": 18 },
+  "settings": { "format": "svg", "background": "transparent" },
+  "activeVersion": "default",
+  "versions": {
+    "default": {
+      "name": "default",
+      "file": "/assets/hero.paddle.long.default.svg",
+      "prompt": "A long neon breakout paddle, broad and stable, cyan edge lights, transparent background.",
+      "createdAt": "2026-07-03T00:00:00.000Z",
+      "model": "manual-svg"
+    }
+  },
+  "tags": ["hero", "paddle"]
+}

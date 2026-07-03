@@ -1,0 +1,9 @@
+{
+  "id": "audio.sfx.enemy",
+  "kind": "sound",
+  "prompt": "Small enemy burst zap.",
+  "audioSettings": { "provider": "elevenlabs", "format": "mp3", "durationSeconds": 1 },
+  "activeVersion": "",
+  "versions": {},
+  "tags": ["sfx"]
+}

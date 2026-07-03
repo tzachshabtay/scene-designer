@@ -1,0 +1,9 @@
+{
+  "id": "audio.sfx.wall",
+  "kind": "sound",
+  "prompt": "Soft electronic wall rebound tick.",
+  "audioSettings": { "provider": "elevenlabs", "format": "mp3", "durationSeconds": 1 },
+  "activeVersion": "",
+  "versions": {},
+  "tags": ["sfx"]
+}

@@ -1,0 +1,18 @@
+{
+  "id": "background.arcade",
+  "kind": "image",
+  "prompt": "A vertical neon arcade arena background with subtle starfield, grid horizon, and room for gameplay.",
+  "dimensions": { "width": 800, "height": 600 },
+  "settings": { "format": "svg", "background": "opaque" },
+  "activeVersion": "default",
+  "versions": {
+    "default": {
+      "name": "default",
+      "file": "/assets/background.arcade.default.svg",
+      "prompt": "A vertical neon arcade arena background with subtle starfield, grid horizon, and room for gameplay.",
+      "createdAt": "2026-07-03T00:00:00.000Z",
+      "model": "manual-svg"
+    }
+  },
+  "tags": ["background"]
+}

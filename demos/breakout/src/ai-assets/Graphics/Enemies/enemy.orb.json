@@ -1,0 +1,18 @@
+{
+  "id": "enemy.orb",
+  "kind": "image",
+  "prompt": "A small floating orb enemy with green core and neon ring, transparent background.",
+  "dimensions": { "width": 34, "height": 34 },
+  "settings": { "format": "svg", "background": "transparent" },
+  "activeVersion": "default",
+  "versions": {
+    "default": {
+      "name": "default",
+      "file": "/assets/enemy.orb.default.svg",
+      "prompt": "A small floating orb enemy with green core and neon ring, transparent background.",
+      "createdAt": "2026-07-03T00:00:00.000Z",
+      "model": "manual-svg"
+    }
+  },
+  "tags": ["enemy"]
+}

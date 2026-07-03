@@ -1,0 +1,66 @@
+{
+  "id": "level.two",
+  "name": "Level 2 - Prism Steps",
+  "width": 800,
+  "height": 600,
+  "layers": [
+    {
+      "id": "layer-background",
+      "name": "Background",
+      "visible": true,
+      "locked": true,
+      "objects": [
+        { "id": "bg-2", "tag": "background", "assetId": "background.arcade", "x": 400, "y": 600, "scaleX": 1, "scaleY": 1, "rotation": 0, "anchorX": 0.5, "anchorY": 0, "visible": true, "locked": true }
+      ],
+      "areas": []
+    },
+    {
+      "id": "layer-bricks",
+      "name": "Bricks",
+      "visible": true,
+      "locked": false,
+      "objects": [
+        { "id": "l2-b01", "tag": "brick", "assetId": "brick.steel", "x": 160, "y": 104, "scaleX": 1, "scaleY": 1, "rotation": 0, "anchorX": 0.5, "anchorY": 0, "visible": true, "locked": false },
+        { "id": "l2-b02", "tag": "brick", "assetId": "brick.cyan", "x": 240, "y": 104, "scaleX": 1, "scaleY": 1, "rotation": 0, "anchorX": 0.5, "anchorY": 0, "visible": true, "locked": false },
+        { "id": "l2-b03", "tag": "brick", "assetId": "brick.gold", "x": 320, "y": 104, "scaleX": 1, "scaleY": 1, "rotation": 0, "anchorX": 0.5, "anchorY": 0, "visible": true, "locked": false },
+        { "id": "l2-b04", "tag": "brick", "assetId": "brick.magenta", "x": 400, "y": 104, "scaleX": 1, "scaleY": 1, "rotation": 0, "anchorX": 0.5, "anchorY": 0, "visible": true, "locked": false },
+        { "id": "l2-b05", "tag": "brick", "assetId": "brick.gold", "x": 480, "y": 104, "scaleX": 1, "scaleY": 1, "rotation": 0, "anchorX": 0.5, "anchorY": 0, "visible": true, "locked": false },
+        { "id": "l2-b06", "tag": "brick", "assetId": "brick.cyan", "x": 560, "y": 104, "scaleX": 1, "scaleY": 1, "rotation": 0, "anchorX": 0.5, "anchorY": 0, "visible": true, "locked": false },
+        { "id": "l2-b07", "tag": "brick", "assetId": "brick.steel", "x": 640, "y": 104, "scaleX": 1, "scaleY": 1, "rotation": 0, "anchorX": 0.5, "anchorY": 0, "visible": true, "locked": false },
+        { "id": "l2-b08", "tag": "brick", "assetId": "brick.magenta", "x": 240, "y": 144, "scaleX": 1, "scaleY": 1, "rotation": 0, "anchorX": 0.5, "anchorY": 0, "visible": true, "locked": false },
+        { "id": "l2-b09", "tag": "brick", "assetId": "brick.cyan", "x": 320, "y": 144, "scaleX": 1, "scaleY": 1, "rotation": 0, "anchorX": 0.5, "anchorY": 0, "visible": true, "locked": false },
+        { "id": "l2-b10", "tag": "brick", "assetId": "brick.gold", "x": 400, "y": 144, "scaleX": 1, "scaleY": 1, "rotation": 0, "anchorX": 0.5, "anchorY": 0, "visible": true, "locked": false },
+        { "id": "l2-b11", "tag": "brick", "assetId": "brick.cyan", "x": 480, "y": 144, "scaleX": 1, "scaleY": 1, "rotation": 0, "anchorX": 0.5, "anchorY": 0, "visible": true, "locked": false },
+        { "id": "l2-b12", "tag": "brick", "assetId": "brick.magenta", "x": 560, "y": 144, "scaleX": 1, "scaleY": 1, "rotation": 0, "anchorX": 0.5, "anchorY": 0, "visible": true, "locked": false },
+        { "id": "l2-b13", "tag": "brick", "assetId": "brick.cyan", "x": 320, "y": 184, "scaleX": 1, "scaleY": 1, "rotation": 0, "anchorX": 0.5, "anchorY": 0, "visible": true, "locked": false },
+        { "id": "l2-b14", "tag": "brick", "assetId": "brick.steel", "x": 400, "y": 184, "scaleX": 1, "scaleY": 1, "rotation": 0, "anchorX": 0.5, "anchorY": 0, "visible": true, "locked": false },
+        { "id": "l2-b15", "tag": "brick", "assetId": "brick.cyan", "x": 480, "y": 184, "scaleX": 1, "scaleY": 1, "rotation": 0, "anchorX": 0.5, "anchorY": 0, "visible": true, "locked": false },
+        { "id": "l2-b16", "tag": "brick", "assetId": "brick.gold", "x": 400, "y": 224, "scaleX": 1, "scaleY": 1, "rotation": 0, "anchorX": 0.5, "anchorY": 0, "visible": true, "locked": false }
+      ],
+      "areas": []
+    },
+    {
+      "id": "layer-areas",
+      "name": "Spawn Areas",
+      "visible": true,
+      "locked": false,
+      "objects": [],
+      "areas": [
+        {
+          "id": "l2-enemy-spawn",
+          "tag": "enemy.spawn",
+          "visible": true,
+          "locked": false,
+          "closed": true,
+          "vertices": [
+            { "id": "l2-v1", "x": 118, "y": 238 },
+            { "id": "l2-v2", "x": 684, "y": 238 },
+            { "id": "l2-v3", "x": 616, "y": 330, "curve": { "cx": 682, "cy": 296 } },
+            { "id": "l2-v4", "x": 190, "y": 330, "curve": { "cx": 118, "cy": 296 } }
+          ]
+        }
+      ]
+    }
+  ],
+  "tags": ["breakout", "level"]
+}

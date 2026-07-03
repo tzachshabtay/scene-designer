@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#07111f"/>
+      <stop offset=".55" stop-color="#101216"/>
+      <stop offset="1" stop-color="#08110f"/>
+    </linearGradient>
+    <pattern id="grid" width="64" height="32" patternUnits="userSpaceOnUse">
+      <path d="M0 31.5H64M63.5 0V32" stroke="#46d39a" stroke-opacity=".22"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <path d="M0 360h800v240H0z" fill="url(#grid)" opacity=".5"/>
+  <path d="M80 82h640M120 124h560" stroke="#80b7ff" stroke-opacity=".18" stroke-width="2"/>
+  <g fill="#f6fbff" opacity=".7">
+    <circle cx="95" cy="48" r="1.5"/><circle cx="170" cy="94" r="1"/><circle cx="292" cy="52" r="1.4"/>
+    <circle cx="512" cy="78" r="1.2"/><circle cx="678" cy="42" r="1.5"/><circle cx="735" cy="112" r="1"/>
+  </g>
+</svg>

@@ -1,0 +1,38 @@
+import type { AiAssetDefinition, AiAssetManifest } from "@ai-game-assets/core";
+
+export type GraphicAiAsset = AiAssetDefinition & {
+  kind: "image" | "spritesheet" | "animation";
+};
+
+export function graphicAssetIds(manifest: AiAssetManifest): string[] {
+  const targetVariantAssetIds = new Set(
+    Object.values(manifest.targets ?? {}).flatMap((target) => Object.values(target.variants))
+  );
+
+  return Object.values(manifest.assets)
+    .filter((asset): asset is GraphicAiAsset => isGraphicAsset(asset))
+    .filter((asset) => !targetVariantAssetIds.has(asset.id))
+    .map((asset) => asset.id)
+    .sort((a, b) => a.localeCompare(b));
+}
+
+export function isGraphicAsset(asset: AiAssetDefinition | undefined): asset is GraphicAiAsset {
+  return asset?.kind === "image" || asset?.kind === "spritesheet" || asset?.kind === "animation";
+}
+
+export function readableName(id: string): string {
+  return id
+    .split(/[._-]+/g)
+    .filter(Boolean)
+    .map((part) => `${part.slice(0, 1).toUpperCase()}${part.slice(1)}`)
+    .join(" ");
+}
+
+export function assetFolderPath(manifest: AiAssetManifest, assetId: string): string[] {
+  const configuredPath = manifest.assetPaths?.[assetId];
+  if (configuredPath) return configuredPath;
+
+  const parts = assetId.split(".");
+  if (parts.length <= 1) return [];
+  return parts.slice(0, -1).map((part) => readableName(part));
+}

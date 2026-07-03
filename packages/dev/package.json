@@ -1,0 +1,31 @@
+{
+  "name": "@scene-designer/dev",
+  "version": "0.1.0",
+  "description": "Local development server and manifest builder for scene-designer.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "scene-designer-dev": "./dist/cli.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@scene-designer/core": "0.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "id": "brick.steel",
+  "kind": "image",
+  "prompt": "A durable steel breakout brick with blue highlights and reinforced corners, transparent background.",
+  "dimensions": { "width": 58, "height": 24 },
+  "settings": { "format": "svg", "background": "transparent" },
+  "activeVersion": "default",
+  "versions": {
+    "default": {
+      "name": "default",
+      "file": "/assets/brick.steel.default.svg",
+      "prompt": "A durable steel breakout brick with blue highlights and reinforced corners, transparent background.",
+      "createdAt": "2026-07-03T00:00:00.000Z",
+      "model": "manual-svg"
+    }
+  },
+  "tags": ["brick", "tough"]
+}

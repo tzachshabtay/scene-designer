@@ -1,0 +1,18 @@
+{
+  "id": "hero.paddle.normal",
+  "kind": "image",
+  "prompt": "A standard neon breakout paddle, balanced size, cyan and white trim, transparent background.",
+  "dimensions": { "width": 112, "height": 18 },
+  "settings": { "format": "svg", "background": "transparent" },
+  "activeVersion": "default",
+  "versions": {
+    "default": {
+      "name": "default",
+      "file": "/assets/hero.paddle.normal.default.svg",
+      "prompt": "A standard neon breakout paddle, balanced size, cyan and white trim, transparent background.",
+      "createdAt": "2026-07-03T00:00:00.000Z",
+      "model": "manual-svg"
+    }
+  },
+  "tags": ["hero", "paddle"]
+}

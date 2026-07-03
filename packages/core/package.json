@@ -1,0 +1,25 @@
+{
+  "name": "@scene-designer/core",
+  "version": "0.1.0",
+  "description": "Engine-neutral scene manifest types and helpers.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "@ai-game-assets/core": "^0.5.2"
+  }
+}
