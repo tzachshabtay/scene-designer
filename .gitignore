@@ -4,5 +4,8 @@ dist/
 demos/*/dist/
 demos/*/.vite/
 *.tsbuildinfo
+
+# Local environment secrets
 .env
-.env.local
+.env.*
+!.env.example
