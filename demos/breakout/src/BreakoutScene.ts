@@ -5,6 +5,7 @@ import {
   loadAiAssets,
   loadAiAudioAssets
 } from "@ai-game-assets/phaser";
+import type { AiAssetDefinition, AiAssetManifest } from "@ai-game-assets/core";
 import {
   getScene,
   type SceneArea,
@@ -69,6 +70,7 @@ export class BreakoutScene extends Phaser.Scene {
   private lastPointerY?: number;
   private pointerControlUntil = 0;
   private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
+  private readonly previewTextures = new Map<string, string>();
 
   preload(): void {
     loadAiAssets(this, assets);
@@ -94,7 +96,15 @@ export class BreakoutScene extends Phaser.Scene {
       assetIds: assetDesignerIds,
       title: "Assets",
       restartOnPromote: false,
-      onPreview: () => undefined
+      onManifestUpdated: (manifest) => {
+        this.syncAiAssetManifest(manifest);
+      },
+      onPreview: (assetId, textureKey, asset) => {
+        this.applyAiAssetTexture(assetId, textureKey, asset);
+      },
+      onAssetReady: (assetId, textureKey, asset) => {
+        this.applyAiAssetTexture(assetId, textureKey, asset);
+      }
     });
 
     this.sceneDesigner = installPhaserSceneDesigner({
@@ -166,14 +176,16 @@ export class BreakoutScene extends Phaser.Scene {
       }
     }
 
-    this.paddle = this.physics.add.image(400, 564, this.aiRuntime.key("hero.paddle.normal"));
+    this.paddle = this.physics.add.image(400, 564, this.textureForAsset("hero.paddle.normal"));
+    this.paddle.setData("assetId", "hero.paddle.normal");
     this.paddle.setImmovable(true);
     this.paddle.setCollideWorldBounds(true);
     this.paddle.setDepth(1200);
     this.paddle.body.allowGravity = false;
     this.levelObjects.push(this.paddle);
 
-    this.ball = this.physics.add.image(400, 520, this.aiRuntime.key("ball.core"));
+    this.ball = this.physics.add.image(400, 520, this.textureForAsset("ball.core"));
+    this.ball.setData("assetId", "ball.core");
     this.ball.setCollideWorldBounds(true);
     this.ball.setBounce(1, 1);
     this.ball.setVelocity(190, -265);
@@ -215,14 +227,18 @@ export class BreakoutScene extends Phaser.Scene {
 
     if (!background) return;
 
-    const sprite = this.add.sprite(background.x, background.y, this.aiRuntime.key(background.assetId));
+    const sprite = this.add.sprite(background.x, background.y, this.textureForAsset(background.assetId));
+    sprite.setData("assetId", background.assetId);
+    sprite.setData("sceneObject", background);
     applyObjectTransform(sprite, background);
     sprite.setDepth(-10);
     this.levelObjects.push(sprite);
   }
 
   private createBrick(object: SceneObject): void {
-    const brick = this.add.image(object.x, object.y, this.aiRuntime.key(object.assetId));
+    const brick = this.add.image(object.x, object.y, this.textureForAsset(object.assetId));
+    brick.setData("assetId", object.assetId);
+    brick.setData("sceneObject", object);
     applyObjectTransform(brick, object);
     brick.setDepth(500);
     brick.setData("hp", object.assetId === "brick.steel" ? 2 : 1);
@@ -386,7 +402,8 @@ export class BreakoutScene extends Phaser.Scene {
 
     const point = randomPointInArea(area);
     const assetId = Math.random() > 0.5 ? "enemy.orb" : "enemy.scout";
-    const enemy = this.physics.add.image(point.x, point.y, this.aiRuntime.key(assetId));
+    const enemy = this.physics.add.image(point.x, point.y, this.textureForAsset(assetId));
+    enemy.setData("assetId", assetId);
     enemy.setDepth(900);
     this.steerEnemyTowardPaddle(enemy);
     enemy.setBounce(0, 0);
@@ -470,6 +487,55 @@ export class BreakoutScene extends Phaser.Scene {
       this.debugPauseButton.setAttribute("aria-label", paused ? "Resume gameplay" : "Pause gameplay");
     }
   }
+
+  private textureForAsset(assetId: string): string {
+    return this.previewTextures.get(assetId) ?? this.aiRuntime.key(assetId);
+  }
+
+  private syncAiAssetManifest(manifest: AiAssetManifest): void {
+    Object.assign(assets.assets, manifest.assets);
+    assets.assetPaths = manifest.assetPaths;
+    assets.styleGuide = manifest.styleGuide;
+    assets.targets = manifest.targets;
+  }
+
+  private applyAiAssetTexture(assetId: string, textureKey: string, asset: AiAssetDefinition): void {
+    assets.assets[assetId] = asset;
+
+    if (!isVisualAsset(asset)) return;
+    if (!this.textures.exists(textureKey)) return;
+
+    this.previewTextures.set(assetId, textureKey);
+    this.pixelCollision.invalidateTexture(textureKey);
+
+    for (const object of this.levelObjects) {
+      this.applyTextureToGameObject(object, assetId, textureKey);
+    }
+
+    for (const object of this.enemies?.children ?? []) {
+      this.applyTextureToGameObject(object, assetId, textureKey);
+    }
+  }
+
+  private applyTextureToGameObject(
+    object: Phaser.GameObjects.GameObject,
+    assetId: string,
+    textureKey: string
+  ): void {
+    if (!object.active || object.getData("assetId") !== assetId) return;
+    if (!(object instanceof Phaser.GameObjects.Image) && !(object instanceof Phaser.GameObjects.Sprite)) return;
+
+    object.setTexture(textureKey);
+
+    const sceneObject = object.getData("sceneObject") as SceneObject | undefined;
+    if (sceneObject) {
+      applyObjectTransform(object, sceneObject);
+    }
+  }
+}
+
+function isVisualAsset(asset: AiAssetDefinition): boolean {
+  return asset.kind === "image" || asset.kind === "spritesheet" || asset.kind === "animation";
 }
 
 function randomPointInArea(area: SceneArea): Phaser.Math.Vector2 {
@@ -541,6 +607,14 @@ class PixelCollision {
   private readonly scratchContext = this.scratchCanvas.getContext("2d", { willReadFrequently: true });
 
   constructor(private readonly scene: Phaser.Scene) {}
+
+  invalidateTexture(textureKey: string): void {
+    for (const frameKey of this.masks.keys()) {
+      if (frameKey.startsWith(`${textureKey}:`)) {
+        this.masks.delete(frameKey);
+      }
+    }
+  }
 
   point(first: PixelCollidable, second: PixelCollidable): Phaser.Math.Vector2 | undefined {
     if (!first.active || !second.active) return undefined;
