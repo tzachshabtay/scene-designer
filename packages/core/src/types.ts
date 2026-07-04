@@ -1,9 +1,49 @@
 export type SceneDesignerManifest = {
   schemaVersion: 1;
+  designer?: SceneDesignerConfig;
   scenes: Record<string, SceneDefinition>;
   behaviors?: Record<string, SceneBehaviorDefinition>;
   scenePaths?: Record<string, string[]>;
 };
+
+export type SceneDesignerConfig = {
+  canvas?: SceneDesignerCanvasConfig;
+};
+
+export type SceneDesignerCanvasConfig = {
+  grid?: SceneDesignerGridConfig;
+  keyboard?: SceneDesignerKeyboardConfig;
+  mouse?: SceneDesignerMouseConfig;
+};
+
+export type SceneDesignerGridConfig = {
+  width?: number;
+  height?: number;
+};
+
+export type SceneDesignerKeyboardConfig = {
+  nudge?: SceneDesignerNudgeConfig;
+};
+
+export type SceneDesignerNudgeConfig = {
+  normalStep?: number;
+  fineStep?: number;
+  keys?: SceneDesignerNudgeKeysConfig;
+  fineModifiers?: SceneDesignerShortcutModifier[];
+};
+
+export type SceneDesignerNudgeKeysConfig = {
+  left?: string;
+  right?: string;
+  up?: string;
+  down?: string;
+};
+
+export type SceneDesignerMouseConfig = {
+  snapToGridModifiers?: SceneDesignerShortcutModifier[];
+};
+
+export type SceneDesignerShortcutModifier = "shift" | "ctrl" | "meta" | "alt";
 
 export type SceneBehaviorDefinition = {
   id: string;

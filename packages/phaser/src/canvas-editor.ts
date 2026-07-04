@@ -16,8 +16,11 @@ import {
   type SceneArea,
   type SceneAreaVertex,
   type SceneBehaviorAreaAttribute,
+  type SceneDesignerCanvasConfig,
   type SceneDefinition,
   type SceneDesignerManifest,
+  type SceneDesignerNudgeKeysConfig,
+  type SceneDesignerShortcutModifier,
   type SceneLayer,
   type SceneObject,
   type SceneSelection
@@ -44,6 +47,24 @@ type Bounds = {
   right: number;
   bottom: number;
 };
+type ResolvedCanvasConfig = {
+  grid: {
+    width: number;
+    height: number;
+  };
+  keyboard: {
+    nudge: {
+      normalStep: number;
+      fineStep: number;
+      keys: Required<SceneDesignerNudgeKeysConfig>;
+      fineModifiers: SceneDesignerShortcutModifier[];
+    };
+  };
+  mouse: {
+    snapToGridModifiers: SceneDesignerShortcutModifier[];
+  };
+};
+type ModifierEvent = Pick<KeyboardEvent | MouseEvent | PointerEvent, "altKey" | "ctrlKey" | "metaKey" | "shiftKey">;
 type DragState =
   | {
       type: "object";
@@ -95,6 +116,29 @@ type HitObject = {
   kind: HandleKind;
 };
 
+const DEFAULT_CANVAS_CONFIG: ResolvedCanvasConfig = {
+  grid: {
+    width: 16,
+    height: 16
+  },
+  keyboard: {
+    nudge: {
+      normalStep: 10,
+      fineStep: 1,
+      keys: {
+        left: "ArrowLeft",
+        right: "ArrowRight",
+        up: "ArrowUp",
+        down: "ArrowDown"
+      },
+      fineModifiers: ["shift"]
+    }
+  },
+  mouse: {
+    snapToGridModifiers: ["meta", "ctrl"]
+  }
+};
+
 type HitObjectGroup = {
   objects: SceneObject[];
   kind: GroupHandleKind;
@@ -133,6 +177,7 @@ export class PhaserSceneDesignerCanvas {
   private hoverObjectId: string | undefined;
   private selectedVertexId: string | undefined;
   private drag: DragState | undefined;
+  private snapGridVisible = false;
   private windowDragActive = false;
   private designerPointerEventsBeforeDrag = "";
   private readonly onWindowPointerMove = (event: PointerEvent): void => {
@@ -143,7 +188,7 @@ export class PhaserSceneDesignerCanvas {
 
     event.preventDefault();
     event.stopPropagation();
-    this.applyDrag(this.pointerEventPosition(event));
+    this.applyDrag(this.pointerEventPosition(event), event);
   };
   private readonly onWindowPointerUp = (event: PointerEvent): void => {
     if (!this.drag) {
@@ -358,6 +403,10 @@ export class PhaserSceneDesignerCanvas {
     const hoverObject = this.hoverObjectId ? this.findObject(this.hoverObjectId)?.object : undefined;
     const selectedAreas = this.selectedAreasForOverlay();
 
+    if (this.snapGridVisible) {
+      this.drawSnapGrid();
+    }
+
     if (hoverObject && !selectedObjectIds.has(hoverObject.id)) {
       this.drawObjectBox(hoverObject, 0x80b7ff, false);
     }
@@ -444,6 +493,19 @@ export class PhaserSceneDesignerCanvas {
     this.overlay.fillRect(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
     this.overlay.lineStyle(1, 0x8bb8ff, 0.95);
     this.overlay.strokeRect(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
+  }
+
+  private drawSnapGrid(): void {
+    const scene = this.currentScene();
+    const { width, height } = this.canvasConfig().grid;
+    this.overlay.lineStyle(1, 0x8bb8ff, 0.26);
+
+    for (let x = 0; x <= scene.width; x += width) {
+      this.overlay.lineBetween(x, 0, x, scene.height);
+    }
+    for (let y = 0; y <= scene.height; y += height) {
+      this.overlay.lineBetween(0, y, scene.width, y);
+    }
   }
 
   private drawAreaHandles(area: SceneArea): void {
@@ -605,7 +667,7 @@ export class PhaserSceneDesignerCanvas {
     const point = pointerPosition(pointer);
 
     if (this.drag) {
-      this.applyDrag(point);
+      this.applyDrag(point, modifierEvent(pointer.event));
       return;
     }
 
@@ -664,11 +726,12 @@ export class PhaserSceneDesignerCanvas {
   private onKeyDown(event: KeyboardEvent): void {
     if (!this.isOpen || this.isBehaviorView() || isEditableTarget(event.target)) return;
 
-    const deltas: Record<string, { dx: number; dy: number }> = {
-      ArrowLeft: { dx: -1, dy: 0 },
-      ArrowRight: { dx: 1, dy: 0 },
-      ArrowUp: { dx: 0, dy: -1 },
-      ArrowDown: { dx: 0, dy: 1 }
+    const nudge = this.canvasConfig().keyboard.nudge;
+    const deltas: Record<string, { dx: number; dy: number } | undefined> = {
+      [nudge.keys.left]: { dx: -1, dy: 0 },
+      [nudge.keys.right]: { dx: 1, dy: 0 },
+      [nudge.keys.up]: { dx: 0, dy: -1 },
+      [nudge.keys.down]: { dx: 0, dy: 1 }
     };
     const delta = deltas[event.key];
     if (!delta) return;
@@ -678,7 +741,7 @@ export class PhaserSceneDesignerCanvas {
 
     event.preventDefault();
     event.stopPropagation();
-    const step = event.metaKey || event.ctrlKey ? 1 : 10;
+    const step = hasAnyModifier(event, nudge.fineModifiers) ? nudge.fineStep : nudge.normalStep;
     this.options.designer.updateObjects(
       objects.map((object) => ({
         objectId: object.id,
@@ -690,7 +753,7 @@ export class PhaserSceneDesignerCanvas {
     );
   }
 
-  private applyDrag(point: Phaser.Math.Vector2): void {
+  private applyDrag(point: Phaser.Math.Vector2, event?: ModifierEvent): void {
     const drag = this.drag;
     if (!drag) return;
 
@@ -702,16 +765,21 @@ export class PhaserSceneDesignerCanvas {
       drag.historyWritten = true;
 
       if (drag.handle === "move") {
+        const snap = this.shouldSnapDrag(event);
+        const position = snap ? this.snapPoint({ x: start.x + dx, y: start.y + dy }) : { x: start.x + dx, y: start.y + dy };
+        this.snapGridVisible = snap;
         this.options.designer.updateObject(drag.objectId, {
-          x: start.x + dx,
-          y: start.y + dy
+          x: position.x,
+          y: position.y
         }, { history });
       } else if (drag.handle === "rotate") {
+        this.snapGridVisible = false;
         const angle = Phaser.Math.RadToDeg(Math.atan2(point.y - start.y, point.x - start.x)) + 90;
         this.options.designer.updateObject(drag.objectId, {
           rotation: Math.round(angle * 10) / 10
         }, { history });
       } else if (drag.handle === "anchor") {
+        this.snapGridVisible = false;
         const size = this.objectSize(start);
         const local = worldToObjectLocal(point, start);
         this.options.designer.updateObject(drag.objectId, {
@@ -719,6 +787,7 @@ export class PhaserSceneDesignerCanvas {
           anchorY: Phaser.Math.Clamp(start.anchorY - local.y / size.height, 0, 1)
         }, { history });
       } else {
+        this.snapGridVisible = false;
         const size = this.objectSize(start);
         const anchor = objectPosition(start);
         const startDistance = Math.max(12, Phaser.Math.Distance.Between(
@@ -740,14 +809,17 @@ export class PhaserSceneDesignerCanvas {
     if (drag.type === "objects") {
       const history = !drag.historyWritten;
       drag.historyWritten = true;
+      const snap = drag.handle === "move" && this.shouldSnapDrag(event);
+      this.snapGridVisible = snap;
       this.options.designer.updateObjects(
-        this.objectGroupUpdates(drag, point),
+        this.objectGroupUpdates(drag, point, snap),
         { history }
       );
       return;
     }
 
     if (drag.type === "marquee") {
+      this.snapGridVisible = false;
       drag.currentPointer = point;
       drag.active = drag.active || distance(drag.startPointer, point) >= 6;
       this.drawOverlay();
@@ -755,6 +827,7 @@ export class PhaserSceneDesignerCanvas {
     }
 
     if (drag.type === "vertex") {
+      this.snapGridVisible = false;
       const history = !drag.historyWritten;
       drag.historyWritten = true;
       this.options.designer.updateAreaVertex(drag.areaId, drag.vertexId, {
@@ -765,6 +838,7 @@ export class PhaserSceneDesignerCanvas {
     }
 
     if (drag.type === "area") {
+      this.snapGridVisible = false;
       const history = !drag.historyWritten;
       drag.historyWritten = true;
       const dx = point.x - drag.startPointer.x;
@@ -775,6 +849,7 @@ export class PhaserSceneDesignerCanvas {
       return;
     }
 
+    this.snapGridVisible = false;
     const history = !drag.historyWritten;
     drag.historyWritten = true;
     this.options.designer.updateAreaVertex(drag.areaId, drag.vertexId, {
@@ -814,7 +889,9 @@ export class PhaserSceneDesignerCanvas {
 
   private endDrag(): void {
     this.drag = undefined;
+    this.snapGridVisible = false;
     this.releaseWindowDrag();
+    this.drawOverlay();
   }
 
   private captureWindowDrag(): void {
@@ -915,18 +992,20 @@ export class PhaserSceneDesignerCanvas {
 
   private objectGroupUpdates(
     drag: Extract<DragState, { type: "objects" }>,
-    point: Phaser.Math.Vector2
+    point: Phaser.Math.Vector2,
+    snap: boolean
   ): SceneDesignerObjectUpdate[] {
     const center = boundsCenter(drag.startBounds);
     const dx = point.x - drag.startPointer.x;
     const dy = point.y - drag.startPointer.y;
 
     if (drag.handle === "move") {
+      const snappedDelta = snap ? this.snapGroupDelta(drag.startBounds, dx, dy) : { dx, dy };
       return drag.startObjects.map((object) => ({
         objectId: object.id,
         patch: {
-          x: object.x + dx,
-          y: object.y + dy
+          x: object.x + snappedDelta.dx,
+          y: object.y + snappedDelta.dy
         }
       }));
     }
@@ -1166,6 +1245,29 @@ export class PhaserSceneDesignerCanvas {
     return boundsFromPoints(corners);
   }
 
+  private shouldSnapDrag(event: ModifierEvent | undefined): boolean {
+    return Boolean(event && hasAnyModifier(event, this.canvasConfig().mouse.snapToGridModifiers));
+  }
+
+  private snapPoint(point: { x: number; y: number }): Phaser.Math.Vector2 {
+    const { width, height } = this.canvasConfig().grid;
+    return new Phaser.Math.Vector2(
+      snapValue(point.x, width),
+      snapValue(point.y, height)
+    );
+  }
+
+  private snapGroupDelta(bounds: Bounds, dx: number, dy: number): { dx: number; dy: number } {
+    const snapped = this.snapPoint({
+      x: bounds.left + dx,
+      y: bounds.top + dy
+    });
+    return {
+      dx: snapped.x - bounds.left,
+      dy: snapped.y - bounds.top
+    };
+  }
+
   private hitTopObject(point: Phaser.Math.Vector2): HitObject | undefined {
     const scene = this.currentScene();
 
@@ -1294,6 +1396,10 @@ export class PhaserSceneDesignerCanvas {
     return getScene(this.manifest, this.options.designer.getSceneId());
   }
 
+  private canvasConfig(): ResolvedCanvasConfig {
+    return resolveCanvasConfig(this.manifest.designer?.canvas);
+  }
+
   private isBehaviorView(): boolean {
     return this.options.designer.getOpenView() === "behaviors";
   }
@@ -1413,6 +1519,63 @@ function translateAreaVertices(vertices: SceneAreaVertex[], dx: number, dy: numb
         }
       : undefined
   }));
+}
+
+function resolveCanvasConfig(config: SceneDesignerCanvasConfig | undefined): ResolvedCanvasConfig {
+  return {
+    grid: {
+      width: config?.grid?.width ?? DEFAULT_CANVAS_CONFIG.grid.width,
+      height: config?.grid?.height ?? DEFAULT_CANVAS_CONFIG.grid.height
+    },
+    keyboard: {
+      nudge: {
+        normalStep: config?.keyboard?.nudge?.normalStep ?? DEFAULT_CANVAS_CONFIG.keyboard.nudge.normalStep,
+        fineStep: config?.keyboard?.nudge?.fineStep ?? DEFAULT_CANVAS_CONFIG.keyboard.nudge.fineStep,
+        keys: {
+          left: config?.keyboard?.nudge?.keys?.left ?? DEFAULT_CANVAS_CONFIG.keyboard.nudge.keys.left,
+          right: config?.keyboard?.nudge?.keys?.right ?? DEFAULT_CANVAS_CONFIG.keyboard.nudge.keys.right,
+          up: config?.keyboard?.nudge?.keys?.up ?? DEFAULT_CANVAS_CONFIG.keyboard.nudge.keys.up,
+          down: config?.keyboard?.nudge?.keys?.down ?? DEFAULT_CANVAS_CONFIG.keyboard.nudge.keys.down
+        },
+        fineModifiers: config?.keyboard?.nudge?.fineModifiers ?? DEFAULT_CANVAS_CONFIG.keyboard.nudge.fineModifiers
+      }
+    },
+    mouse: {
+      snapToGridModifiers: config?.mouse?.snapToGridModifiers ?? DEFAULT_CANVAS_CONFIG.mouse.snapToGridModifiers
+    }
+  };
+}
+
+function hasAnyModifier(event: ModifierEvent, modifiers: SceneDesignerShortcutModifier[]): boolean {
+  return modifiers.some((modifier) => modifierActive(event, modifier));
+}
+
+function modifierEvent(value: unknown): ModifierEvent | undefined {
+  if (!value || typeof value !== "object") return undefined;
+  const event = value as Partial<ModifierEvent>;
+  return typeof event.altKey === "boolean"
+    && typeof event.ctrlKey === "boolean"
+    && typeof event.metaKey === "boolean"
+    && typeof event.shiftKey === "boolean"
+    ? event as ModifierEvent
+    : undefined;
+}
+
+function modifierActive(event: ModifierEvent, modifier: SceneDesignerShortcutModifier): boolean {
+  switch (modifier) {
+    case "shift":
+      return event.shiftKey;
+    case "ctrl":
+      return event.ctrlKey;
+    case "meta":
+      return event.metaKey;
+    case "alt":
+      return event.altKey;
+  }
+}
+
+function snapValue(value: number, gridSize: number): number {
+  return Math.round(value / gridSize) * gridSize;
 }
 
 function boundsFromPoints(points: Array<{ x: number; y: number }>): Bounds | undefined {

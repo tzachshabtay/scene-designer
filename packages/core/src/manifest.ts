@@ -9,8 +9,10 @@ import type {
   SceneBehaviorDefinition,
   SceneBehaviorInstance,
   SceneBehaviorObjectAttribute,
+  SceneDesignerConfig,
   SceneDefinition,
   SceneDesignerManifest,
+  SceneDesignerShortcutModifier,
   SceneLayer,
   SceneObject,
   SceneObjectDefaults
@@ -42,6 +44,10 @@ export function assertSceneManifest(manifest: SceneDesignerManifest): void {
     throw new Error(`Unsupported scene designer manifest schema: ${manifest.schemaVersion}`);
   }
 
+  if (manifest.designer) {
+    assertDesignerConfig(manifest.designer, "manifest.designer");
+  }
+
   for (const [behaviorId, behavior] of Object.entries(manifest.behaviors ?? {})) {
     if (behaviorId !== behavior.id) {
       throw new Error(`Behavior key "${behaviorId}" does not match behavior id "${behavior.id}".`);
@@ -56,6 +62,49 @@ export function assertSceneManifest(manifest: SceneDesignerManifest): void {
     }
 
     assertScene(scene);
+  }
+}
+
+function assertDesignerConfig(config: SceneDesignerConfig, label: string): void {
+  const canvas = config.canvas;
+  if (!canvas) return;
+
+  if (canvas.grid?.width !== undefined) {
+    assertPositiveFinite(canvas.grid.width, `${label}.canvas.grid.width`);
+  }
+  if (canvas.grid?.height !== undefined) {
+    assertPositiveFinite(canvas.grid.height, `${label}.canvas.grid.height`);
+  }
+
+  const nudge = canvas.keyboard?.nudge;
+  if (nudge?.normalStep !== undefined) {
+    assertPositiveFinite(nudge.normalStep, `${label}.canvas.keyboard.nudge.normalStep`);
+  }
+  if (nudge?.fineStep !== undefined) {
+    assertPositiveFinite(nudge.fineStep, `${label}.canvas.keyboard.nudge.fineStep`);
+  }
+  if (nudge?.keys) {
+    for (const [key, value] of Object.entries(nudge.keys)) {
+      assertNonEmpty(value, `${label}.canvas.keyboard.nudge.keys.${key}`);
+    }
+  }
+  if (nudge?.fineModifiers) {
+    assertShortcutModifiers(nudge.fineModifiers, `${label}.canvas.keyboard.nudge.fineModifiers`);
+  }
+  if (canvas.mouse?.snapToGridModifiers) {
+    assertShortcutModifiers(canvas.mouse.snapToGridModifiers, `${label}.canvas.mouse.snapToGridModifiers`);
+  }
+}
+
+function assertShortcutModifiers(modifiers: SceneDesignerShortcutModifier[], label: string): void {
+  const allowed = new Set<SceneDesignerShortcutModifier>(["shift", "ctrl", "meta", "alt"]);
+  const seen = new Set<string>();
+  for (const [index, modifier] of modifiers.entries()) {
+    assertNonEmpty(modifier, `${label}.${index}`);
+    if (!allowed.has(modifier)) {
+      throw new Error(`${label}.${index} must be one of: shift, ctrl, meta, alt.`);
+    }
+    assertUnique(seen, modifier, `${label}.${index}`);
   }
 }
 
