@@ -52,7 +52,9 @@ const monkeyHavocSpeed = 82;
 const monkeyMinShotDelayMs = 1900;
 const monkeyMaxShotDelayMs = 3300;
 const monkeyMaxY = 250;
-const bananaSpeed = 215;
+const bananaAimLeadSeconds = 0.45;
+const bananaLaunchOffset = 22;
+const bananaSpeed = 360;
 const paddleKeyboardSpeed = 430;
 const paddlePointerHoldMs = 180;
 
@@ -507,21 +509,30 @@ export class BreakoutScene extends Phaser.Scene {
   private shootBanana(monkey: ArcadeImage): void {
     if (!this.paddle?.active) return;
 
-    const banana = this.physics.add.image(monkey.x, monkey.y + 12, this.textureForAsset(bananaAssetId));
-    banana.setData("assetId", bananaAssetId);
-    banana.setDepth(950);
-    banana.setRotation(Phaser.Math.FloatBetween(-0.45, 0.45));
-    banana.setAngularVelocity(Phaser.Math.Between(-260, 260));
-    banana.body.allowGravity = false;
-    banana.setCollideWorldBounds(false);
-
-    const direction = new Phaser.Math.Vector2(this.paddle.x - monkey.x, this.paddle.y - monkey.y);
+    const leadTargetX = Phaser.Math.Clamp(
+      this.paddle.x + this.paddle.body.velocity.x * bananaAimLeadSeconds,
+      48,
+      752
+    );
+    const target = new Phaser.Math.Vector2(leadTargetX, this.paddle.y);
+    const direction = target.subtract(new Phaser.Math.Vector2(monkey.x, monkey.y));
     if (direction.lengthSq() === 0) {
       direction.set(0, 1);
     }
 
-    direction.normalize().scale(bananaSpeed);
-    banana.setVelocity(direction.x, direction.y);
+    direction.normalize();
+
+    const banana = this.physics.add.image(
+      monkey.x + direction.x * bananaLaunchOffset,
+      monkey.y + direction.y * bananaLaunchOffset,
+      this.textureForAsset(bananaAssetId)
+    );
+    banana.setData("assetId", bananaAssetId);
+    banana.setDepth(950);
+    banana.setRotation(direction.angle());
+    banana.body.allowGravity = false;
+    banana.setCollideWorldBounds(false);
+    banana.setVelocity(direction.x * bananaSpeed, direction.y * bananaSpeed);
     this.bananas.add(banana);
   }
 
