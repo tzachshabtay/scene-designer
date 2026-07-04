@@ -55,6 +55,13 @@ type DragState =
       areaId: string;
       vertexId: string;
       historyWritten: boolean;
+    }
+  | {
+      type: "area";
+      areaId: string;
+      startPointer: Phaser.Math.Vector2;
+      startVertices: SceneAreaVertex[];
+      historyWritten: boolean;
     };
 
 type HitObject = {
@@ -65,7 +72,8 @@ type HitObject = {
 
 type HitArea =
   | { kind: "vertex"; area: SceneArea; vertex: SceneAreaVertex }
-  | { kind: "edge"; area: SceneArea; from: SceneAreaVertex; to: SceneAreaVertex; insertIndex: number };
+  | { kind: "edge"; area: SceneArea; from: SceneAreaVertex; to: SceneAreaVertex; insertIndex: number }
+  | { kind: "body"; area: SceneArea };
 
 type CanvasArea = {
   area: SceneArea;
@@ -94,6 +102,29 @@ export class PhaserSceneDesignerCanvas {
   private hoverObjectId: string | undefined;
   private selectedVertexId: string | undefined;
   private drag: DragState | undefined;
+  private windowDragActive = false;
+  private designerPointerEventsBeforeDrag = "";
+  private readonly onWindowPointerMove = (event: PointerEvent): void => {
+    if (!this.drag) {
+      this.releaseWindowDrag();
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    this.applyDrag(this.pointerEventPosition(event));
+  };
+  private readonly onWindowPointerUp = (event: PointerEvent): void => {
+    if (!this.drag) {
+      this.releaseWindowDrag();
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    this.insertVertexFromEdgeClick(this.pointerEventPosition(event), event.detail);
+    this.endDrag();
+  };
 
   constructor(private readonly options: PhaserSceneDesignerCanvasOptions) {
     this.manifest = options.manifest;
@@ -137,7 +168,7 @@ export class PhaserSceneDesignerCanvas {
     this.overlay.setVisible(isOpen);
     if (!isOpen) {
       this.hoverObjectId = undefined;
-      this.drag = undefined;
+      this.endDrag();
       this.overlay.clear();
     } else {
       this.drawAreas();
@@ -152,6 +183,7 @@ export class PhaserSceneDesignerCanvas {
     this.options.scene.input.off("gameobjectdown", this.stopEvent, this);
     this.options.scene.input.keyboard?.off("keydown-BACKSPACE", this.onBackspace, this);
     this.options.scene.input.keyboard?.off("keydown-DELETE", this.onBackspace, this);
+    this.endDrag();
     for (const sprite of this.objects.values()) {
       sprite.destroy();
     }
@@ -367,8 +399,9 @@ export class PhaserSceneDesignerCanvas {
     const scene = this.currentScene();
 
     if (this.selection?.type === "area") {
-      const area = this.findArea(this.selection.areaId)?.area;
-      if (area && !area.locked) {
+      const resolvedArea = this.findArea(this.selection.areaId);
+      const area = resolvedArea?.area;
+      if (area && resolvedArea && !resolvedArea.layer.locked && !area.locked) {
         if (!area.closed || this.mode === "area-draw") {
           this.handleAreaDrawClick(area, point);
           return;
@@ -377,28 +410,38 @@ export class PhaserSceneDesignerCanvas {
         const areaHit = this.hitArea(point, area);
         if (areaHit?.kind === "vertex") {
           this.selectedVertexId = areaHit.vertex.id;
-          this.drag = {
+          this.beginDrag({
             type: "vertex",
             areaId: area.id,
             vertexId: areaHit.vertex.id,
             historyWritten: false
-          };
+          });
           this.options.designer.select({
             type: "vertex",
             sceneId: scene.id,
-            layerId: this.findArea(area.id)!.layer.id,
+            layerId: resolvedArea.layer.id,
             areaId: area.id,
             vertexId: areaHit.vertex.id
           });
           return;
         }
         if (areaHit?.kind === "edge") {
-          this.drag = {
+          this.beginDrag({
             type: "edge",
             areaId: area.id,
             vertexId: areaHit.from.id,
             historyWritten: false
-          };
+          });
+          return;
+        }
+        if (areaHit?.kind === "body") {
+          this.beginDrag({
+            type: "area",
+            areaId: area.id,
+            startPointer: point,
+            startVertices: structuredClone(area.vertices),
+            historyWritten: false
+          });
           return;
         }
       }
@@ -408,14 +451,14 @@ export class PhaserSceneDesignerCanvas {
       ? this.hitObject(point, this.findObject(this.selection.objectId)?.object)
       : undefined;
     if (selectedHit && !selectedHit.layer.locked && !selectedHit.object.locked) {
-      this.drag = {
+      this.beginDrag({
         type: "object",
         objectId: selectedHit.object.id,
         handle: selectedHit.kind,
         startPointer: point,
         startObject: { ...selectedHit.object },
         historyWritten: false
-      };
+      });
       return;
     }
 
@@ -427,16 +470,16 @@ export class PhaserSceneDesignerCanvas {
         layerId: hit.layer.id,
         objectId: hit.object.id
       });
-      this.drag = hit.layer.locked || hit.object.locked
-        ? undefined
-        : {
+      if (!hit.layer.locked && !hit.object.locked) {
+        this.beginDrag({
             type: "object",
             objectId: hit.object.id,
             handle: "move",
             startPointer: point,
             startObject: { ...hit.object },
             historyWritten: false
-          };
+        });
+      }
       return;
     }
 
@@ -450,6 +493,15 @@ export class PhaserSceneDesignerCanvas {
           layerId: layer.id,
           areaId: areaHit.area.id
         });
+        if (areaHit.kind === "body" && !layer.locked && !areaHit.area.locked) {
+          this.beginDrag({
+            type: "area",
+            areaId: areaHit.area.id,
+            startPointer: point,
+            startVertices: structuredClone(areaHit.area.vertices),
+            historyWritten: false
+          });
+        }
       }
     }
   }
@@ -479,32 +531,20 @@ export class PhaserSceneDesignerCanvas {
     if (!this.isOpen) return;
 
     const point = pointerPosition(pointer);
-    if (this.isBehaviorView()) {
-      const selectedArea = this.selectedBehaviorArea()?.area;
-      const edge = selectedArea ? this.hitAreaEdge(point, selectedArea) : undefined;
-      if (
-        pointer.getDuration() < 320 &&
-        selectedArea?.closed &&
-        edge &&
-        pointer.downTime &&
-        pointer.upTime - pointer.downTime < 260 &&
-        pointer.event.detail >= 2
-      ) {
-        this.options.designer.insertAreaVertex(selectedArea.id, edge.insertIndex, point.x, point.y);
-      }
-      this.drag = undefined;
+    if (this.drag) {
+      this.insertVertexFromEdgeClick(point, pointer.event.detail, pointer.getDuration());
+      this.endDrag();
       return;
     }
 
-    if (pointer.getDuration() < 320 && this.selection?.type === "area") {
-      const area = this.findArea(this.selection.areaId)?.area;
-      const edge = area ? this.hitAreaEdge(point, area) : undefined;
-      if (area?.closed && edge && pointer.downTime && pointer.upTime - pointer.downTime < 260 && pointer.event.detail >= 2) {
-        this.options.designer.insertAreaVertex(area.id, edge.insertIndex, point.x, point.y);
-      }
+    if (this.isBehaviorView()) {
+      this.insertVertexFromEdgeClick(point, pointer.event.detail, pointer.getDuration());
+      return;
     }
 
-    this.drag = undefined;
+    this.insertVertexFromEdgeClick(point, pointer.event.detail, pointer.getDuration());
+
+    this.endDrag();
   }
 
   private onBackspace(event: KeyboardEvent): void {
@@ -581,6 +621,17 @@ export class PhaserSceneDesignerCanvas {
       return;
     }
 
+    if (drag.type === "area") {
+      const history = !drag.historyWritten;
+      drag.historyWritten = true;
+      const dx = point.x - drag.startPointer.x;
+      const dy = point.y - drag.startPointer.y;
+      this.options.designer.updateArea(drag.areaId, {
+        vertices: translateAreaVertices(drag.startVertices, dx, dy)
+      }, { history });
+      return;
+    }
+
     const history = !drag.historyWritten;
     drag.historyWritten = true;
     this.options.designer.updateAreaVertex(drag.areaId, drag.vertexId, {
@@ -589,6 +640,69 @@ export class PhaserSceneDesignerCanvas {
         cy: point.y
       }
     }, { history });
+  }
+
+  private insertVertexFromEdgeClick(point: Phaser.Math.Vector2, clickCount: number | undefined, durationMs?: number): void {
+    const drag = this.drag;
+    if (drag && (drag.type !== "edge" || drag.historyWritten)) return;
+    if ((clickCount ?? 0) < 2 || (durationMs !== undefined && durationMs >= 320)) return;
+
+    const area = this.areaForEdgeInsert();
+    const edge = area ? this.hitAreaEdge(point, area) : undefined;
+    if (area?.closed && edge) {
+      this.options.designer.insertAreaVertex(area.id, edge.insertIndex, point.x, point.y);
+    }
+  }
+
+  private areaForEdgeInsert(): SceneArea | undefined {
+    if (this.isBehaviorView()) {
+      return this.selectedBehaviorArea()?.area;
+    }
+
+    return this.selection?.type === "area"
+      ? this.findArea(this.selection.areaId)?.area
+      : undefined;
+  }
+
+  private beginDrag(drag: DragState): void {
+    this.drag = drag;
+    this.captureWindowDrag();
+  }
+
+  private endDrag(): void {
+    this.drag = undefined;
+    this.releaseWindowDrag();
+  }
+
+  private captureWindowDrag(): void {
+    if (this.windowDragActive || typeof window === "undefined") return;
+
+    this.windowDragActive = true;
+    this.designerPointerEventsBeforeDrag = this.options.designer.root.style.pointerEvents;
+    this.options.designer.root.style.pointerEvents = "none";
+    window.addEventListener("pointermove", this.onWindowPointerMove, true);
+    window.addEventListener("pointerup", this.onWindowPointerUp, true);
+    window.addEventListener("pointercancel", this.onWindowPointerUp, true);
+  }
+
+  private releaseWindowDrag(): void {
+    if (!this.windowDragActive || typeof window === "undefined") return;
+
+    this.windowDragActive = false;
+    this.options.designer.root.style.pointerEvents = this.designerPointerEventsBeforeDrag;
+    window.removeEventListener("pointermove", this.onWindowPointerMove, true);
+    window.removeEventListener("pointerup", this.onWindowPointerUp, true);
+    window.removeEventListener("pointercancel", this.onWindowPointerUp, true);
+  }
+
+  private pointerEventPosition(event: PointerEvent): Phaser.Math.Vector2 {
+    const canvas = this.options.scene.game.canvas;
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = this.options.scene.scale.width / rect.width;
+    const scaleY = this.options.scene.scale.height / rect.height;
+    const screenX = (event.clientX - rect.left) * scaleX;
+    const screenY = (event.clientY - rect.top) * scaleY;
+    return this.options.scene.cameras.main.getWorldPoint(screenX, screenY);
   }
 
   private handleAreaDrawClick(area: SceneArea, point: Phaser.Math.Vector2): void {
@@ -611,12 +725,12 @@ export class PhaserSceneDesignerCanvas {
       const areaHit = this.hitArea(point, selected.area);
       if (areaHit?.kind === "vertex") {
         this.selectedVertexId = areaHit.vertex.id;
-        this.drag = {
+        this.beginDrag({
           type: "vertex",
           areaId: selected.area.id,
           vertexId: areaHit.vertex.id,
           historyWritten: false
-        };
+        });
         this.options.designer.select({
           type: "behavior-vertex",
           behaviorId: selected.behaviorId,
@@ -626,12 +740,22 @@ export class PhaserSceneDesignerCanvas {
         return;
       }
       if (areaHit?.kind === "edge") {
-        this.drag = {
+        this.beginDrag({
           type: "edge",
           areaId: selected.area.id,
           vertexId: areaHit.from.id,
           historyWritten: false
-        };
+        });
+        return;
+      }
+      if (areaHit?.kind === "body") {
+        this.beginDrag({
+          type: "area",
+          areaId: selected.area.id,
+          startPointer: point,
+          startVertices: structuredClone(selected.area.vertices),
+          historyWritten: false
+        });
         return;
       }
     }
@@ -770,7 +894,12 @@ export class PhaserSceneDesignerCanvas {
       }
     }
 
-    return this.hitAreaEdge(point, area);
+    const edge = this.hitAreaEdge(point, area);
+    if (edge) return edge;
+
+    return area.closed && pointInArea(point, area)
+      ? { kind: "body", area }
+      : undefined;
   }
 
   private hitAreaEdge(point: Phaser.Math.Vector2, area: SceneArea): Extract<HitArea, { kind: "edge" }> | undefined {
@@ -922,6 +1051,63 @@ function rotatePoint(
 
 function pointerPosition(pointer: Phaser.Input.Pointer): Phaser.Math.Vector2 {
   return new Phaser.Math.Vector2(pointer.worldX, pointer.worldY);
+}
+
+function translateAreaVertices(vertices: SceneAreaVertex[], dx: number, dy: number): SceneAreaVertex[] {
+  return vertices.map((vertex) => ({
+    ...vertex,
+    x: vertex.x + dx,
+    y: vertex.y + dy,
+    curve: vertex.curve
+      ? {
+          cx: vertex.curve.cx + dx,
+          cy: vertex.curve.cy + dy
+        }
+      : undefined
+  }));
+}
+
+function pointInArea(point: { x: number; y: number }, area: SceneArea): boolean {
+  if (!area.closed || area.vertices.length < 3) return false;
+
+  const points = areaBoundaryPoints(area);
+  let inside = false;
+  for (let index = 0, previousIndex = points.length - 1; index < points.length; previousIndex = index, index += 1) {
+    const current = points[index];
+    const previous = points[previousIndex];
+    const intersects = (current.y > point.y) !== (previous.y > point.y)
+      && point.x < ((previous.x - current.x) * (point.y - current.y)) / (previous.y - current.y) + current.x;
+    if (intersects) inside = !inside;
+  }
+
+  return inside;
+}
+
+function areaBoundaryPoints(area: SceneArea): Array<{ x: number; y: number }> {
+  const points: Array<{ x: number; y: number }> = [];
+  const first = area.vertices[0];
+  if (!first) return points;
+
+  points.push({ x: first.x, y: first.y });
+  const edgeCount = area.closed ? area.vertices.length : area.vertices.length - 1;
+  for (let index = 0; index < edgeCount; index += 1) {
+    const from = area.vertices[index];
+    const to = area.vertices[(index + 1) % area.vertices.length];
+    if (from.curve) {
+      for (let step = 1; step <= 12; step += 1) {
+        const t = step / 12;
+        const inv = 1 - t;
+        points.push({
+          x: inv * inv * from.x + 2 * inv * t * from.curve.cx + t * t * to.x,
+          y: inv * inv * from.y + 2 * inv * t * from.curve.cy + t * t * to.y
+        });
+      }
+    } else {
+      points.push({ x: to.x, y: to.y });
+    }
+  }
+
+  return points;
 }
 
 function distance(a: { x: number; y: number }, b: { x: number; y: number }): number {
