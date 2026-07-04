@@ -304,53 +304,12 @@ export const scenes = defineSceneManifest(
           "areas": [],
           "behaviors": [
             {
-              "id": "l1-enemy-spawn-snake",
-              "behaviorId": "snake",
+              "id": "l1-enemy-spawn",
+              "behaviorId": "spawn-area",
               "visible": true,
               "locked": false,
               "overrides": {
-                "spawnArea": {
-                  "closed": true,
-                  "vertices": [
-                    {
-                      "id": "l1-v1",
-                      "x": 300,
-                      "y": 220
-                    },
-                    {
-                      "id": "l1-v2",
-                      "x": 500,
-                      "y": 220
-                    },
-                    {
-                      "id": "l1-v3",
-                      "x": 560,
-                      "y": 300,
-                      "curve": {
-                        "cx": 550,
-                        "cy": 260
-                      }
-                    },
-                    {
-                      "id": "l1-v4",
-                      "x": 240,
-                      "y": 300,
-                      "curve": {
-                        "cx": 250,
-                        "cy": 260
-                      }
-                    }
-                  ]
-                }
-              }
-            },
-            {
-              "id": "l1-enemy-spawn-monkey",
-              "behaviorId": "monkey",
-              "visible": true,
-              "locked": false,
-              "overrides": {
-                "spawnArea": {
+                "area": {
                   "closed": true,
                   "vertices": [
                     {
@@ -702,12 +661,12 @@ export const scenes = defineSceneManifest(
           "areas": [],
           "behaviors": [
             {
-              "id": "l3-enemy-spawn-left-snake",
-              "behaviorId": "snake",
+              "id": "l3-enemy-spawn-left",
+              "behaviorId": "spawn-area",
               "visible": true,
               "locked": false,
               "overrides": {
-                "spawnArea": {
+                "area": {
                   "closed": true,
                   "vertices": [
                     {
@@ -743,94 +702,12 @@ export const scenes = defineSceneManifest(
               }
             },
             {
-              "id": "l3-enemy-spawn-left-monkey",
-              "behaviorId": "monkey",
+              "id": "l3-enemy-spawn-right",
+              "behaviorId": "spawn-area",
               "visible": true,
               "locked": false,
               "overrides": {
-                "spawnArea": {
-                  "closed": true,
-                  "vertices": [
-                    {
-                      "id": "l3-v1",
-                      "x": 110,
-                      "y": 250
-                    },
-                    {
-                      "id": "l3-v2",
-                      "x": 270,
-                      "y": 242
-                    },
-                    {
-                      "id": "l3-v3",
-                      "x": 310,
-                      "y": 336,
-                      "curve": {
-                        "cx": 292,
-                        "cy": 282
-                      }
-                    },
-                    {
-                      "id": "l3-v4",
-                      "x": 120,
-                      "y": 344,
-                      "curve": {
-                        "cx": 84,
-                        "cy": 300
-                      }
-                    }
-                  ]
-                }
-              }
-            },
-            {
-              "id": "l3-enemy-spawn-right-snake",
-              "behaviorId": "snake",
-              "visible": true,
-              "locked": false,
-              "overrides": {
-                "spawnArea": {
-                  "closed": true,
-                  "vertices": [
-                    {
-                      "id": "l3-v5",
-                      "x": 530,
-                      "y": 242
-                    },
-                    {
-                      "id": "l3-v6",
-                      "x": 690,
-                      "y": 250
-                    },
-                    {
-                      "id": "l3-v7",
-                      "x": 680,
-                      "y": 344,
-                      "curve": {
-                        "cx": 716,
-                        "cy": 300
-                      }
-                    },
-                    {
-                      "id": "l3-v8",
-                      "x": 490,
-                      "y": 336,
-                      "curve": {
-                        "cx": 508,
-                        "cy": 282
-                      }
-                    }
-                  ]
-                }
-              }
-            },
-            {
-              "id": "l3-enemy-spawn-right-monkey",
-              "behaviorId": "monkey",
-              "visible": true,
-              "locked": false,
-              "overrides": {
-                "spawnArea": {
+                "area": {
                   "closed": true,
                   "vertices": [
                     {
@@ -1159,53 +1036,12 @@ export const scenes = defineSceneManifest(
           "areas": [],
           "behaviors": [
             {
-              "id": "l2-enemy-spawn-snake",
-              "behaviorId": "snake",
+              "id": "l2-enemy-spawn",
+              "behaviorId": "spawn-area",
               "visible": true,
               "locked": false,
               "overrides": {
-                "spawnArea": {
-                  "closed": true,
-                  "vertices": [
-                    {
-                      "id": "l2-v1",
-                      "x": 118,
-                      "y": 238
-                    },
-                    {
-                      "id": "l2-v2",
-                      "x": 684,
-                      "y": 238
-                    },
-                    {
-                      "id": "l2-v3",
-                      "x": 616,
-                      "y": 330,
-                      "curve": {
-                        "cx": 682,
-                        "cy": 296
-                      }
-                    },
-                    {
-                      "id": "l2-v4",
-                      "x": 190,
-                      "y": 330,
-                      "curve": {
-                        "cx": 118,
-                        "cy": 296
-                      }
-                    }
-                  ]
-                }
-              }
-            },
-            {
-              "id": "l2-enemy-spawn-monkey",
-              "behaviorId": "monkey",
-              "visible": true,
-              "locked": false,
-              "overrides": {
-                "spawnArea": {
+                "area": {
                   "closed": true,
                   "vertices": [
                     {
@@ -1322,20 +1158,44 @@ export const scenes = defineSceneManifest(
         }
       ]
     },
+    "spawn-area": {
+      "id": "spawn-area",
+      "name": "Spawn Area",
+      "attributes": [
+        {
+          "id": "area",
+          "name": "Area",
+          "kind": "area",
+          "area": {
+            "tag": "enemy.spawn",
+            "visible": true,
+            "locked": false,
+            "closed": false,
+            "vertices": []
+          }
+        }
+      ]
+    },
     "snake": {
       "id": "snake",
       "name": "Snake",
       "attributes": [
         {
-          "id": "spawnArea",
-          "name": "Spawn Area",
-          "kind": "area",
-          "area": {
-            "tag": "enemy.spawn.snake",
+          "id": "sprite",
+          "name": "Sprite",
+          "kind": "object",
+          "object": {
+            "tag": "enemy.snake",
+            "assetId": "enemy.snake",
+            "x": 0,
+            "y": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "rotation": 0,
+            "anchorX": 0.5,
+            "anchorY": 0.5,
             "visible": true,
-            "locked": false,
-            "closed": false,
-            "vertices": []
+            "locked": false
           }
         }
       ]
@@ -1345,15 +1205,21 @@ export const scenes = defineSceneManifest(
       "name": "Monkey",
       "attributes": [
         {
-          "id": "spawnArea",
-          "name": "Spawn Area",
-          "kind": "area",
-          "area": {
-            "tag": "enemy.spawn.monkey",
+          "id": "sprite",
+          "name": "Sprite",
+          "kind": "object",
+          "object": {
+            "tag": "enemy.monkey",
+            "assetId": "enemy.monkey",
+            "x": 0,
+            "y": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "rotation": 0,
+            "anchorX": 0.5,
+            "anchorY": 0.5,
             "visible": true,
-            "locked": false,
-            "closed": false,
-            "vertices": []
+            "locked": false
           }
         }
       ]

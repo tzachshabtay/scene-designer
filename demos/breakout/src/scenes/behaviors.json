@@ -71,20 +71,44 @@
       }
     ]
   },
+  "spawn-area": {
+    "id": "spawn-area",
+    "name": "Spawn Area",
+    "attributes": [
+      {
+        "id": "area",
+        "name": "Area",
+        "kind": "area",
+        "area": {
+          "tag": "enemy.spawn",
+          "visible": true,
+          "locked": false,
+          "closed": false,
+          "vertices": []
+        }
+      }
+    ]
+  },
   "snake": {
     "id": "snake",
     "name": "Snake",
     "attributes": [
       {
-        "id": "spawnArea",
-        "name": "Spawn Area",
-        "kind": "area",
-        "area": {
-          "tag": "enemy.spawn.snake",
+        "id": "sprite",
+        "name": "Sprite",
+        "kind": "object",
+        "object": {
+          "tag": "enemy.snake",
+          "assetId": "enemy.snake",
+          "x": 0,
+          "y": 0,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotation": 0,
+          "anchorX": 0.5,
+          "anchorY": 0.5,
           "visible": true,
-          "locked": false,
-          "closed": false,
-          "vertices": []
+          "locked": false
         }
       }
     ]
@@ -94,15 +118,21 @@
     "name": "Monkey",
     "attributes": [
       {
-        "id": "spawnArea",
-        "name": "Spawn Area",
-        "kind": "area",
-        "area": {
-          "tag": "enemy.spawn.monkey",
+        "id": "sprite",
+        "name": "Sprite",
+        "kind": "object",
+        "object": {
+          "tag": "enemy.monkey",
+          "assetId": "enemy.monkey",
+          "x": 0,
+          "y": 0,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotation": 0,
+          "anchorX": 0.5,
+          "anchorY": 0.5,
           "visible": true,
-          "locked": false,
-          "closed": false,
-          "vertices": []
+          "locked": false
         }
       }
     ]

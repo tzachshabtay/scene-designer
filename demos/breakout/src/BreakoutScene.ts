@@ -36,8 +36,6 @@ const levelIds = ["level.one", "level.two", "level.three"];
 const brickTag = "brick";
 const backgroundTag = "background";
 const spawnTag = "enemy.spawn";
-const snakeSpawnTag = "enemy.spawn.snake";
-const monkeySpawnTag = "enemy.spawn.monkey";
 const ballTag = "ball";
 const paddleTag = "paddle";
 const statueBrickAssetId = "brick.statue";
@@ -526,16 +524,14 @@ export class BreakoutScene extends Phaser.Scene {
     if (this.gameplayPaused) return;
     if (this.enemies.countActive(true) >= maxActiveEnemies) return;
 
-    const areas = sceneAreas(this.sceneManifest, level).filter((area) => area.tag.startsWith(spawnTag) && area.closed);
+    const areas = sceneAreas(this.sceneManifest, level).filter((area) => (
+      area.tag === spawnTag || area.tag.startsWith(`${spawnTag}.`)
+    ) && area.closed);
     const area = Phaser.Utils.Array.GetRandom(areas);
     if (!area) return;
 
     const point = randomPointInArea(area);
-    const assetId = area.tag === snakeSpawnTag
-      ? snakeAssetId
-      : area.tag === monkeySpawnTag
-        ? monkeyAssetId
-        : Math.random() > 0.5 ? snakeAssetId : monkeyAssetId;
+    const assetId = Math.random() > 0.5 ? snakeAssetId : monkeyAssetId;
     const enemy = this.physics.add.image(point.x, point.y, this.textureForAsset(assetId));
     enemy.setData("assetId", assetId);
     this.bindAiAssetTexture(enemy, assetId);

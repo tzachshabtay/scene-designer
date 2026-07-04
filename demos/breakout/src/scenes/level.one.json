@@ -298,53 +298,12 @@
       "areas": [],
       "behaviors": [
         {
-          "id": "l1-enemy-spawn-snake",
-          "behaviorId": "snake",
+          "id": "l1-enemy-spawn",
+          "behaviorId": "spawn-area",
           "visible": true,
           "locked": false,
           "overrides": {
-            "spawnArea": {
-              "closed": true,
-              "vertices": [
-                {
-                  "id": "l1-v1",
-                  "x": 300,
-                  "y": 220
-                },
-                {
-                  "id": "l1-v2",
-                  "x": 500,
-                  "y": 220
-                },
-                {
-                  "id": "l1-v3",
-                  "x": 560,
-                  "y": 300,
-                  "curve": {
-                    "cx": 550,
-                    "cy": 260
-                  }
-                },
-                {
-                  "id": "l1-v4",
-                  "x": 240,
-                  "y": 300,
-                  "curve": {
-                    "cx": 250,
-                    "cy": 260
-                  }
-                }
-              ]
-            }
-          }
-        },
-        {
-          "id": "l1-enemy-spawn-monkey",
-          "behaviorId": "monkey",
-          "visible": true,
-          "locked": false,
-          "overrides": {
-            "spawnArea": {
+            "area": {
               "closed": true,
               "vertices": [
                 {

@@ -307,12 +307,12 @@
       "areas": [],
       "behaviors": [
         {
-          "id": "l3-enemy-spawn-left-snake",
-          "behaviorId": "snake",
+          "id": "l3-enemy-spawn-left",
+          "behaviorId": "spawn-area",
           "visible": true,
           "locked": false,
           "overrides": {
-            "spawnArea": {
+            "area": {
               "closed": true,
               "vertices": [
                 {
@@ -348,94 +348,12 @@
           }
         },
         {
-          "id": "l3-enemy-spawn-left-monkey",
-          "behaviorId": "monkey",
+          "id": "l3-enemy-spawn-right",
+          "behaviorId": "spawn-area",
           "visible": true,
           "locked": false,
           "overrides": {
-            "spawnArea": {
-              "closed": true,
-              "vertices": [
-                {
-                  "id": "l3-v1",
-                  "x": 110,
-                  "y": 250
-                },
-                {
-                  "id": "l3-v2",
-                  "x": 270,
-                  "y": 242
-                },
-                {
-                  "id": "l3-v3",
-                  "x": 310,
-                  "y": 336,
-                  "curve": {
-                    "cx": 292,
-                    "cy": 282
-                  }
-                },
-                {
-                  "id": "l3-v4",
-                  "x": 120,
-                  "y": 344,
-                  "curve": {
-                    "cx": 84,
-                    "cy": 300
-                  }
-                }
-              ]
-            }
-          }
-        },
-        {
-          "id": "l3-enemy-spawn-right-snake",
-          "behaviorId": "snake",
-          "visible": true,
-          "locked": false,
-          "overrides": {
-            "spawnArea": {
-              "closed": true,
-              "vertices": [
-                {
-                  "id": "l3-v5",
-                  "x": 530,
-                  "y": 242
-                },
-                {
-                  "id": "l3-v6",
-                  "x": 690,
-                  "y": 250
-                },
-                {
-                  "id": "l3-v7",
-                  "x": 680,
-                  "y": 344,
-                  "curve": {
-                    "cx": 716,
-                    "cy": 300
-                  }
-                },
-                {
-                  "id": "l3-v8",
-                  "x": 490,
-                  "y": 336,
-                  "curve": {
-                    "cx": 508,
-                    "cy": 282
-                  }
-                }
-              ]
-            }
-          }
-        },
-        {
-          "id": "l3-enemy-spawn-right-monkey",
-          "behaviorId": "monkey",
-          "visible": true,
-          "locked": false,
-          "overrides": {
-            "spawnArea": {
+            "area": {
               "closed": true,
               "vertices": [
                 {
