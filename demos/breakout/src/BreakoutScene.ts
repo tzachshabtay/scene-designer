@@ -50,6 +50,7 @@ const bananaAimLeadSeconds = 0.45;
 const bananaLaunchOffset = 22;
 const bananaSpeed = 360;
 const bananaSpinSpeed = 720;
+const ballSpinSpeed = 520;
 const paddleKeyboardSpeed = 430;
 const paddlePointerHoldMs = 180;
 
@@ -179,6 +180,7 @@ export class BreakoutScene extends Phaser.Scene {
     this.updatePaddleControl();
     this.handleBrickCollisions();
     this.handleEnemyCollisions();
+    this.updateBallSpin();
 
     if (this.ball.y > 620) {
       this.loseBall();
@@ -239,6 +241,7 @@ export class BreakoutScene extends Phaser.Scene {
     this.ball = this.physics.add.image(400, 520, this.textureForAsset("ball.core"));
     this.ball.setData("assetId", "ball.core");
     this.bindAiAssetTexture(this.ball, "ball.core");
+    this.ball.setOrigin(0.5, 0.5);
     this.ball.setCollideWorldBounds(true);
     this.ball.setBounce(1, 1);
     this.ball.setVelocity(190, -265);
@@ -329,6 +332,12 @@ export class BreakoutScene extends Phaser.Scene {
     }
 
     this.paddle.setVelocityX(0);
+  }
+
+  private updateBallSpin(): void {
+    const velocity = this.ball.body.velocity;
+    const speed = Math.hypot(velocity.x, velocity.y);
+    this.ball.setAngularVelocity(speed > 1 ? ballSpinSpeed : 0);
   }
 
   private handleBrickCollisions(): void {
