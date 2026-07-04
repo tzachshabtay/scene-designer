@@ -17,7 +17,6 @@ await loadEnvFile(path.join(demoRoot, ".env"));
 
 const aiAssets = createAiAssetDevServer({
   manifestPath: path.join(demoRoot, "src/ai-assets"),
-  manifestModulePath: path.join(demoRoot, "src/assets.ts"),
   assetsDir: path.join(demoRoot, "public/assets"),
   publicPathPrefix: "/assets",
   port: 4077,
@@ -34,7 +33,6 @@ const aiAssets = createAiAssetDevServer({
 
 const scenes = createSceneDesignerDevServer({
   manifestPath: path.join(demoRoot, "src/scenes"),
-  manifestModulePath: path.join(demoRoot, "src/scenes.ts"),
   port: 4078
 });
 
