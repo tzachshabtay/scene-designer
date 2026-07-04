@@ -56,13 +56,15 @@ const paddlePointerHoldMs = 180;
 export type BreakoutSceneOptions = {
   aiAssets: AiAssetManifest;
   sceneManifest: SceneDesignerManifest;
-  assetApi?: string;
+  aiAssetDebugClient?: AiAssetDebugClient;
+  assetBaseUrl?: string;
   sceneApi?: string;
 };
 
 export class BreakoutScene extends Phaser.Scene {
   private readonly aiAssets: AiAssetManifest;
-  private readonly assetApi?: string;
+  private readonly aiAssetDebugClient?: AiAssetDebugClient;
+  private readonly assetBaseUrl?: string;
   private readonly sceneApi?: string;
   private aiRuntime!: AiAssetRuntime;
   private pixelCollision!: PixelCollision;
@@ -93,18 +95,25 @@ export class BreakoutScene extends Phaser.Scene {
   constructor(options: BreakoutSceneOptions) {
     super("breakout");
     this.aiAssets = options.aiAssets;
-    this.assetApi = options.assetApi;
+    this.aiAssetDebugClient = options.aiAssetDebugClient;
+    this.assetBaseUrl = options.assetBaseUrl;
     this.sceneApi = options.sceneApi;
     this.sceneManifest = options.sceneManifest;
   }
 
   preload(): void {
-    loadAiAssets(this, this.aiAssets);
-    loadAiAudioAssets(this, this.aiAssets);
+    const loadOptions = this.assetBaseUrl ? { baseUrl: this.assetBaseUrl } : undefined;
+    loadAiAssets(this, this.aiAssets, loadOptions);
+    loadAiAudioAssets(this, this.aiAssets, loadOptions);
   }
 
   create(): void {
-    this.aiRuntime = new AiAssetRuntime(this, this.aiAssets);
+    this.aiRuntime = new AiAssetRuntime(
+      this,
+      this.aiAssets,
+      this.assetBaseUrl ? { baseUrl: this.assetBaseUrl } : {}
+    );
+    const aiDesignerCallbacks = this.aiRuntime.designerCallbacks();
     this.pixelCollision = new PixelCollision(this);
     this.physics.world.setBounds(0, 0, 800, 600, true, true, true, false);
     this.cursors = this.input.keyboard?.createCursorKeys();
@@ -115,28 +124,33 @@ export class BreakoutScene extends Phaser.Scene {
       color: "#eef2f7"
     }).setDepth(5000);
 
-    installAiAssetDesigner({
-      scene: this,
-      manifest: this.aiAssets,
-      client: new AiAssetDebugClient(this.assetApi ?? "http://127.0.0.1:4077"),
-      assetIds: this.assetDesignerIds(),
-      title: "Assets",
-      restartOnPromote: false,
-      onManifestUpdated: (manifest) => {
-        this.syncAiAssetManifest(manifest);
-      },
-      onPreview: (assetId, textureKey, asset) => {
-        this.applyAiAssetTexture(assetId, textureKey, asset);
-      },
-      onAssetReady: (assetId, textureKey, asset) => {
-        this.applyAiAssetTexture(assetId, textureKey, asset);
-      }
-    });
+    if (this.aiAssetDebugClient) {
+      installAiAssetDesigner({
+        scene: this,
+        manifest: this.aiAssets,
+        client: this.aiAssetDebugClient,
+        assetIds: this.assetDesignerIds(),
+        title: "Assets",
+        restartOnPromote: false,
+        onManifestUpdated: (manifest) => {
+          aiDesignerCallbacks.onManifestUpdated(manifest);
+        },
+        onPreview: (assetId, textureKey, asset) => {
+          aiDesignerCallbacks.onPreview(assetId, textureKey, asset);
+          this.applyAiAssetTexture(assetId, textureKey, asset);
+        },
+        onAssetReady: (assetId, textureKey, asset) => {
+          aiDesignerCallbacks.onAssetReady(assetId, textureKey, asset);
+          this.applyAiAssetTexture(assetId, textureKey, asset);
+        }
+      });
+    }
 
     this.sceneDesigner = installPhaserSceneDesigner({
       scene: this,
       manifest: this.sceneManifest,
       aiAssets: this.aiAssets,
+      aiRuntime: this.aiRuntime,
       client: new SceneDesignerDebugClient(this.sceneApi ?? "http://127.0.0.1:4078"),
       defaultSceneId: this.currentSceneId,
       renderSceneObjects: false,
@@ -214,6 +228,7 @@ export class BreakoutScene extends Phaser.Scene {
 
     this.paddle = this.physics.add.image(400, 564, this.textureForAsset("hero.paddle.normal"));
     this.paddle.setData("assetId", "hero.paddle.normal");
+    this.bindAiAssetTexture(this.paddle, "hero.paddle.normal");
     this.paddle.setImmovable(true);
     this.paddle.setCollideWorldBounds(true);
     this.paddle.setDepth(1200);
@@ -222,6 +237,7 @@ export class BreakoutScene extends Phaser.Scene {
 
     this.ball = this.physics.add.image(400, 520, this.textureForAsset("ball.core"));
     this.ball.setData("assetId", "ball.core");
+    this.bindAiAssetTexture(this.ball, "ball.core");
     this.ball.setCollideWorldBounds(true);
     this.ball.setBounce(1, 1);
     this.ball.setVelocity(190, -265);
@@ -268,6 +284,7 @@ export class BreakoutScene extends Phaser.Scene {
 
     const sprite = this.add.sprite(background.x, background.y, this.textureForAsset(background.assetId));
     sprite.setData("assetId", background.assetId);
+    this.bindAiAssetTexture(sprite, background.assetId);
     sprite.setData("sceneObject", background);
     applyObjectTransform(sprite, background);
     sprite.setDepth(-10);
@@ -277,6 +294,7 @@ export class BreakoutScene extends Phaser.Scene {
   private createBrick(object: SceneObject): void {
     const brick = this.add.image(object.x, object.y, this.textureForAsset(object.assetId));
     brick.setData("assetId", object.assetId);
+    this.bindAiAssetTexture(brick, object.assetId);
     brick.setData("sceneObject", object);
     applyObjectTransform(brick, object);
     brick.setDepth(500);
@@ -468,6 +486,7 @@ export class BreakoutScene extends Phaser.Scene {
     const assetId = Math.random() > 0.5 ? snakeAssetId : monkeyAssetId;
     const enemy = this.physics.add.image(point.x, point.y, this.textureForAsset(assetId));
     enemy.setData("assetId", assetId);
+    this.bindAiAssetTexture(enemy, assetId);
     enemy.setDepth(900);
     if (assetId === monkeyAssetId) {
       enemy.setData("spawnY", Phaser.Math.Clamp(point.y, 42, monkeyMaxY - 40));
@@ -541,6 +560,7 @@ export class BreakoutScene extends Phaser.Scene {
       this.textureForAsset(bananaAssetId)
     );
     banana.setData("assetId", bananaAssetId);
+    this.bindAiAssetTexture(banana, bananaAssetId);
     banana.setDepth(950);
     banana.setRotation(direction.angle());
     banana.body.allowGravity = false;
@@ -629,16 +649,7 @@ export class BreakoutScene extends Phaser.Scene {
     ];
   }
 
-  private syncAiAssetManifest(manifest: AiAssetManifest): void {
-    Object.assign(this.aiAssets.assets, manifest.assets);
-    this.aiAssets.assetPaths = manifest.assetPaths;
-    this.aiAssets.styleGuide = manifest.styleGuide;
-    this.aiAssets.targets = manifest.targets;
-  }
-
   private applyAiAssetTexture(assetId: string, textureKey: string, asset: AiAssetDefinition): void {
-    this.aiAssets.assets[assetId] = asset;
-
     if (!isVisualAsset(asset)) return;
     if (!this.textures.exists(textureKey)) return;
 
@@ -672,6 +683,16 @@ export class BreakoutScene extends Phaser.Scene {
     if (sceneObject) {
       applyObjectTransform(object, sceneObject);
     }
+  }
+
+  private bindAiAssetTexture(
+    object: Phaser.GameObjects.Image | Phaser.GameObjects.Sprite,
+    assetId: string
+  ): void {
+    const binding = this.aiRuntime.bindTexture(object, assetId, {
+      setInitialTexture: false
+    });
+    object.once("destroy", () => binding.destroy());
   }
 }
 

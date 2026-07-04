@@ -66,6 +66,10 @@ export class PhaserSceneDesignerCanvas {
   private mode: SceneDesignerMode;
   private selection: SceneSelection | undefined;
   private readonly objects = new Map<string, Phaser.GameObjects.Sprite>();
+  private readonly objectTextureBindings = new Map<string, {
+    assetId: string;
+    binding: ReturnType<AiAssetRuntime["bindTexture"]>;
+  }>();
   private readonly areaGraphics: Phaser.GameObjects.Graphics;
   private readonly overlay: Phaser.GameObjects.Graphics;
   private isOpen = false;
@@ -131,6 +135,7 @@ export class PhaserSceneDesignerCanvas {
     for (const sprite of this.objects.values()) {
       sprite.destroy();
     }
+    this.destroyObjectTextureBindings();
     this.areaGraphics.destroy();
     this.overlay.destroy();
   }
@@ -149,6 +154,7 @@ export class PhaserSceneDesignerCanvas {
         sprite.destroy();
       }
       this.objects.clear();
+      this.destroyObjectTextureBindings();
       return;
     }
 
@@ -167,6 +173,7 @@ export class PhaserSceneDesignerCanvas {
         } else if (sprite.texture.key !== this.options.aiRuntime.key(object.assetId)) {
           sprite.setTexture(this.options.aiRuntime.key(object.assetId));
         }
+        this.syncObjectTextureBinding(object, sprite);
 
         applyObjectTransform(sprite, object);
         sprite.setVisible(layer.visible && object.visible);
@@ -178,8 +185,33 @@ export class PhaserSceneDesignerCanvas {
     for (const [objectId, sprite] of this.objects) {
       if (!needed.has(objectId)) {
         sprite.destroy();
+        this.destroyObjectTextureBinding(objectId);
         this.objects.delete(objectId);
       }
+    }
+  }
+
+  private syncObjectTextureBinding(object: SceneObject, sprite: Phaser.GameObjects.Sprite): void {
+    const existing = this.objectTextureBindings.get(object.id);
+    if (existing?.assetId === object.assetId) return;
+
+    existing?.binding.destroy();
+    this.objectTextureBindings.set(object.id, {
+      assetId: object.assetId,
+      binding: this.options.aiRuntime.bindTexture(sprite, object.assetId, {
+        setInitialTexture: false
+      })
+    });
+  }
+
+  private destroyObjectTextureBinding(objectId: string): void {
+    this.objectTextureBindings.get(objectId)?.binding.destroy();
+    this.objectTextureBindings.delete(objectId);
+  }
+
+  private destroyObjectTextureBindings(): void {
+    for (const objectId of this.objectTextureBindings.keys()) {
+      this.destroyObjectTextureBinding(objectId);
     }
   }
 

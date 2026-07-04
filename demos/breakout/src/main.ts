@@ -9,6 +9,12 @@ const params = new URLSearchParams(window.location.search);
 const assetApi = params.get("assetApi") ?? "http://127.0.0.1:4077";
 const sceneApi = params.get("sceneApi") ?? "http://127.0.0.1:4078";
 
+type LoadedAiAssets = {
+  manifest: AiAssetManifest;
+  debugClient?: AiAssetDebugClient;
+  assetBaseUrl?: string;
+};
+
 boot().catch((error) => {
   const message = error instanceof Error ? error.message : String(error);
   const element = document.createElement("pre");
@@ -43,25 +49,33 @@ async function boot(): Promise<void> {
     },
     scene: [
       new BreakoutScene({
-        aiAssets,
+        aiAssets: aiAssets.manifest,
+        aiAssetDebugClient: aiAssets.debugClient,
+        assetBaseUrl: aiAssets.assetBaseUrl,
         sceneManifest,
-        assetApi,
         sceneApi
       })
     ]
   });
 }
 
-async function loadAiAssetsManifest(): Promise<AiAssetManifest> {
+async function loadAiAssetsManifest(): Promise<LoadedAiAssets> {
   if (import.meta.env.DEV) {
     try {
-      return await new AiAssetDebugClient(assetApi).getManifest();
+      const debugClient = new AiAssetDebugClient(assetApi);
+      return {
+        manifest: await debugClient.getManifest(),
+        debugClient,
+        assetBaseUrl: assetApi
+      };
     } catch (error) {
       console.warn("Falling back to bundled AI assets manifest.", error);
     }
   }
 
-  return (await import("./assets.js")).assets;
+  return {
+    manifest: (await import("./assets.js")).assets
+  };
 }
 
 async function loadSceneManifest(): Promise<SceneDesignerManifest> {
