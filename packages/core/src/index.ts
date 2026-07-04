@@ -1,16 +1,19 @@
 export type {
   ResolvedSceneArea,
   ResolvedSceneObject,
+  ResolvedScenePlatform,
   SceneArea,
   SceneAreaCurve,
   SceneAreaDefaults,
   SceneAreaVertex,
   SceneBehaviorAreaAttribute,
+  SceneBehaviorAreaLikeAttribute,
   SceneBehaviorAttribute,
   SceneBehaviorAttributeOverride,
   SceneBehaviorDefinition,
   SceneBehaviorInstance,
   SceneBehaviorObjectAttribute,
+  SceneBehaviorPlatformAttribute,
   SceneDesignerCanvasConfig,
   SceneDesignerConfig,
   SceneDesignerGridConfig,
@@ -24,6 +27,11 @@ export type {
   SceneLayer,
   SceneObject,
   SceneObjectDefaults,
+  ScenePlatform,
+  ScenePlatformDefaults,
+  ScenePlatformFitPaint,
+  ScenePlatformPaint,
+  ScenePlatformTilePaint,
   SceneSelection
 } from "./types.js";
 
@@ -46,10 +54,13 @@ export {
   getScene,
   resolveSceneArea,
   resolveSceneObject,
+  resolveScenePlatform,
   sceneAreas,
   sceneLayerAreas,
   sceneLayerObjects,
-  sceneObjects
+  sceneLayerPlatforms,
+  sceneObjects,
+  scenePlatforms
 } from "./manifest.js";
 
 export {
@@ -59,8 +70,10 @@ export {
   createBehaviorAreaAttribute,
   createBehaviorInstance,
   createBehaviorObjectAttribute,
+  createBehaviorPlatformAttribute,
   createLayer,
   createObject,
+  createPlatform,
   createScene,
   duplicateObject,
   uniqueId
@@ -72,5 +85,6 @@ export type {
   CreateBehaviorInstanceInput,
   CreateLayerInput,
   CreateObjectInput,
+  CreatePlatformInput,
   CreateSceneInput
 } from "./factories.js";

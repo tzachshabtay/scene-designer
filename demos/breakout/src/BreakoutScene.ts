@@ -10,10 +10,12 @@ import {
   getScene,
   sceneAreas,
   sceneObjects,
+  scenePlatforms,
   type SceneArea,
   type SceneDefinition,
   type SceneDesignerManifest,
-  type SceneObject
+  type SceneObject,
+  type ScenePlatform
 } from "@scene-designer/core";
 import {
   applyObjectTransform,
@@ -25,6 +27,7 @@ import Phaser from "phaser";
 
 type ArcadeImage = Phaser.Types.Physics.Arcade.ImageWithDynamicBody;
 type BrickImage = Phaser.GameObjects.Image;
+type PlatformVisual = Phaser.GameObjects.Image | Phaser.GameObjects.TileSprite;
 
 type AlphaMask = {
   width: number;
@@ -38,6 +41,7 @@ const backgroundTag = "background";
 const spawnTag = "enemy.spawn";
 const ballTag = "ball";
 const paddleTag = "paddle";
+const wallTag = "wall";
 const statueBrickAssetId = "brick.statue";
 const snakeAssetId = "enemy.snake";
 const monkeyAssetId = "enemy.monkey";
@@ -79,6 +83,8 @@ export class BreakoutScene extends Phaser.Scene {
   private paddle!: ArcadeImage;
   private ball!: ArcadeImage;
   private brickObjects: BrickImage[] = [];
+  private wallPlatforms: ScenePlatform[] = [];
+  private wallLastHitAt = new Map<string, number>();
   private enemies!: Phaser.Physics.Arcade.Group;
   private bananas!: Phaser.Physics.Arcade.Group;
   private levelObjects: Phaser.GameObjects.GameObject[] = [];
@@ -181,6 +187,7 @@ export class BreakoutScene extends Phaser.Scene {
 
     this.updatePaddleControl();
     this.handleBrickCollisions();
+    this.handleWallCollisions();
     this.handleEnemyCollisions();
     this.updateBallSpin();
 
@@ -222,6 +229,10 @@ export class BreakoutScene extends Phaser.Scene {
     const level = getScene(this.sceneManifest, this.currentSceneId);
     const levelObjects = sceneObjects(this.sceneManifest, level);
     this.addSceneBackground(level);
+    this.wallPlatforms = scenePlatforms(this.sceneManifest, level).filter((platform) => (
+      platform.tag === wallTag && platform.visible && platform.closed && platform.vertices.length >= 3
+    ));
+    this.wallPlatforms.forEach((platform, index) => this.createWallPlatform(platform, index));
 
     this.enemies = this.physics.add.group({ allowGravity: false });
     this.bananas = this.physics.add.group({ allowGravity: false });
@@ -284,6 +295,8 @@ export class BreakoutScene extends Phaser.Scene {
     }
     this.levelObjects = [];
     this.brickObjects = [];
+    this.wallPlatforms = [];
+    this.wallLastHitAt.clear();
     this.enemies?.destroy(true);
     this.bananas?.destroy(true);
     this.firstEnemySpawnTimer?.remove(false);
@@ -317,6 +330,41 @@ export class BreakoutScene extends Phaser.Scene {
     brick.setData("hp", object.assetId === statueBrickAssetId ? 2 : 1);
     this.brickObjects.push(brick);
     this.levelObjects.push(brick);
+  }
+
+  private createWallPlatform(platform: ScenePlatform, index: number): void {
+    const bounds = boundsFromPoints(platformBoundaryPoints(platform));
+    if (!bounds) return;
+
+    const width = Math.max(1, bounds.right - bounds.left);
+    const height = Math.max(1, bounds.bottom - bounds.top);
+    const textureKey = this.textureForAsset(platform.assetId);
+    const visual: PlatformVisual = platform.paint.mode === "tile"
+      ? this.add.tileSprite(bounds.left + width / 2, bounds.top + height / 2, width, height, textureKey)
+      : this.add.image(bounds.left + width / 2, bounds.top + height / 2, textureKey);
+
+    visual.setData("assetId", platform.assetId);
+    visual.setData("scenePlatform", platform);
+    visual.setOrigin(0.5, 0.5);
+    visual.setDepth(470 + index);
+
+    if (visual instanceof Phaser.GameObjects.TileSprite) {
+      visual.setTilePosition(bounds.left, bounds.top);
+      visual.setFlipX(platform.paint.mode === "tile" && Boolean(platform.paint.mirrorX));
+      visual.setFlipY(platform.paint.mode === "tile" && Boolean(platform.paint.mirrorY));
+    } else {
+      visual.setDisplaySize(width, height);
+    }
+
+    const maskGraphics = this.add.graphics();
+    maskGraphics.fillStyle(0xffffff, 1);
+    drawPlatformPath(maskGraphics, platform);
+    maskGraphics.fillPath();
+    maskGraphics.setVisible(false);
+    visual.setMask(maskGraphics.createGeometryMask());
+
+    this.bindAiAssetTexture(visual, platform.assetId);
+    this.levelObjects.push(visual, maskGraphics);
   }
 
   private updatePaddleControl(): void {
@@ -371,6 +419,22 @@ export class BreakoutScene extends Phaser.Scene {
 
       brick.setData("lastHitAt", this.time.now);
       this.onBrickHit(this.ball, brick, point);
+      break;
+    }
+  }
+
+  private handleWallCollisions(): void {
+    if (!this.ball?.active) return;
+
+    for (const platform of this.wallPlatforms) {
+      const lastHitAt = this.wallLastHitAt.get(platform.id) ?? -Infinity;
+      if (this.time.now - lastHitAt < 80) continue;
+
+      const hit = platformBallCollision(this.ball, platform);
+      if (!hit) continue;
+
+      this.wallLastHitAt.set(platform.id, this.time.now);
+      this.reflectBallFromNormal(this.ball, hit.normal, hit.point);
       break;
     }
   }
@@ -435,6 +499,14 @@ export class BreakoutScene extends Phaser.Scene {
     collisionPoint: Phaser.Math.Vector2
   ): void {
     const normal = objectCollisionNormal(target, collisionPoint);
+    this.reflectBallFromNormal(ball, normal, collisionPoint);
+  }
+
+  private reflectBallFromNormal(
+    ball: ArcadeImage,
+    normal: Phaser.Math.Vector2,
+    collisionPoint: Phaser.Math.Vector2
+  ): void {
     const velocity = new Phaser.Math.Vector2(ball.body.velocity.x, ball.body.velocity.y);
 
     if (velocity.lengthSq() === 0) {
@@ -723,18 +795,27 @@ export class BreakoutScene extends Phaser.Scene {
     textureKey: string
   ): void {
     if (!object.active || object.getData("assetId") !== assetId) return;
-    if (!(object instanceof Phaser.GameObjects.Image) && !(object instanceof Phaser.GameObjects.Sprite)) return;
+    if (
+      !(object instanceof Phaser.GameObjects.Image) &&
+      !(object instanceof Phaser.GameObjects.Sprite) &&
+      !(object instanceof Phaser.GameObjects.TileSprite)
+    ) return;
 
     object.setTexture(textureKey);
 
     const sceneObject = object.getData("sceneObject") as SceneObject | undefined;
-    if (sceneObject) {
+    if (sceneObject && (object instanceof Phaser.GameObjects.Image || object instanceof Phaser.GameObjects.Sprite)) {
       applyObjectTransform(object, sceneObject);
+    }
+
+    const scenePlatform = object.getData("scenePlatform") as ScenePlatform | undefined;
+    if (scenePlatform) {
+      applyPlatformVisualTransform(object, scenePlatform);
     }
   }
 
   private bindAiAssetTexture(
-    object: Phaser.GameObjects.Image | Phaser.GameObjects.Sprite,
+    object: Phaser.GameObjects.Image | Phaser.GameObjects.Sprite | Phaser.GameObjects.TileSprite,
     assetId: string
   ): void {
     const binding = this.aiRuntime.bindTexture(object, assetId, {
@@ -746,6 +827,171 @@ export class BreakoutScene extends Phaser.Scene {
 
 function isVisualAsset(asset: AiAssetDefinition): boolean {
   return asset.kind === "image" || asset.kind === "spritesheet" || asset.kind === "animation";
+}
+
+function applyPlatformVisualTransform(object: PlatformVisual, platform: ScenePlatform): void {
+  const bounds = boundsFromPoints(platformBoundaryPoints(platform));
+  if (!bounds) return;
+
+  const width = Math.max(1, bounds.right - bounds.left);
+  const height = Math.max(1, bounds.bottom - bounds.top);
+  object.setPosition(bounds.left + width / 2, bounds.top + height / 2);
+  object.setOrigin(0.5, 0.5);
+
+  if (object instanceof Phaser.GameObjects.TileSprite) {
+    object.setSize(width, height);
+    object.setTilePosition(bounds.left, bounds.top);
+    object.setFlipX(platform.paint.mode === "tile" && Boolean(platform.paint.mirrorX));
+    object.setFlipY(platform.paint.mode === "tile" && Boolean(platform.paint.mirrorY));
+  } else {
+    object.setDisplaySize(width, height);
+  }
+}
+
+function drawPlatformPath(graphics: Phaser.GameObjects.Graphics, platform: ScenePlatform): void {
+  const [first] = platform.vertices;
+  if (!first) return;
+
+  graphics.beginPath();
+  graphics.moveTo(first.x, first.y);
+  const edgeCount = platform.closed ? platform.vertices.length : platform.vertices.length - 1;
+  for (let index = 0; index < edgeCount; index += 1) {
+    const from = platform.vertices[index];
+    const to = platform.vertices[(index + 1) % platform.vertices.length];
+    if (from.curve) {
+      lineQuadratic(graphics, from, { x: from.curve.cx, y: from.curve.cy }, to);
+    } else {
+      graphics.lineTo(to.x, to.y);
+    }
+  }
+  if (platform.closed && platform.vertices.length > 2) {
+    graphics.closePath();
+  }
+}
+
+function lineQuadratic(
+  graphics: Phaser.GameObjects.Graphics,
+  from: { x: number; y: number },
+  control: { x: number; y: number },
+  to: { x: number; y: number }
+): void {
+  for (let step = 1; step <= 16; step += 1) {
+    const t = step / 16;
+    const inv = 1 - t;
+    graphics.lineTo(
+      inv * inv * from.x + 2 * inv * t * control.x + t * t * to.x,
+      inv * inv * from.y + 2 * inv * t * control.y + t * t * to.y
+    );
+  }
+}
+
+function platformBallCollision(
+  ball: ArcadeImage,
+  platform: ScenePlatform
+): { point: Phaser.Math.Vector2; normal: Phaser.Math.Vector2 } | undefined {
+  const points = platformBoundaryPoints(platform);
+  if (points.length < 3) return undefined;
+
+  const center = new Phaser.Math.Vector2(ball.x, ball.y);
+  const radius = Math.max(8, Math.min(ball.displayWidth, ball.displayHeight) * 0.42);
+  const inside = pointInPolygon(center, points);
+  const closest = closestPointOnPolygon(center, points);
+  if (!closest) return undefined;
+
+  if (!inside && closest.distance > radius) return undefined;
+
+  let normal = center.clone().subtract(closest.point);
+  if (inside) {
+    normal.negate();
+  }
+
+  if (normal.lengthSq() < 0.0001) {
+    normal = new Phaser.Math.Vector2(-ball.body.velocity.x, -ball.body.velocity.y);
+  }
+  if (normal.lengthSq() < 0.0001) {
+    normal.set(0, -1);
+  }
+
+  return {
+    point: closest.point,
+    normal: normal.normalize()
+  };
+}
+
+function closestPointOnPolygon(
+  point: Phaser.Math.Vector2,
+  vertices: Phaser.Math.Vector2[]
+): { point: Phaser.Math.Vector2; distance: number } | undefined {
+  let best: { point: Phaser.Math.Vector2; distance: number } | undefined;
+
+  for (let index = 0; index < vertices.length; index += 1) {
+    const from = vertices[index];
+    const to = vertices[(index + 1) % vertices.length];
+    const candidate = closestPointOnSegment(point, from, to);
+    const distance = Phaser.Math.Distance.Between(point.x, point.y, candidate.x, candidate.y);
+    if (!best || distance < best.distance) {
+      best = { point: candidate, distance };
+    }
+  }
+
+  return best;
+}
+
+function closestPointOnSegment(
+  point: Phaser.Math.Vector2,
+  from: Phaser.Math.Vector2,
+  to: Phaser.Math.Vector2
+): Phaser.Math.Vector2 {
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  const lengthSquared = dx * dx + dy * dy;
+  if (lengthSquared === 0) return from.clone();
+
+  const t = Math.max(0, Math.min(1, ((point.x - from.x) * dx + (point.y - from.y) * dy) / lengthSquared));
+  return new Phaser.Math.Vector2(from.x + dx * t, from.y + dy * t);
+}
+
+function platformBoundaryPoints(platform: ScenePlatform): Phaser.Math.Vector2[] {
+  const points: Phaser.Math.Vector2[] = [];
+  const first = platform.vertices[0];
+  if (!first) return points;
+
+  points.push(new Phaser.Math.Vector2(first.x, first.y));
+  const edgeCount = platform.closed ? platform.vertices.length : platform.vertices.length - 1;
+  for (let index = 0; index < edgeCount; index += 1) {
+    const from = platform.vertices[index];
+    const to = platform.vertices[(index + 1) % platform.vertices.length];
+    if (from.curve) {
+      for (let step = 1; step <= 12; step += 1) {
+        const t = step / 12;
+        const inv = 1 - t;
+        points.push(new Phaser.Math.Vector2(
+          inv * inv * from.x + 2 * inv * t * from.curve.cx + t * t * to.x,
+          inv * inv * from.y + 2 * inv * t * from.curve.cy + t * t * to.y
+        ));
+      }
+    } else {
+      points.push(new Phaser.Math.Vector2(to.x, to.y));
+    }
+  }
+
+  return points;
+}
+
+function boundsFromPoints(points: Array<{ x: number; y: number }>): { left: number; top: number; right: number; bottom: number } | undefined {
+  if (!points.length) return undefined;
+
+  return points.reduce((bounds, point) => ({
+    left: Math.min(bounds.left, point.x),
+    top: Math.min(bounds.top, point.y),
+    right: Math.max(bounds.right, point.x),
+    bottom: Math.max(bounds.bottom, point.y)
+  }), {
+    left: points[0].x,
+    top: points[0].y,
+    right: points[0].x,
+    bottom: points[0].y
+  });
 }
 
 function randomPointInArea(area: SceneArea): Phaser.Math.Vector2 {

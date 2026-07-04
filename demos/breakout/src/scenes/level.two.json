@@ -242,6 +242,80 @@
       ]
     },
     {
+      "id": "layer-walls",
+      "name": "Walls",
+      "visible": true,
+      "locked": false,
+      "objects": [],
+      "areas": [],
+      "behaviors": [
+        {
+          "id": "l2-wall-left",
+          "behaviorId": "wall",
+          "visible": true,
+          "locked": false,
+          "overrides": {
+            "platform": {
+              "vertices": [
+                {
+                  "id": "l2-wall-left-v1",
+                  "x": 170,
+                  "y": 280
+                },
+                {
+                  "id": "l2-wall-left-v2",
+                  "x": 304,
+                  "y": 252
+                },
+                {
+                  "id": "l2-wall-left-v3",
+                  "x": 312,
+                  "y": 282
+                },
+                {
+                  "id": "l2-wall-left-v4",
+                  "x": 178,
+                  "y": 310
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "l2-wall-right",
+          "behaviorId": "wall",
+          "visible": true,
+          "locked": false,
+          "overrides": {
+            "platform": {
+              "vertices": [
+                {
+                  "id": "l2-wall-right-v1",
+                  "x": 496,
+                  "y": 252
+                },
+                {
+                  "id": "l2-wall-right-v2",
+                  "x": 630,
+                  "y": 280
+                },
+                {
+                  "id": "l2-wall-right-v3",
+                  "x": 622,
+                  "y": 310
+                },
+                {
+                  "id": "l2-wall-right-v4",
+                  "x": 488,
+                  "y": 282
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
       "id": "layer-actors",
       "name": "Actors",
       "visible": true,

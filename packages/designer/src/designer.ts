@@ -21,7 +21,7 @@ import {
   type ResolvedSceneObject,
   type SceneArea,
   type SceneAreaDefaults,
-  type SceneBehaviorAreaAttribute,
+  type SceneBehaviorAreaLikeAttribute,
   type SceneBehaviorDefinition,
   type SceneBehaviorInstance,
   type SceneObjectDefaults,
@@ -29,6 +29,8 @@ import {
   type SceneDesignerManifest,
   type SceneLayer,
   type SceneObject,
+  type ScenePlatform,
+  type ScenePlatformDefaults,
   type SceneSelection
 } from "@scene-designer/core";
 import { assetFolderPath, graphicAssetIds, graphicAssetPreviewUrl, readableName } from "./assets.js";
@@ -70,7 +72,7 @@ export type SceneDesigner = {
   select(selection: SceneSelection | undefined): void;
   updateObject(objectId: string, patch: Partial<SceneObject>, options?: SceneDesignerEditOptions): void;
   updateObjects(updates: SceneDesignerObjectUpdate[], options?: SceneDesignerEditOptions): void;
-  updateArea(areaId: string, patch: Partial<SceneArea>, options?: SceneDesignerEditOptions): void;
+  updateArea(areaId: string, patch: SceneDesignerAreaUpdate, options?: SceneDesignerEditOptions): void;
   updateAreaVertex(areaId: string, vertexId: string, patch: Partial<SceneArea["vertices"][number]>, options?: SceneDesignerEditOptions): void;
   addAreaVertex(areaId: string, x: number, y: number, options?: SceneDesignerEditOptions): void;
   insertAreaVertex(areaId: string, index: number, x: number, y: number, options?: SceneDesignerEditOptions): void;
@@ -92,6 +94,8 @@ export type SceneDesignerObjectUpdate = {
   objectId: string;
   patch: Partial<SceneObject>;
 };
+
+export type SceneDesignerAreaUpdate = Partial<SceneArea | ScenePlatform>;
 
 type Elements = {
   root: HTMLDivElement;
@@ -211,7 +215,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
       commit(() => {
         const behaviorArea = findBehaviorAreaDefault(areaId);
         if (behaviorArea) {
-          Object.assign(behaviorArea.attribute.area, withoutId(patch));
+          Object.assign(areaDefaultsForAttribute(behaviorArea.attribute), withoutId(patch));
           return;
         }
 
@@ -539,9 +543,9 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
       const heading = document.createElement("div");
       heading.className = "scene-designer__subhead";
       const title = document.createElement("span");
-      title.textContent = `${attribute.name} ${attribute.kind === "object" ? "object" : "area"}`;
+      title.textContent = `${attribute.name} ${attributeKindLabel(attribute.kind)}`;
       heading.append(title);
-      if (attribute.kind === "area") {
+      if (isAreaLikeAttribute(attribute)) {
         const editArea = button("Edit on canvas");
         editArea.addEventListener("click", () => {
           selectBehaviorArea(behavior.id, attribute.id);
@@ -566,11 +570,18 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
           });
         });
         section.append(browser);
-      } else {
+      } else if (attribute.kind === "area") {
         const area = { id: behaviorAttributeId(behavior.id, attribute.id), ...attribute.area };
         appendAreaControls(section, area, (patch) => {
           commit(() => {
             Object.assign(attribute.area, withoutId(patch));
+          });
+        });
+      } else {
+        const platform = { id: behaviorAttributeId(behavior.id, attribute.id), ...attribute.platform };
+        appendPlatformControls(section, platform, (patch) => {
+          commit(() => {
+            Object.assign(attribute.platform, withoutId(patch));
           });
         });
       }
@@ -1076,7 +1087,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
       const label = document.createElement("div");
       label.className = "scene-designer__item-title";
       label.textContent = attribute.name;
-      const edit = button(attribute.kind === "object" ? "Edit object" : "Edit area");
+      const edit = button(attribute.kind === "object" ? "Edit object" : `Edit ${attributeKindLabel(attribute.kind)}`);
       const clear = button("Clear overrides");
       row.append(label, edit, clear);
       edit.addEventListener("click", () => {
@@ -1093,7 +1104,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
               layerId: layer.id,
               areaId: behaviorAttributeId(instance.id, attribute.id)
             };
-        mode = attribute.kind === "area" ? "area-draw" : "select";
+        mode = isAreaLikeAttribute(attribute) ? "area-draw" : "select";
         render();
         emitSelection();
         options.onModeChange?.(mode);
@@ -1177,6 +1188,10 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
       : "Click the canvas to finish this area.";
     stack.append(info);
 
+    if (isScenePlatform(area)) {
+      appendPlatformPaintControls(stack, area, (patch) => api.updateArea(area.id, patch));
+    }
+
     const actions = document.createElement("div");
     actions.className = "scene-designer__row";
     const draw = button(area.closed ? "Edit shape" : "Drawing");
@@ -1212,9 +1227,13 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
   }
 
   function appendObjectPreview(container: HTMLElement, object: SceneObject): void {
+    appendAssetPreview(container, object);
+  }
+
+  function appendAssetPreview(container: HTMLElement, target: { assetId: string }): void {
     const preview = document.createElement("div");
     preview.className = "scene-designer__asset-preview";
-    const url = graphicAssetPreviewUrl(options.aiAssets, object.assetId, {
+    const url = graphicAssetPreviewUrl(options.aiAssets, target.assetId, {
       baseUrl: options.assetBaseUrl,
       targetId: options.assetTargetId
     });
@@ -1222,7 +1241,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     if (url) {
       const image = document.createElement("img");
       image.src = url;
-      image.alt = readableName(object.assetId);
+      image.alt = readableName(target.assetId);
       preview.append(image);
     } else {
       const empty = document.createElement("div");
@@ -1282,9 +1301,74 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     container.append(info);
   }
 
+  function appendPlatformControls(
+    container: HTMLElement,
+    platform: ScenePlatform,
+    onPatch: (patch: Partial<ScenePlatform>) => void
+  ): void {
+    appendAreaControls(container, platform, onPatch);
+    appendPlatformPaintControls(container, platform, onPatch);
+  }
+
+  function appendPlatformPaintControls(
+    container: HTMLElement,
+    platform: ScenePlatform,
+    onPatch: (patch: Partial<ScenePlatform>) => void
+  ): void {
+    appendAssetPreview(container, platform);
+
+    const browser = document.createElement("div");
+    browser.className = "scene-designer__asset-browser";
+    renderAssetBrowser(browser, platform, (assetId) => {
+      onPatch({ assetId });
+    });
+    container.append(browser);
+
+    const paintMode = document.createElement("label");
+    paintMode.className = "scene-designer__label";
+    const paintModeText = document.createElement("span");
+    paintModeText.textContent = "Paint";
+    const paintModeSelect = document.createElement("select");
+    paintModeSelect.className = "scene-designer__select";
+    for (const [value, label] of [["tile", "Tile"], ["fit", "Fit"]] as const) {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = label;
+      paintModeSelect.append(option);
+    }
+    paintModeSelect.value = platform.paint.mode;
+    paintModeSelect.addEventListener("change", () => {
+      onPatch({
+        paint: paintModeSelect.value === "fit"
+          ? { mode: "fit" }
+          : {
+              mode: "tile",
+              mirrorX: platform.paint.mode === "tile" ? Boolean(platform.paint.mirrorX) : false,
+              mirrorY: platform.paint.mode === "tile" ? Boolean(platform.paint.mirrorY) : false
+            }
+      });
+    });
+    paintMode.append(paintModeText, paintModeSelect);
+    container.append(paintMode);
+
+    if (platform.paint.mode !== "tile") return;
+
+    const mirrorRow = document.createElement("div");
+    mirrorRow.className = "scene-designer__row";
+    mirrorRow.append(
+      labelWithCheckbox("Mirror horizontally", Boolean(platform.paint.mirrorX), (mirrorX) => {
+        onPatch({ paint: { ...platform.paint, mode: "tile", mirrorX } });
+      }),
+      labelWithCheckbox("Mirror vertically", Boolean(platform.paint.mirrorY), (mirrorY) => {
+        onPatch({ paint: { ...platform.paint, mode: "tile", mirrorY } });
+      })
+    );
+    container.append(mirrorRow);
+  }
+
   function renderAssetBrowser(
     container: HTMLElement,
-    object: SceneObject,
+    object: { id: string; assetId: string },
     onAssetSelect: (assetId: string) => void
   ): void {
     const assetIds = graphicAssetIds(options.aiAssets);
@@ -1338,7 +1422,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     container.append(breadcrumbs, list);
   }
 
-  function assetChip(label: string, path: string[], object: SceneObject): HTMLButtonElement {
+  function assetChip(label: string, path: string[], object: { id: string }): HTMLButtonElement {
     const chip = button(label, "scene-designer__asset-chip");
     chip.addEventListener("click", () => {
       assetPathByObject.set(object.id, path);
@@ -1365,6 +1449,23 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     if (max !== undefined) field.max = String(max);
     field.addEventListener("change", () => onChange(field.value));
     wrapper.append(text, field);
+    return wrapper;
+  }
+
+  function labelWithCheckbox(
+    label: string,
+    checked: boolean,
+    onChange: (checked: boolean) => void
+  ): HTMLLabelElement {
+    const wrapper = document.createElement("label");
+    wrapper.className = "scene-designer__label";
+    const field = document.createElement("input");
+    field.type = "checkbox";
+    field.checked = checked;
+    field.addEventListener("change", () => onChange(field.checked));
+    const text = document.createElement("span");
+    text.textContent = label;
+    wrapper.append(field, text);
     return wrapper;
   }
 
@@ -1410,8 +1511,9 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     if (behaviorVertexSelection.type === "behavior-vertex") {
       const area = findBehaviorAreaDefault(
         behaviorAttributeId(behaviorVertexSelection.behaviorId, behaviorVertexSelection.attributeId)
-      )?.attribute.area;
-      if (!area || !area.vertices.some((vertex) => vertex.id === behaviorVertexSelection.vertexId)) {
+      );
+      const defaults = area ? areaDefaultsForAttribute(area.attribute) : undefined;
+      if (!defaults || !defaults.vertices.some((vertex) => vertex.id === behaviorVertexSelection.vertexId)) {
         selection = {
           type: "behavior-area",
           behaviorId: behaviorVertexSelection.behaviorId,
@@ -1514,10 +1616,10 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     throw new Error(`Unknown behavior instance "${instanceId}".`);
   }
 
-  function mutableAreaForEdit(areaId: string): SceneArea | SceneAreaDefaults | undefined {
+  function mutableAreaForEdit(areaId: string): SceneArea | SceneAreaDefaults | ScenePlatformDefaults | undefined {
     const behaviorArea = findBehaviorAreaDefault(areaId);
     if (behaviorArea) {
-      return behaviorArea.attribute.area;
+      return areaDefaultsForAttribute(behaviorArea.attribute);
     }
 
     const resolved = findArea(areaId);
@@ -1528,12 +1630,17 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     const override = ensureBehaviorOverride(
       resolved.behaviorInstance,
       resolved.behaviorAttribute.id
-    ) as Partial<SceneAreaDefaults>;
+    ) as Partial<SceneAreaDefaults | ScenePlatformDefaults>;
     override.tag ??= resolved.area.tag;
     override.visible ??= resolved.area.visible;
     override.locked ??= resolved.area.locked;
     override.closed ??= resolved.area.closed;
     override.vertices ??= structuredClone(resolved.area.vertices);
+    if (isScenePlatform(resolved.area)) {
+      const platformOverride = override as Partial<ScenePlatformDefaults>;
+      platformOverride.assetId ??= resolved.area.assetId;
+      platformOverride.paint ??= structuredClone(resolved.area.paint);
+    }
     const mutable = override as SceneArea;
     mutable.id = resolved.area.id;
     return mutable;
@@ -1559,11 +1666,11 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
 
   function findBehaviorAreaDefault(areaId: string): {
     behavior: SceneBehaviorDefinition;
-    attribute: SceneBehaviorAreaAttribute;
+    attribute: SceneBehaviorAreaLikeAttribute;
   } | undefined {
     for (const behavior of Object.values(manifest.behaviors ?? {})) {
       for (const attribute of behavior.attributes) {
-        if (attribute.kind !== "area") continue;
+        if (!isAreaLikeAttribute(attribute)) continue;
         if (behaviorAttributeId(behavior.id, attribute.id) === areaId) {
           return { behavior, attribute };
         }
@@ -1649,19 +1756,44 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     return Object.values(manifest.behaviors ?? {}).sort((a, b) => a.name.localeCompare(b.name));
   }
 
+  function isAreaLikeAttribute(
+    attribute: SceneBehaviorDefinition["attributes"][number]
+  ): attribute is SceneBehaviorAreaLikeAttribute {
+    return attribute.kind === "area" || attribute.kind === "platform";
+  }
+
+  function areaDefaultsForAttribute(attribute: SceneBehaviorAreaLikeAttribute): SceneAreaDefaults | ScenePlatformDefaults {
+    return attribute.kind === "platform" ? attribute.platform : attribute.area;
+  }
+
+  function attributeKindLabel(kind: SceneBehaviorDefinition["attributes"][number]["kind"]): string {
+    switch (kind) {
+      case "object":
+        return "object";
+      case "area":
+        return "area";
+      case "platform":
+        return "platform";
+    }
+  }
+
+  function isScenePlatform(area: SceneArea): area is ScenePlatform {
+    return "assetId" in area && "paint" in area;
+  }
+
   function selectBehaviorDefinition(behaviorId: string): void {
     const behavior = manifest.behaviors?.[behaviorId] ?? behaviorDefinitions()[0];
     if (!behavior) return;
 
     selectedBehaviorId = behavior.id;
-    const firstArea = behavior.attributes.find((attribute): attribute is SceneBehaviorAreaAttribute => attribute.kind === "area");
+    const firstArea = behavior.attributes.find(isAreaLikeAttribute);
     if (firstArea) {
       selection = {
         type: "behavior-area",
         behaviorId: behavior.id,
         attributeId: firstArea.id
       };
-      mode = firstArea.area.closed ? "select" : "area-draw";
+      mode = areaDefaultsForAttribute(firstArea).closed ? "select" : "area-draw";
     } else {
       selection = {
         type: "behavior-definition",
@@ -1677,8 +1809,8 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
 
   function selectBehaviorArea(behaviorId: string, attributeId: string): void {
     const behavior = manifest.behaviors?.[behaviorId];
-    const attribute = behavior?.attributes.find((candidate): candidate is SceneBehaviorAreaAttribute => (
-      candidate.id === attributeId && candidate.kind === "area"
+    const attribute = behavior?.attributes.find((candidate): candidate is SceneBehaviorAreaLikeAttribute => (
+      candidate.id === attributeId && isAreaLikeAttribute(candidate)
     ));
     if (!behavior || !attribute) return;
 
@@ -1688,7 +1820,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
       behaviorId,
       attributeId
     };
-    mode = attribute.area.closed ? "select" : "area-draw";
+    mode = areaDefaultsForAttribute(attribute).closed ? "select" : "area-draw";
     render();
     emitSelection();
     options.onModeChange?.(mode);

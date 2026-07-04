@@ -1,21 +1,27 @@
 import type {
   ResolvedSceneArea,
   ResolvedSceneObject,
+  ResolvedScenePlatform,
   SceneArea,
   SceneAreaDefaults,
+  SceneBehaviorAreaLikeAttribute,
   SceneBehaviorAreaAttribute,
   SceneBehaviorAttribute,
   SceneBehaviorAttributeOverride,
   SceneBehaviorDefinition,
   SceneBehaviorInstance,
   SceneBehaviorObjectAttribute,
+  SceneBehaviorPlatformAttribute,
   SceneDesignerConfig,
   SceneDefinition,
   SceneDesignerManifest,
   SceneDesignerShortcutModifier,
   SceneLayer,
   SceneObject,
-  SceneObjectDefaults
+  SceneObjectDefaults,
+  ScenePlatform,
+  ScenePlatformDefaults,
+  ScenePlatformPaint
 } from "./types.js";
 
 const behaviorAttributeSeparator = "::";
@@ -164,8 +170,10 @@ export function assertBehaviorAttribute(attribute: SceneBehaviorAttribute, label
 
   if (attribute.kind === "object") {
     assertObjectDefaults(attribute.object, `${label}.object`);
-  } else {
+  } else if (attribute.kind === "area") {
     assertAreaDefaults(attribute.area, `${label}.area`);
+  } else {
+    assertPlatformDefaults(attribute.platform, `${label}.platform`);
   }
 }
 
@@ -216,6 +224,30 @@ function assertAreaDefaults(area: SceneAreaDefaults, label: string): void {
       assertFiniteNumber(vertex.curve.cy, `${label}.vertices.${index}.curve.cy`);
     }
   }
+}
+
+function assertPlatformDefaults(platform: ScenePlatformDefaults, label: string): void {
+  assertAreaDefaults(platform, label);
+  assertNonEmpty(platform.assetId, `${label}.assetId`);
+  assertPlatformPaint(platform.paint, `${label}.paint`);
+}
+
+function assertPlatformPaint(paint: ScenePlatformPaint, label: string): void {
+  if (paint.mode === "fit") {
+    return;
+  }
+
+  if (paint.mode === "tile") {
+    if (paint.mirrorX !== undefined) {
+      assertBoolean(paint.mirrorX, `${label}.mirrorX`);
+    }
+    if (paint.mirrorY !== undefined) {
+      assertBoolean(paint.mirrorY, `${label}.mirrorY`);
+    }
+    return;
+  }
+
+  throw new Error(`${label}.mode must be "fit" or "tile".`);
 }
 
 export function getScene(
@@ -281,6 +313,25 @@ export function resolveSceneArea(
   throw new Error(`Unknown area "${areaId}" in scene "${sceneId}".`);
 }
 
+export function resolveScenePlatform(
+  manifest: SceneDesignerManifest,
+  sceneId: string,
+  platformId: string
+): ResolvedScenePlatform {
+  const scene = getScene(manifest, sceneId);
+
+  for (const layer of scene.layers) {
+    const behaviorPlatform = resolveLayerBehaviorPlatforms(manifest, layer)
+      .find((candidate) => candidate.platform.id === platformId);
+
+    if (behaviorPlatform) {
+      return { scene, layer, ...behaviorPlatform };
+    }
+  }
+
+  throw new Error(`Unknown platform "${platformId}" in scene "${sceneId}".`);
+}
+
 export function cloneSceneManifest(manifest: SceneDesignerManifest): SceneDesignerManifest {
   return structuredClone(manifest);
 }
@@ -310,6 +361,14 @@ export function sceneAreas(
   return scene.layers.flatMap((layer) => sceneLayerAreas(manifest, layer));
 }
 
+export function scenePlatforms(
+  manifest: SceneDesignerManifest,
+  sceneOrId: SceneDefinition | string
+): ScenePlatform[] {
+  const scene = typeof sceneOrId === "string" ? getScene(manifest, sceneOrId) : sceneOrId;
+  return scene.layers.flatMap((layer) => sceneLayerPlatforms(manifest, layer));
+}
+
 export function sceneLayerObjects(
   manifest: SceneDesignerManifest,
   layer: SceneLayer
@@ -328,6 +387,13 @@ export function sceneLayerAreas(
     ...layer.areas,
     ...resolveLayerBehaviorAreas(manifest, layer).map((resolved) => resolved.area)
   ];
+}
+
+export function sceneLayerPlatforms(
+  manifest: SceneDesignerManifest,
+  layer: SceneLayer
+): ScenePlatform[] {
+  return resolveLayerBehaviorPlatforms(manifest, layer).map((resolved) => resolved.platform);
 }
 
 export function resolveLayerBehaviorObjects(
@@ -376,12 +442,12 @@ export function resolveLayerBehaviorAreas(
 ): Array<Omit<ResolvedSceneArea, "scene" | "layer"> & {
   behavior: SceneBehaviorDefinition;
   behaviorInstance: SceneBehaviorInstance;
-  behaviorAttribute: SceneBehaviorAreaAttribute;
+  behaviorAttribute: SceneBehaviorAreaLikeAttribute;
 }> {
   const resolved: Array<Omit<ResolvedSceneArea, "scene" | "layer"> & {
     behavior: SceneBehaviorDefinition;
     behaviorInstance: SceneBehaviorInstance;
-    behaviorAttribute: SceneBehaviorAreaAttribute;
+    behaviorAttribute: SceneBehaviorAreaLikeAttribute;
   }> = [];
 
   for (const instance of layer.behaviors ?? []) {
@@ -389,20 +455,63 @@ export function resolveLayerBehaviorAreas(
     if (!behavior) continue;
 
     for (const attribute of behavior.attributes) {
-      if (attribute.kind !== "area") continue;
+      if (attribute.kind !== "area" && attribute.kind !== "platform") continue;
 
-      const override = instance.overrides?.[attribute.id] as Partial<SceneAreaDefaults> | undefined;
+      const defaults = areaDefaultsForAttribute(attribute);
+      const override = instance.overrides?.[attribute.id] as Partial<SceneAreaDefaults> | Partial<ScenePlatformDefaults> | undefined;
       resolved.push({
         behavior,
         behaviorInstance: instance,
         behaviorAttribute: attribute,
         area: {
-          ...structuredClone(attribute.area),
+          ...structuredClone(defaults),
           ...structuredClone(override ?? {}),
           id: behaviorAttributeId(instance.id, attribute.id),
-          visible: instance.visible && (override?.visible ?? attribute.area.visible),
-          locked: instance.locked || (override?.locked ?? attribute.area.locked),
-          vertices: structuredClone(override?.vertices ?? attribute.area.vertices)
+          visible: instance.visible && (override?.visible ?? defaults.visible),
+          locked: instance.locked || (override?.locked ?? defaults.locked),
+          vertices: structuredClone(override?.vertices ?? defaults.vertices)
+        }
+      });
+    }
+  }
+
+  return resolved;
+}
+
+export function resolveLayerBehaviorPlatforms(
+  manifest: SceneDesignerManifest,
+  layer: SceneLayer
+): Array<Omit<ResolvedScenePlatform, "scene" | "layer"> & {
+  behavior: SceneBehaviorDefinition;
+  behaviorInstance: SceneBehaviorInstance;
+  behaviorAttribute: SceneBehaviorPlatformAttribute;
+}> {
+  const resolved: Array<Omit<ResolvedScenePlatform, "scene" | "layer"> & {
+    behavior: SceneBehaviorDefinition;
+    behaviorInstance: SceneBehaviorInstance;
+    behaviorAttribute: SceneBehaviorPlatformAttribute;
+  }> = [];
+
+  for (const instance of layer.behaviors ?? []) {
+    const behavior = manifest.behaviors?.[instance.behaviorId];
+    if (!behavior) continue;
+
+    for (const attribute of behavior.attributes) {
+      if (attribute.kind !== "platform") continue;
+
+      const override = instance.overrides?.[attribute.id] as Partial<ScenePlatformDefaults> | undefined;
+      resolved.push({
+        behavior,
+        behaviorInstance: instance,
+        behaviorAttribute: attribute,
+        platform: {
+          ...structuredClone(attribute.platform),
+          ...structuredClone(override ?? {}),
+          id: behaviorAttributeId(instance.id, attribute.id),
+          visible: instance.visible && (override?.visible ?? attribute.platform.visible),
+          locked: instance.locked || (override?.locked ?? attribute.platform.locked),
+          vertices: structuredClone(override?.vertices ?? attribute.platform.vertices),
+          paint: structuredClone(override?.paint ?? attribute.platform.paint)
         }
       });
     }
@@ -418,6 +527,10 @@ export function ensureBehaviorOverride(
   instance.overrides ??= {};
   instance.overrides[attributeId] ??= {};
   return instance.overrides[attributeId];
+}
+
+function areaDefaultsForAttribute(attribute: SceneBehaviorAreaLikeAttribute): SceneAreaDefaults | ScenePlatformDefaults {
+  return attribute.kind === "platform" ? attribute.platform : attribute.area;
 }
 
 function assertNonEmpty(value: string | undefined, label: string): void {

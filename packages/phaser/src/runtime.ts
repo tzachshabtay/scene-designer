@@ -6,10 +6,12 @@ import {
   sceneAreas,
   sceneLayerObjects,
   sceneObjects,
+  scenePlatforms,
   type SceneArea,
   type SceneDefinition,
   type SceneDesignerManifest,
-  type SceneObject
+  type SceneObject,
+  type ScenePlatform
 } from "@scene-designer/core";
 
 export type SceneDesignerRuntimeOptions = {
@@ -55,6 +57,11 @@ export class SceneDesignerRuntime {
   areas(sceneId: string, tag?: string): SceneArea[] {
     return sceneAreas(this.scenes, sceneId)
       .filter((area) => tag === undefined || area.tag === tag);
+  }
+
+  platforms(sceneId: string, tag?: string): ScenePlatform[] {
+    return scenePlatforms(this.scenes, sceneId)
+      .filter((platform) => tag === undefined || platform.tag === tag);
   }
 
   createObjects(sceneId: string, options: CreateSceneObjectsOptions = {}): CreatedSceneObject[] {

@@ -262,6 +262,48 @@ export const scenes = defineSceneManifest(
           ]
         },
         {
+          "id": "layer-walls",
+          "name": "Walls",
+          "visible": true,
+          "locked": false,
+          "objects": [],
+          "areas": [],
+          "behaviors": [
+            {
+              "id": "l1-wall-center",
+              "behaviorId": "wall",
+              "visible": true,
+              "locked": false,
+              "overrides": {
+                "platform": {
+                  "vertices": [
+                    {
+                      "id": "l1-wall-center-v1",
+                      "x": 302,
+                      "y": 314
+                    },
+                    {
+                      "id": "l1-wall-center-v2",
+                      "x": 498,
+                      "y": 314
+                    },
+                    {
+                      "id": "l1-wall-center-v3",
+                      "x": 498,
+                      "y": 342
+                    },
+                    {
+                      "id": "l1-wall-center-v4",
+                      "x": 302,
+                      "y": 342
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
           "id": "layer-actors",
           "name": "Actors",
           "visible": true,
@@ -308,41 +350,7 @@ export const scenes = defineSceneManifest(
               "behaviorId": "spawn-area",
               "visible": true,
               "locked": false,
-              "overrides": {
-                "area": {
-                  "closed": true,
-                  "vertices": [
-                    {
-                      "id": "l1-v1",
-                      "x": 300,
-                      "y": 220
-                    },
-                    {
-                      "id": "l1-v2",
-                      "x": 500,
-                      "y": 220
-                    },
-                    {
-                      "id": "l1-v3",
-                      "x": 560,
-                      "y": 300,
-                      "curve": {
-                        "cx": 550,
-                        "cy": 260
-                      }
-                    },
-                    {
-                      "id": "l1-v4",
-                      "x": 240,
-                      "y": 300,
-                      "curve": {
-                        "cx": 250,
-                        "cy": 260
-                      }
-                    }
-                  ]
-                }
-              }
+              "overrides": {}
             }
           ]
         }
@@ -613,6 +621,53 @@ export const scenes = defineSceneManifest(
                   "x": 460,
                   "y": 226,
                   "assetId": "brick.pineapple"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "layer-walls",
+          "name": "Walls",
+          "visible": true,
+          "locked": false,
+          "objects": [],
+          "areas": [],
+          "behaviors": [
+            {
+              "id": "l3-wall-shield",
+              "behaviorId": "wall",
+              "visible": true,
+              "locked": false,
+              "overrides": {
+                "platform": {
+                  "vertices": [
+                    {
+                      "id": "l3-wall-shield-v1",
+                      "x": 360,
+                      "y": 282
+                    },
+                    {
+                      "id": "l3-wall-shield-v2",
+                      "x": 440,
+                      "y": 282
+                    },
+                    {
+                      "id": "l3-wall-shield-v3",
+                      "x": 474,
+                      "y": 344
+                    },
+                    {
+                      "id": "l3-wall-shield-v4",
+                      "x": 400,
+                      "y": 382
+                    },
+                    {
+                      "id": "l3-wall-shield-v5",
+                      "x": 326,
+                      "y": 344
+                    }
+                  ]
                 }
               }
             }
@@ -994,6 +1049,80 @@ export const scenes = defineSceneManifest(
           ]
         },
         {
+          "id": "layer-walls",
+          "name": "Walls",
+          "visible": true,
+          "locked": false,
+          "objects": [],
+          "areas": [],
+          "behaviors": [
+            {
+              "id": "l2-wall-left",
+              "behaviorId": "wall",
+              "visible": true,
+              "locked": false,
+              "overrides": {
+                "platform": {
+                  "vertices": [
+                    {
+                      "id": "l2-wall-left-v1",
+                      "x": 170,
+                      "y": 280
+                    },
+                    {
+                      "id": "l2-wall-left-v2",
+                      "x": 304,
+                      "y": 252
+                    },
+                    {
+                      "id": "l2-wall-left-v3",
+                      "x": 312,
+                      "y": 282
+                    },
+                    {
+                      "id": "l2-wall-left-v4",
+                      "x": 178,
+                      "y": 310
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "id": "l2-wall-right",
+              "behaviorId": "wall",
+              "visible": true,
+              "locked": false,
+              "overrides": {
+                "platform": {
+                  "vertices": [
+                    {
+                      "id": "l2-wall-right-v1",
+                      "x": 496,
+                      "y": 252
+                    },
+                    {
+                      "id": "l2-wall-right-v2",
+                      "x": 630,
+                      "y": 280
+                    },
+                    {
+                      "id": "l2-wall-right-v3",
+                      "x": 622,
+                      "y": 310
+                    },
+                    {
+                      "id": "l2-wall-right-v4",
+                      "x": 488,
+                      "y": 282
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
           "id": "layer-actors",
           "name": "Actors",
           "visible": true,
@@ -1170,8 +1299,74 @@ export const scenes = defineSceneManifest(
             "tag": "enemy.spawn",
             "visible": true,
             "locked": false,
-            "closed": false,
-            "vertices": []
+            "closed": true,
+            "vertices": [
+              {
+                "id": "vertex-mr6ti65v-elrh33",
+                "x": 20.473933649289098,
+                "y": 121.32701421800947
+              },
+              {
+                "id": "vertex-mr6ti7ay-fi1v4q",
+                "x": 693.0805687203791,
+                "y": 138.00947867298578
+              },
+              {
+                "id": "vertex-mr6ti81t-q2ltg3",
+                "x": 681.7061611374406,
+                "y": 3.0331753554502257
+              },
+              {
+                "id": "vertex-mr6ti9el-4w5v4u",
+                "x": 28.056872037914687,
+                "y": -0.7582938388625706
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "wall": {
+      "id": "wall",
+      "name": "Wall",
+      "attributes": [
+        {
+          "id": "platform",
+          "name": "Platform",
+          "kind": "platform",
+          "platform": {
+            "tag": "wall",
+            "assetId": "wall.stone",
+            "visible": true,
+            "locked": false,
+            "closed": true,
+            "vertices": [
+              {
+                "id": "wall-default-top-left",
+                "x": 260,
+                "y": 260
+              },
+              {
+                "id": "wall-default-top-right",
+                "x": 540,
+                "y": 260
+              },
+              {
+                "id": "wall-default-bottom-right",
+                "x": 540,
+                "y": 292
+              },
+              {
+                "id": "wall-default-bottom-left",
+                "x": 260,
+                "y": 292
+              }
+            ],
+            "paint": {
+              "mode": "tile",
+              "mirrorX": true,
+              "mirrorY": false
+            }
           }
         }
       ]

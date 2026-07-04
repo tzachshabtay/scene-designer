@@ -384,6 +384,38 @@ export const assets = defineAiAssets(
       "banana"
     ]
   },
+  "wall.stone": {
+    "id": "wall.stone",
+    "kind": "image",
+    "prompt": "A seamless jungle ruin wall texture tile for a breakout obstacle, mossy carved stone blocks with vines, readable pixel-art details, tileable edges.",
+    "dimensions": {
+      "width": 64,
+      "height": 64
+    },
+    "settings": {
+      "format": "png",
+      "background": "opaque",
+      "model": "gpt-image-2"
+    },
+    "activeVersion": "default",
+    "versions": {
+      "default": {
+        "name": "default",
+        "file": "/assets/wall.stone.default.svg",
+        "prompt": "A seamless jungle ruin wall texture tile for a breakout obstacle, mossy carved stone blocks with vines, readable pixel-art details, tileable edges.",
+        "createdAt": "2026-07-04T00:00:00.000Z",
+        "model": "manual-svg"
+      }
+    },
+    "tags": [
+      "wall",
+      "stone",
+      "texture"
+    ],
+    "audioSettings": {},
+    "audioPlayback": {},
+    "voiceSettings": {}
+  },
   "audio.sfx.brick": {
     "id": "audio.sfx.brick",
     "kind": "sound",

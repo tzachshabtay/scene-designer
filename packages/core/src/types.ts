@@ -53,7 +53,12 @@ export type SceneBehaviorDefinition = {
 
 export type SceneBehaviorAttribute =
   | SceneBehaviorObjectAttribute
-  | SceneBehaviorAreaAttribute;
+  | SceneBehaviorAreaAttribute
+  | SceneBehaviorPlatformAttribute;
+
+export type SceneBehaviorAreaLikeAttribute =
+  | SceneBehaviorAreaAttribute
+  | SceneBehaviorPlatformAttribute;
 
 export type SceneBehaviorObjectAttribute = {
   id: string;
@@ -67,6 +72,13 @@ export type SceneBehaviorAreaAttribute = {
   name: string;
   kind: "area";
   area: SceneAreaDefaults;
+};
+
+export type SceneBehaviorPlatformAttribute = {
+  id: string;
+  name: string;
+  kind: "platform";
+  platform: ScenePlatformDefaults;
 };
 
 export type SceneDefinition = {
@@ -99,7 +111,8 @@ export type SceneBehaviorInstance = {
 
 export type SceneBehaviorAttributeOverride =
   | Partial<SceneObjectDefaults>
-  | Partial<SceneAreaDefaults>;
+  | Partial<SceneAreaDefaults>
+  | Partial<ScenePlatformDefaults>;
 
 export type SceneObject = {
   id: string;
@@ -128,6 +141,27 @@ export type SceneArea = {
 };
 
 export type SceneAreaDefaults = Omit<SceneArea, "id">;
+
+export type ScenePlatform = SceneArea & {
+  assetId: string;
+  paint: ScenePlatformPaint;
+};
+
+export type ScenePlatformDefaults = Omit<ScenePlatform, "id">;
+
+export type ScenePlatformPaint =
+  | ScenePlatformFitPaint
+  | ScenePlatformTilePaint;
+
+export type ScenePlatformFitPaint = {
+  mode: "fit";
+};
+
+export type ScenePlatformTilePaint = {
+  mode: "tile";
+  mirrorX?: boolean;
+  mirrorY?: boolean;
+};
 
 export type SceneAreaVertex = {
   id: string;
@@ -168,5 +202,14 @@ export type ResolvedSceneArea = {
   area: SceneArea;
   behavior?: SceneBehaviorDefinition;
   behaviorInstance?: SceneBehaviorInstance;
-  behaviorAttribute?: SceneBehaviorAreaAttribute;
+  behaviorAttribute?: SceneBehaviorAreaLikeAttribute;
+};
+
+export type ResolvedScenePlatform = {
+  scene: SceneDefinition;
+  layer: SceneLayer;
+  platform: ScenePlatform;
+  behavior: SceneBehaviorDefinition;
+  behaviorInstance: SceneBehaviorInstance;
+  behaviorAttribute: SceneBehaviorPlatformAttribute;
 };

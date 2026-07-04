@@ -14,8 +14,10 @@ import {
   sceneLayerAreas,
   sceneLayerObjects,
   type SceneArea,
+  type SceneAreaDefaults,
   type SceneAreaVertex,
-  type SceneBehaviorAreaAttribute,
+  type SceneBehaviorAreaLikeAttribute,
+  type SceneBehaviorAttribute,
   type SceneDesignerCanvasConfig,
   type SceneDefinition,
   type SceneDesignerManifest,
@@ -1117,26 +1119,27 @@ export class PhaserSceneDesignerCanvas {
     if (!behavior) return [];
 
     return behavior.attributes
-      .filter((attribute): attribute is SceneBehaviorAreaAttribute => attribute.kind === "area")
+      .filter(isAreaLikeAttribute)
       .map((attribute) => this.behaviorAreaEntry(behavior.id, attribute));
   }
 
   private findBehaviorArea(behaviorId: string, attributeId: string): BehaviorCanvasArea | undefined {
     const behavior = this.manifest.behaviors?.[behaviorId];
-    const attribute = behavior?.attributes.find((candidate): candidate is SceneBehaviorAreaAttribute => (
-      candidate.id === attributeId && candidate.kind === "area"
+    const attribute = behavior?.attributes.find((candidate): candidate is SceneBehaviorAreaLikeAttribute => (
+      candidate.id === attributeId && isAreaLikeAttribute(candidate)
     ));
     return behavior && attribute ? this.behaviorAreaEntry(behavior.id, attribute) : undefined;
   }
 
-  private behaviorAreaEntry(behaviorId: string, attribute: SceneBehaviorAreaAttribute): BehaviorCanvasArea {
+  private behaviorAreaEntry(behaviorId: string, attribute: SceneBehaviorAreaLikeAttribute): BehaviorCanvasArea {
+    const defaults = areaDefaultsForAttribute(attribute);
     return {
       behaviorId,
       attributeId: attribute.id,
       area: {
-        ...structuredClone(attribute.area),
+        ...structuredClone(defaults),
         id: behaviorAttributeId(behaviorId, attribute.id),
-        vertices: structuredClone(attribute.area.vertices)
+        vertices: structuredClone(defaults.vertices)
       }
     };
   }
@@ -1649,6 +1652,14 @@ function pointInArea(point: { x: number; y: number }, area: SceneArea): boolean 
   }
 
   return inside;
+}
+
+function isAreaLikeAttribute(attribute: SceneBehaviorAttribute): attribute is SceneBehaviorAreaLikeAttribute {
+  return attribute.kind === "area" || attribute.kind === "platform";
+}
+
+function areaDefaultsForAttribute(attribute: SceneBehaviorAreaLikeAttribute): SceneAreaDefaults {
+  return attribute.kind === "platform" ? attribute.platform : attribute.area;
 }
 
 function areaBoundaryPoints(area: SceneArea): Array<{ x: number; y: number }> {

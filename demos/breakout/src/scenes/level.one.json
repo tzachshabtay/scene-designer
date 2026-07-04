@@ -256,6 +256,48 @@
       ]
     },
     {
+      "id": "layer-walls",
+      "name": "Walls",
+      "visible": true,
+      "locked": false,
+      "objects": [],
+      "areas": [],
+      "behaviors": [
+        {
+          "id": "l1-wall-center",
+          "behaviorId": "wall",
+          "visible": true,
+          "locked": false,
+          "overrides": {
+            "platform": {
+              "vertices": [
+                {
+                  "id": "l1-wall-center-v1",
+                  "x": 302,
+                  "y": 314
+                },
+                {
+                  "id": "l1-wall-center-v2",
+                  "x": 498,
+                  "y": 314
+                },
+                {
+                  "id": "l1-wall-center-v3",
+                  "x": 498,
+                  "y": 342
+                },
+                {
+                  "id": "l1-wall-center-v4",
+                  "x": 302,
+                  "y": 342
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
       "id": "layer-actors",
       "name": "Actors",
       "visible": true,
@@ -302,41 +344,7 @@
           "behaviorId": "spawn-area",
           "visible": true,
           "locked": false,
-          "overrides": {
-            "area": {
-              "closed": true,
-              "vertices": [
-                {
-                  "id": "l1-v1",
-                  "x": 300,
-                  "y": 220
-                },
-                {
-                  "id": "l1-v2",
-                  "x": 500,
-                  "y": 220
-                },
-                {
-                  "id": "l1-v3",
-                  "x": 560,
-                  "y": 300,
-                  "curve": {
-                    "cx": 550,
-                    "cy": 260
-                  }
-                },
-                {
-                  "id": "l1-v4",
-                  "x": 240,
-                  "y": 300,
-                  "curve": {
-                    "cx": 250,
-                    "cy": 260
-                  }
-                }
-              ]
-            }
-          }
+          "overrides": {}
         }
       ]
     }

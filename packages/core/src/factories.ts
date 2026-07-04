@@ -5,9 +5,12 @@ import type {
   SceneBehaviorDefinition,
   SceneBehaviorInstance,
   SceneBehaviorObjectAttribute,
+  SceneBehaviorPlatformAttribute,
   SceneDefinition,
   SceneLayer,
-  SceneObject
+  SceneObject,
+  ScenePlatform,
+  ScenePlatformPaint
 } from "./types.js";
 
 export type CreateSceneInput = {
@@ -29,6 +32,12 @@ export type CreateObjectInput = Partial<Omit<SceneObject, "id">> & {
 export type CreateAreaInput = Partial<Omit<SceneArea, "id" | "vertices">> & {
   id?: string;
   vertices?: SceneAreaVertex[];
+};
+
+export type CreatePlatformInput = Partial<Omit<ScenePlatform, "id" | "vertices" | "paint">> & {
+  id?: string;
+  vertices?: SceneAreaVertex[];
+  paint?: ScenePlatformPaint;
 };
 
 export type CreateBehaviorInput = {
@@ -92,6 +101,18 @@ export function createArea(input: CreateAreaInput = {}): SceneArea {
   };
 }
 
+export function createPlatform(input: CreatePlatformInput = {}): ScenePlatform {
+  return {
+    ...createArea(input),
+    assetId: input.assetId ?? "",
+    paint: input.paint ? structuredClone(input.paint) : {
+      mode: "tile",
+      mirrorX: false,
+      mirrorY: false
+    }
+  };
+}
+
 export function createAreaVertex(x: number, y: number): SceneAreaVertex {
   return {
     id: uniqueId("vertex"),
@@ -134,6 +155,15 @@ export function createBehaviorAreaAttribute(
   return {
     ...structuredClone(input),
     kind: "area"
+  };
+}
+
+export function createBehaviorPlatformAttribute(
+  input: Omit<SceneBehaviorPlatformAttribute, "kind">
+): SceneBehaviorPlatformAttribute {
+  return {
+    ...structuredClone(input),
+    kind: "platform"
   };
 }
 

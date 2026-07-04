@@ -265,6 +265,53 @@
       ]
     },
     {
+      "id": "layer-walls",
+      "name": "Walls",
+      "visible": true,
+      "locked": false,
+      "objects": [],
+      "areas": [],
+      "behaviors": [
+        {
+          "id": "l3-wall-shield",
+          "behaviorId": "wall",
+          "visible": true,
+          "locked": false,
+          "overrides": {
+            "platform": {
+              "vertices": [
+                {
+                  "id": "l3-wall-shield-v1",
+                  "x": 360,
+                  "y": 282
+                },
+                {
+                  "id": "l3-wall-shield-v2",
+                  "x": 440,
+                  "y": 282
+                },
+                {
+                  "id": "l3-wall-shield-v3",
+                  "x": 474,
+                  "y": 344
+                },
+                {
+                  "id": "l3-wall-shield-v4",
+                  "x": 400,
+                  "y": 382
+                },
+                {
+                  "id": "l3-wall-shield-v5",
+                  "x": 326,
+                  "y": 344
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
       "id": "layer-actors",
       "name": "Actors",
       "visible": true,
