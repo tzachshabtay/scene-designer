@@ -6,6 +6,10 @@ import type {
 } from "@scene-designer/designer";
 import {
   getScene,
+  resolveSceneArea,
+  resolveSceneObject,
+  sceneLayerAreas,
+  sceneLayerObjects,
   type SceneArea,
   type SceneAreaVertex,
   type SceneDefinition,
@@ -163,7 +167,7 @@ export class PhaserSceneDesignerCanvas {
     const baseDepth = this.options.objectDepth ?? 1000;
 
     scene.layers.forEach((layer, layerIndex) => {
-      layer.objects.forEach((object, objectIndex) => {
+      sceneLayerObjects(this.manifest, layer).forEach((object, objectIndex) => {
         needed.add(object.id);
         let sprite = this.objects.get(object.id);
 
@@ -223,7 +227,7 @@ export class PhaserSceneDesignerCanvas {
     scene.layers.forEach((layer) => {
       if (!layer.visible) return;
 
-      layer.areas.forEach((area, index) => {
+      sceneLayerAreas(this.manifest, layer).forEach((area, index) => {
         if (!area.visible || area.vertices.length < 2) return;
         const alpha = layer.locked || area.locked ? 0.18 : 0.28;
         this.areaGraphics.lineStyle(2, 0x46d39a, 0.8);
@@ -530,8 +534,9 @@ export class PhaserSceneDesignerCanvas {
       const layer = scene.layers[layerIndex];
       if (!layer.visible) continue;
 
-      for (let objectIndex = layer.objects.length - 1; objectIndex >= 0; objectIndex -= 1) {
-        const object = layer.objects[objectIndex];
+      const objects = sceneLayerObjects(this.manifest, layer);
+      for (let objectIndex = objects.length - 1; objectIndex >= 0; objectIndex -= 1) {
+        const object = objects[objectIndex];
         if (!object.visible) continue;
         const hit = this.hitObject(point, object);
         if (hit) return { ...hit, layer };
@@ -580,8 +585,9 @@ export class PhaserSceneDesignerCanvas {
     for (let layerIndex = scene.layers.length - 1; layerIndex >= 0; layerIndex -= 1) {
       const layer = scene.layers[layerIndex];
       if (!layer.visible) continue;
-      for (let areaIndex = layer.areas.length - 1; areaIndex >= 0; areaIndex -= 1) {
-        const area = layer.areas[areaIndex];
+      const areas = sceneLayerAreas(this.manifest, layer);
+      for (let areaIndex = areas.length - 1; areaIndex >= 0; areaIndex -= 1) {
+        const area = areas[areaIndex];
         const hit = this.hitArea(point, area);
         if (hit) return hit;
       }
@@ -622,21 +628,21 @@ export class PhaserSceneDesignerCanvas {
   }
 
   private findObject(objectId: string): { layer: SceneLayer; object: SceneObject } | undefined {
-    const scene = this.currentScene();
-    for (const layer of scene.layers) {
-      const object = layer.objects.find((candidate) => candidate.id === objectId);
-      if (object) return { layer, object };
+    try {
+      const resolved = resolveSceneObject(this.manifest, this.options.designer.getSceneId(), objectId);
+      return { layer: resolved.layer, object: resolved.object };
+    } catch {
+      return undefined;
     }
-    return undefined;
   }
 
   private findArea(areaId: string): { layer: SceneLayer; area: SceneArea } | undefined {
-    const scene = this.currentScene();
-    for (const layer of scene.layers) {
-      const area = layer.areas.find((candidate) => candidate.id === areaId);
-      if (area) return { layer, area };
+    try {
+      const resolved = resolveSceneArea(this.manifest, this.options.designer.getSceneId(), areaId);
+      return { layer: resolved.layer, area: resolved.area };
+    } catch {
+      return undefined;
     }
-    return undefined;
   }
 
   private currentScene(): SceneDefinition {

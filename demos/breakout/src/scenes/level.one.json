@@ -9,35 +9,284 @@
       "name": "Background",
       "visible": true,
       "locked": true,
-      "objects": [
-        { "id": "bg-1", "tag": "background", "assetId": "background.arcade", "x": 400, "y": 600, "scaleX": 1, "scaleY": 1, "rotation": 0, "anchorX": 0.5, "anchorY": 0, "visible": true, "locked": true }
-      ],
-      "areas": []
+      "objects": [],
+      "areas": [],
+      "behaviors": [
+        {
+          "id": "bg-1",
+          "behaviorId": "background",
+          "visible": true,
+          "locked": true,
+          "overrides": {
+            "sprite": {
+              "x": 400,
+              "y": 600
+            }
+          }
+        }
+      ]
     },
     {
       "id": "layer-bricks",
       "name": "Bricks",
       "visible": true,
       "locked": false,
-      "objects": [
-        { "id": "l1-b01", "tag": "brick", "assetId": "brick.leaves", "x": 140, "y": 114, "scaleX": 1, "scaleY": 1, "rotation": 0, "anchorX": 0.5, "anchorY": 0, "visible": true, "locked": false },
-        { "id": "l1-b02", "tag": "brick", "assetId": "brick.vines", "x": 220, "y": 114, "scaleX": 1, "scaleY": 1, "rotation": 0, "anchorX": 0.5, "anchorY": 0, "visible": true, "locked": false },
-        { "id": "l1-b03", "tag": "brick", "assetId": "brick.pineapple", "x": 300, "y": 114, "scaleX": 1, "scaleY": 1, "rotation": 0, "anchorX": 0.5, "anchorY": 0, "visible": true, "locked": false },
-        { "id": "l1-b04", "tag": "brick", "assetId": "brick.leaves", "x": 380, "y": 114, "scaleX": 1, "scaleY": 1, "rotation": 0, "anchorX": 0.5, "anchorY": 0, "visible": true, "locked": false },
-        { "id": "l1-b05", "tag": "brick", "assetId": "brick.pineapple", "x": 460, "y": 114, "scaleX": 1, "scaleY": 1, "rotation": 0, "anchorX": 0.5, "anchorY": 0, "visible": true, "locked": false },
-        { "id": "l1-b06", "tag": "brick", "assetId": "brick.vines", "x": 540, "y": 114, "scaleX": 1, "scaleY": 1, "rotation": 0, "anchorX": 0.5, "anchorY": 0, "visible": true, "locked": false },
-        { "id": "l1-b07", "tag": "brick", "assetId": "brick.leaves", "x": 620, "y": 114, "scaleX": 1, "scaleY": 1, "rotation": 0, "anchorX": 0.5, "anchorY": 0, "visible": true, "locked": false },
-        { "id": "l1-b08", "tag": "brick", "assetId": "brick.vines", "x": 180, "y": 150, "scaleX": 1, "scaleY": 1, "rotation": 0, "anchorX": 0.5, "anchorY": 0, "visible": true, "locked": false },
-        { "id": "l1-b09", "tag": "brick", "assetId": "brick.leaves", "x": 260, "y": 150, "scaleX": 1, "scaleY": 1, "rotation": 0, "anchorX": 0.5, "anchorY": 0, "visible": true, "locked": false },
-        { "id": "l1-b10", "tag": "brick", "assetId": "brick.statue", "x": 340, "y": 150, "scaleX": 1, "scaleY": 1, "rotation": 0, "anchorX": 0.5, "anchorY": 0, "visible": true, "locked": false },
-        { "id": "l1-b11", "tag": "brick", "assetId": "brick.statue", "x": 420, "y": 150, "scaleX": 1, "scaleY": 1, "rotation": 0, "anchorX": 0.5, "anchorY": 0, "visible": true, "locked": false },
-        { "id": "l1-b12", "tag": "brick", "assetId": "brick.leaves", "x": 500, "y": 150, "scaleX": 1, "scaleY": 1, "rotation": 0, "anchorX": 0.5, "anchorY": 0, "visible": true, "locked": false },
-        { "id": "l1-b13", "tag": "brick", "assetId": "brick.vines", "x": 580, "y": 150, "scaleX": 1, "scaleY": 1, "rotation": 0, "anchorX": 0.5, "anchorY": 0, "visible": true, "locked": false },
-        { "id": "l1-b14", "tag": "brick", "assetId": "brick.pineapple", "x": 260, "y": 186, "scaleX": 1, "scaleY": 1, "rotation": 0, "anchorX": 0.5, "anchorY": 0, "visible": true, "locked": false },
-        { "id": "l1-b15", "tag": "brick", "assetId": "brick.leaves", "x": 340, "y": 186, "scaleX": 1, "scaleY": 1, "rotation": 0, "anchorX": 0.5, "anchorY": 0, "visible": true, "locked": false },
-        { "id": "l1-b16", "tag": "brick", "assetId": "brick.vines", "x": 420, "y": 186, "scaleX": 1, "scaleY": 1, "rotation": 0, "anchorX": 0.5, "anchorY": 0, "visible": true, "locked": false },
-        { "id": "l1-b17", "tag": "brick", "assetId": "brick.pineapple", "x": 500, "y": 186, "scaleX": 1, "scaleY": 1, "rotation": 0, "anchorX": 0.5, "anchorY": 0, "visible": true, "locked": false }
+      "objects": [],
+      "areas": [],
+      "behaviors": [
+        {
+          "id": "l1-b01",
+          "behaviorId": "single-brick",
+          "visible": true,
+          "locked": false,
+          "overrides": {
+            "sprite": {
+              "x": 140,
+              "y": 114,
+              "assetId": "brick.leaves"
+            }
+          }
+        },
+        {
+          "id": "l1-b02",
+          "behaviorId": "single-brick",
+          "visible": true,
+          "locked": false,
+          "overrides": {
+            "sprite": {
+              "x": 220,
+              "y": 114,
+              "assetId": "brick.vines"
+            }
+          }
+        },
+        {
+          "id": "l1-b03",
+          "behaviorId": "single-brick",
+          "visible": true,
+          "locked": false,
+          "overrides": {
+            "sprite": {
+              "x": 300,
+              "y": 114,
+              "assetId": "brick.pineapple"
+            }
+          }
+        },
+        {
+          "id": "l1-b04",
+          "behaviorId": "single-brick",
+          "visible": true,
+          "locked": false,
+          "overrides": {
+            "sprite": {
+              "x": 380,
+              "y": 114,
+              "assetId": "brick.leaves"
+            }
+          }
+        },
+        {
+          "id": "l1-b05",
+          "behaviorId": "single-brick",
+          "visible": true,
+          "locked": false,
+          "overrides": {
+            "sprite": {
+              "x": 460,
+              "y": 114,
+              "assetId": "brick.pineapple"
+            }
+          }
+        },
+        {
+          "id": "l1-b06",
+          "behaviorId": "single-brick",
+          "visible": true,
+          "locked": false,
+          "overrides": {
+            "sprite": {
+              "x": 540,
+              "y": 114,
+              "assetId": "brick.vines"
+            }
+          }
+        },
+        {
+          "id": "l1-b07",
+          "behaviorId": "single-brick",
+          "visible": true,
+          "locked": false,
+          "overrides": {
+            "sprite": {
+              "x": 620,
+              "y": 114,
+              "assetId": "brick.leaves"
+            }
+          }
+        },
+        {
+          "id": "l1-b08",
+          "behaviorId": "single-brick",
+          "visible": true,
+          "locked": false,
+          "overrides": {
+            "sprite": {
+              "x": 180,
+              "y": 150,
+              "assetId": "brick.vines"
+            }
+          }
+        },
+        {
+          "id": "l1-b09",
+          "behaviorId": "single-brick",
+          "visible": true,
+          "locked": false,
+          "overrides": {
+            "sprite": {
+              "x": 260,
+              "y": 150,
+              "assetId": "brick.leaves"
+            }
+          }
+        },
+        {
+          "id": "l1-b10",
+          "behaviorId": "double-brick",
+          "visible": true,
+          "locked": false,
+          "overrides": {
+            "sprite": {
+              "x": 340,
+              "y": 150
+            }
+          }
+        },
+        {
+          "id": "l1-b11",
+          "behaviorId": "double-brick",
+          "visible": true,
+          "locked": false,
+          "overrides": {
+            "sprite": {
+              "x": 420,
+              "y": 150
+            }
+          }
+        },
+        {
+          "id": "l1-b12",
+          "behaviorId": "single-brick",
+          "visible": true,
+          "locked": false,
+          "overrides": {
+            "sprite": {
+              "x": 500,
+              "y": 150,
+              "assetId": "brick.leaves"
+            }
+          }
+        },
+        {
+          "id": "l1-b13",
+          "behaviorId": "single-brick",
+          "visible": true,
+          "locked": false,
+          "overrides": {
+            "sprite": {
+              "x": 580,
+              "y": 150,
+              "assetId": "brick.vines"
+            }
+          }
+        },
+        {
+          "id": "l1-b14",
+          "behaviorId": "single-brick",
+          "visible": true,
+          "locked": false,
+          "overrides": {
+            "sprite": {
+              "x": 260,
+              "y": 186,
+              "assetId": "brick.pineapple"
+            }
+          }
+        },
+        {
+          "id": "l1-b15",
+          "behaviorId": "single-brick",
+          "visible": true,
+          "locked": false,
+          "overrides": {
+            "sprite": {
+              "x": 340,
+              "y": 186,
+              "assetId": "brick.leaves"
+            }
+          }
+        },
+        {
+          "id": "l1-b16",
+          "behaviorId": "single-brick",
+          "visible": true,
+          "locked": false,
+          "overrides": {
+            "sprite": {
+              "x": 420,
+              "y": 186,
+              "assetId": "brick.vines"
+            }
+          }
+        },
+        {
+          "id": "l1-b17",
+          "behaviorId": "single-brick",
+          "visible": true,
+          "locked": false,
+          "overrides": {
+            "sprite": {
+              "x": 500,
+              "y": 186,
+              "assetId": "brick.pineapple"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "layer-actors",
+      "name": "Actors",
+      "visible": true,
+      "locked": false,
+      "behaviors": [
+        {
+          "id": "l1-paddle",
+          "behaviorId": "paddle",
+          "visible": true,
+          "locked": false,
+          "overrides": {
+            "sprite": {
+              "x": 400,
+              "y": 564
+            }
+          }
+        },
+        {
+          "id": "l1-ball",
+          "behaviorId": "ball",
+          "visible": true,
+          "locked": false,
+          "overrides": {
+            "sprite": {
+              "x": 400,
+              "y": 520
+            }
+          }
+        }
       ],
+      "objects": [],
       "areas": []
     },
     {
@@ -46,22 +295,95 @@
       "visible": true,
       "locked": false,
       "objects": [],
-      "areas": [
+      "areas": [],
+      "behaviors": [
         {
-          "id": "l1-enemy-spawn",
-          "tag": "enemy.spawn",
+          "id": "l1-enemy-spawn-snake",
+          "behaviorId": "snake",
           "visible": true,
           "locked": false,
-          "closed": true,
-          "vertices": [
-            { "id": "l1-v1", "x": 300, "y": 220 },
-            { "id": "l1-v2", "x": 500, "y": 220 },
-            { "id": "l1-v3", "x": 560, "y": 300, "curve": { "cx": 550, "cy": 260 } },
-            { "id": "l1-v4", "x": 240, "y": 300, "curve": { "cx": 250, "cy": 260 } }
-          ]
+          "overrides": {
+            "spawnArea": {
+              "closed": true,
+              "vertices": [
+                {
+                  "id": "l1-v1",
+                  "x": 300,
+                  "y": 220
+                },
+                {
+                  "id": "l1-v2",
+                  "x": 500,
+                  "y": 220
+                },
+                {
+                  "id": "l1-v3",
+                  "x": 560,
+                  "y": 300,
+                  "curve": {
+                    "cx": 550,
+                    "cy": 260
+                  }
+                },
+                {
+                  "id": "l1-v4",
+                  "x": 240,
+                  "y": 300,
+                  "curve": {
+                    "cx": 250,
+                    "cy": 260
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "l1-enemy-spawn-monkey",
+          "behaviorId": "monkey",
+          "visible": true,
+          "locked": false,
+          "overrides": {
+            "spawnArea": {
+              "closed": true,
+              "vertices": [
+                {
+                  "id": "l1-v1",
+                  "x": 300,
+                  "y": 220
+                },
+                {
+                  "id": "l1-v2",
+                  "x": 500,
+                  "y": 220
+                },
+                {
+                  "id": "l1-v3",
+                  "x": 560,
+                  "y": 300,
+                  "curve": {
+                    "cx": 550,
+                    "cy": 260
+                  }
+                },
+                {
+                  "id": "l1-v4",
+                  "x": 240,
+                  "y": 300,
+                  "curve": {
+                    "cx": 250,
+                    "cy": 260
+                  }
+                }
+              ]
+            }
+          }
         }
       ]
     }
   ],
-  "tags": ["breakout", "level"]
+  "tags": [
+    "breakout",
+    "level"
+  ]
 }

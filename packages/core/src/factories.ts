@@ -1,6 +1,10 @@
 import type {
   SceneArea,
   SceneAreaVertex,
+  SceneBehaviorAreaAttribute,
+  SceneBehaviorDefinition,
+  SceneBehaviorInstance,
+  SceneBehaviorObjectAttribute,
   SceneDefinition,
   SceneLayer,
   SceneObject
@@ -27,6 +31,17 @@ export type CreateAreaInput = Partial<Omit<SceneArea, "id" | "vertices">> & {
   vertices?: SceneAreaVertex[];
 };
 
+export type CreateBehaviorInput = {
+  id?: string;
+  name?: string;
+  attributes?: SceneBehaviorDefinition["attributes"];
+};
+
+export type CreateBehaviorInstanceInput = Partial<Omit<SceneBehaviorInstance, "id" | "overrides">> & {
+  id?: string;
+  overrides?: SceneBehaviorInstance["overrides"];
+};
+
 export function createScene(input: CreateSceneInput = {}): SceneDefinition {
   return {
     id: input.id ?? uniqueId("scene"),
@@ -43,6 +58,7 @@ export function createLayer(input: CreateLayerInput = {}): SceneLayer {
     name: input.name ?? "Layer",
     visible: true,
     locked: false,
+    behaviors: [],
     objects: [],
     areas: []
   };
@@ -81,6 +97,43 @@ export function createAreaVertex(x: number, y: number): SceneAreaVertex {
     id: uniqueId("vertex"),
     x,
     y
+  };
+}
+
+export function createBehavior(input: CreateBehaviorInput = {}): SceneBehaviorDefinition {
+  return {
+    id: input.id ?? uniqueId("behavior"),
+    name: input.name ?? "Behavior",
+    attributes: input.attributes ? input.attributes.map((attribute) => structuredClone(attribute)) : []
+  };
+}
+
+export function createBehaviorInstance(input: CreateBehaviorInstanceInput & { behaviorId: string }): SceneBehaviorInstance {
+  return {
+    id: input.id ?? uniqueId("behavior-instance"),
+    behaviorId: input.behaviorId,
+    name: input.name,
+    visible: input.visible ?? true,
+    locked: input.locked ?? false,
+    overrides: input.overrides ? structuredClone(input.overrides) : {}
+  };
+}
+
+export function createBehaviorObjectAttribute(
+  input: Omit<SceneBehaviorObjectAttribute, "kind">
+): SceneBehaviorObjectAttribute {
+  return {
+    ...structuredClone(input),
+    kind: "object"
+  };
+}
+
+export function createBehaviorAreaAttribute(
+  input: Omit<SceneBehaviorAreaAttribute, "kind">
+): SceneBehaviorAreaAttribute {
+  return {
+    ...structuredClone(input),
+    kind: "area"
   };
 }
 

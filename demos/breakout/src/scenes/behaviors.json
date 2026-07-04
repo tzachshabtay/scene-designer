@@ -1,0 +1,158 @@
+{
+  "background": {
+    "id": "background",
+    "name": "Background",
+    "attributes": [
+      {
+        "id": "sprite",
+        "name": "Sprite",
+        "kind": "object",
+        "object": {
+          "tag": "background",
+          "assetId": "background.arcade",
+          "x": 400,
+          "y": 600,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotation": 0,
+          "anchorX": 0.5,
+          "anchorY": 0,
+          "visible": true,
+          "locked": true
+        }
+      }
+    ]
+  },
+  "single-brick": {
+    "id": "single-brick",
+    "name": "Single Brick",
+    "attributes": [
+      {
+        "id": "sprite",
+        "name": "Sprite",
+        "kind": "object",
+        "object": {
+          "tag": "brick",
+          "assetId": "brick.leaves",
+          "x": 0,
+          "y": 0,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotation": 0,
+          "anchorX": 0.5,
+          "anchorY": 0,
+          "visible": true,
+          "locked": false
+        }
+      }
+    ]
+  },
+  "double-brick": {
+    "id": "double-brick",
+    "name": "Double Brick",
+    "attributes": [
+      {
+        "id": "sprite",
+        "name": "Sprite",
+        "kind": "object",
+        "object": {
+          "tag": "brick",
+          "assetId": "brick.statue",
+          "x": 0,
+          "y": 0,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotation": 0,
+          "anchorX": 0.5,
+          "anchorY": 0,
+          "visible": true,
+          "locked": false
+        }
+      }
+    ]
+  },
+  "snake": {
+    "id": "snake",
+    "name": "Snake",
+    "attributes": [
+      {
+        "id": "spawnArea",
+        "name": "Spawn Area",
+        "kind": "area",
+        "area": {
+          "tag": "enemy.spawn.snake",
+          "visible": true,
+          "locked": false,
+          "closed": false,
+          "vertices": []
+        }
+      }
+    ]
+  },
+  "monkey": {
+    "id": "monkey",
+    "name": "Monkey",
+    "attributes": [
+      {
+        "id": "spawnArea",
+        "name": "Spawn Area",
+        "kind": "area",
+        "area": {
+          "tag": "enemy.spawn.monkey",
+          "visible": true,
+          "locked": false,
+          "closed": false,
+          "vertices": []
+        }
+      }
+    ]
+  },
+  "ball": {
+    "id": "ball",
+    "name": "Ball",
+    "attributes": [
+      {
+        "id": "sprite",
+        "name": "Sprite",
+        "kind": "object",
+        "object": {
+          "tag": "ball",
+          "assetId": "ball.core",
+          "x": 400,
+          "y": 520,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotation": 0,
+          "anchorX": 0.5,
+          "anchorY": 0.5,
+          "visible": true,
+          "locked": false
+        }
+      }
+    ]
+  },
+  "paddle": {
+    "id": "paddle",
+    "name": "Paddle",
+    "attributes": [
+      {
+        "id": "sprite",
+        "name": "Sprite",
+        "kind": "object",
+        "object": {
+          "tag": "paddle",
+          "assetId": "hero.paddle.normal",
+          "x": 400,
+          "y": 564,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotation": 0,
+          "anchorX": 0.5,
+          "anchorY": 0.5,
+          "visible": true,
+          "locked": false
+        }
+      }
+    ]
+  }
+}

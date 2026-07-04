@@ -3,32 +3,54 @@ export type {
   ResolvedSceneObject,
   SceneArea,
   SceneAreaCurve,
+  SceneAreaDefaults,
   SceneAreaVertex,
+  SceneBehaviorAreaAttribute,
+  SceneBehaviorAttribute,
+  SceneBehaviorAttributeOverride,
+  SceneBehaviorDefinition,
+  SceneBehaviorInstance,
+  SceneBehaviorObjectAttribute,
   SceneDefinition,
   SceneDesignerManifest,
   SceneLayer,
   SceneObject,
+  SceneObjectDefaults,
   SceneSelection
 } from "./types.js";
 
 export {
   assertArea,
+  assertBehavior,
+  assertBehaviorAttribute,
+  assertBehaviorInstance,
   assertLayer,
   assertObject,
   assertScene,
   assertSceneManifest,
+  behaviorAttributeId,
+  behaviorInstanceIdFromAttributeId,
   cloneSceneManifest,
   defineScene,
   defineSceneManifest,
   defineScenes,
+  ensureBehaviorOverride,
   getScene,
   resolveSceneArea,
-  resolveSceneObject
+  resolveSceneObject,
+  sceneAreas,
+  sceneLayerAreas,
+  sceneLayerObjects,
+  sceneObjects
 } from "./manifest.js";
 
 export {
   createArea,
   createAreaVertex,
+  createBehavior,
+  createBehaviorAreaAttribute,
+  createBehaviorInstance,
+  createBehaviorObjectAttribute,
   createLayer,
   createObject,
   createScene,
@@ -38,6 +60,8 @@ export {
 
 export type {
   CreateAreaInput,
+  CreateBehaviorInput,
+  CreateBehaviorInstanceInput,
   CreateLayerInput,
   CreateObjectInput,
   CreateSceneInput

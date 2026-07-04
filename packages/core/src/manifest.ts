@@ -2,11 +2,21 @@ import type {
   ResolvedSceneArea,
   ResolvedSceneObject,
   SceneArea,
+  SceneAreaDefaults,
+  SceneBehaviorAreaAttribute,
+  SceneBehaviorAttribute,
+  SceneBehaviorAttributeOverride,
+  SceneBehaviorDefinition,
+  SceneBehaviorInstance,
+  SceneBehaviorObjectAttribute,
   SceneDefinition,
   SceneDesignerManifest,
   SceneLayer,
-  SceneObject
+  SceneObject,
+  SceneObjectDefaults
 } from "./types.js";
+
+const behaviorAttributeSeparator = "::";
 
 export function defineScene(scene: SceneDefinition): SceneDefinition {
   assertScene(scene);
@@ -30,6 +40,14 @@ export function defineSceneManifest(manifest: SceneDesignerManifest): SceneDesig
 export function assertSceneManifest(manifest: SceneDesignerManifest): void {
   if (manifest.schemaVersion !== 1) {
     throw new Error(`Unsupported scene designer manifest schema: ${manifest.schemaVersion}`);
+  }
+
+  for (const [behaviorId, behavior] of Object.entries(manifest.behaviors ?? {})) {
+    if (behaviorId !== behavior.id) {
+      throw new Error(`Behavior key "${behaviorId}" does not match behavior id "${behavior.id}".`);
+    }
+
+    assertBehavior(behavior);
   }
 
   for (const [sceneId, scene] of Object.entries(manifest.scenes)) {
@@ -62,6 +80,12 @@ export function assertLayer(layer: SceneLayer, label: string): void {
 
   const objectIds = new Set<string>();
   const areaIds = new Set<string>();
+  const behaviorInstanceIds = new Set<string>();
+
+  for (const [index, instance] of (layer.behaviors ?? []).entries()) {
+    assertBehaviorInstance(instance, `${label}.behaviors.${index}`);
+    assertUnique(behaviorInstanceIds, instance.id, `${label}.behaviors.${index}.id`);
+  }
 
   for (const [index, object] of layer.objects.entries()) {
     assertObject(object, `${label}.objects.${index}`);
@@ -74,8 +98,41 @@ export function assertLayer(layer: SceneLayer, label: string): void {
   }
 }
 
+export function assertBehavior(behavior: SceneBehaviorDefinition, label = behavior.id): void {
+  assertNonEmpty(behavior.id, `${label}.id`);
+  assertNonEmpty(behavior.name, `${label}.name`);
+
+  const attributeIds = new Set<string>();
+  for (const [index, attribute] of behavior.attributes.entries()) {
+    assertBehaviorAttribute(attribute, `${label}.attributes.${index}`);
+    assertUnique(attributeIds, attribute.id, `${label}.attributes.${index}.id`);
+  }
+}
+
+export function assertBehaviorAttribute(attribute: SceneBehaviorAttribute, label = attribute.id): void {
+  assertNonEmpty(attribute.id, `${label}.id`);
+  assertNonEmpty(attribute.name, `${label}.name`);
+
+  if (attribute.kind === "object") {
+    assertObjectDefaults(attribute.object, `${label}.object`);
+  } else {
+    assertAreaDefaults(attribute.area, `${label}.area`);
+  }
+}
+
+export function assertBehaviorInstance(instance: SceneBehaviorInstance, label = instance.id): void {
+  assertNonEmpty(instance.id, `${label}.id`);
+  assertNonEmpty(instance.behaviorId, `${label}.behaviorId`);
+  assertBoolean(instance.visible, `${label}.visible`);
+  assertBoolean(instance.locked, `${label}.locked`);
+}
+
 export function assertObject(object: SceneObject, label = object.id): void {
   assertNonEmpty(object.id, `${label}.id`);
+  assertObjectDefaults(object, label);
+}
+
+function assertObjectDefaults(object: SceneObjectDefaults, label: string): void {
   assertNonEmpty(object.assetId, `${label}.assetId`);
   assertFiniteNumber(object.x, `${label}.x`);
   assertFiniteNumber(object.y, `${label}.y`);
@@ -90,6 +147,10 @@ export function assertObject(object: SceneObject, label = object.id): void {
 
 export function assertArea(area: SceneArea, label = area.id): void {
   assertNonEmpty(area.id, `${label}.id`);
+  assertAreaDefaults(area, label);
+}
+
+function assertAreaDefaults(area: SceneAreaDefaults, label: string): void {
   assertBoolean(area.visible, `${label}.visible`);
   assertBoolean(area.locked, `${label}.locked`);
   assertBoolean(area.closed, `${label}.closed`);
@@ -134,6 +195,13 @@ export function resolveSceneObject(
     if (object) {
       return { scene, layer, object };
     }
+
+    const behaviorObject = resolveLayerBehaviorObjects(manifest, layer)
+      .find((candidate) => candidate.object.id === objectId);
+
+    if (behaviorObject) {
+      return { scene, layer, ...behaviorObject };
+    }
   }
 
   throw new Error(`Unknown object "${objectId}" in scene "${sceneId}".`);
@@ -152,6 +220,13 @@ export function resolveSceneArea(
     if (area) {
       return { scene, layer, area };
     }
+
+    const behaviorArea = resolveLayerBehaviorAreas(manifest, layer)
+      .find((candidate) => candidate.area.id === areaId);
+
+    if (behaviorArea) {
+      return { scene, layer, ...behaviorArea };
+    }
   }
 
   throw new Error(`Unknown area "${areaId}" in scene "${sceneId}".`);
@@ -159,6 +234,141 @@ export function resolveSceneArea(
 
 export function cloneSceneManifest(manifest: SceneDesignerManifest): SceneDesignerManifest {
   return structuredClone(manifest);
+}
+
+export function behaviorAttributeId(instanceId: string, attributeId: string): string {
+  return `${instanceId}${behaviorAttributeSeparator}${attributeId}`;
+}
+
+export function behaviorInstanceIdFromAttributeId(id: string): string | undefined {
+  const index = id.indexOf(behaviorAttributeSeparator);
+  return index === -1 ? undefined : id.slice(0, index);
+}
+
+export function sceneObjects(
+  manifest: SceneDesignerManifest,
+  sceneOrId: SceneDefinition | string
+): SceneObject[] {
+  const scene = typeof sceneOrId === "string" ? getScene(manifest, sceneOrId) : sceneOrId;
+  return scene.layers.flatMap((layer) => sceneLayerObjects(manifest, layer));
+}
+
+export function sceneAreas(
+  manifest: SceneDesignerManifest,
+  sceneOrId: SceneDefinition | string
+): SceneArea[] {
+  const scene = typeof sceneOrId === "string" ? getScene(manifest, sceneOrId) : sceneOrId;
+  return scene.layers.flatMap((layer) => sceneLayerAreas(manifest, layer));
+}
+
+export function sceneLayerObjects(
+  manifest: SceneDesignerManifest,
+  layer: SceneLayer
+): SceneObject[] {
+  return [
+    ...layer.objects,
+    ...resolveLayerBehaviorObjects(manifest, layer).map((resolved) => resolved.object)
+  ];
+}
+
+export function sceneLayerAreas(
+  manifest: SceneDesignerManifest,
+  layer: SceneLayer
+): SceneArea[] {
+  return [
+    ...layer.areas,
+    ...resolveLayerBehaviorAreas(manifest, layer).map((resolved) => resolved.area)
+  ];
+}
+
+export function resolveLayerBehaviorObjects(
+  manifest: SceneDesignerManifest,
+  layer: SceneLayer
+): Array<Omit<ResolvedSceneObject, "scene" | "layer"> & {
+  behavior: SceneBehaviorDefinition;
+  behaviorInstance: SceneBehaviorInstance;
+  behaviorAttribute: SceneBehaviorObjectAttribute;
+}> {
+  const resolved: Array<Omit<ResolvedSceneObject, "scene" | "layer"> & {
+    behavior: SceneBehaviorDefinition;
+    behaviorInstance: SceneBehaviorInstance;
+    behaviorAttribute: SceneBehaviorObjectAttribute;
+  }> = [];
+
+  for (const instance of layer.behaviors ?? []) {
+    const behavior = manifest.behaviors?.[instance.behaviorId];
+    if (!behavior) continue;
+
+    for (const attribute of behavior.attributes) {
+      if (attribute.kind !== "object") continue;
+
+      const override = instance.overrides?.[attribute.id] as Partial<SceneObjectDefaults> | undefined;
+      resolved.push({
+        behavior,
+        behaviorInstance: instance,
+        behaviorAttribute: attribute,
+        object: {
+          ...structuredClone(attribute.object),
+          ...structuredClone(override ?? {}),
+          id: behaviorAttributeId(instance.id, attribute.id),
+          visible: instance.visible && (override?.visible ?? attribute.object.visible),
+          locked: instance.locked || (override?.locked ?? attribute.object.locked)
+        }
+      });
+    }
+  }
+
+  return resolved;
+}
+
+export function resolveLayerBehaviorAreas(
+  manifest: SceneDesignerManifest,
+  layer: SceneLayer
+): Array<Omit<ResolvedSceneArea, "scene" | "layer"> & {
+  behavior: SceneBehaviorDefinition;
+  behaviorInstance: SceneBehaviorInstance;
+  behaviorAttribute: SceneBehaviorAreaAttribute;
+}> {
+  const resolved: Array<Omit<ResolvedSceneArea, "scene" | "layer"> & {
+    behavior: SceneBehaviorDefinition;
+    behaviorInstance: SceneBehaviorInstance;
+    behaviorAttribute: SceneBehaviorAreaAttribute;
+  }> = [];
+
+  for (const instance of layer.behaviors ?? []) {
+    const behavior = manifest.behaviors?.[instance.behaviorId];
+    if (!behavior) continue;
+
+    for (const attribute of behavior.attributes) {
+      if (attribute.kind !== "area") continue;
+
+      const override = instance.overrides?.[attribute.id] as Partial<SceneAreaDefaults> | undefined;
+      resolved.push({
+        behavior,
+        behaviorInstance: instance,
+        behaviorAttribute: attribute,
+        area: {
+          ...structuredClone(attribute.area),
+          ...structuredClone(override ?? {}),
+          id: behaviorAttributeId(instance.id, attribute.id),
+          visible: instance.visible && (override?.visible ?? attribute.area.visible),
+          locked: instance.locked || (override?.locked ?? attribute.area.locked),
+          vertices: structuredClone(override?.vertices ?? attribute.area.vertices)
+        }
+      });
+    }
+  }
+
+  return resolved;
+}
+
+export function ensureBehaviorOverride(
+  instance: SceneBehaviorInstance,
+  attributeId: string
+): SceneBehaviorAttributeOverride {
+  instance.overrides ??= {};
+  instance.overrides[attributeId] ??= {};
+  return instance.overrides[attributeId];
 }
 
 function assertNonEmpty(value: string | undefined, label: string): void {

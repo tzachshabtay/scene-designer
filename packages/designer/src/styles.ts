@@ -58,6 +58,7 @@ export function ensureSceneDesignerStyles(): void {
     0 12px 30px rgba(0, 0, 0, 0.42);
   transform: translateY(-1px);
 }
+.scene-designer__toggle + .scene-designer__toggle { margin-top: 8px; }
 .scene-designer__panel {
   display: none;
   width: min(420px, calc(100vw - 28px));
@@ -70,7 +71,8 @@ export function ensureSceneDesignerStyles(): void {
   background: var(--sd-bg);
   box-shadow: 0 18px 60px rgba(0, 0, 0, 0.45);
 }
-.scene-designer[data-open="true"] .scene-designer__panel { display: block; }
+.scene-designer[data-open="scenes"] .scene-designer__panel[data-panel="scenes"],
+.scene-designer[data-open="behaviors"] .scene-designer__panel[data-panel="behaviors"] { display: block; }
 .scene-designer__header,
 .scene-designer__section,
 .scene-designer__editor {
@@ -152,12 +154,14 @@ export function ensureSceneDesignerStyles(): void {
   letter-spacing: 0;
 }
 .scene-designer__layer,
-.scene-designer__item {
+.scene-designer__item,
+.scene-designer__attribute {
   border: 1px solid var(--sd-border);
   border-radius: 7px;
   background: rgba(27, 34, 48, 0.72);
 }
-.scene-designer__layer { margin-bottom: 10px; }
+.scene-designer__layer,
+.scene-designer__attribute { margin-bottom: 10px; }
 .scene-designer__layer-header {
   display: grid;
   grid-template-columns: auto 1fr auto auto auto;
@@ -188,6 +192,13 @@ export function ensureSceneDesignerStyles(): void {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.scene-designer__attribute {
+  padding: 8px;
+}
+.scene-designer__attribute-row {
+  margin: 6px 8px;
+  padding: 8px;
 }
 .scene-designer__empty {
   color: var(--sd-muted);

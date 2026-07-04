@@ -1,5 +1,6 @@
 import {
   assertSceneManifest,
+  type SceneBehaviorDefinition,
   type SceneDefinition,
   type SceneDesignerManifest
 } from "@scene-designer/core";
@@ -72,10 +73,16 @@ export async function writeSceneManifestModule(
 
 export async function readSceneManifestDirectory(rootDir: string): Promise<SceneDesignerManifest> {
   const scenes: Record<string, SceneDefinition> = {};
+  let behaviors: Record<string, SceneBehaviorDefinition> | undefined;
   const scenePaths: Record<string, string[]> = {};
 
   for (const filePath of await jsonFiles(rootDir)) {
     const relativePath = path.relative(rootDir, filePath);
+    if (relativePath === "behaviors.json") {
+      behaviors = JSON.parse(await readFile(filePath, "utf8")) as Record<string, SceneBehaviorDefinition>;
+      continue;
+    }
+
     const scene = JSON.parse(await readFile(filePath, "utf8")) as SceneDefinition;
     scenes[scene.id] = scene;
     scenePaths[scene.id] = path.dirname(relativePath) === "."
@@ -86,6 +93,7 @@ export async function readSceneManifestDirectory(rootDir: string): Promise<Scene
   const manifest: SceneDesignerManifest = {
     schemaVersion: 1,
     scenes,
+    behaviors,
     scenePaths
   };
   assertSceneManifest(manifest);
@@ -107,6 +115,10 @@ export async function writeSceneManifestDirectory(
     const filePath = path.join(rootDir, ...folder, `${sanitizeFilePart(scene.id)}.json`);
     await mkdir(path.dirname(filePath), { recursive: true });
     await writeFile(filePath, `${JSON.stringify(scene, null, 2)}\n`);
+  }
+
+  if (manifest.behaviors && Object.keys(manifest.behaviors).length > 0) {
+    await writeFile(path.join(rootDir, "behaviors.json"), `${JSON.stringify(manifest.behaviors, null, 2)}\n`);
   }
 }
 

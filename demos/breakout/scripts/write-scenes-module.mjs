@@ -8,10 +8,16 @@ const manifestDir = path.join(demoRoot, "src/scenes");
 const moduleOut = path.join(demoRoot, "src/scenes.ts");
 
 const scenes = {};
+let behaviors;
 const scenePaths = {};
 
 for (const filePath of await jsonFiles(manifestDir)) {
   const relativePath = path.relative(manifestDir, filePath);
+  if (relativePath === "behaviors.json") {
+    behaviors = JSON.parse(await readFile(filePath, "utf8"));
+    continue;
+  }
+
   const scene = JSON.parse(await readFile(filePath, "utf8"));
   scenes[scene.id] = scene;
   const dirname = path.dirname(relativePath);
@@ -23,7 +29,7 @@ await writeFile(moduleOut, [
   "import { defineSceneManifest } from \"@scene-designer/core\";",
   "",
   "export const scenes = defineSceneManifest(",
-  `${JSON.stringify({ schemaVersion: 1, scenes, scenePaths }, null, 2)}`,
+  `${JSON.stringify({ schemaVersion: 1, scenes, behaviors, scenePaths }, null, 2)}`,
   ");",
   ""
 ].join("\n"));

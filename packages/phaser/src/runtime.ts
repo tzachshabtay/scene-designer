@@ -3,6 +3,9 @@ import { AiAssetRuntime } from "@ai-game-assets/phaser";
 import type Phaser from "phaser";
 import {
   getScene,
+  sceneAreas,
+  sceneLayerObjects,
+  sceneObjects,
   type SceneArea,
   type SceneDefinition,
   type SceneDesignerManifest,
@@ -45,21 +48,25 @@ export class SceneDesignerRuntime {
   }
 
   objects(sceneId: string, tag?: string): SceneObject[] {
-    return getScene(this.scenes, sceneId).layers.flatMap((layer) => layer.objects)
+    return sceneObjects(this.scenes, sceneId)
       .filter((object) => tag === undefined || object.tag === tag);
   }
 
   areas(sceneId: string, tag?: string): SceneArea[] {
-    return getScene(this.scenes, sceneId).layers.flatMap((layer) => layer.areas)
+    return sceneAreas(this.scenes, sceneId)
       .filter((area) => tag === undefined || area.tag === tag);
   }
 
   createObjects(sceneId: string, options: CreateSceneObjectsOptions = {}): CreatedSceneObject[] {
-    return createSceneObjects(this.scene, getScene(this.scenes, sceneId), this.aiRuntime, options);
+    return createSceneObjects(this.scene, getScene(this.scenes, sceneId), this.aiRuntime, {
+      ...options,
+      manifest: this.scenes
+    });
   }
 }
 
 export type CreateSceneObjectsOptions = {
+  manifest?: SceneDesignerManifest;
   depth?: number;
   layerDepthStep?: number;
   objectFilter?(object: SceneObject): boolean;
@@ -74,11 +81,12 @@ export function createSceneObjects(
   const created: CreatedSceneObject[] = [];
   const baseDepth = options.depth ?? 0;
   const layerDepthStep = options.layerDepthStep ?? 100;
+  const manifest = options.manifest ?? { schemaVersion: 1, scenes: { [scene.id]: scene } } satisfies SceneDesignerManifest;
 
   scene.layers.forEach((layer, layerIndex) => {
     if (!layer.visible) return;
 
-    layer.objects.forEach((object, objectIndex) => {
+    sceneLayerObjects(manifest, layer).forEach((object, objectIndex) => {
       if (!object.visible || options.objectFilter?.(object) === false) return;
 
       const sprite = phaserScene.add.sprite(object.x, object.y, aiRuntime.key(object.assetId)) as CreatedSceneObject;

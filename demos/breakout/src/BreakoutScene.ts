@@ -8,6 +8,8 @@ import {
 import type { AiAssetDefinition, AiAssetManifest } from "@ai-game-assets/core";
 import {
   getScene,
+  sceneAreas,
+  sceneObjects,
   type SceneArea,
   type SceneDefinition,
   type SceneDesignerManifest,
@@ -34,6 +36,10 @@ const levelIds = ["level.one", "level.two", "level.three"];
 const brickTag = "brick";
 const backgroundTag = "background";
 const spawnTag = "enemy.spawn";
+const snakeSpawnTag = "enemy.spawn.snake";
+const monkeySpawnTag = "enemy.spawn.monkey";
+const ballTag = "ball";
+const paddleTag = "paddle";
 const statueBrickAssetId = "brick.statue";
 const snakeAssetId = "enemy.snake";
 const monkeyAssetId = "enemy.monkey";
@@ -216,30 +222,42 @@ export class BreakoutScene extends Phaser.Scene {
     this.clearLevel();
 
     const level = getScene(this.sceneManifest, this.currentSceneId);
+    const levelObjects = sceneObjects(this.sceneManifest, level);
     this.addSceneBackground(level);
 
     this.enemies = this.physics.add.group({ allowGravity: false });
     this.bananas = this.physics.add.group({ allowGravity: false });
 
-    for (const object of level.layers.flatMap((layer) => layer.objects)) {
+    for (const object of levelObjects) {
       if (object.tag === brickTag && object.visible) {
         this.createBrick(object);
       }
     }
 
-    this.paddle = this.physics.add.image(400, 564, this.textureForAsset("hero.paddle.normal"));
-    this.paddle.setData("assetId", "hero.paddle.normal");
-    this.bindAiAssetTexture(this.paddle, "hero.paddle.normal");
+    const paddleDefinition = levelObjects.find((object) => object.tag === paddleTag);
+    const paddleAssetId = paddleDefinition?.assetId ?? "hero.paddle.normal";
+    this.paddle = this.physics.add.image(paddleDefinition?.x ?? 400, paddleDefinition?.y ?? 564, this.textureForAsset(paddleAssetId));
+    this.paddle.setData("assetId", paddleAssetId);
+    this.bindAiAssetTexture(this.paddle, paddleAssetId);
+    if (paddleDefinition) {
+      applyObjectTransform(this.paddle, paddleDefinition);
+    }
     this.paddle.setImmovable(true);
     this.paddle.setCollideWorldBounds(true);
     this.paddle.setDepth(1200);
     this.paddle.body.allowGravity = false;
     this.levelObjects.push(this.paddle);
 
-    this.ball = this.physics.add.image(400, 520, this.textureForAsset("ball.core"));
-    this.ball.setData("assetId", "ball.core");
-    this.bindAiAssetTexture(this.ball, "ball.core");
-    this.ball.setOrigin(0.5, 0.5);
+    const ballDefinition = levelObjects.find((object) => object.tag === ballTag);
+    const ballAssetId = ballDefinition?.assetId ?? "ball.core";
+    this.ball = this.physics.add.image(ballDefinition?.x ?? 400, ballDefinition?.y ?? 520, this.textureForAsset(ballAssetId));
+    this.ball.setData("assetId", ballAssetId);
+    this.bindAiAssetTexture(this.ball, ballAssetId);
+    if (ballDefinition) {
+      applyObjectTransform(this.ball, ballDefinition);
+    } else {
+      this.ball.setOrigin(0.5, 0.5);
+    }
     this.ball.setCollideWorldBounds(true);
     this.ball.setBounce(1, 1);
     this.ball.setVelocity(190, -265);
@@ -277,8 +295,7 @@ export class BreakoutScene extends Phaser.Scene {
   }
 
   private addSceneBackground(level: SceneDefinition): void {
-    const background = level.layers
-      .flatMap((layer) => layer.objects)
+    const background = sceneObjects(this.sceneManifest, level)
       .find((object) => object.tag === backgroundTag);
 
     if (!background) return;
@@ -509,12 +526,16 @@ export class BreakoutScene extends Phaser.Scene {
     if (this.gameplayPaused) return;
     if (this.enemies.countActive(true) >= maxActiveEnemies) return;
 
-    const areas = level.layers.flatMap((layer) => layer.areas).filter((area) => area.tag === spawnTag && area.closed);
+    const areas = sceneAreas(this.sceneManifest, level).filter((area) => area.tag.startsWith(spawnTag) && area.closed);
     const area = Phaser.Utils.Array.GetRandom(areas);
     if (!area) return;
 
     const point = randomPointInArea(area);
-    const assetId = Math.random() > 0.5 ? snakeAssetId : monkeyAssetId;
+    const assetId = area.tag === snakeSpawnTag
+      ? snakeAssetId
+      : area.tag === monkeySpawnTag
+        ? monkeyAssetId
+        : Math.random() > 0.5 ? snakeAssetId : monkeyAssetId;
     const enemy = this.physics.add.image(point.x, point.y, this.textureForAsset(assetId));
     enemy.setData("assetId", assetId);
     this.bindAiAssetTexture(enemy, assetId);
