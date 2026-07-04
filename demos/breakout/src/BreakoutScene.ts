@@ -55,6 +55,7 @@ const monkeyMaxY = 250;
 const bananaAimLeadSeconds = 0.45;
 const bananaLaunchOffset = 22;
 const bananaSpeed = 360;
+const bananaSpinSpeed = 720;
 const paddleKeyboardSpeed = 430;
 const paddlePointerHoldMs = 180;
 
@@ -171,8 +172,6 @@ export class BreakoutScene extends Phaser.Scene {
       const banana = child as ArcadeImage;
       if (banana.y > 630 || banana.x < -40 || banana.x > 840) {
         banana.destroy();
-      } else if (banana.body.velocity.lengthSq() > 0) {
-        banana.setRotation(banana.body.velocity.angle());
       }
     }
   }
@@ -536,6 +535,7 @@ export class BreakoutScene extends Phaser.Scene {
     banana.setCollideWorldBounds(false);
     this.bananas.add(banana);
     banana.setVelocity(direction.x * bananaSpeed, direction.y * bananaSpeed);
+    banana.setAngularVelocity(Phaser.Math.RND.sign() * bananaSpinSpeed);
   }
 
   private queueLevelReload(): void {
