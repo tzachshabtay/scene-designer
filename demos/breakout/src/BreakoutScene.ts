@@ -178,6 +178,7 @@ export class BreakoutScene extends Phaser.Scene {
 
     this.updatePaddleControl();
     this.handleBrickCollisions();
+    this.handleEnemyCollisions();
 
     if (this.ball.y > 620) {
       this.loseBall();
@@ -246,7 +247,6 @@ export class BreakoutScene extends Phaser.Scene {
     this.levelObjects.push(this.ball);
 
     this.physics.add.collider(this.ball, this.paddle, this.onPaddleHit, undefined, this);
-    this.physics.add.overlap(this.ball, this.enemies, this.onEnemyHit, undefined, this);
     this.physics.add.overlap(this.paddle, this.enemies, this.onPaddleEnemyOverlap, undefined, this);
     this.physics.add.overlap(this.ball, this.bananas, this.onBananaHit, undefined, this);
     this.physics.add.overlap(this.paddle, this.bananas, this.onPaddleBananaOverlap, undefined, this);
@@ -349,6 +349,25 @@ export class BreakoutScene extends Phaser.Scene {
     }
   }
 
+  private handleEnemyCollisions(): void {
+    if (!this.ball?.active || !this.enemies) return;
+
+    for (const child of this.enemies.children) {
+      const enemy = child as ArcadeImage;
+      if (!enemy.active || !enemy.visible) continue;
+
+      const lastHitAt = Number(enemy.getData("lastHitAt") ?? -Infinity);
+      if (this.time.now - lastHitAt < 80) continue;
+
+      const point = this.pixelCollision.point(this.ball, enemy);
+      if (!point) continue;
+
+      enemy.setData("lastHitAt", this.time.now);
+      this.onEnemyHit(this.ball, enemy, point);
+      break;
+    }
+  }
+
   private onPaddleHit(ballObject: unknown): void {
     const ball = ballObject as ArcadeImage;
     const offset = Phaser.Math.Clamp((ball.x - this.paddle.x) / 64, -1, 1);
@@ -410,11 +429,11 @@ export class BreakoutScene extends Phaser.Scene {
 
   private onEnemyHit(
     ballObject: unknown,
-    enemyObject: unknown
+    enemyObject: unknown,
+    collisionPoint: Phaser.Math.Vector2
   ): void {
     const ball = ballObject as ArcadeImage;
     const enemy = enemyObject as ArcadeImage;
-    const collisionPoint = this.pixelCollision.point(ball, enemy) ?? closestPointOnObjectBounds(ball, enemy);
     this.reflectBallFromObject(ball, enemy, collisionPoint);
     enemy.destroy();
     this.score += 100;
@@ -737,18 +756,6 @@ function pointInPolygon(point: Phaser.Math.Vector2, vertices: Array<{ x: number;
   }
 
   return inside;
-}
-
-function closestPointOnObjectBounds(
-  source: Phaser.GameObjects.Image | Phaser.GameObjects.Sprite,
-  target: Phaser.GameObjects.Image | Phaser.GameObjects.Sprite
-): Phaser.Math.Vector2 {
-  const bounds = target.getBounds();
-
-  return new Phaser.Math.Vector2(
-    Phaser.Math.Clamp(source.x, bounds.left, bounds.right),
-    Phaser.Math.Clamp(source.y, bounds.top, bounds.bottom)
-  );
 }
 
 function objectCollisionNormal(
