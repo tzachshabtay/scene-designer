@@ -41,6 +41,8 @@ export function installPhaserSceneDesigner(
     ...options,
     manifest: options.manifest,
     aiAssets: options.aiAssets,
+    assetBaseUrl: options.baseUrl,
+    assetTargetId: options.targetId,
     client: options.client ?? new SceneDesignerDebugClient(),
     onManifestChange(manifest) {
       options.onManifestChange?.(manifest);

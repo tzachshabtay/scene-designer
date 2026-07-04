@@ -5,6 +5,7 @@ import type {
   SceneDesignerMode
 } from "@scene-designer/designer";
 import {
+  behaviorAttributeId,
   getScene,
   resolveSceneArea,
   resolveSceneObject,
@@ -12,6 +13,7 @@ import {
   sceneLayerObjects,
   type SceneArea,
   type SceneAreaVertex,
+  type SceneBehaviorAreaAttribute,
   type SceneDefinition,
   type SceneDesignerManifest,
   type SceneLayer,
@@ -65,6 +67,18 @@ type HitArea =
   | { kind: "vertex"; area: SceneArea; vertex: SceneAreaVertex }
   | { kind: "edge"; area: SceneArea; from: SceneAreaVertex; to: SceneAreaVertex; insertIndex: number };
 
+type CanvasArea = {
+  area: SceneArea;
+  layer?: SceneLayer;
+  behaviorId?: string;
+  attributeId?: string;
+};
+
+type BehaviorCanvasArea = CanvasArea & {
+  behaviorId: string;
+  attributeId: string;
+};
+
 export class PhaserSceneDesignerCanvas {
   private manifest: SceneDesignerManifest;
   private mode: SceneDesignerMode;
@@ -106,7 +120,9 @@ export class PhaserSceneDesignerCanvas {
 
   setSelection(selection: SceneSelection | undefined): void {
     this.selection = selection;
-    this.selectedVertexId = selection?.type === "vertex" ? selection.vertexId : this.selectedVertexId;
+    this.selectedVertexId = selection?.type === "vertex" || selection?.type === "behavior-vertex"
+      ? selection.vertexId
+      : this.selectedVertexId;
     this.drawOverlay();
   }
 
@@ -222,6 +238,14 @@ export class PhaserSceneDesignerCanvas {
   private drawAreas(): void {
     this.areaGraphics.clear();
     if (!this.isOpen) return;
+    if (this.isBehaviorView()) {
+      this.behaviorAreaEntries().forEach((entry, index) => {
+        if (!entry.area.visible || entry.area.vertices.length < 2) return;
+        this.drawArea(entry.area, index, entry.area.locked);
+      });
+      return;
+    }
+
     const scene = this.currentScene();
 
     scene.layers.forEach((layer) => {
@@ -229,21 +253,33 @@ export class PhaserSceneDesignerCanvas {
 
       sceneLayerAreas(this.manifest, layer).forEach((area, index) => {
         if (!area.visible || area.vertices.length < 2) return;
-        const alpha = layer.locked || area.locked ? 0.18 : 0.28;
-        this.areaGraphics.lineStyle(2, 0x46d39a, 0.8);
-        this.areaGraphics.fillStyle(index % 2 === 0 ? 0x46d39a : 0x80b7ff, area.closed ? alpha : 0.08);
-        drawAreaPath(this.areaGraphics, area, area.closed);
-        if (area.closed) {
-          this.areaGraphics.fillPath();
-        }
-        this.areaGraphics.strokePath();
+        this.drawArea(area, index, layer.locked || area.locked);
       });
     });
+  }
+
+  private drawArea(area: SceneArea, index: number, locked: boolean): void {
+    const alpha = locked ? 0.18 : 0.28;
+    this.areaGraphics.lineStyle(2, 0x46d39a, 0.8);
+    this.areaGraphics.fillStyle(index % 2 === 0 ? 0x46d39a : 0x80b7ff, area.closed ? alpha : 0.08);
+    drawAreaPath(this.areaGraphics, area, area.closed);
+    if (area.closed) {
+      this.areaGraphics.fillPath();
+    }
+    this.areaGraphics.strokePath();
   }
 
   private drawOverlay(): void {
     this.overlay.clear();
     if (!this.isOpen) return;
+    if (this.isBehaviorView()) {
+      const selectedBehaviorArea = this.selectedBehaviorArea()?.area;
+      if (selectedBehaviorArea) {
+        this.drawAreaHandles(selectedBehaviorArea);
+      }
+      return;
+    }
+
     const selectedObject = this.selection?.type === "object"
       ? this.findObject(this.selection.objectId)?.object
       : undefined;
@@ -323,6 +359,11 @@ export class PhaserSceneDesignerCanvas {
     if (!this.isOpen) return;
 
     const point = pointerPosition(pointer);
+    if (this.isBehaviorView()) {
+      this.onBehaviorPointerDown(point);
+      return;
+    }
+
     const scene = this.currentScene();
 
     if (this.selection?.type === "area") {
@@ -423,6 +464,12 @@ export class PhaserSceneDesignerCanvas {
       return;
     }
 
+    if (this.isBehaviorView()) {
+      this.hoverObjectId = undefined;
+      this.drawOverlay();
+      return;
+    }
+
     const hit = this.hitTopObject(point);
     this.hoverObjectId = hit?.object.id;
     this.drawOverlay();
@@ -432,6 +479,23 @@ export class PhaserSceneDesignerCanvas {
     if (!this.isOpen) return;
 
     const point = pointerPosition(pointer);
+    if (this.isBehaviorView()) {
+      const selectedArea = this.selectedBehaviorArea()?.area;
+      const edge = selectedArea ? this.hitAreaEdge(point, selectedArea) : undefined;
+      if (
+        pointer.getDuration() < 320 &&
+        selectedArea?.closed &&
+        edge &&
+        pointer.downTime &&
+        pointer.upTime - pointer.downTime < 260 &&
+        pointer.event.detail >= 2
+      ) {
+        this.options.designer.insertAreaVertex(selectedArea.id, edge.insertIndex, point.x, point.y);
+      }
+      this.drag = undefined;
+      return;
+    }
+
     if (pointer.getDuration() < 320 && this.selection?.type === "area") {
       const area = this.findArea(this.selection.areaId)?.area;
       const edge = area ? this.hitAreaEdge(point, area) : undefined;
@@ -445,6 +509,15 @@ export class PhaserSceneDesignerCanvas {
 
   private onBackspace(event: KeyboardEvent): void {
     if (!this.isOpen) return;
+
+    if (this.selection?.type === "behavior-vertex") {
+      event.preventDefault();
+      this.options.designer.removeAreaVertex(
+        behaviorAttributeId(this.selection.behaviorId, this.selection.attributeId),
+        this.selection.vertexId
+      );
+      return;
+    }
 
     if (!this.selection || this.selection.type !== "vertex") return;
     event.preventDefault();
@@ -525,6 +598,101 @@ export class PhaserSceneDesignerCanvas {
     }
 
     this.options.designer.addAreaVertex(area.id, point.x, point.y);
+  }
+
+  private onBehaviorPointerDown(point: Phaser.Math.Vector2): void {
+    const selected = this.selectedBehaviorArea();
+    if (selected && !selected.area.locked) {
+      if (!selected.area.closed || this.mode === "area-draw") {
+        this.handleAreaDrawClick(selected.area, point);
+        return;
+      }
+
+      const areaHit = this.hitArea(point, selected.area);
+      if (areaHit?.kind === "vertex") {
+        this.selectedVertexId = areaHit.vertex.id;
+        this.drag = {
+          type: "vertex",
+          areaId: selected.area.id,
+          vertexId: areaHit.vertex.id,
+          historyWritten: false
+        };
+        this.options.designer.select({
+          type: "behavior-vertex",
+          behaviorId: selected.behaviorId,
+          attributeId: selected.attributeId,
+          vertexId: areaHit.vertex.id
+        });
+        return;
+      }
+      if (areaHit?.kind === "edge") {
+        this.drag = {
+          type: "edge",
+          areaId: selected.area.id,
+          vertexId: areaHit.from.id,
+          historyWritten: false
+        };
+        return;
+      }
+    }
+
+    const hit = this.hitAnyBehaviorArea(point);
+    if (hit?.behaviorId && hit.attributeId) {
+      this.options.designer.select({
+        type: "behavior-area",
+        behaviorId: hit.behaviorId,
+        attributeId: hit.attributeId
+      });
+    }
+  }
+
+  private selectedBehaviorArea(): BehaviorCanvasArea | undefined {
+    if (this.selection?.type === "behavior-area" || this.selection?.type === "behavior-vertex") {
+      return this.findBehaviorArea(this.selection.behaviorId, this.selection.attributeId);
+    }
+
+    return undefined;
+  }
+
+  private hitAnyBehaviorArea(point: Phaser.Math.Vector2): BehaviorCanvasArea | undefined {
+    const areas = this.behaviorAreaEntries();
+    for (let index = areas.length - 1; index >= 0; index -= 1) {
+      const entry = areas[index];
+      if (!entry.area.visible) continue;
+      if (this.hitArea(point, entry.area)) return entry;
+    }
+
+    return undefined;
+  }
+
+  private behaviorAreaEntries(): BehaviorCanvasArea[] {
+    const behaviorId = this.options.designer.getSelectedBehaviorId();
+    const behavior = behaviorId ? this.manifest.behaviors?.[behaviorId] : undefined;
+    if (!behavior) return [];
+
+    return behavior.attributes
+      .filter((attribute): attribute is SceneBehaviorAreaAttribute => attribute.kind === "area")
+      .map((attribute) => this.behaviorAreaEntry(behavior.id, attribute));
+  }
+
+  private findBehaviorArea(behaviorId: string, attributeId: string): BehaviorCanvasArea | undefined {
+    const behavior = this.manifest.behaviors?.[behaviorId];
+    const attribute = behavior?.attributes.find((candidate): candidate is SceneBehaviorAreaAttribute => (
+      candidate.id === attributeId && candidate.kind === "area"
+    ));
+    return behavior && attribute ? this.behaviorAreaEntry(behavior.id, attribute) : undefined;
+  }
+
+  private behaviorAreaEntry(behaviorId: string, attribute: SceneBehaviorAreaAttribute): BehaviorCanvasArea {
+    return {
+      behaviorId,
+      attributeId: attribute.id,
+      area: {
+        ...structuredClone(attribute.area),
+        id: behaviorAttributeId(behaviorId, attribute.id),
+        vertices: structuredClone(attribute.area.vertices)
+      }
+    };
   }
 
   private hitTopObject(point: Phaser.Math.Vector2): HitObject | undefined {
@@ -647,6 +815,10 @@ export class PhaserSceneDesignerCanvas {
 
   private currentScene(): SceneDefinition {
     return getScene(this.manifest, this.options.designer.getSceneId());
+  }
+
+  private isBehaviorView(): boolean {
+    return this.options.designer.getOpenView() === "behaviors";
   }
 
   private objectSize(object: SceneObject): { width: number; height: number } {

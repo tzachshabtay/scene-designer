@@ -105,6 +105,9 @@ export type SceneSelection =
   | { type: "scene"; sceneId: string }
   | { type: "layer"; sceneId: string; layerId: string }
   | { type: "behavior"; sceneId: string; layerId: string; instanceId: string }
+  | { type: "behavior-definition"; behaviorId: string }
+  | { type: "behavior-area"; behaviorId: string; attributeId: string }
+  | { type: "behavior-vertex"; behaviorId: string; attributeId: string; vertexId: string }
   | { type: "object"; sceneId: string; layerId: string; objectId: string }
   | { type: "area"; sceneId: string; layerId: string; areaId: string }
   | { type: "vertex"; sceneId: string; layerId: string; areaId: string; vertexId: string };

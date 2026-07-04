@@ -1,4 +1,4 @@
-import type { AiAssetDefinition, AiAssetManifest } from "@ai-game-assets/core";
+import { resolveAiAsset, type AiAssetDefinition, type AiAssetManifest } from "@ai-game-assets/core";
 
 export type GraphicAiAsset = AiAssetDefinition & {
   kind: "image" | "spritesheet" | "animation";
@@ -35,4 +35,25 @@ export function assetFolderPath(manifest: AiAssetManifest, assetId: string): str
   const parts = assetId.split(".");
   if (parts.length <= 1) return [];
   return parts.slice(0, -1).map((part) => readableName(part));
+}
+
+export function graphicAssetPreviewUrl(
+  manifest: AiAssetManifest,
+  assetId: string,
+  options: { baseUrl?: string; targetId?: string } = {}
+): string | undefined {
+  const asset = manifest.assets[assetId];
+  if (!isGraphicAsset(asset) || Object.keys(asset.versions).length === 0) return undefined;
+
+  try {
+    const resolved = resolveAiAsset(manifest, {
+      assetId,
+      targetId: options.targetId
+    });
+    return options.baseUrl
+      ? `${options.baseUrl.replace(/\/$/, "")}/${resolved.version.file.replace(/^\//, "")}`
+      : resolved.version.file;
+  } catch {
+    return undefined;
+  }
 }

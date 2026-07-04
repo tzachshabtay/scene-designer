@@ -209,6 +209,28 @@ export function ensureSceneDesignerStyles(): void {
   border-radius: 7px;
   overflow: hidden;
 }
+.scene-designer__asset-preview {
+  display: grid;
+  place-items: center;
+  min-height: 96px;
+  border: 1px solid var(--sd-border);
+  border-radius: 7px;
+  background:
+    linear-gradient(45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.05) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, 0.05) 75%),
+    #111722;
+  background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+  background-size: 16px 16px;
+  overflow: hidden;
+}
+.scene-designer__asset-preview img {
+  display: block;
+  max-width: 100%;
+  max-height: 140px;
+  object-fit: contain;
+}
 .scene-designer__asset-breadcrumbs,
 .scene-designer__asset-list {
   display: flex;

@@ -21,6 +21,7 @@ import {
   type ResolvedSceneObject,
   type SceneArea,
   type SceneAreaDefaults,
+  type SceneBehaviorAreaAttribute,
   type SceneBehaviorDefinition,
   type SceneBehaviorInstance,
   type SceneObjectDefaults,
@@ -30,13 +31,15 @@ import {
   type SceneObject,
   type SceneSelection
 } from "@scene-designer/core";
-import { assetFolderPath, graphicAssetIds, readableName } from "./assets.js";
+import { assetFolderPath, graphicAssetIds, graphicAssetPreviewUrl, readableName } from "./assets.js";
 import { SceneDesignerDebugClient } from "./debug-client.js";
 import { ensureSceneDesignerStyles } from "./styles.js";
 
 export type SceneDesignerOptions = {
   manifest: SceneDesignerManifest;
   aiAssets: AiAssetManifest;
+  assetBaseUrl?: string;
+  assetTargetId?: string;
   client?: SceneDesignerDebugClient;
   title?: string;
   mount?: HTMLElement;
@@ -49,6 +52,7 @@ export type SceneDesignerOptions = {
 };
 
 export type SceneDesignerMode = "select" | "area-draw";
+export type SceneDesignerOpenView = "scenes" | "behaviors" | false;
 
 export type SceneDesigner = {
   root: HTMLDivElement;
@@ -58,6 +62,8 @@ export type SceneDesigner = {
   destroy(): void;
   getManifest(): SceneDesignerManifest;
   getSceneId(): string;
+  getSelectedBehaviorId(): string;
+  getOpenView(): SceneDesignerOpenView;
   getSelection(): SceneSelection | undefined;
   getMode(): SceneDesignerMode;
   setManifest(manifest: SceneDesignerManifest): void;
@@ -146,6 +152,12 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     getSceneId() {
       return selectedSceneId;
     },
+    getSelectedBehaviorId() {
+      return selectedBehaviorId;
+    },
+    getOpenView() {
+      return openView();
+    },
     getSelection() {
       return selection ? { ...selection } as SceneSelection : undefined;
     },
@@ -167,8 +179,11 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     },
     select(nextSelection) {
       selection = nextSelection;
-      selectedSceneId = nextSelection?.sceneId ?? selectedSceneId;
-      mode = nextSelection?.type === "area" ? mode : "select";
+      const sceneId = sceneIdFromSelection(nextSelection);
+      if (sceneId) selectedSceneId = sceneId;
+      const behaviorId = behaviorIdFromSelection(nextSelection);
+      if (behaviorId) selectedBehaviorId = behaviorId;
+      mode = nextSelection?.type === "area" || nextSelection?.type === "behavior-area" ? mode : "select";
       render();
       emitSelection();
       options.onModeChange?.(mode);
@@ -188,6 +203,12 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     },
     updateArea(areaId, patch, editOptions) {
       commit(() => {
+        const behaviorArea = findBehaviorAreaDefault(areaId);
+        if (behaviorArea) {
+          Object.assign(behaviorArea.attribute.area, withoutId(patch));
+          return;
+        }
+
         const resolved = findArea(areaId);
         if (resolved.behaviorInstance && resolved.behaviorAttribute) {
           Object.assign(
@@ -202,7 +223,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     updateAreaVertex(areaId, vertexId, patch, editOptions) {
       commit(() => {
         const area = mutableAreaForEdit(areaId);
-        const vertex = area.vertices.find((candidate) => candidate.id === vertexId);
+        const vertex = area?.vertices.find((candidate) => candidate.id === vertexId);
         if (!vertex) return;
         Object.assign(vertex, patch);
       }, editOptions?.history);
@@ -210,18 +231,21 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     addAreaVertex(areaId, x, y, editOptions) {
       commit(() => {
         const area = mutableAreaForEdit(areaId);
+        if (!area) return;
         area.vertices.push(createAreaVertex(x, y));
       }, editOptions?.history);
     },
     insertAreaVertex(areaId, index, x, y, editOptions) {
       commit(() => {
         const area = mutableAreaForEdit(areaId);
+        if (!area) return;
         area.vertices.splice(Math.max(0, index), 0, createAreaVertex(x, y));
       }, editOptions?.history);
     },
     removeAreaVertex(areaId, vertexId, editOptions) {
       commit(() => {
         const area = mutableAreaForEdit(areaId);
+        if (!area) return;
         if (area.vertices.length <= 3 && area.closed) return;
         area.vertices = area.vertices.filter((vertex) => vertex.id !== vertexId);
       }, editOptions?.history);
@@ -229,7 +253,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     closeArea(areaId, editOptions) {
       commit(() => {
         const area = mutableAreaForEdit(areaId);
-        if (area.vertices.length >= 3) {
+        if (area && area.vertices.length >= 3) {
           area.closed = true;
         }
       }, editOptions?.history);
@@ -314,7 +338,11 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     setOpen(elements.root.dataset.open === "scenes" ? false : "scenes");
   });
   elements.behaviorToggle.addEventListener("click", () => {
-    setOpen(elements.root.dataset.open === "behaviors" ? false : "behaviors");
+    const nextView = elements.root.dataset.open === "behaviors" ? false : "behaviors";
+    setOpen(nextView);
+    if (nextView === "behaviors") {
+      selectBehaviorDefinition(selectedBehaviorId);
+    }
   });
   elements.sceneSelect.addEventListener("change", () => {
     selectedSceneId = elements.sceneSelect.value;
@@ -419,8 +447,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     promoteAllButton.addEventListener("click", () => void api.promote("Promoted all scene changes."));
     promoteBehaviorsButton.addEventListener("click", () => void api.promote("Promoted behavior changes."));
     behaviorSelect.addEventListener("change", () => {
-      selectedBehaviorId = behaviorSelect.value;
-      renderBehaviors();
+      selectBehaviorDefinition(behaviorSelect.value);
     });
 
     return {
@@ -493,6 +520,12 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
         behavior.name = value.trim() || behavior.name;
       });
     }));
+    const behaviorActions = document.createElement("div");
+    behaviorActions.className = "scene-designer__row";
+    const promoteBehavior = button("Promote");
+    behaviorActions.append(promoteBehavior);
+    promoteBehavior.addEventListener("click", () => void api.promote(`Promoted behavior "${behavior.name}".`));
+    stack.append(behaviorActions);
 
     for (const attribute of behavior.attributes) {
       const section = document.createElement("div");
@@ -502,10 +535,18 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
       const title = document.createElement("span");
       title.textContent = `${attribute.name} ${attribute.kind === "object" ? "object" : "area"}`;
       heading.append(title);
+      if (attribute.kind === "area") {
+        const editArea = button("Edit on canvas");
+        editArea.addEventListener("click", () => {
+          selectBehaviorArea(behavior.id, attribute.id);
+        });
+        heading.append(editArea);
+      }
       section.append(heading);
 
       if (attribute.kind === "object") {
         const object = { id: behaviorAttributeId(behavior.id, attribute.id), ...attribute.object };
+        appendObjectPreview(section, object);
         appendObjectControls(section, object, (patch) => {
           commit(() => {
             Object.assign(attribute.object, withoutId(sanitizeObjectPatch(patch)));
@@ -520,7 +561,8 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
         });
         section.append(browser);
       } else {
-        appendAreaControls(section, { id: attribute.id, ...attribute.area }, (patch) => {
+        const area = { id: behaviorAttributeId(behavior.id, attribute.id), ...attribute.area };
+        appendAreaControls(section, area, (patch) => {
           commit(() => {
             Object.assign(attribute.area, withoutId(patch));
           });
@@ -596,7 +638,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     remove.addEventListener("click", () => {
       commit(() => {
         scene.layers = scene.layers.filter((candidate) => candidate.id !== layer.id);
-        if (selection?.type !== "scene" && selection?.layerId === layer.id) {
+        if (selectionLayerId(selection) === layer.id) {
           selection = { type: "scene", sceneId: scene.id };
         }
       });
@@ -1079,6 +1121,29 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     appendObjectNumericControls(container, object, onPatch);
   }
 
+  function appendObjectPreview(container: HTMLElement, object: SceneObject): void {
+    const preview = document.createElement("div");
+    preview.className = "scene-designer__asset-preview";
+    const url = graphicAssetPreviewUrl(options.aiAssets, object.assetId, {
+      baseUrl: options.assetBaseUrl,
+      targetId: options.assetTargetId
+    });
+
+    if (url) {
+      const image = document.createElement("img");
+      image.src = url;
+      image.alt = readableName(object.assetId);
+      preview.append(image);
+    } else {
+      const empty = document.createElement("div");
+      empty.className = "scene-designer__empty";
+      empty.textContent = "No image preview available.";
+      preview.append(empty);
+    }
+
+    container.append(preview);
+  }
+
   function appendObjectNumericControls(
     container: HTMLElement,
     object: SceneObject,
@@ -1231,8 +1296,46 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
       selectedSceneId = Object.keys(manifest.scenes)[0] ?? "";
     }
 
+    if (selectedBehaviorId && !manifest.behaviors?.[selectedBehaviorId]) {
+      selectedBehaviorId = Object.keys(manifest.behaviors ?? {})[0] ?? "";
+    }
+
     if (!selection || !selectedSceneId) return;
-    const scene = manifest.scenes[selection.sceneId];
+    const behaviorId = behaviorIdFromSelection(selection);
+    if (behaviorId && !manifest.behaviors?.[behaviorId]) {
+      selection = selectedBehaviorId
+        ? { type: "behavior-definition", behaviorId: selectedBehaviorId }
+        : { type: "scene", sceneId: selectedSceneId };
+      return;
+    }
+
+    if (selection.type === "behavior-area") {
+      if (!findBehaviorAreaDefault(behaviorAttributeId(selection.behaviorId, selection.attributeId))) {
+        selection = { type: "behavior-definition", behaviorId: selection.behaviorId };
+      }
+      return;
+    }
+
+    const behaviorVertexSelection = selection;
+    if (behaviorVertexSelection.type === "behavior-vertex") {
+      const area = findBehaviorAreaDefault(
+        behaviorAttributeId(behaviorVertexSelection.behaviorId, behaviorVertexSelection.attributeId)
+      )?.attribute.area;
+      if (!area || !area.vertices.some((vertex) => vertex.id === behaviorVertexSelection.vertexId)) {
+        selection = {
+          type: "behavior-area",
+          behaviorId: behaviorVertexSelection.behaviorId,
+          attributeId: behaviorVertexSelection.attributeId
+        };
+      }
+      return;
+    }
+
+    if (selection.type === "behavior-definition") return;
+
+    const sceneId = sceneIdFromSelection(selection);
+    if (!sceneId) return;
+    const scene = manifest.scenes[sceneId];
     if (!scene) {
       selection = { type: "scene", sceneId: selectedSceneId };
       return;
@@ -1290,7 +1393,12 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     throw new Error(`Unknown behavior instance "${instanceId}".`);
   }
 
-  function mutableAreaForEdit(areaId: string): SceneArea {
+  function mutableAreaForEdit(areaId: string): SceneArea | SceneAreaDefaults | undefined {
+    const behaviorArea = findBehaviorAreaDefault(areaId);
+    if (behaviorArea) {
+      return behaviorArea.attribute.area;
+    }
+
     const resolved = findArea(areaId);
     if (!resolved.behaviorInstance || !resolved.behaviorAttribute) {
       return resolved.area;
@@ -1324,8 +1432,24 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
       findArea(areaId);
       return true;
     } catch {
-      return false;
+      return Boolean(findBehaviorAreaDefault(areaId));
     }
+  }
+
+  function findBehaviorAreaDefault(areaId: string): {
+    behavior: SceneBehaviorDefinition;
+    attribute: SceneBehaviorAreaAttribute;
+  } | undefined {
+    for (const behavior of Object.values(manifest.behaviors ?? {})) {
+      for (const attribute of behavior.attributes) {
+        if (attribute.kind !== "area") continue;
+        if (behaviorAttributeId(behavior.id, attribute.id) === areaId) {
+          return { behavior, attribute };
+        }
+      }
+    }
+
+    return undefined;
   }
 
   function emitChange(): void {
@@ -1341,11 +1465,17 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     options.onSceneChange?.(selectedSceneId, manifest.scenes[selectedSceneId]);
   }
 
-  function setOpen(view: "scenes" | "behaviors" | false): void {
+  function setOpen(view: SceneDesignerOpenView): void {
     elements.root.dataset.open = view === false ? "false" : view;
     elements.toggle.setAttribute("aria-expanded", String(view === "scenes"));
     elements.behaviorToggle.setAttribute("aria-expanded", String(view === "behaviors"));
-    options.onOpenChange?.(view === "scenes");
+    options.onOpenChange?.(view !== false);
+  }
+
+  function openView(): SceneDesignerOpenView {
+    return elements.root.dataset.open === "scenes" || elements.root.dataset.open === "behaviors"
+      ? elements.root.dataset.open
+      : false;
   }
 
   function setStatus(message: string, tone: StatusTone): void {
@@ -1396,6 +1526,102 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
 
   function behaviorDefinitions(): SceneBehaviorDefinition[] {
     return Object.values(manifest.behaviors ?? {}).sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  function selectBehaviorDefinition(behaviorId: string): void {
+    const behavior = manifest.behaviors?.[behaviorId] ?? behaviorDefinitions()[0];
+    if (!behavior) return;
+
+    selectedBehaviorId = behavior.id;
+    const firstArea = behavior.attributes.find((attribute): attribute is SceneBehaviorAreaAttribute => attribute.kind === "area");
+    if (firstArea) {
+      selection = {
+        type: "behavior-area",
+        behaviorId: behavior.id,
+        attributeId: firstArea.id
+      };
+      mode = firstArea.area.closed ? "select" : "area-draw";
+    } else {
+      selection = {
+        type: "behavior-definition",
+        behaviorId: behavior.id
+      };
+      mode = "select";
+    }
+
+    render();
+    emitSelection();
+    options.onModeChange?.(mode);
+  }
+
+  function selectBehaviorArea(behaviorId: string, attributeId: string): void {
+    const behavior = manifest.behaviors?.[behaviorId];
+    const attribute = behavior?.attributes.find((candidate): candidate is SceneBehaviorAreaAttribute => (
+      candidate.id === attributeId && candidate.kind === "area"
+    ));
+    if (!behavior || !attribute) return;
+
+    selectedBehaviorId = behaviorId;
+    selection = {
+      type: "behavior-area",
+      behaviorId,
+      attributeId
+    };
+    mode = attribute.area.closed ? "select" : "area-draw";
+    render();
+    emitSelection();
+    options.onModeChange?.(mode);
+  }
+
+  function sceneIdFromSelection(nextSelection: SceneSelection | undefined): string | undefined {
+    if (!nextSelection) return undefined;
+    switch (nextSelection.type) {
+      case "scene":
+      case "layer":
+      case "behavior":
+      case "object":
+      case "area":
+      case "vertex":
+        return nextSelection.sceneId;
+      case "behavior-definition":
+      case "behavior-area":
+      case "behavior-vertex":
+        return undefined;
+    }
+  }
+
+  function selectionLayerId(nextSelection: SceneSelection | undefined): string | undefined {
+    if (!nextSelection) return undefined;
+    switch (nextSelection.type) {
+      case "layer":
+      case "behavior":
+      case "object":
+      case "area":
+      case "vertex":
+        return nextSelection.layerId;
+      case "scene":
+      case "behavior-definition":
+      case "behavior-area":
+      case "behavior-vertex":
+        return undefined;
+    }
+  }
+
+  function behaviorIdFromSelection(nextSelection: SceneSelection | undefined): string | undefined {
+    if (!nextSelection) return undefined;
+    switch (nextSelection.type) {
+      case "behavior-definition":
+      case "behavior-area":
+      case "behavior-vertex":
+        return nextSelection.behaviorId;
+      case "scene":
+      case "layer":
+      case "behavior":
+      case "object":
+      case "area":
+      case "vertex":
+        return undefined;
+    }
   }
 
   function uniqueBehaviorInstanceName(scene: SceneDefinition, base: string): string {
