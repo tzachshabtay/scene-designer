@@ -52,7 +52,6 @@ const bananaSpeed = 360;
 const bananaSpinSpeed = 720;
 const ballSpinSpeed = 520;
 const paddleKeyboardSpeed = 430;
-const paddlePointerHoldMs = 180;
 
 export type BreakoutSceneOptions = {
   aiAssets: AiAssetManifest;
@@ -87,9 +86,8 @@ export class BreakoutScene extends Phaser.Scene {
   private reloadTimer?: Phaser.Time.TimerEvent;
   private enemySpawnTimer?: Phaser.Time.TimerEvent;
   private firstEnemySpawnTimer?: Phaser.Time.TimerEvent;
-  private lastPointerX?: number;
-  private lastPointerY?: number;
-  private pointerControlUntil = 0;
+  private pointerWasDown = false;
+  private paddlePointerDragActive = false;
   private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
   private readonly previewTextures = new Map<string, string>();
 
@@ -308,24 +306,28 @@ export class BreakoutScene extends Phaser.Scene {
 
   private updatePaddleControl(): void {
     const pointer = this.input.activePointer;
-    const pointerMoved = this.lastPointerX !== undefined &&
-      (Math.abs(pointer.x - this.lastPointerX) > 0.5 || Math.abs(pointer.y - (this.lastPointerY ?? pointer.y)) > 0.5);
-    this.lastPointerX = pointer.x;
-    this.lastPointerY = pointer.y;
+    const pointerDown = pointer.isDown;
 
     const keyboardDirection = (this.cursors?.left.isDown ? -1 : 0) + (this.cursors?.right.isDown ? 1 : 0);
 
     if (keyboardDirection !== 0) {
-      this.pointerControlUntil = 0;
+      this.paddlePointerDragActive = false;
+      this.pointerWasDown = pointerDown;
       this.paddle.setVelocityX(keyboardDirection * paddleKeyboardSpeed);
       return;
     }
 
-    if (pointer.isDown || pointerMoved) {
-      this.pointerControlUntil = this.time.now + paddlePointerHoldMs;
+    if (pointerDown && !this.pointerWasDown) {
+      this.paddlePointerDragActive = this.paddle.getBounds().contains(pointer.worldX, pointer.worldY);
     }
 
-    if (pointer.isDown || this.time.now < this.pointerControlUntil) {
+    this.pointerWasDown = pointerDown;
+
+    if (!pointerDown) {
+      this.paddlePointerDragActive = false;
+    }
+
+    if (this.paddlePointerDragActive) {
       this.paddle.setVelocityX(0);
       this.paddle.setX(Phaser.Math.Clamp(pointer.worldX, 56, 744));
       return;
