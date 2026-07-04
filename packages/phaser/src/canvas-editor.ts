@@ -1055,6 +1055,11 @@ export class PhaserSceneDesignerCanvas {
           layerId: hit.layer.id,
           objectId: hit.object.id
         });
+      } else {
+        this.options.designer.select({
+          type: "scene",
+          sceneId: this.currentScene().id
+        });
       }
       return;
     }
