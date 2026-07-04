@@ -69,6 +69,7 @@ export type SceneDesigner = {
   setManifest(manifest: SceneDesignerManifest): void;
   select(selection: SceneSelection | undefined): void;
   updateObject(objectId: string, patch: Partial<SceneObject>, options?: SceneDesignerEditOptions): void;
+  updateObjects(updates: SceneDesignerObjectUpdate[], options?: SceneDesignerEditOptions): void;
   updateArea(areaId: string, patch: Partial<SceneArea>, options?: SceneDesignerEditOptions): void;
   updateAreaVertex(areaId: string, vertexId: string, patch: Partial<SceneArea["vertices"][number]>, options?: SceneDesignerEditOptions): void;
   addAreaVertex(areaId: string, x: number, y: number, options?: SceneDesignerEditOptions): void;
@@ -85,6 +86,11 @@ type StatusTone = "info" | "success" | "error";
 
 export type SceneDesignerEditOptions = {
   history?: boolean;
+};
+
+export type SceneDesignerObjectUpdate = {
+  objectId: string;
+  patch: Partial<SceneObject>;
 };
 
 type Elements = {
@@ -190,14 +196,14 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     },
     updateObject(objectId, patch, editOptions) {
       commit(() => {
-        const resolved = findObject(objectId);
-        if (resolved.behaviorInstance && resolved.behaviorAttribute) {
-          Object.assign(
-            ensureBehaviorOverride(resolved.behaviorInstance, resolved.behaviorAttribute.id),
-            withoutId(sanitizeObjectPatch(patch))
-          );
-        } else {
-          Object.assign(resolved.object, sanitizeObjectPatch(patch));
+        applyObjectPatch(objectId, patch);
+      }, editOptions?.history);
+    },
+    updateObjects(updates, editOptions) {
+      if (!updates.length) return;
+      commit(() => {
+        for (const update of updates) {
+          applyObjectPatch(update.objectId, update.patch);
         }
       }, editOptions?.history);
     },
@@ -639,7 +645,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
       let selectionChanged = false;
       commit(() => {
         layer.locked = !layer.locked;
-        if (layer.locked && selectionLayerId(selection) === layer.id) {
+        if (layer.locked && selectionTouchesLayer(selection, layer.id)) {
           selection = { type: "layer", sceneId: scene.id, layerId: layer.id };
           selectionChanged = true;
         }
@@ -652,7 +658,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     remove.addEventListener("click", () => {
       commit(() => {
         scene.layers = scene.layers.filter((candidate) => candidate.id !== layer.id);
-        if (selectionLayerId(selection) === layer.id) {
+        if (selectionTouchesLayer(selection, layer.id)) {
           selection = { type: "scene", sceneId: scene.id };
         }
       });
@@ -876,7 +882,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     const item = document.createElement("div");
     item.className = "scene-designer__item";
     item.setAttribute("role", "button");
-    item.setAttribute("aria-selected", String(selection?.type === "object" && selection.objectId === object.id));
+    item.setAttribute("aria-selected", String(isObjectSelected(object.id)));
     const title = document.createElement("div");
     title.className = "scene-designer__item-title";
     title.textContent = object.tag || readableName(object.assetId);
@@ -907,7 +913,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
       event.stopPropagation();
       commit(() => {
         layer.objects = layer.objects.filter((candidate) => candidate.id !== object.id);
-        if (selection?.type === "object" && selection.objectId === object.id) {
+        if (isObjectSelected(object.id)) {
           selection = { type: "layer", sceneId: scene.id, layerId: layer.id };
         }
       });
@@ -1013,6 +1019,17 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
 
     if (selection.type === "object") {
       renderObjectEditor(findObject(selection.objectId));
+      return;
+    }
+
+    if (selection.type === "objects") {
+      const stack = document.createElement("div");
+      stack.className = "scene-designer__stack";
+      const count = document.createElement("div");
+      count.className = "scene-designer__empty";
+      count.textContent = `${selection.objectIds.length} objects selected`;
+      stack.append(count);
+      elements.editor.append(stack);
       return;
     }
 
@@ -1434,6 +1451,25 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
           selection = { type: "scene", sceneId: scene.id };
         }
         break;
+      case "objects": {
+        const objectIds = currentSelection.objectIds.filter((objectId, index, ids) => (
+          ids.indexOf(objectId) === index && canResolveObject(objectId)
+        ));
+        if (objectIds.length === 0) {
+          selection = { type: "scene", sceneId: scene.id };
+        } else if (objectIds.length === 1) {
+          const resolved = findObject(objectIds[0]);
+          selection = {
+            type: "object",
+            sceneId: scene.id,
+            layerId: resolved.layer.id,
+            objectId: objectIds[0]
+          };
+        } else {
+          selection = { ...currentSelection, objectIds };
+        }
+        break;
+      }
       case "area":
       case "vertex":
         if (!canResolveArea(currentSelection.areaId)) {
@@ -1445,6 +1481,18 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
 
   function findObject(objectId: string): ResolvedSceneObject {
     return resolveSceneObject(manifest, selectedSceneId, objectId);
+  }
+
+  function applyObjectPatch(objectId: string, patch: Partial<SceneObject>): void {
+    const resolved = findObject(objectId);
+    if (resolved.behaviorInstance && resolved.behaviorAttribute) {
+      Object.assign(
+        ensureBehaviorOverride(resolved.behaviorInstance, resolved.behaviorAttribute.id),
+        withoutId(sanitizeObjectPatch(patch))
+      );
+    } else {
+      Object.assign(resolved.object, sanitizeObjectPatch(patch));
+    }
   }
 
   function findArea(areaId: string): ResolvedSceneArea {
@@ -1653,6 +1701,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
       case "layer":
       case "behavior":
       case "object":
+      case "objects":
       case "area":
       case "vertex":
         return nextSelection.sceneId;
@@ -1672,6 +1721,17 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
       case "area":
       case "vertex":
         return nextSelection.layerId;
+      case "objects": {
+        const layerIds = new Set<string>();
+        for (const objectId of nextSelection.objectIds) {
+          try {
+            layerIds.add(findObject(objectId).layer.id);
+          } catch {
+            return undefined;
+          }
+        }
+        return layerIds.size === 1 ? [...layerIds][0] : undefined;
+      }
       case "scene":
       case "behavior-definition":
       case "behavior-area":
@@ -1691,6 +1751,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
       case "layer":
       case "behavior":
       case "object":
+      case "objects":
       case "area":
       case "vertex":
         return undefined;
@@ -1723,10 +1784,33 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     return selectionBelongsToBehaviorInstance(instanceId);
   }
 
+  function isObjectSelected(objectId: string): boolean {
+    if (!selection) return false;
+    if (selection.type === "object") return selection.objectId === objectId;
+    if (selection.type === "objects") return selection.objectIds.includes(objectId);
+    return false;
+  }
+
+  function selectionTouchesLayer(nextSelection: SceneSelection | undefined, layerId: string): boolean {
+    if (!nextSelection) return false;
+    if (selectionLayerId(nextSelection) === layerId) return true;
+    if (nextSelection.type !== "objects") return false;
+    return nextSelection.objectIds.some((objectId) => {
+      try {
+        return findObject(objectId).layer.id === layerId;
+      } catch {
+        return false;
+      }
+    });
+  }
+
   function selectionBelongsToBehaviorInstance(instanceId: string): boolean {
     if (!selection) return false;
     if (selection.type === "behavior") return selection.instanceId === instanceId;
     if (selection.type === "object") return behaviorInstanceIdFromAttributeId(selection.objectId) === instanceId;
+    if (selection.type === "objects") {
+      return selection.objectIds.some((objectId) => behaviorInstanceIdFromAttributeId(objectId) === instanceId);
+    }
     if (selection.type === "area" || selection.type === "vertex") {
       return behaviorInstanceIdFromAttributeId(selection.areaId) === instanceId;
     }

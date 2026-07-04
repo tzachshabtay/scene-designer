@@ -1,5 +1,6 @@
 export type {
   SceneDesigner,
+  SceneDesignerObjectUpdate,
   SceneDesignerMode,
   SceneDesignerOptions
 } from "./designer.js";

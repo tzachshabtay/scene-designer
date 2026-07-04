@@ -2,7 +2,8 @@ import type { AiAssetManifest } from "@ai-game-assets/core";
 import { AiAssetRuntime } from "@ai-game-assets/phaser";
 import type {
   SceneDesigner,
-  SceneDesignerMode
+  SceneDesignerMode,
+  SceneDesignerObjectUpdate
 } from "@scene-designer/designer";
 import {
   behaviorAttributeId,
@@ -36,6 +37,13 @@ export type PhaserSceneDesignerCanvasOptions = {
 };
 
 type HandleKind = "move" | "scale-nw" | "scale-ne" | "scale-se" | "scale-sw" | "rotate" | "anchor";
+type GroupHandleKind = Exclude<HandleKind, "anchor">;
+type Bounds = {
+  left: number;
+  top: number;
+  right: number;
+  bottom: number;
+};
 type DragState =
   | {
       type: "object";
@@ -44,6 +52,22 @@ type DragState =
       startPointer: Phaser.Math.Vector2;
       startObject: SceneObject;
       historyWritten: boolean;
+    }
+  | {
+      type: "objects";
+      objectIds: string[];
+      handle: GroupHandleKind;
+      startPointer: Phaser.Math.Vector2;
+      startObjects: SceneObject[];
+      startBounds: Bounds;
+      historyWritten: boolean;
+    }
+  | {
+      type: "marquee";
+      startPointer: Phaser.Math.Vector2;
+      currentPointer: Phaser.Math.Vector2;
+      startedHit?: HitObject;
+      active: boolean;
     }
   | {
       type: "vertex";
@@ -69,6 +93,12 @@ type HitObject = {
   object: SceneObject;
   layer: SceneLayer;
   kind: HandleKind;
+};
+
+type HitObjectGroup = {
+  objects: SceneObject[];
+  kind: GroupHandleKind;
+  bounds: Bounds;
 };
 
 type HitArea =
@@ -123,8 +153,16 @@ export class PhaserSceneDesignerCanvas {
 
     event.preventDefault();
     event.stopPropagation();
-    this.insertVertexFromEdgeClick(this.pointerEventPosition(event), event.detail);
+    const point = this.pointerEventPosition(event);
+    if (this.drag.type === "marquee") {
+      this.finishMarquee(point);
+    } else {
+      this.insertVertexFromEdgeClick(point, event.detail);
+    }
     this.endDrag();
+  };
+  private readonly onWindowKeyDown = (event: KeyboardEvent): void => {
+    this.onKeyDown(event);
   };
 
   constructor(private readonly options: PhaserSceneDesignerCanvasOptions) {
@@ -184,6 +222,7 @@ export class PhaserSceneDesignerCanvas {
     this.options.scene.input.off("gameobjectdown", this.stopEvent, this);
     this.options.scene.input.keyboard?.off("keydown-BACKSPACE", this.onBackspace, this);
     this.options.scene.input.keyboard?.off("keydown-DELETE", this.onBackspace, this);
+    window.removeEventListener("keydown", this.onWindowKeyDown, true);
     this.endDrag();
     for (const sprite of this.objects.values()) {
       sprite.destroy();
@@ -199,6 +238,7 @@ export class PhaserSceneDesignerCanvas {
     this.options.scene.input.on("pointerup", this.onPointerUp, this);
     this.options.scene.input.keyboard?.on("keydown-BACKSPACE", this.onBackspace, this);
     this.options.scene.input.keyboard?.on("keydown-DELETE", this.onBackspace, this);
+    window.addEventListener("keydown", this.onWindowKeyDown, true);
   }
 
   private syncObjects(): void {
@@ -322,12 +362,23 @@ export class PhaserSceneDesignerCanvas {
       this.drawObjectBox(hoverObject, 0x80b7ff, false);
     }
 
-    for (const selectedObject of selectedObjects) {
-      this.drawObjectBox(selectedObject, 0x46d39a, true);
+    if (selectedObjects.length > 1) {
+      for (const selectedObject of selectedObjects) {
+        this.drawObjectBox(selectedObject, 0x46d39a, false);
+      }
+      this.drawObjectGroupBox(selectedObjects, 0x46d39a);
+    } else {
+      for (const selectedObject of selectedObjects) {
+        this.drawObjectBox(selectedObject, 0x46d39a, true);
+      }
     }
 
     for (const selectedArea of selectedAreas) {
       this.drawAreaHandles(selectedArea);
+    }
+
+    if (this.drag?.type === "marquee" && this.drag.active) {
+      this.drawMarquee(this.drag.startPointer, this.drag.currentPointer);
     }
   }
 
@@ -362,6 +413,37 @@ export class PhaserSceneDesignerCanvas {
     this.overlay.lineStyle(2, 0xffe08a, 1);
     this.overlay.lineBetween(anchor.x - 8, anchor.y, anchor.x + 8, anchor.y);
     this.overlay.lineBetween(anchor.x, anchor.y - 8, anchor.x, anchor.y + 8);
+  }
+
+  private drawObjectGroupBox(objects: SceneObject[], color: number): void {
+    const bounds = this.objectsBounds(objects);
+    if (!bounds) return;
+
+    this.overlay.lineStyle(2, color, 1);
+    this.overlay.strokeRect(bounds.left, bounds.top, bounds.right - bounds.left, bounds.bottom - bounds.top);
+
+    const corners = boundsCorners(bounds);
+    for (const corner of corners) {
+      this.overlay.fillStyle(0x101216, 1);
+      this.overlay.fillRect(corner.x - 5, corner.y - 5, 10, 10);
+      this.overlay.lineStyle(1, color, 1);
+      this.overlay.strokeRect(corner.x - 5, corner.y - 5, 10, 10);
+    }
+
+    const top = midpoint(corners[0], corners[1]);
+    const rotateHandle = new Phaser.Math.Vector2(top.x, top.y - 34);
+    this.overlay.lineStyle(1, color, 0.85);
+    this.overlay.lineBetween(top.x, top.y, rotateHandle.x, rotateHandle.y);
+    this.overlay.fillStyle(color, 1);
+    this.overlay.fillCircle(rotateHandle.x, rotateHandle.y, 6);
+  }
+
+  private drawMarquee(from: Phaser.Math.Vector2, to: Phaser.Math.Vector2): void {
+    const rect = rectFromPoints(from, to);
+    this.overlay.fillStyle(0x8bb8ff, 0.12);
+    this.overlay.fillRect(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
+    this.overlay.lineStyle(1, 0x8bb8ff, 0.95);
+    this.overlay.strokeRect(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
   }
 
   private drawAreaHandles(area: SceneArea): void {
@@ -445,6 +527,20 @@ export class PhaserSceneDesignerCanvas {
       }
     }
 
+    const selectedGroupHit = this.hitSelectedObjectGroup(point);
+    if (selectedGroupHit) {
+      this.beginDrag({
+        type: "objects",
+        objectIds: selectedGroupHit.objects.map((object) => object.id),
+        handle: selectedGroupHit.kind,
+        startPointer: point,
+        startObjects: selectedGroupHit.objects.map((object) => ({ ...object })),
+        startBounds: selectedGroupHit.bounds,
+        historyWritten: false
+      });
+      return;
+    }
+
     const selectedHit = this.selection?.type === "object"
       ? this.hitObject(point, this.findObject(this.selection.objectId)?.object)
       : undefined;
@@ -462,22 +558,13 @@ export class PhaserSceneDesignerCanvas {
 
     const hit = this.hitTopObject(point);
     if (hit) {
-      this.options.designer.select({
-        type: "object",
-        sceneId: scene.id,
-        layerId: hit.layer.id,
-        objectId: hit.object.id
+      this.beginDrag({
+        type: "marquee",
+        startPointer: point,
+        currentPointer: point,
+        startedHit: hit,
+        active: false
       });
-      if (!hit.layer.locked && !hit.object.locked) {
-        this.beginDrag({
-            type: "object",
-            objectId: hit.object.id,
-            handle: "move",
-            startPointer: point,
-            startObject: { ...hit.object },
-            historyWritten: false
-        });
-      }
       return;
     }
 
@@ -501,7 +588,15 @@ export class PhaserSceneDesignerCanvas {
           });
         }
       }
+      return;
     }
+
+    this.beginDrag({
+      type: "marquee",
+      startPointer: point,
+      currentPointer: point,
+      active: false
+    });
   }
 
   private onPointerMove(pointer: Phaser.Input.Pointer): void {
@@ -530,7 +625,11 @@ export class PhaserSceneDesignerCanvas {
 
     const point = pointerPosition(pointer);
     if (this.drag) {
-      this.insertVertexFromEdgeClick(point, pointer.event.detail, pointer.getDuration());
+      if (this.drag.type === "marquee") {
+        this.finishMarquee(point);
+      } else {
+        this.insertVertexFromEdgeClick(point, pointer.event.detail, pointer.getDuration());
+      }
       this.endDrag();
       return;
     }
@@ -560,6 +659,35 @@ export class PhaserSceneDesignerCanvas {
     if (!this.selection || this.selection.type !== "vertex") return;
     event.preventDefault();
     this.options.designer.removeAreaVertex(this.selection.areaId, this.selection.vertexId);
+  }
+
+  private onKeyDown(event: KeyboardEvent): void {
+    if (!this.isOpen || this.isBehaviorView() || isEditableTarget(event.target)) return;
+
+    const deltas: Record<string, { dx: number; dy: number }> = {
+      ArrowLeft: { dx: -1, dy: 0 },
+      ArrowRight: { dx: 1, dy: 0 },
+      ArrowUp: { dx: 0, dy: -1 },
+      ArrowDown: { dx: 0, dy: 1 }
+    };
+    const delta = deltas[event.key];
+    if (!delta) return;
+
+    const objects = this.editableSelectedObjects();
+    if (!objects.length) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    const step = event.metaKey || event.ctrlKey ? 1 : 10;
+    this.options.designer.updateObjects(
+      objects.map((object) => ({
+        objectId: object.id,
+        patch: {
+          x: object.x + delta.dx * step,
+          y: object.y + delta.dy * step
+        }
+      }))
+    );
   }
 
   private applyDrag(point: Phaser.Math.Vector2): void {
@@ -606,6 +734,23 @@ export class PhaserSceneDesignerCanvas {
           scaleY: Math.max(0.05, start.scaleY * scale)
         }, { history });
       }
+      return;
+    }
+
+    if (drag.type === "objects") {
+      const history = !drag.historyWritten;
+      drag.historyWritten = true;
+      this.options.designer.updateObjects(
+        this.objectGroupUpdates(drag, point),
+        { history }
+      );
+      return;
+    }
+
+    if (drag.type === "marquee") {
+      drag.currentPointer = point;
+      drag.active = drag.active || distance(drag.startPointer, point) >= 6;
+      this.drawOverlay();
       return;
     }
 
@@ -768,6 +913,101 @@ export class PhaserSceneDesignerCanvas {
     }
   }
 
+  private objectGroupUpdates(
+    drag: Extract<DragState, { type: "objects" }>,
+    point: Phaser.Math.Vector2
+  ): SceneDesignerObjectUpdate[] {
+    const center = boundsCenter(drag.startBounds);
+    const dx = point.x - drag.startPointer.x;
+    const dy = point.y - drag.startPointer.y;
+
+    if (drag.handle === "move") {
+      return drag.startObjects.map((object) => ({
+        objectId: object.id,
+        patch: {
+          x: object.x + dx,
+          y: object.y + dy
+        }
+      }));
+    }
+
+    if (drag.handle === "rotate") {
+      const startAngle = Math.atan2(drag.startPointer.y - center.y, drag.startPointer.x - center.x);
+      const currentAngle = Math.atan2(point.y - center.y, point.x - center.x);
+      const deltaDegrees = Phaser.Math.RadToDeg(currentAngle - startAngle);
+      return drag.startObjects.map((object) => {
+        const rotated = rotatePoint(objectPosition(object), center, deltaDegrees);
+        return {
+          objectId: object.id,
+          patch: {
+            x: rotated.x,
+            y: rotated.y,
+            rotation: Math.round((object.rotation + deltaDegrees) * 10) / 10
+          }
+        };
+      });
+    }
+
+    const startDistance = Math.max(12, distance(drag.startPointer, center));
+    const currentDistance = Math.max(12, distance(point, center));
+    const scale = currentDistance / startDistance;
+    return drag.startObjects.map((object) => ({
+      objectId: object.id,
+      patch: {
+        x: center.x + (object.x - center.x) * scale,
+        y: center.y + (object.y - center.y) * scale,
+        scaleX: Math.max(0.05, object.scaleX * scale),
+        scaleY: Math.max(0.05, object.scaleY * scale)
+      }
+    }));
+  }
+
+  private finishMarquee(point: Phaser.Math.Vector2): void {
+    const drag = this.drag;
+    if (!drag || drag.type !== "marquee") return;
+
+    const active = drag.active || distance(drag.startPointer, point) >= 6;
+    if (!active) {
+      const hit = drag.startedHit;
+      if (hit) {
+        this.options.designer.select({
+          type: "object",
+          sceneId: this.currentScene().id,
+          layerId: hit.layer.id,
+          objectId: hit.object.id
+        });
+      }
+      return;
+    }
+
+    const rect = rectFromPoints(drag.startPointer, point);
+    const hits = this.objectsCompletelyInside(rect);
+    if (hits.length === 0) {
+      this.options.designer.select({
+        type: "scene",
+        sceneId: this.currentScene().id
+      });
+      return;
+    }
+
+    if (hits.length === 1) {
+      const hit = hits[0];
+      this.options.designer.select({
+        type: "object",
+        sceneId: this.currentScene().id,
+        layerId: hit.layer.id,
+        objectId: hit.object.id
+      });
+      return;
+    }
+
+    this.options.designer.select({
+      type: "objects",
+      sceneId: this.currentScene().id,
+      objectIds: hits.map((hit) => hit.object.id)
+    });
+  }
+
   private selectedBehaviorArea(): BehaviorCanvasArea | undefined {
     if (this.selection?.type === "behavior-area" || this.selection?.type === "behavior-vertex") {
       return this.findBehaviorArea(this.selection.behaviorId, this.selection.attributeId);
@@ -825,6 +1065,14 @@ export class PhaserSceneDesignerCanvas {
       return resolved?.layer.visible && resolved.object.visible ? [resolved.object] : [];
     }
 
+    if (this.selection.type === "objects") {
+      return this.selection.objectIds
+        .map((objectId) => this.findObject(objectId))
+        .filter((resolved): resolved is { layer: SceneLayer; object: SceneObject } => Boolean(resolved))
+        .filter((resolved) => resolved.layer.visible && resolved.object.visible)
+        .map((resolved) => resolved.object);
+    }
+
     if (this.selection.type !== "behavior") return [];
 
     const instanceId = this.selection.instanceId;
@@ -857,6 +1105,65 @@ export class PhaserSceneDesignerCanvas {
     return this.currentScene().layers.find((layer) => (
       layer.behaviors?.some((instance) => instance.id === instanceId)
     ));
+  }
+
+  private editableSelectedObjects(): SceneObject[] {
+    return this.selectedObjectsForOverlay().filter((object) => {
+      const resolved = this.findObject(object.id);
+      return resolved && !resolved.layer.locked && !resolved.object.locked;
+    });
+  }
+
+  private hitSelectedObjectGroup(point: Phaser.Math.Vector2): HitObjectGroup | undefined {
+    const objects = this.editableSelectedObjects();
+    if (objects.length < 2) return undefined;
+
+    const bounds = this.objectsBounds(objects);
+    if (!bounds) return undefined;
+
+    const corners = boundsCorners(bounds);
+    const handleNames: GroupHandleKind[] = ["scale-nw", "scale-ne", "scale-se", "scale-sw"];
+    for (let index = 0; index < corners.length; index += 1) {
+      if (distance(point, corners[index]) < 12) {
+        return { objects, bounds, kind: handleNames[index] };
+      }
+    }
+
+    const topMid = midpoint(corners[0], corners[1]);
+    const rotateHandle = new Phaser.Math.Vector2(topMid.x, topMid.y - 34);
+    if (distance(point, rotateHandle) < 14) {
+      return { objects, bounds, kind: "rotate" };
+    }
+
+    if (rectContainsPoint(bounds, point)) {
+      return { objects, bounds, kind: "move" };
+    }
+
+    return undefined;
+  }
+
+  private objectsCompletelyInside(rect: Bounds): HitObject[] {
+    const hits: HitObject[] = [];
+    const scene = this.currentScene();
+
+    for (const layer of scene.layers) {
+      if (!layer.visible || layer.locked) continue;
+      for (const object of sceneLayerObjects(this.manifest, layer)) {
+        if (!object.visible || object.locked) continue;
+        const inside = objectCorners(object, this.objectSize(object))
+          .every((corner) => rectContainsPoint(rect, corner));
+        if (inside) {
+          hits.push({ object, layer, kind: "move" });
+        }
+      }
+    }
+
+    return hits;
+  }
+
+  private objectsBounds(objects: SceneObject[]): Bounds | undefined {
+    const corners = objects.flatMap((object) => objectCorners(object, this.objectSize(object)));
+    return boundsFromPoints(corners);
   }
 
   private hitTopObject(point: Phaser.Math.Vector2): HitObject | undefined {
@@ -1106,6 +1413,58 @@ function translateAreaVertices(vertices: SceneAreaVertex[], dx: number, dy: numb
         }
       : undefined
   }));
+}
+
+function boundsFromPoints(points: Array<{ x: number; y: number }>): Bounds | undefined {
+  if (!points.length) return undefined;
+
+  return points.reduce<Bounds>((bounds, point) => ({
+    left: Math.min(bounds.left, point.x),
+    top: Math.min(bounds.top, point.y),
+    right: Math.max(bounds.right, point.x),
+    bottom: Math.max(bounds.bottom, point.y)
+  }), {
+    left: points[0].x,
+    top: points[0].y,
+    right: points[0].x,
+    bottom: points[0].y
+  });
+}
+
+function rectFromPoints(a: { x: number; y: number }, b: { x: number; y: number }): Bounds {
+  return {
+    left: Math.min(a.x, b.x),
+    top: Math.min(a.y, b.y),
+    right: Math.max(a.x, b.x),
+    bottom: Math.max(a.y, b.y)
+  };
+}
+
+function boundsCorners(bounds: Bounds): Phaser.Math.Vector2[] {
+  return [
+    new Phaser.Math.Vector2(bounds.left, bounds.top),
+    new Phaser.Math.Vector2(bounds.right, bounds.top),
+    new Phaser.Math.Vector2(bounds.right, bounds.bottom),
+    new Phaser.Math.Vector2(bounds.left, bounds.bottom)
+  ];
+}
+
+function boundsCenter(bounds: Bounds): Phaser.Math.Vector2 {
+  return new Phaser.Math.Vector2(
+    (bounds.left + bounds.right) / 2,
+    (bounds.top + bounds.bottom) / 2
+  );
+}
+
+function rectContainsPoint(rect: Bounds, point: { x: number; y: number }): boolean {
+  return point.x >= rect.left && point.x <= rect.right && point.y >= rect.top && point.y <= rect.bottom;
+}
+
+function isEditableTarget(target: EventTarget | null): boolean {
+  return target instanceof HTMLInputElement
+    || target instanceof HTMLTextAreaElement
+    || target instanceof HTMLSelectElement
+    || (target instanceof HTMLElement && target.isContentEditable);
 }
 
 function pointInArea(point: { x: number; y: number }, area: SceneArea): boolean {
