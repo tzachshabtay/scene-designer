@@ -6,6 +6,7 @@ import type {
 } from "@scene-designer/designer";
 import {
   behaviorAttributeId,
+  behaviorInstanceIdFromAttributeId,
   getScene,
   resolveSceneArea,
   resolveSceneObject,
@@ -312,23 +313,20 @@ export class PhaserSceneDesignerCanvas {
       return;
     }
 
-    const selectedObject = this.selection?.type === "object"
-      ? this.findObject(this.selection.objectId)?.object
-      : undefined;
+    const selectedObjects = this.selectedObjectsForOverlay();
+    const selectedObjectIds = new Set(selectedObjects.map((object) => object.id));
     const hoverObject = this.hoverObjectId ? this.findObject(this.hoverObjectId)?.object : undefined;
-    const selectedArea = this.selection?.type === "area" || this.selection?.type === "vertex"
-      ? this.findArea(this.selection.areaId)?.area
-      : undefined;
+    const selectedAreas = this.selectedAreasForOverlay();
 
-    if (hoverObject && hoverObject.id !== selectedObject?.id) {
+    if (hoverObject && !selectedObjectIds.has(hoverObject.id)) {
       this.drawObjectBox(hoverObject, 0x80b7ff, false);
     }
 
-    if (selectedObject) {
+    for (const selectedObject of selectedObjects) {
       this.drawObjectBox(selectedObject, 0x46d39a, true);
     }
 
-    if (selectedArea) {
+    for (const selectedArea of selectedAreas) {
       this.drawAreaHandles(selectedArea);
     }
   }
@@ -819,17 +817,59 @@ export class PhaserSceneDesignerCanvas {
     };
   }
 
+  private selectedObjectsForOverlay(): SceneObject[] {
+    if (!this.selection) return [];
+
+    if (this.selection.type === "object") {
+      const resolved = this.findObject(this.selection.objectId);
+      return resolved?.layer.visible && resolved.object.visible ? [resolved.object] : [];
+    }
+
+    if (this.selection.type !== "behavior") return [];
+
+    const instanceId = this.selection.instanceId;
+    const layer = this.findBehaviorLayer(instanceId);
+    if (!layer?.visible) return [];
+
+    return sceneLayerObjects(this.manifest, layer)
+      .filter((object) => object.visible && behaviorInstanceIdFromAttributeId(object.id) === instanceId);
+  }
+
+  private selectedAreasForOverlay(): SceneArea[] {
+    if (!this.selection) return [];
+
+    if (this.selection.type === "area" || this.selection.type === "vertex") {
+      const resolved = this.findArea(this.selection.areaId);
+      return resolved?.layer.visible && resolved.area.visible ? [resolved.area] : [];
+    }
+
+    if (this.selection.type !== "behavior") return [];
+
+    const instanceId = this.selection.instanceId;
+    const layer = this.findBehaviorLayer(instanceId);
+    if (!layer?.visible) return [];
+
+    return sceneLayerAreas(this.manifest, layer)
+      .filter((area) => area.visible && behaviorInstanceIdFromAttributeId(area.id) === instanceId);
+  }
+
+  private findBehaviorLayer(instanceId: string): SceneLayer | undefined {
+    return this.currentScene().layers.find((layer) => (
+      layer.behaviors?.some((instance) => instance.id === instanceId)
+    ));
+  }
+
   private hitTopObject(point: Phaser.Math.Vector2): HitObject | undefined {
     const scene = this.currentScene();
 
     for (let layerIndex = scene.layers.length - 1; layerIndex >= 0; layerIndex -= 1) {
       const layer = scene.layers[layerIndex];
-      if (!layer.visible) continue;
+      if (!layer.visible || layer.locked) continue;
 
       const objects = sceneLayerObjects(this.manifest, layer);
       for (let objectIndex = objects.length - 1; objectIndex >= 0; objectIndex -= 1) {
         const object = objects[objectIndex];
-        if (!object.visible) continue;
+        if (!object.visible || object.locked) continue;
         const hit = this.hitObject(point, object);
         if (hit) return { ...hit, layer };
       }
@@ -876,10 +916,11 @@ export class PhaserSceneDesignerCanvas {
     const scene = this.currentScene();
     for (let layerIndex = scene.layers.length - 1; layerIndex >= 0; layerIndex -= 1) {
       const layer = scene.layers[layerIndex];
-      if (!layer.visible) continue;
+      if (!layer.visible || layer.locked) continue;
       const areas = sceneLayerAreas(this.manifest, layer);
       for (let areaIndex = areas.length - 1; areaIndex >= 0; areaIndex -= 1) {
         const area = areas[areaIndex];
+        if (!area.visible || area.locked) continue;
         const hit = this.hitArea(point, area);
         if (hit) return hit;
       }

@@ -635,9 +635,17 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     visibility.addEventListener("click", () => commit(() => {
       layer.visible = !layer.visible;
     }));
-    lock.addEventListener("click", () => commit(() => {
-      layer.locked = !layer.locked;
-    }));
+    lock.addEventListener("click", () => {
+      let selectionChanged = false;
+      commit(() => {
+        layer.locked = !layer.locked;
+        if (layer.locked && selectionLayerId(selection) === layer.id) {
+          selection = { type: "layer", sceneId: scene.id, layerId: layer.id };
+          selectionChanged = true;
+        }
+      });
+      if (selectionChanged) emitSelection();
+    });
     addBehavior?.addEventListener("click", () => {
       openAddBehaviorDialog(scene, layer);
     });
