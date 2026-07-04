@@ -164,7 +164,7 @@ export function ensureSceneDesignerStyles(): void {
 .scene-designer__attribute { margin-bottom: 10px; }
 .scene-designer__layer-header {
   display: grid;
-  grid-template-columns: auto 1fr auto auto auto;
+  grid-template-columns: auto minmax(0, 1fr) auto auto auto auto;
   gap: 6px;
   align-items: center;
   padding: 8px;
@@ -261,6 +261,23 @@ export function ensureSceneDesignerStyles(): void {
 }
 .scene-designer__status[data-tone="success"] { color: var(--sd-success); }
 .scene-designer__status[data-tone="error"] { color: var(--sd-danger); }
+.scene-designer__dialog {
+  width: min(320px, calc(100vw - 32px));
+  border: 1px solid var(--sd-border);
+  border-radius: 8px;
+  padding: 14px;
+  background: var(--sd-bg);
+  color: var(--sd-text);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.45);
+}
+.scene-designer__dialog::backdrop {
+  background: rgba(0, 0, 0, 0.34);
+}
+.scene-designer__dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
 `;
   document.head.append(style);
 }

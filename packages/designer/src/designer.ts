@@ -612,8 +612,11 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     const nameInput = input(layer.name);
     const visibility = iconButton(layer.visible ? "👁" : "○", layer.visible ? "Hide layer" : "Show layer");
     const lock = iconButton(layer.locked ? "🔒" : "🔓", layer.locked ? "Unlock layer" : "Lock layer");
+    const addBehavior = behaviorDefinitions().length > 0 ? iconButton("+", "Add behavior") : undefined;
     const remove = iconButton("×", "Remove layer", true);
-    header.append(collapse, nameInput, visibility, lock, remove);
+    header.append(collapse, nameInput, visibility, lock);
+    if (addBehavior) header.append(addBehavior);
+    header.append(remove);
     wrapper.append(header);
 
     collapse.addEventListener("click", () => {
@@ -635,6 +638,9 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     lock.addEventListener("click", () => commit(() => {
       layer.locked = !layer.locked;
     }));
+    addBehavior?.addEventListener("click", () => {
+      openAddBehaviorDialog(scene, layer);
+    });
     remove.addEventListener("click", () => {
       commit(() => {
         scene.layers = scene.layers.filter((candidate) => candidate.id !== layer.id);
@@ -660,41 +666,6 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
   function renderBehaviorInstanceLists(scene: SceneDefinition, layer: SceneLayer): HTMLElement {
     const wrapper = document.createElement("div");
     const behaviors = behaviorDefinitions();
-    const addRow = document.createElement("div");
-    addRow.className = "scene-designer__row";
-    const behaviorSelect = document.createElement("select");
-    behaviorSelect.className = "scene-designer__select";
-    for (const behavior of behaviors) {
-      const option = document.createElement("option");
-      option.value = behavior.id;
-      option.textContent = behavior.name;
-      behaviorSelect.append(option);
-    }
-    const add = button("Add...");
-    addRow.append(behaviorSelect, add);
-    wrapper.append(addRow);
-
-    add.addEventListener("click", () => {
-      const behavior = manifest.behaviors?.[behaviorSelect.value];
-      if (!behavior) return;
-
-      commit(() => {
-        const instance = createBehaviorInstance({
-          behaviorId: behavior.id,
-          name: uniqueBehaviorInstanceName(scene, behavior.name)
-        });
-        layer.behaviors ??= [];
-        layer.behaviors.push(instance);
-        selection = {
-          type: "behavior",
-          sceneId: scene.id,
-          layerId: layer.id,
-          instanceId: instance.id
-        };
-      });
-      emitSelection();
-    });
-
     let renderedSections = 0;
 
     for (const behavior of behaviors) {
@@ -725,6 +696,80 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     }
 
     return wrapper;
+  }
+
+  function openAddBehaviorDialog(scene: SceneDefinition, layer: SceneLayer): void {
+    const behaviors = behaviorDefinitions();
+    if (!behaviors.length) return;
+
+    const dialog = document.createElement("dialog");
+    dialog.className = "scene-designer__dialog";
+    const form = document.createElement("form");
+    form.method = "dialog";
+    form.className = "scene-designer__stack";
+
+    const title = document.createElement("div");
+    title.className = "scene-designer__title";
+    title.textContent = "Add Behavior";
+
+    const label = document.createElement("label");
+    label.className = "scene-designer__label";
+    const labelText = document.createElement("span");
+    labelText.textContent = "Behavior";
+    const select = document.createElement("select");
+    select.className = "scene-designer__select";
+    for (const behavior of behaviors) {
+      const option = document.createElement("option");
+      option.value = behavior.id;
+      option.textContent = behavior.name;
+      select.append(option);
+    }
+    label.append(labelText, select);
+
+    const actions = document.createElement("div");
+    actions.className = "scene-designer__dialog-actions";
+    const cancel = button("Cancel");
+    cancel.value = "cancel";
+    const add = button("Add");
+    add.value = "add";
+    actions.append(cancel, add);
+    form.append(title, label, actions);
+    dialog.append(form);
+    elements.root.append(dialog);
+
+    dialog.addEventListener("close", () => {
+      const behavior = dialog.returnValue === "add" ? manifest.behaviors?.[select.value] : undefined;
+      dialog.remove();
+      if (!behavior) return;
+      addBehaviorInstance(scene, layer, behavior);
+    });
+    cancel.addEventListener("click", () => {
+      dialog.close("cancel");
+    });
+    add.addEventListener("click", () => {
+      dialog.close("add");
+    });
+
+    dialog.showModal();
+    select.focus();
+  }
+
+  function addBehaviorInstance(scene: SceneDefinition, layer: SceneLayer, behavior: SceneBehaviorDefinition): void {
+    commit(() => {
+      const instance = createBehaviorInstance({
+        behaviorId: behavior.id,
+        name: uniqueBehaviorInstanceName(scene, behavior.name)
+      });
+      layer.behaviors ??= [];
+      layer.behaviors.push(instance);
+      selection = {
+        type: "behavior",
+        sceneId: scene.id,
+        layerId: layer.id,
+        instanceId: instance.id
+      };
+    });
+    emitSelection();
   }
 
   function renderBehaviorInstanceItem(
