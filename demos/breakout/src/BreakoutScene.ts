@@ -20,8 +20,6 @@ import {
   SceneDesignerDebugClient
 } from "@scene-designer/phaser";
 import Phaser from "phaser";
-import { assets } from "./assets.js";
-import { scenes } from "./scenes.js";
 
 type ArcadeImage = Phaser.Types.Physics.Arcade.ImageWithDynamicBody;
 type BrickImage = Phaser.GameObjects.Image;
@@ -33,10 +31,6 @@ type AlphaMask = {
 };
 
 const levelIds = ["level.one", "level.two", "level.three"];
-const assetDesignerIds = [
-  "audio.sfx.paddle",
-  ...Object.keys(assets.assets).filter((assetId) => assetId !== "audio.sfx.paddle")
-];
 const brickTag = "brick";
 const backgroundTag = "background";
 const spawnTag = "enemy.spawn";
@@ -59,11 +53,21 @@ const bananaSpinSpeed = 720;
 const paddleKeyboardSpeed = 430;
 const paddlePointerHoldMs = 180;
 
+export type BreakoutSceneOptions = {
+  aiAssets: AiAssetManifest;
+  sceneManifest: SceneDesignerManifest;
+  assetApi?: string;
+  sceneApi?: string;
+};
+
 export class BreakoutScene extends Phaser.Scene {
+  private readonly aiAssets: AiAssetManifest;
+  private readonly assetApi?: string;
+  private readonly sceneApi?: string;
   private aiRuntime!: AiAssetRuntime;
   private pixelCollision!: PixelCollision;
   private sceneDesigner?: InstalledPhaserSceneDesigner;
-  private sceneManifest: SceneDesignerManifest = scenes;
+  private sceneManifest: SceneDesignerManifest;
   private levelIndex = 0;
   private currentSceneId = levelIds[0];
   private paddle!: ArcadeImage;
@@ -86,13 +90,21 @@ export class BreakoutScene extends Phaser.Scene {
   private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
   private readonly previewTextures = new Map<string, string>();
 
+  constructor(options: BreakoutSceneOptions) {
+    super("breakout");
+    this.aiAssets = options.aiAssets;
+    this.assetApi = options.assetApi;
+    this.sceneApi = options.sceneApi;
+    this.sceneManifest = options.sceneManifest;
+  }
+
   preload(): void {
-    loadAiAssets(this, assets);
-    loadAiAudioAssets(this, assets);
+    loadAiAssets(this, this.aiAssets);
+    loadAiAudioAssets(this, this.aiAssets);
   }
 
   create(): void {
-    this.aiRuntime = new AiAssetRuntime(this, assets);
+    this.aiRuntime = new AiAssetRuntime(this, this.aiAssets);
     this.pixelCollision = new PixelCollision(this);
     this.physics.world.setBounds(0, 0, 800, 600, true, true, true, false);
     this.cursors = this.input.keyboard?.createCursorKeys();
@@ -105,9 +117,9 @@ export class BreakoutScene extends Phaser.Scene {
 
     installAiAssetDesigner({
       scene: this,
-      manifest: assets,
-      client: new AiAssetDebugClient("http://127.0.0.1:4077"),
-      assetIds: assetDesignerIds,
+      manifest: this.aiAssets,
+      client: new AiAssetDebugClient(this.assetApi ?? "http://127.0.0.1:4077"),
+      assetIds: this.assetDesignerIds(),
       title: "Assets",
       restartOnPromote: false,
       onManifestUpdated: (manifest) => {
@@ -124,8 +136,8 @@ export class BreakoutScene extends Phaser.Scene {
     this.sceneDesigner = installPhaserSceneDesigner({
       scene: this,
       manifest: this.sceneManifest,
-      aiAssets: assets,
-      client: new SceneDesignerDebugClient("http://127.0.0.1:4078"),
+      aiAssets: this.aiAssets,
+      client: new SceneDesignerDebugClient(this.sceneApi ?? "http://127.0.0.1:4078"),
       defaultSceneId: this.currentSceneId,
       renderSceneObjects: false,
       areaDepth: 4200,
@@ -610,15 +622,22 @@ export class BreakoutScene extends Phaser.Scene {
     return this.previewTextures.get(assetId) ?? this.aiRuntime.key(assetId);
   }
 
+  private assetDesignerIds(): string[] {
+    return [
+      "audio.sfx.paddle",
+      ...Object.keys(this.aiAssets.assets).filter((assetId) => assetId !== "audio.sfx.paddle")
+    ];
+  }
+
   private syncAiAssetManifest(manifest: AiAssetManifest): void {
-    Object.assign(assets.assets, manifest.assets);
-    assets.assetPaths = manifest.assetPaths;
-    assets.styleGuide = manifest.styleGuide;
-    assets.targets = manifest.targets;
+    Object.assign(this.aiAssets.assets, manifest.assets);
+    this.aiAssets.assetPaths = manifest.assetPaths;
+    this.aiAssets.styleGuide = manifest.styleGuide;
+    this.aiAssets.targets = manifest.targets;
   }
 
   private applyAiAssetTexture(assetId: string, textureKey: string, asset: AiAssetDefinition): void {
-    assets.assets[assetId] = asset;
+    this.aiAssets.assets[assetId] = asset;
 
     if (!isVisualAsset(asset)) return;
     if (!this.textures.exists(textureKey)) return;
