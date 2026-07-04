@@ -363,7 +363,7 @@ export class BreakoutScene extends Phaser.Scene {
   ): void {
     const ball = ballObject as ArcadeImage;
     const brick = brickObject as BrickImage;
-    this.reflectBallFromBrick(ball, brick, collisionPoint);
+    this.reflectBallFromObject(ball, brick, collisionPoint);
 
     const hp = Math.max(0, Number(brick.getData("hp") ?? 1) - 1);
 
@@ -384,12 +384,12 @@ export class BreakoutScene extends Phaser.Scene {
     }
   }
 
-  private reflectBallFromBrick(
+  private reflectBallFromObject(
     ball: ArcadeImage,
-    brick: BrickImage,
+    target: Phaser.GameObjects.Image,
     collisionPoint: Phaser.Math.Vector2
   ): void {
-    const normal = brickCollisionNormal(brick, collisionPoint);
+    const normal = objectCollisionNormal(target, collisionPoint);
     const velocity = new Phaser.Math.Vector2(ball.body.velocity.x, ball.body.velocity.y);
 
     if (velocity.lengthSq() === 0) {
@@ -412,11 +412,12 @@ export class BreakoutScene extends Phaser.Scene {
     ballObject: unknown,
     enemyObject: unknown
   ): void {
+    const ball = ballObject as ArcadeImage;
     const enemy = enemyObject as ArcadeImage;
+    const collisionPoint = this.pixelCollision.point(ball, enemy) ?? closestPointOnObjectBounds(ball, enemy);
+    this.reflectBallFromObject(ball, enemy, collisionPoint);
     enemy.destroy();
     this.score += 100;
-    const ball = ballObject as ArcadeImage;
-    ball.setVelocity(ball.body.velocity.x * 1.04, ball.body.velocity.y * 1.04);
     this.updateHud();
   }
 
@@ -738,12 +739,24 @@ function pointInPolygon(point: Phaser.Math.Vector2, vertices: Array<{ x: number;
   return inside;
 }
 
-function brickCollisionNormal(
-  brick: BrickImage,
+function closestPointOnObjectBounds(
+  source: Phaser.GameObjects.Image | Phaser.GameObjects.Sprite,
+  target: Phaser.GameObjects.Image | Phaser.GameObjects.Sprite
+): Phaser.Math.Vector2 {
+  const bounds = target.getBounds();
+
+  return new Phaser.Math.Vector2(
+    Phaser.Math.Clamp(source.x, bounds.left, bounds.right),
+    Phaser.Math.Clamp(source.y, bounds.top, bounds.bottom)
+  );
+}
+
+function objectCollisionNormal(
+  target: Phaser.GameObjects.Image,
   collisionPoint: Phaser.Math.Vector2
 ): Phaser.Math.Vector2 {
-  const localPoint = brick.getLocalPoint(collisionPoint.x, collisionPoint.y, new Phaser.Math.Vector2());
-  const frame = brick.frame;
+  const localPoint = target.getLocalPoint(collisionPoint.x, collisionPoint.y, new Phaser.Math.Vector2());
+  const frame = target.frame;
   const distances = [
     { distance: localPoint.x, normal: new Phaser.Math.Vector2(-1, 0) },
     { distance: frame.width - localPoint.x, normal: new Phaser.Math.Vector2(1, 0) },
@@ -751,8 +764,8 @@ function brickCollisionNormal(
     { distance: frame.height - localPoint.y, normal: new Phaser.Math.Vector2(0, 1) }
   ].sort((a, b) => a.distance - b.distance);
   const localNormal = distances[0]?.normal ?? new Phaser.Math.Vector2(0, -1);
-  const cos = Math.cos(brick.rotation);
-  const sin = Math.sin(brick.rotation);
+  const cos = Math.cos(target.rotation);
+  const sin = Math.sin(target.rotation);
 
   return new Phaser.Math.Vector2(
     localNormal.x * cos - localNormal.y * sin,
