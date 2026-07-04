@@ -1,0 +1,27 @@
+{
+  "id": "enemy.monkey",
+  "kind": "image",
+  "prompt": "A mischievous jungle monkey enemy for a cute arcade breakout game, playful face, raised arms, small readable body, transparent background.",
+  "dimensions": {
+    "width": 44,
+    "height": 38
+  },
+  "settings": {
+    "format": "svg",
+    "background": "transparent"
+  },
+  "activeVersion": "default",
+  "versions": {
+    "default": {
+      "name": "default",
+      "file": "/assets/enemy.monkey.default.svg",
+      "prompt": "A mischievous jungle monkey enemy for a cute arcade breakout game, playful face, raised arms, small readable body, transparent background.",
+      "createdAt": "2026-07-03T00:00:00.000Z",
+      "model": "manual-svg"
+    }
+  },
+  "tags": [
+    "enemy",
+    "monkey"
+  ]
+}

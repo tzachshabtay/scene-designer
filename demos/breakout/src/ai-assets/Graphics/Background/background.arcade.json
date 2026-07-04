@@ -1,10 +1,17 @@
 {
   "id": "background.arcade",
   "kind": "image",
-  "prompt": "A vertical neon arcade arena background with subtle starfield, grid horizon, and room for gameplay.",
-  "dimensions": { "width": 800, "height": 600 },
-  "settings": { "format": "svg", "background": "opaque" },
-  "activeVersion": "default",
+  "prompt": "a jungle background for a breakout game",
+  "dimensions": {
+    "width": 800,
+    "height": 600
+  },
+  "settings": {
+    "format": "png",
+    "background": "opaque",
+    "model": "gpt-image-2"
+  },
+  "activeVersion": "promoted-1783118955999",
   "versions": {
     "default": {
       "name": "default",
@@ -12,7 +19,46 @@
       "prompt": "A vertical neon arcade arena background with subtle starfield, grid horizon, and room for gameplay.",
       "createdAt": "2026-07-03T00:00:00.000Z",
       "model": "manual-svg"
+    },
+    "promoted-1783118189677": {
+      "name": "promoted-1783118189677",
+      "file": "/assets/background.arcade.promoted-1783118189677.png",
+      "prompt": "a jungle background for a breakout game",
+      "createdAt": "2026-07-03T22:36:29.786Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "format": "png",
+        "background": "opaque",
+        "model": "gpt-image-2"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "default",
+      "notes": "Promoted from the AI asset designer."
+    },
+    "promoted-1783118955999": {
+      "name": "promoted-1783118955999",
+      "file": "/assets/background.arcade.promoted-1783118955999.png",
+      "prompt": "a jungle background for a breakout game",
+      "createdAt": "2026-07-03T22:49:16.042Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "format": "png",
+        "background": "opaque",
+        "model": "gpt-image-2"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "promoted-1783118189677",
+      "notes": "Promoted from the AI asset designer."
     }
   },
-  "tags": ["background"]
+  "tags": [
+    "background"
+  ],
+  "audioSettings": {},
+  "audioPlayback": {},
+  "voiceSettings": {}
 }

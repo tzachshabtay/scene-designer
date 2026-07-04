@@ -1,3 +1,10 @@
 {
-  "prompt": "Bright neon arcade assets with crisp vector edges, readable silhouettes, deep space contrast, and playful sci-fi energy."
+  "prompt": "Cute retro pixel-art arcade game style, inspired by 16-bit era console games, with crisp visible pixels, saturated jewel-tone colors, chunky readable shapes, playful character design, and dense environmental detail. Use a charming jungle-adventure mood with lush layered foliage, vines, flowers, carved stone ruins, wood-and-bamboo UI frames, fruit and animal motifs, and soft atmospheric depth in the background. Keep the composition bright, whimsical, and game-like, with clear silhouettes, high contrast, rounded organic forms, decorative pixel clusters, and polished arcade HUD elements. Avoid realism, painterly blending, modern vector smoothness, and overly harsh square grids; everything should feel handcrafted, cute, nostalgic, and readable as a classic pixel-art game screenshot.",
+  "images": [
+    {
+      "name": "jungle.png",
+      "file": "/assets/style-guide.1783117129562.1.png",
+      "mimeType": "image/png"
+    }
+  ]
 }

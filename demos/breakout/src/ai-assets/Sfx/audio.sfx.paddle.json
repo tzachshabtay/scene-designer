@@ -2,8 +2,14 @@
   "id": "audio.sfx.paddle",
   "kind": "sound",
   "prompt": "Short bright paddle deflection blip.",
-  "audioSettings": { "provider": "elevenlabs", "format": "mp3", "durationSeconds": 1 },
+  "audioSettings": {
+    "provider": "elevenlabs",
+    "format": "mp3",
+    "durationSeconds": 1
+  },
   "activeVersion": "",
   "versions": {},
-  "tags": ["sfx"]
+  "tags": [
+    "sfx"
+  ]
 }

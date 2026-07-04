@@ -1,10 +1,17 @@
 {
   "id": "hero.paddle.normal",
   "kind": "image",
-  "prompt": "A standard neon breakout paddle, balanced size, cyan and white trim, transparent background.",
-  "dimensions": { "width": 112, "height": 18 },
-  "settings": { "format": "svg", "background": "transparent" },
-  "activeVersion": "default",
+  "prompt": "A standard jungle themed breakout paddle, transparent background.",
+  "dimensions": {
+    "width": 112,
+    "height": 18
+  },
+  "settings": {
+    "format": "svg",
+    "background": "transparent",
+    "model": "gpt-5"
+  },
+  "activeVersion": "promoted-1783119204300",
   "versions": {
     "default": {
       "name": "default",
@@ -12,7 +19,30 @@
       "prompt": "A standard neon breakout paddle, balanced size, cyan and white trim, transparent background.",
       "createdAt": "2026-07-03T00:00:00.000Z",
       "model": "manual-svg"
+    },
+    "promoted-1783119204300": {
+      "name": "promoted-1783119204300",
+      "file": "/assets/hero.paddle.normal.promoted-1783119204300.svg",
+      "prompt": "A standard jungle themed breakout paddle, transparent background.",
+      "createdAt": "2026-07-03T22:53:24.332Z",
+      "model": "gpt-5",
+      "settings": {
+        "format": "svg",
+        "background": "transparent",
+        "model": "gpt-5"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "default",
+      "notes": "Promoted from the AI asset designer."
     }
   },
-  "tags": ["hero", "paddle"]
+  "tags": [
+    "hero",
+    "paddle"
+  ],
+  "audioSettings": {},
+  "audioPlayback": {},
+  "voiceSettings": {}
 }

@@ -1,0 +1,28 @@
+{
+  "id": "brick.statue",
+  "kind": "image",
+  "prompt": "A tough double-hit breakout brick that looks like a carved Easter Island head statue, moai-style stone face, mossy cracks, compact readable block silhouette, transparent background.",
+  "dimensions": {
+    "width": 58,
+    "height": 24
+  },
+  "settings": {
+    "format": "svg",
+    "background": "transparent"
+  },
+  "activeVersion": "default",
+  "versions": {
+    "default": {
+      "name": "default",
+      "file": "/assets/brick.statue.default.svg",
+      "prompt": "A tough double-hit breakout brick that looks like a carved Easter Island head statue, moai-style stone face, mossy cracks, compact readable block silhouette, transparent background.",
+      "createdAt": "2026-07-03T00:00:00.000Z",
+      "model": "manual-svg"
+    }
+  },
+  "tags": [
+    "brick",
+    "tough",
+    "statue"
+  ]
+}

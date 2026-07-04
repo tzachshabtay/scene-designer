@@ -1,0 +1,27 @@
+{
+  "id": "brick.leaves",
+  "kind": "image",
+  "prompt": "A lush cluster of overlapping jungle leaves arranged like a breakout brick, broad tropical leaves with crisp silhouettes, bright veins, transparent background.",
+  "dimensions": {
+    "width": 58,
+    "height": 24
+  },
+  "settings": {
+    "format": "svg",
+    "background": "transparent"
+  },
+  "activeVersion": "default",
+  "versions": {
+    "default": {
+      "name": "default",
+      "file": "/assets/brick.leaves.default.svg",
+      "prompt": "A lush cluster of overlapping jungle leaves arranged like a breakout brick, broad tropical leaves with crisp silhouettes, bright veins, transparent background.",
+      "createdAt": "2026-07-03T00:00:00.000Z",
+      "model": "manual-svg"
+    }
+  },
+  "tags": [
+    "brick",
+    "leaves"
+  ]
+}

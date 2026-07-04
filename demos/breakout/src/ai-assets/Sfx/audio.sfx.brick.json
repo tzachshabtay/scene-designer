@@ -2,8 +2,14 @@
   "id": "audio.sfx.brick",
   "kind": "sound",
   "prompt": "Punchy glass brick crack with arcade sparkle.",
-  "audioSettings": { "provider": "elevenlabs", "format": "mp3", "durationSeconds": 1 },
+  "audioSettings": {
+    "provider": "elevenlabs",
+    "format": "mp3",
+    "durationSeconds": 1
+  },
   "activeVersion": "",
   "versions": {},
-  "tags": ["sfx"]
+  "tags": [
+    "sfx"
+  ]
 }

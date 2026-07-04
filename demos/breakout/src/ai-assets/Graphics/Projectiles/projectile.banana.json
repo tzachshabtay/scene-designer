@@ -1,0 +1,27 @@
+{
+  "id": "projectile.banana",
+  "kind": "image",
+  "prompt": "A bright curved banana projectile for a cute jungle arcade game, golden yellow peel, small readable silhouette, transparent background.",
+  "dimensions": {
+    "width": 28,
+    "height": 16
+  },
+  "settings": {
+    "format": "svg",
+    "background": "transparent"
+  },
+  "activeVersion": "default",
+  "versions": {
+    "default": {
+      "name": "default",
+      "file": "/assets/projectile.banana.default.svg",
+      "prompt": "A bright curved banana projectile for a cute jungle arcade game, golden yellow peel, small readable silhouette, transparent background.",
+      "createdAt": "2026-07-03T00:00:00.000Z",
+      "model": "manual-svg"
+    }
+  },
+  "tags": [
+    "projectile",
+    "banana"
+  ]
+}

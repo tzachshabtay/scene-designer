@@ -2,8 +2,14 @@
   "id": "ball.core",
   "kind": "image",
   "prompt": "A glowing arcade energy ball, gold center with white highlight, transparent background.",
-  "dimensions": { "width": 24, "height": 24 },
-  "settings": { "format": "svg", "background": "transparent" },
+  "dimensions": {
+    "width": 24,
+    "height": 24
+  },
+  "settings": {
+    "format": "svg",
+    "background": "transparent"
+  },
   "activeVersion": "default",
   "versions": {
     "default": {
@@ -14,5 +20,7 @@
       "model": "manual-svg"
     }
   },
-  "tags": ["ball"]
+  "tags": [
+    "ball"
+  ]
 }

@@ -42,7 +42,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l1-b01",
               "tag": "brick",
-              "assetId": "brick.cyan",
+              "assetId": "brick.leaves",
               "x": 140,
               "y": 114,
               "scaleX": 1,
@@ -56,7 +56,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l1-b02",
               "tag": "brick",
-              "assetId": "brick.gold",
+              "assetId": "brick.vines",
               "x": 220,
               "y": 114,
               "scaleX": 1,
@@ -70,7 +70,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l1-b03",
               "tag": "brick",
-              "assetId": "brick.magenta",
+              "assetId": "brick.pineapple",
               "x": 300,
               "y": 114,
               "scaleX": 1,
@@ -84,7 +84,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l1-b04",
               "tag": "brick",
-              "assetId": "brick.cyan",
+              "assetId": "brick.leaves",
               "x": 380,
               "y": 114,
               "scaleX": 1,
@@ -98,7 +98,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l1-b05",
               "tag": "brick",
-              "assetId": "brick.magenta",
+              "assetId": "brick.pineapple",
               "x": 460,
               "y": 114,
               "scaleX": 1,
@@ -112,7 +112,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l1-b06",
               "tag": "brick",
-              "assetId": "brick.gold",
+              "assetId": "brick.vines",
               "x": 540,
               "y": 114,
               "scaleX": 1,
@@ -126,7 +126,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l1-b07",
               "tag": "brick",
-              "assetId": "brick.cyan",
+              "assetId": "brick.leaves",
               "x": 620,
               "y": 114,
               "scaleX": 1,
@@ -140,7 +140,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l1-b08",
               "tag": "brick",
-              "assetId": "brick.gold",
+              "assetId": "brick.vines",
               "x": 180,
               "y": 150,
               "scaleX": 1,
@@ -154,7 +154,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l1-b09",
               "tag": "brick",
-              "assetId": "brick.cyan",
+              "assetId": "brick.leaves",
               "x": 260,
               "y": 150,
               "scaleX": 1,
@@ -168,7 +168,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l1-b10",
               "tag": "brick",
-              "assetId": "brick.steel",
+              "assetId": "brick.statue",
               "x": 340,
               "y": 150,
               "scaleX": 1,
@@ -182,7 +182,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l1-b11",
               "tag": "brick",
-              "assetId": "brick.steel",
+              "assetId": "brick.statue",
               "x": 420,
               "y": 150,
               "scaleX": 1,
@@ -196,7 +196,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l1-b12",
               "tag": "brick",
-              "assetId": "brick.cyan",
+              "assetId": "brick.leaves",
               "x": 500,
               "y": 150,
               "scaleX": 1,
@@ -210,7 +210,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l1-b13",
               "tag": "brick",
-              "assetId": "brick.gold",
+              "assetId": "brick.vines",
               "x": 580,
               "y": 150,
               "scaleX": 1,
@@ -224,7 +224,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l1-b14",
               "tag": "brick",
-              "assetId": "brick.magenta",
+              "assetId": "brick.pineapple",
               "x": 260,
               "y": 186,
               "scaleX": 1,
@@ -238,7 +238,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l1-b15",
               "tag": "brick",
-              "assetId": "brick.cyan",
+              "assetId": "brick.leaves",
               "x": 340,
               "y": 186,
               "scaleX": 1,
@@ -252,7 +252,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l1-b16",
               "tag": "brick",
-              "assetId": "brick.gold",
+              "assetId": "brick.vines",
               "x": 420,
               "y": 186,
               "scaleX": 1,
@@ -266,7 +266,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l1-b17",
               "tag": "brick",
-              "assetId": "brick.magenta",
+              "assetId": "brick.pineapple",
               "x": 500,
               "y": 186,
               "scaleX": 1,
@@ -370,7 +370,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l3-b01",
               "tag": "brick",
-              "assetId": "brick.steel",
+              "assetId": "brick.statue",
               "x": 180,
               "y": 106,
               "scaleX": 1,
@@ -384,7 +384,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l3-b02",
               "tag": "brick",
-              "assetId": "brick.steel",
+              "assetId": "brick.statue",
               "x": 260,
               "y": 106,
               "scaleX": 1,
@@ -398,7 +398,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l3-b03",
               "tag": "brick",
-              "assetId": "brick.steel",
+              "assetId": "brick.statue",
               "x": 340,
               "y": 106,
               "scaleX": 1,
@@ -412,7 +412,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l3-b04",
               "tag": "brick",
-              "assetId": "brick.steel",
+              "assetId": "brick.statue",
               "x": 460,
               "y": 106,
               "scaleX": 1,
@@ -426,7 +426,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l3-b05",
               "tag": "brick",
-              "assetId": "brick.steel",
+              "assetId": "brick.statue",
               "x": 540,
               "y": 106,
               "scaleX": 1,
@@ -440,7 +440,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l3-b06",
               "tag": "brick",
-              "assetId": "brick.steel",
+              "assetId": "brick.statue",
               "x": 620,
               "y": 106,
               "scaleX": 1,
@@ -454,7 +454,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l3-b07",
               "tag": "brick",
-              "assetId": "brick.cyan",
+              "assetId": "brick.leaves",
               "x": 220,
               "y": 146,
               "scaleX": 1,
@@ -468,7 +468,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l3-b08",
               "tag": "brick",
-              "assetId": "brick.magenta",
+              "assetId": "brick.pineapple",
               "x": 300,
               "y": 146,
               "scaleX": 1,
@@ -482,7 +482,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l3-b09",
               "tag": "brick",
-              "assetId": "brick.gold",
+              "assetId": "brick.vines",
               "x": 380,
               "y": 146,
               "scaleX": 1,
@@ -496,7 +496,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l3-b10",
               "tag": "brick",
-              "assetId": "brick.gold",
+              "assetId": "brick.vines",
               "x": 420,
               "y": 146,
               "scaleX": 1,
@@ -510,7 +510,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l3-b11",
               "tag": "brick",
-              "assetId": "brick.magenta",
+              "assetId": "brick.pineapple",
               "x": 500,
               "y": 146,
               "scaleX": 1,
@@ -524,7 +524,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l3-b12",
               "tag": "brick",
-              "assetId": "brick.cyan",
+              "assetId": "brick.leaves",
               "x": 580,
               "y": 146,
               "scaleX": 1,
@@ -538,7 +538,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l3-b13",
               "tag": "brick",
-              "assetId": "brick.cyan",
+              "assetId": "brick.leaves",
               "x": 260,
               "y": 186,
               "scaleX": 1,
@@ -552,7 +552,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l3-b14",
               "tag": "brick",
-              "assetId": "brick.gold",
+              "assetId": "brick.vines",
               "x": 340,
               "y": 186,
               "scaleX": 1,
@@ -566,7 +566,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l3-b15",
               "tag": "brick",
-              "assetId": "brick.gold",
+              "assetId": "brick.vines",
               "x": 460,
               "y": 186,
               "scaleX": 1,
@@ -580,7 +580,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l3-b16",
               "tag": "brick",
-              "assetId": "brick.cyan",
+              "assetId": "brick.leaves",
               "x": 540,
               "y": 186,
               "scaleX": 1,
@@ -594,7 +594,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l3-b17",
               "tag": "brick",
-              "assetId": "brick.magenta",
+              "assetId": "brick.pineapple",
               "x": 340,
               "y": 226,
               "scaleX": 1,
@@ -608,7 +608,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l3-b18",
               "tag": "brick",
-              "assetId": "brick.magenta",
+              "assetId": "brick.pineapple",
               "x": 460,
               "y": 226,
               "scaleX": 1,
@@ -749,7 +749,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l2-b01",
               "tag": "brick",
-              "assetId": "brick.steel",
+              "assetId": "brick.statue",
               "x": 160,
               "y": 104,
               "scaleX": 1,
@@ -763,7 +763,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l2-b02",
               "tag": "brick",
-              "assetId": "brick.cyan",
+              "assetId": "brick.leaves",
               "x": 240,
               "y": 104,
               "scaleX": 1,
@@ -777,7 +777,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l2-b03",
               "tag": "brick",
-              "assetId": "brick.gold",
+              "assetId": "brick.vines",
               "x": 320,
               "y": 104,
               "scaleX": 1,
@@ -791,7 +791,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l2-b04",
               "tag": "brick",
-              "assetId": "brick.magenta",
+              "assetId": "brick.pineapple",
               "x": 400,
               "y": 104,
               "scaleX": 1,
@@ -805,7 +805,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l2-b05",
               "tag": "brick",
-              "assetId": "brick.gold",
+              "assetId": "brick.vines",
               "x": 480,
               "y": 104,
               "scaleX": 1,
@@ -819,7 +819,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l2-b06",
               "tag": "brick",
-              "assetId": "brick.cyan",
+              "assetId": "brick.leaves",
               "x": 560,
               "y": 104,
               "scaleX": 1,
@@ -833,7 +833,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l2-b07",
               "tag": "brick",
-              "assetId": "brick.steel",
+              "assetId": "brick.statue",
               "x": 640,
               "y": 104,
               "scaleX": 1,
@@ -847,7 +847,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l2-b08",
               "tag": "brick",
-              "assetId": "brick.magenta",
+              "assetId": "brick.pineapple",
               "x": 240,
               "y": 144,
               "scaleX": 1,
@@ -861,7 +861,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l2-b09",
               "tag": "brick",
-              "assetId": "brick.cyan",
+              "assetId": "brick.leaves",
               "x": 320,
               "y": 144,
               "scaleX": 1,
@@ -875,7 +875,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l2-b10",
               "tag": "brick",
-              "assetId": "brick.gold",
+              "assetId": "brick.vines",
               "x": 400,
               "y": 144,
               "scaleX": 1,
@@ -889,7 +889,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l2-b11",
               "tag": "brick",
-              "assetId": "brick.cyan",
+              "assetId": "brick.leaves",
               "x": 480,
               "y": 144,
               "scaleX": 1,
@@ -903,7 +903,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l2-b12",
               "tag": "brick",
-              "assetId": "brick.magenta",
+              "assetId": "brick.pineapple",
               "x": 560,
               "y": 144,
               "scaleX": 1,
@@ -917,7 +917,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l2-b13",
               "tag": "brick",
-              "assetId": "brick.cyan",
+              "assetId": "brick.leaves",
               "x": 320,
               "y": 184,
               "scaleX": 1,
@@ -931,7 +931,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l2-b14",
               "tag": "brick",
-              "assetId": "brick.steel",
+              "assetId": "brick.statue",
               "x": 400,
               "y": 184,
               "scaleX": 1,
@@ -945,7 +945,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l2-b15",
               "tag": "brick",
-              "assetId": "brick.cyan",
+              "assetId": "brick.leaves",
               "x": 480,
               "y": 184,
               "scaleX": 1,
@@ -959,7 +959,7 @@ export const scenes = defineSceneManifest(
             {
               "id": "l2-b16",
               "tag": "brick",
-              "assetId": "brick.gold",
+              "assetId": "brick.vines",
               "x": 400,
               "y": 224,
               "scaleX": 1,

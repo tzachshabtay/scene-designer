@@ -2,8 +2,14 @@
   "id": "hero.paddle.short",
   "kind": "image",
   "prompt": "A short neon breakout paddle, compact and fast, cyan edge lights, transparent background.",
-  "dimensions": { "width": 72, "height": 18 },
-  "settings": { "format": "svg", "background": "transparent" },
+  "dimensions": {
+    "width": 72,
+    "height": 18
+  },
+  "settings": {
+    "format": "svg",
+    "background": "transparent"
+  },
   "activeVersion": "default",
   "versions": {
     "default": {
@@ -14,5 +20,8 @@
       "model": "manual-svg"
     }
   },
-  "tags": ["hero", "paddle"]
+  "tags": [
+    "hero",
+    "paddle"
+  ]
 }

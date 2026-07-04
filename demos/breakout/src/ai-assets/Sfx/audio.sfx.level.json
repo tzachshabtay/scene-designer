@@ -2,8 +2,14 @@
   "id": "audio.sfx.level",
   "kind": "sound",
   "prompt": "Upbeat level clear arpeggio.",
-  "audioSettings": { "provider": "elevenlabs", "format": "mp3", "durationSeconds": 2 },
+  "audioSettings": {
+    "provider": "elevenlabs",
+    "format": "mp3",
+    "durationSeconds": 2
+  },
   "activeVersion": "",
   "versions": {},
-  "tags": ["sfx"]
+  "tags": [
+    "sfx"
+  ]
 }

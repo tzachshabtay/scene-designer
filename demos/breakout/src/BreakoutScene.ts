@@ -40,9 +40,19 @@ const assetDesignerIds = [
 const brickTag = "brick";
 const backgroundTag = "background";
 const spawnTag = "enemy.spawn";
+const statueBrickAssetId = "brick.statue";
+const snakeAssetId = "enemy.snake";
+const monkeyAssetId = "enemy.monkey";
+const bananaAssetId = "projectile.banana";
 const enemySpawnDelayMs = 18000;
 const firstEnemySpawnDelayMs = 5000;
 const maxActiveEnemies = 2;
+const snakeSpeed = 38;
+const monkeyHavocSpeed = 82;
+const monkeyMinShotDelayMs = 1900;
+const monkeyMaxShotDelayMs = 3300;
+const monkeyMaxY = 250;
+const bananaSpeed = 215;
 const paddleKeyboardSpeed = 430;
 const paddlePointerHoldMs = 180;
 
@@ -57,6 +67,7 @@ export class BreakoutScene extends Phaser.Scene {
   private ball!: ArcadeImage;
   private brickObjects: BrickImage[] = [];
   private enemies!: Phaser.Physics.Arcade.Group;
+  private bananas!: Phaser.Physics.Arcade.Group;
   private levelObjects: Phaser.GameObjects.GameObject[] = [];
   private score = 0;
   private lives = 3;
@@ -147,8 +158,17 @@ export class BreakoutScene extends Phaser.Scene {
       const enemy = child as ArcadeImage;
       if (enemy.y > 620) {
         enemy.destroy();
+      } else if (enemy.getData("assetId") === monkeyAssetId) {
+        this.updateMonkey(enemy);
       } else {
         this.steerEnemyTowardPaddle(enemy);
+      }
+    }
+
+    for (const child of this.bananas.children) {
+      const banana = child as ArcadeImage;
+      if (banana.y > 630 || banana.x < -40 || banana.x > 840) {
+        banana.destroy();
       }
     }
   }
@@ -169,6 +189,7 @@ export class BreakoutScene extends Phaser.Scene {
     this.addSceneBackground(level);
 
     this.enemies = this.physics.add.group({ allowGravity: false });
+    this.bananas = this.physics.add.group({ allowGravity: false });
 
     for (const object of level.layers.flatMap((layer) => layer.objects)) {
       if (object.tag === brickTag && object.visible) {
@@ -196,6 +217,8 @@ export class BreakoutScene extends Phaser.Scene {
     this.physics.add.collider(this.ball, this.paddle, this.onPaddleHit, undefined, this);
     this.physics.add.overlap(this.ball, this.enemies, this.onEnemyHit, undefined, this);
     this.physics.add.overlap(this.paddle, this.enemies, this.onPaddleEnemyOverlap, undefined, this);
+    this.physics.add.overlap(this.ball, this.bananas, this.onBananaHit, undefined, this);
+    this.physics.add.overlap(this.paddle, this.bananas, this.onPaddleBananaOverlap, undefined, this);
 
     this.firstEnemySpawnTimer = this.time.delayedCall(firstEnemySpawnDelayMs, () => this.spawnEnemy(level));
     this.enemySpawnTimer = this.time.addEvent({
@@ -214,6 +237,7 @@ export class BreakoutScene extends Phaser.Scene {
     this.levelObjects = [];
     this.brickObjects = [];
     this.enemies?.destroy(true);
+    this.bananas?.destroy(true);
     this.firstEnemySpawnTimer?.remove(false);
     this.firstEnemySpawnTimer = undefined;
     this.enemySpawnTimer?.remove(false);
@@ -241,7 +265,7 @@ export class BreakoutScene extends Phaser.Scene {
     brick.setData("sceneObject", object);
     applyObjectTransform(brick, object);
     brick.setDepth(500);
-    brick.setData("hp", object.assetId === "brick.steel" ? 2 : 1);
+    brick.setData("hp", object.assetId === statueBrickAssetId ? 2 : 1);
     this.brickObjects.push(brick);
     this.levelObjects.push(brick);
   }
@@ -378,6 +402,31 @@ export class BreakoutScene extends Phaser.Scene {
     }
   }
 
+  private onBananaHit(
+    _ballObject: unknown,
+    bananaObject: unknown
+  ): void {
+    const banana = bananaObject as ArcadeImage;
+    banana.destroy();
+    this.score += 10;
+    this.updateHud();
+  }
+
+  private onPaddleBananaOverlap(
+    _paddleObject: unknown,
+    bananaObject: unknown
+  ): void {
+    const banana = bananaObject as ArcadeImage;
+    banana.destroy();
+    this.lives = Math.max(0, this.lives - 1);
+    this.updateHud();
+    if (this.lives === 0) {
+      this.score = 0;
+      this.lives = 3;
+      this.loadLevel(0);
+    }
+  }
+
   private loseBall(): void {
     this.lives -= 1;
     if (this.lives <= 0) {
@@ -401,11 +450,18 @@ export class BreakoutScene extends Phaser.Scene {
     if (!area) return;
 
     const point = randomPointInArea(area);
-    const assetId = Math.random() > 0.5 ? "enemy.orb" : "enemy.scout";
+    const assetId = Math.random() > 0.5 ? snakeAssetId : monkeyAssetId;
     const enemy = this.physics.add.image(point.x, point.y, this.textureForAsset(assetId));
     enemy.setData("assetId", assetId);
     enemy.setDepth(900);
-    this.steerEnemyTowardPaddle(enemy);
+    if (assetId === monkeyAssetId) {
+      enemy.setData("spawnY", Phaser.Math.Clamp(point.y, 42, monkeyMaxY - 40));
+      enemy.setData("phase", Phaser.Math.FloatBetween(0, Math.PI * 2));
+      enemy.setData("nextShotAt", this.time.now + Phaser.Math.Between(monkeyMinShotDelayMs, monkeyMaxShotDelayMs));
+      this.updateMonkey(enemy);
+    } else {
+      this.steerEnemyTowardPaddle(enemy);
+    }
     enemy.setBounce(0, 0);
     enemy.setCollideWorldBounds(true);
     this.enemies.add(enemy);
@@ -416,8 +472,57 @@ export class BreakoutScene extends Phaser.Scene {
 
     const direction = new Phaser.Math.Vector2(this.paddle.x - enemy.x, this.paddle.y - enemy.y);
     if (direction.lengthSq() === 0) return;
-    direction.normalize().scale(38);
+    direction.normalize().scale(snakeSpeed);
     enemy.setVelocity(direction.x, direction.y);
+  }
+
+  private updateMonkey(enemy: ArcadeImage): void {
+    const spawnY = Number(enemy.getData("spawnY") ?? Math.min(enemy.y, monkeyMaxY - 40));
+    const phase = Number(enemy.getData("phase") ?? 0);
+    const seconds = this.time.now / 1000;
+    const horizontal = (
+      Math.sin(seconds * 2.1 + phase) * monkeyHavocSpeed +
+      Math.cos(seconds * 3.7 + phase * 0.6) * 34
+    );
+    const targetY = Phaser.Math.Clamp(
+      spawnY + Math.sin(seconds * 1.45 + phase) * 34,
+      38,
+      monkeyMaxY
+    );
+    const vertical = Phaser.Math.Clamp((targetY - enemy.y) * 3, -70, 70);
+
+    let velocityX = horizontal;
+    if (enemy.x < 42) velocityX = Math.abs(velocityX) + 36;
+    if (enemy.x > 758) velocityX = -Math.abs(velocityX) - 36;
+
+    enemy.setVelocity(velocityX, vertical);
+
+    const nextShotAt = Number(enemy.getData("nextShotAt") ?? 0);
+    if (this.time.now >= nextShotAt) {
+      this.shootBanana(enemy);
+      enemy.setData("nextShotAt", this.time.now + Phaser.Math.Between(monkeyMinShotDelayMs, monkeyMaxShotDelayMs));
+    }
+  }
+
+  private shootBanana(monkey: ArcadeImage): void {
+    if (!this.paddle?.active) return;
+
+    const banana = this.physics.add.image(monkey.x, monkey.y + 12, this.textureForAsset(bananaAssetId));
+    banana.setData("assetId", bananaAssetId);
+    banana.setDepth(950);
+    banana.setRotation(Phaser.Math.FloatBetween(-0.45, 0.45));
+    banana.setAngularVelocity(Phaser.Math.Between(-260, 260));
+    banana.body.allowGravity = false;
+    banana.setCollideWorldBounds(false);
+
+    const direction = new Phaser.Math.Vector2(this.paddle.x - monkey.x, this.paddle.y - monkey.y);
+    if (direction.lengthSq() === 0) {
+      direction.set(0, 1);
+    }
+
+    direction.normalize().scale(bananaSpeed);
+    banana.setVelocity(direction.x, direction.y);
+    this.bananas.add(banana);
   }
 
   private queueLevelReload(): void {
@@ -513,6 +618,10 @@ export class BreakoutScene extends Phaser.Scene {
     }
 
     for (const object of this.enemies?.children ?? []) {
+      this.applyTextureToGameObject(object, assetId, textureKey);
+    }
+
+    for (const object of this.bananas?.children ?? []) {
       this.applyTextureToGameObject(object, assetId, textureKey);
     }
   }

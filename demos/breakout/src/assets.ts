@@ -5,16 +5,17 @@ export const assets = defineAiAssets(
   "background.arcade": {
     "id": "background.arcade",
     "kind": "image",
-    "prompt": "A vertical neon arcade arena background with subtle starfield, grid horizon, and room for gameplay.",
+    "prompt": "a jungle background for a breakout game",
     "dimensions": {
       "width": 800,
       "height": 600
     },
     "settings": {
-      "format": "svg",
-      "background": "opaque"
+      "format": "png",
+      "background": "opaque",
+      "model": "gpt-image-2"
     },
-    "activeVersion": "default",
+    "activeVersion": "promoted-1783118955999",
     "versions": {
       "default": {
         "name": "default",
@@ -22,16 +23,53 @@ export const assets = defineAiAssets(
         "prompt": "A vertical neon arcade arena background with subtle starfield, grid horizon, and room for gameplay.",
         "createdAt": "2026-07-03T00:00:00.000Z",
         "model": "manual-svg"
+      },
+      "promoted-1783118189677": {
+        "name": "promoted-1783118189677",
+        "file": "/assets/background.arcade.promoted-1783118189677.png",
+        "prompt": "a jungle background for a breakout game",
+        "createdAt": "2026-07-03T22:36:29.786Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "format": "png",
+          "background": "opaque",
+          "model": "gpt-image-2"
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "default",
+        "notes": "Promoted from the AI asset designer."
+      },
+      "promoted-1783118955999": {
+        "name": "promoted-1783118955999",
+        "file": "/assets/background.arcade.promoted-1783118955999.png",
+        "prompt": "a jungle background for a breakout game",
+        "createdAt": "2026-07-03T22:49:16.042Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "format": "png",
+          "background": "opaque",
+          "model": "gpt-image-2"
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1783118189677",
+        "notes": "Promoted from the AI asset designer."
       }
     },
     "tags": [
       "background"
-    ]
+    ],
+    "audioSettings": {},
+    "audioPlayback": {},
+    "voiceSettings": {}
   },
-  "brick.cyan": {
-    "id": "brick.cyan",
+  "brick.leaves": {
+    "id": "brick.leaves",
     "kind": "image",
-    "prompt": "A cyan glass breakout brick with beveled neon rim, transparent background.",
+    "prompt": "A lush cluster of overlapping jungle leaves arranged like a breakout brick, broad tropical leaves with crisp silhouettes, bright veins, transparent background.",
     "dimensions": {
       "width": 58,
       "height": 24
@@ -44,102 +82,24 @@ export const assets = defineAiAssets(
     "versions": {
       "default": {
         "name": "default",
-        "file": "/assets/brick.cyan.default.svg",
-        "prompt": "A cyan glass breakout brick with beveled neon rim, transparent background.",
-        "createdAt": "2026-07-03T00:00:00.000Z",
-        "model": "manual-svg"
-      }
-    },
-    "tags": [
-      "brick"
-    ]
-  },
-  "brick.gold": {
-    "id": "brick.gold",
-    "kind": "image",
-    "prompt": "A gold breakout brick with warm glow and beveled arcade styling, transparent background.",
-    "dimensions": {
-      "width": 58,
-      "height": 24
-    },
-    "settings": {
-      "format": "svg",
-      "background": "transparent"
-    },
-    "activeVersion": "default",
-    "versions": {
-      "default": {
-        "name": "default",
-        "file": "/assets/brick.gold.default.svg",
-        "prompt": "A gold breakout brick with warm glow and beveled arcade styling, transparent background.",
-        "createdAt": "2026-07-03T00:00:00.000Z",
-        "model": "manual-svg"
-      }
-    },
-    "tags": [
-      "brick"
-    ]
-  },
-  "brick.magenta": {
-    "id": "brick.magenta",
-    "kind": "image",
-    "prompt": "A magenta breakout brick with glassy sci-fi highlights, transparent background.",
-    "dimensions": {
-      "width": 58,
-      "height": 24
-    },
-    "settings": {
-      "format": "svg",
-      "background": "transparent"
-    },
-    "activeVersion": "default",
-    "versions": {
-      "default": {
-        "name": "default",
-        "file": "/assets/brick.magenta.default.svg",
-        "prompt": "A magenta breakout brick with glassy sci-fi highlights, transparent background.",
-        "createdAt": "2026-07-03T00:00:00.000Z",
-        "model": "manual-svg"
-      }
-    },
-    "tags": [
-      "brick"
-    ]
-  },
-  "brick.steel": {
-    "id": "brick.steel",
-    "kind": "image",
-    "prompt": "A durable steel breakout brick with blue highlights and reinforced corners, transparent background.",
-    "dimensions": {
-      "width": 58,
-      "height": 24
-    },
-    "settings": {
-      "format": "svg",
-      "background": "transparent"
-    },
-    "activeVersion": "default",
-    "versions": {
-      "default": {
-        "name": "default",
-        "file": "/assets/brick.steel.default.svg",
-        "prompt": "A durable steel breakout brick with blue highlights and reinforced corners, transparent background.",
+        "file": "/assets/brick.leaves.default.svg",
+        "prompt": "A lush cluster of overlapping jungle leaves arranged like a breakout brick, broad tropical leaves with crisp silhouettes, bright veins, transparent background.",
         "createdAt": "2026-07-03T00:00:00.000Z",
         "model": "manual-svg"
       }
     },
     "tags": [
       "brick",
-      "tough"
+      "leaves"
     ]
   },
-  "enemy.orb": {
-    "id": "enemy.orb",
+  "brick.pineapple": {
+    "id": "brick.pineapple",
     "kind": "image",
-    "prompt": "A small floating orb enemy with green core and neon ring, transparent background.",
+    "prompt": "A cute pineapple-themed breakout brick made from golden pineapple segments with leafy green crown details, juicy tropical colors, transparent background.",
     "dimensions": {
-      "width": 34,
-      "height": 34
+      "width": 58,
+      "height": 24
     },
     "settings": {
       "format": "svg",
@@ -149,23 +109,24 @@ export const assets = defineAiAssets(
     "versions": {
       "default": {
         "name": "default",
-        "file": "/assets/enemy.orb.default.svg",
-        "prompt": "A small floating orb enemy with green core and neon ring, transparent background.",
+        "file": "/assets/brick.pineapple.default.svg",
+        "prompt": "A cute pineapple-themed breakout brick made from golden pineapple segments with leafy green crown details, juicy tropical colors, transparent background.",
         "createdAt": "2026-07-03T00:00:00.000Z",
         "model": "manual-svg"
       }
     },
     "tags": [
-      "enemy"
+      "brick",
+      "pineapple"
     ]
   },
-  "enemy.scout": {
-    "id": "enemy.scout",
+  "brick.statue": {
+    "id": "brick.statue",
     "kind": "image",
-    "prompt": "A tiny angular drone enemy with orange eye and wing fins, transparent background.",
+    "prompt": "A tough double-hit breakout brick that looks like a carved Easter Island head statue, moai-style stone face, mossy cracks, compact readable block silhouette, transparent background.",
     "dimensions": {
-      "width": 42,
-      "height": 30
+      "width": 58,
+      "height": 24
     },
     "settings": {
       "format": "svg",
@@ -175,14 +136,97 @@ export const assets = defineAiAssets(
     "versions": {
       "default": {
         "name": "default",
-        "file": "/assets/enemy.scout.default.svg",
-        "prompt": "A tiny angular drone enemy with orange eye and wing fins, transparent background.",
+        "file": "/assets/brick.statue.default.svg",
+        "prompt": "A tough double-hit breakout brick that looks like a carved Easter Island head statue, moai-style stone face, mossy cracks, compact readable block silhouette, transparent background.",
         "createdAt": "2026-07-03T00:00:00.000Z",
         "model": "manual-svg"
       }
     },
     "tags": [
-      "enemy"
+      "brick",
+      "tough",
+      "statue"
+    ]
+  },
+  "brick.vines": {
+    "id": "brick.vines",
+    "kind": "image",
+    "prompt": "A bundled tangle of jungle vines shaped like a breakout brick, twisting green stems with small leaves and a readable chunky silhouette, transparent background.",
+    "dimensions": {
+      "width": 58,
+      "height": 24
+    },
+    "settings": {
+      "format": "svg",
+      "background": "transparent"
+    },
+    "activeVersion": "default",
+    "versions": {
+      "default": {
+        "name": "default",
+        "file": "/assets/brick.vines.default.svg",
+        "prompt": "A bundled tangle of jungle vines shaped like a breakout brick, twisting green stems with small leaves and a readable chunky silhouette, transparent background.",
+        "createdAt": "2026-07-03T00:00:00.000Z",
+        "model": "manual-svg"
+      }
+    },
+    "tags": [
+      "brick",
+      "vines"
+    ]
+  },
+  "enemy.monkey": {
+    "id": "enemy.monkey",
+    "kind": "image",
+    "prompt": "A mischievous jungle monkey enemy for a cute arcade breakout game, playful face, raised arms, small readable body, transparent background.",
+    "dimensions": {
+      "width": 44,
+      "height": 38
+    },
+    "settings": {
+      "format": "svg",
+      "background": "transparent"
+    },
+    "activeVersion": "default",
+    "versions": {
+      "default": {
+        "name": "default",
+        "file": "/assets/enemy.monkey.default.svg",
+        "prompt": "A mischievous jungle monkey enemy for a cute arcade breakout game, playful face, raised arms, small readable body, transparent background.",
+        "createdAt": "2026-07-03T00:00:00.000Z",
+        "model": "manual-svg"
+      }
+    },
+    "tags": [
+      "enemy",
+      "monkey"
+    ]
+  },
+  "enemy.snake": {
+    "id": "enemy.snake",
+    "kind": "image",
+    "prompt": "A small jungle snake enemy for a cute arcade breakout game, coiled green body, alert eyes, readable silhouette, transparent background.",
+    "dimensions": {
+      "width": 46,
+      "height": 28
+    },
+    "settings": {
+      "format": "svg",
+      "background": "transparent"
+    },
+    "activeVersion": "default",
+    "versions": {
+      "default": {
+        "name": "default",
+        "file": "/assets/enemy.snake.default.svg",
+        "prompt": "A small jungle snake enemy for a cute arcade breakout game, coiled green body, alert eyes, readable silhouette, transparent background.",
+        "createdAt": "2026-07-03T00:00:00.000Z",
+        "model": "manual-svg"
+      }
+    },
+    "tags": [
+      "enemy",
+      "snake"
     ]
   },
   "ball.core": {
@@ -241,16 +285,17 @@ export const assets = defineAiAssets(
   "hero.paddle.normal": {
     "id": "hero.paddle.normal",
     "kind": "image",
-    "prompt": "A standard neon breakout paddle, balanced size, cyan and white trim, transparent background.",
+    "prompt": "A standard jungle themed breakout paddle, transparent background.",
     "dimensions": {
       "width": 112,
       "height": 18
     },
     "settings": {
       "format": "svg",
-      "background": "transparent"
+      "background": "transparent",
+      "model": "gpt-5"
     },
-    "activeVersion": "default",
+    "activeVersion": "promoted-1783119204300",
     "versions": {
       "default": {
         "name": "default",
@@ -258,12 +303,32 @@ export const assets = defineAiAssets(
         "prompt": "A standard neon breakout paddle, balanced size, cyan and white trim, transparent background.",
         "createdAt": "2026-07-03T00:00:00.000Z",
         "model": "manual-svg"
+      },
+      "promoted-1783119204300": {
+        "name": "promoted-1783119204300",
+        "file": "/assets/hero.paddle.normal.promoted-1783119204300.svg",
+        "prompt": "A standard jungle themed breakout paddle, transparent background.",
+        "createdAt": "2026-07-03T22:53:24.332Z",
+        "model": "gpt-5",
+        "settings": {
+          "format": "svg",
+          "background": "transparent",
+          "model": "gpt-5"
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "default",
+        "notes": "Promoted from the AI asset designer."
       }
     },
     "tags": [
       "hero",
       "paddle"
-    ]
+    ],
+    "audioSettings": {},
+    "audioPlayback": {},
+    "voiceSettings": {}
   },
   "hero.paddle.short": {
     "id": "hero.paddle.short",
@@ -290,6 +355,33 @@ export const assets = defineAiAssets(
     "tags": [
       "hero",
       "paddle"
+    ]
+  },
+  "projectile.banana": {
+    "id": "projectile.banana",
+    "kind": "image",
+    "prompt": "A bright curved banana projectile for a cute jungle arcade game, golden yellow peel, small readable silhouette, transparent background.",
+    "dimensions": {
+      "width": 28,
+      "height": 16
+    },
+    "settings": {
+      "format": "svg",
+      "background": "transparent"
+    },
+    "activeVersion": "default",
+    "versions": {
+      "default": {
+        "name": "default",
+        "file": "/assets/projectile.banana.default.svg",
+        "prompt": "A bright curved banana projectile for a cute jungle arcade game, golden yellow peel, small readable silhouette, transparent background.",
+        "createdAt": "2026-07-03T00:00:00.000Z",
+        "model": "manual-svg"
+      }
+    },
+    "tags": [
+      "projectile",
+      "banana"
     ]
   },
   "audio.sfx.brick": {
@@ -370,7 +462,14 @@ export const assets = defineAiAssets(
 },
 {
   "styleGuide": {
-    "prompt": "Bright neon arcade assets with crisp vector edges, readable silhouettes, deep space contrast, and playful sci-fi energy."
+    "prompt": "Cute retro pixel-art arcade game style, inspired by 16-bit era console games, with crisp visible pixels, saturated jewel-tone colors, chunky readable shapes, playful character design, and dense environmental detail. Use a charming jungle-adventure mood with lush layered foliage, vines, flowers, carved stone ruins, wood-and-bamboo UI frames, fruit and animal motifs, and soft atmospheric depth in the background. Keep the composition bright, whimsical, and game-like, with clear silhouettes, high contrast, rounded organic forms, decorative pixel clusters, and polished arcade HUD elements. Avoid realism, painterly blending, modern vector smoothness, and overly harsh square grids; everything should feel handcrafted, cute, nostalgic, and readable as a classic pixel-art game screenshot.",
+    "images": [
+      {
+        "name": "jungle.png",
+        "file": "/assets/style-guide.1783117129562.1.png",
+        "mimeType": "image/png"
+      }
+    ]
   }
 }
 );

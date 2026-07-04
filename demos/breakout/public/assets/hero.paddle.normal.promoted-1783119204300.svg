@@ -1,0 +1,195 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="112" height="18" viewBox="0 0 112 18">
+  <g id="sprite-strip" shape-rendering="crispEdges">
+    <!-- FRAME 1 -->
+    <g id="frame-1" transform="translate(0,0)">
+      <!-- left cap -->
+      <rect id="f1-capL-outline" x="0" y="6" width="5" height="8" fill="#2b1a0e"/>
+      <rect id="f1-capL-fill" x="1" y="7" width="4" height="6" fill="#d94a1a"/>
+      <rect id="f1-capL-topHi" x="1" y="7" width="4" height="1" fill="#ff8a3a"/>
+      <rect id="f1-capL-botSh" x="1" y="12" width="4" height="1" fill="#a5340f"/>
+      <!-- body -->
+      <rect id="f1-body-outline" x="3" y="6" width="22" height="8" fill="#2b1a0e"/>
+      <rect id="f1-body-fill" x="4" y="7" width="20" height="6" fill="#b8742a"/>
+      <rect id="f1-body-topHi" x="4" y="7" width="20" height="1" fill="#f1a346"/>
+      <rect id="f1-body-botSh" x="4" y="12" width="20" height="1" fill="#8c4e1b"/>
+      <rect id="f1-wood-knot1" x="9" y="9" width="2" height="2" fill="#8c4e1b"/>
+      <rect id="f1-wood-knot1-hi" x="9" y="9" width="1" height="1" fill="#f1a346"/>
+      <rect id="f1-wood-knot2" x="16" y="10" width="2" height="2" fill="#8c4e1b"/>
+      <!-- green band -->
+      <rect id="f1-band-outline" x="12" y="6" width="4" height="8" fill="#1e3b19"/>
+      <rect id="f1-band-fill" x="13" y="7" width="2" height="6" fill="#2fa35a"/>
+      <rect id="f1-band-hi" x="13" y="8" width="2" height="1" fill="#7cd96c"/>
+      <rect id="f1-band-sh" x="13" y="11" width="2" height="1" fill="#1a6b34"/>
+      <!-- right cap -->
+      <rect id="f1-capR-outline" x="23" y="6" width="5" height="8" fill="#2b1a0e"/>
+      <rect id="f1-capR-fill" x="24" y="7" width="4" height="6" fill="#d94a1a"/>
+      <rect id="f1-capR-topHi" x="24" y="7" width="4" height="1" fill="#ff8a3a"/>
+      <rect id="f1-capR-botSh" x="24" y="12" width="4" height="1" fill="#a5340f"/>
+      <!-- gold rings at joins -->
+      <rect id="f1-ringL" x="5" y="7" width="1" height="6" fill="#f5c241"/>
+      <rect id="f1-ringR" x="23" y="7" width="1" height="6" fill="#f5c241"/>
+      <!-- leaf sprigs -->
+      <g id="f1-leavesL" transform="translate(3,3)">
+        <rect x="-1" y="2" width="3" height="2" fill="#1e3b19"/>
+        <rect x="0" y="1" width="3" height="2" fill="#2d5b1e"/>
+        <rect x="1" y="0" width="3" height="2" fill="#4aa832"/>
+        <rect x="2" y="0" width="2" height="1" fill="#9be06a"/>
+      </g>
+      <g id="f1-leavesR" transform="translate(24,3)">
+        <rect x="1" y="2" width="3" height="2" fill="#1e3b19"/>
+        <rect x="0" y="1" width="3" height="2" fill="#2d5b1e"/>
+        <rect x="-2" y="0" width="3" height="2" fill="#4aa832"/>
+        <rect x="-2" y="0" width="2" height="1" fill="#9be06a"/>
+      </g>
+      <!-- glint highlight (left) -->
+      <rect id="f1-glint1" x="7" y="5" width="2" height="2" fill="#ffe17a"/>
+      <!-- drop shadow -->
+      <rect id="f1-shadow" x="2" y="14" width="24" height="1" fill="#133d2f" fill-opacity="0.85"/>
+    </g>
+
+    <!-- FRAME 2 -->
+    <g id="frame-2" transform="translate(28,0)">
+      <!-- left cap -->
+      <rect x="0" y="6" width="5" height="8" fill="#2b1a0e"/>
+      <rect x="1" y="7" width="4" height="6" fill="#d94a1a"/>
+      <rect x="1" y="7" width="4" height="1" fill="#ff8a3a"/>
+      <rect x="1" y="12" width="4" height="1" fill="#a5340f"/>
+      <!-- body slightly raised highlight -->
+      <rect x="3" y="6" width="22" height="8" fill="#2b1a0e"/>
+      <rect x="4" y="7" width="20" height="6" fill="#b8742a"/>
+      <rect x="4" y="7" width="20" height="1" fill="#f1a346"/>
+      <rect x="4" y="11" width="20" height="1" fill="#8c4e1b"/>
+      <rect x="9" y="9" width="2" height="2" fill="#8c4e1b"/>
+      <rect x="9" y="9" width="1" height="1" fill="#f1a346"/>
+      <rect x="16" y="10" width="2" height="2" fill="#8c4e1b"/>
+      <!-- green band shifted up by 1 -->
+      <rect x="12" y="5" width="4" height="8" fill="#1e3b19"/>
+      <rect x="13" y="6" width="2" height="6" fill="#2fa35a"/>
+      <rect x="13" y="7" width="2" height="1" fill="#7cd96c"/>
+      <rect x="13" y="10" width="2" height="1" fill="#1a6b34"/>
+      <!-- right cap -->
+      <rect x="23" y="6" width="5" height="8" fill="#2b1a0e"/>
+      <rect x="24" y="7" width="4" height="6" fill="#d94a1a"/>
+      <rect x="24" y="7" width="4" height="1" fill="#ff8a3a"/>
+      <rect x="24" y="12" width="4" height="1" fill="#a5340f"/>
+      <!-- gold rings -->
+      <rect x="5" y="7" width="1" height="6" fill="#f5c241"/>
+      <rect x="23" y="7" width="1" height="6" fill="#f5c241"/>
+      <!-- leaves (upright) -->
+      <g transform="translate(3,2)">
+        <rect x="-1" y="3" width="3" height="2" fill="#1e3b19"/>
+        <rect x="0" y="2" width="3" height="2" fill="#2d5b1e"/>
+        <rect x="1" y="1" width="3" height="2" fill="#4aa832"/>
+        <rect x="2" y="1" width="2" height="1" fill="#9be06a"/>
+      </g>
+      <g transform="translate(24,2)">
+        <rect x="1" y="3" width="3" height="2" fill="#1e3b19"/>
+        <rect x="0" y="2" width="3" height="2" fill="#2d5b1e"/>
+        <rect x="-2" y="1" width="3" height="2" fill="#4aa832"/>
+        <rect x="-2" y="1" width="2" height="1" fill="#9be06a"/>
+      </g>
+      <!-- glint highlight (center-left) -->
+      <rect x="11" y="5" width="2" height="2" fill="#ffe17a"/>
+      <rect x="10" y="6" width="1" height="1" fill="#fff3a5"/>
+      <!-- shadow narrower to suggest squash -->
+      <rect x="3" y="14" width="22" height="1" fill="#133d2f" fill-opacity="0.85"/>
+    </g>
+
+    <!-- FRAME 3 -->
+    <g id="frame-3" transform="translate(56,0)">
+      <!-- left cap -->
+      <rect x="0" y="6" width="5" height="8" fill="#2b1a0e"/>
+      <rect x="1" y="7" width="4" height="6" fill="#d94a1a"/>
+      <rect x="1" y="7" width="4" height="1" fill="#ff8a3a"/>
+      <rect x="1" y="12" width="4" height="1" fill="#a5340f"/>
+      <!-- body deeper bottom shade -->
+      <rect x="3" y="6" width="22" height="8" fill="#2b1a0e"/>
+      <rect x="4" y="7" width="20" height="6" fill="#b8742a"/>
+      <rect x="4" y="7" width="20" height="1" fill="#f1a346"/>
+      <rect x="4" y="12" width="20" height="1" fill="#7a3f16"/>
+      <rect x="9" y="9" width="2" height="2" fill="#8c4e1b"/>
+      <rect x="9" y="9" width="1" height="1" fill="#f1a346"/>
+      <rect x="16" y="10" width="2" height="2" fill="#8c4e1b"/>
+      <!-- green band shifted down by 1 -->
+      <rect x="12" y="7" width="4" height="8" fill="#1e3b19"/>
+      <rect x="13" y="8" width="2" height="6" fill="#2fa35a"/>
+      <rect x="13" y="9" width="2" height="1" fill="#7cd96c"/>
+      <rect x="13" y="12" width="2" height="1" fill="#1a6b34"/>
+      <!-- right cap -->
+      <rect x="23" y="6" width="5" height="8" fill="#2b1a0e"/>
+      <rect x="24" y="7" width="4" height="6" fill="#d94a1a"/>
+      <rect x="24" y="7" width="4" height="1" fill="#ff8a3a"/>
+      <rect x="24" y="12" width="4" height="1" fill="#a5340f"/>
+      <!-- gold rings -->
+      <rect x="5" y="7" width="1" height="6" fill="#f5c241"/>
+      <rect x="23" y="7" width="1" height="6" fill="#f5c241"/>
+      <!-- leaves swept right -->
+      <g transform="translate(4,4)">
+        <rect x="0" y="1" width="3" height="2" fill="#1e3b19"/>
+        <rect x="1" y="0" width="3" height="2" fill="#2d5b1e"/>
+        <rect x="2" y="0" width="3" height="2" fill="#4aa832"/>
+        <rect x="3" y="0" width="2" height="1" fill="#9be06a"/>
+      </g>
+      <g transform="translate(23,4)">
+        <rect x="0" y="1" width="3" height="2" fill="#1e3b19"/>
+        <rect x="-1" y="0" width="3" height="2" fill="#2d5b1e"/>
+        <rect x="-3" y="0" width="3" height="2" fill="#4aa832"/>
+        <rect x="-3" y="0" width="2" height="1" fill="#9be06a"/>
+      </g>
+      <!-- glint highlight (center-right) -->
+      <rect x="17" y="5" width="2" height="2" fill="#ffe17a"/>
+      <rect x="18" y="6" width="1" height="1" fill="#fff3a5"/>
+      <!-- longer shadow -->
+      <rect x="2" y="14" width="24" height="1" fill="#133d2f" fill-opacity="0.9"/>
+    </g>
+
+    <!-- FRAME 4 -->
+    <g id="frame-4" transform="translate(84,0)">
+      <!-- left cap -->
+      <rect x="0" y="6" width="5" height="8" fill="#2b1a0e"/>
+      <rect x="1" y="7" width="4" height="6" fill="#d94a1a"/>
+      <rect x="1" y="7" width="4" height="1" fill="#ff8a3a"/>
+      <rect x="1" y="12" width="4" height="1" fill="#a5340f"/>
+      <!-- body settle -->
+      <rect x="3" y="6" width="22" height="8" fill="#2b1a0e"/>
+      <rect x="4" y="7" width="20" height="6" fill="#b8742a"/>
+      <rect x="4" y="7" width="20" height="1" fill="#f1a346"/>
+      <rect x="4" y="12" width="20" height="1" fill="#8c4e1b"/>
+      <rect x="9" y="9" width="2" height="2" fill="#8c4e1b"/>
+      <rect x="9" y="9" width="1" height="1" fill="#f1a346"/>
+      <rect x="16" y="10" width="2" height="2" fill="#8c4e1b"/>
+      <!-- green band centered -->
+      <rect x="12" y="6" width="4" height="8" fill="#1e3b19"/>
+      <rect x="13" y="7" width="2" height="6" fill="#2fa35a"/>
+      <rect x="13" y="8" width="2" height="1" fill="#7cd96c"/>
+      <rect x="13" y="11" width="2" height="1" fill="#1a6b34"/>
+      <!-- right cap -->
+      <rect x="23" y="6" width="5" height="8" fill="#2b1a0e"/>
+      <rect x="24" y="7" width="4" height="6" fill="#d94a1a"/>
+      <rect x="24" y="7" width="4" height="1" fill="#ff8a3a"/>
+      <rect x="24" y="12" width="4" height="1" fill="#a5340f"/>
+      <!-- gold rings -->
+      <rect x="5" y="7" width="1" height="6" fill="#f5c241"/>
+      <rect x="23" y="7" width="1" height="6" fill="#f5c241"/>
+      <!-- leaves relaxed and split -->
+      <g transform="translate(2,3)">
+        <rect x="0" y="2" width="2" height="2" fill="#1e3b19"/>
+        <rect x="1" y="1" width="2" height="2" fill="#2d5b1e"/>
+        <rect x="2" y="1" width="2" height="2" fill="#4aa832"/>
+        <rect x="3" y="1" width="1" height="1" fill="#9be06a"/>
+      </g>
+      <g transform="translate(26,3)">
+        <rect x="-1" y="2" width="2" height="2" fill="#1e3b19"/>
+        <rect x="-2" y="1" width="2" height="2" fill="#2d5b1e"/>
+        <rect x="-3" y="1" width="2" height="2" fill="#4aa832"/>
+        <rect x="-4" y="1" width="1" height="1" fill="#9be06a"/>
+      </g>
+      <!-- glint highlight (far right) -->
+      <rect x="21" y="5" width="2" height="2" fill="#ffe17a"/>
+      <!-- small sparkle -->
+      <rect x="22" y="4" width="1" height="1" fill="#fff3a5"/>
+      <!-- shadow medium -->
+      <rect x="2" y="14" width="24" height="1" fill="#133d2f" fill-opacity="0.85"/>
+    </g>
+  </g>
+</svg>

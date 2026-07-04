@@ -1,0 +1,27 @@
+{
+  "id": "enemy.snake",
+  "kind": "image",
+  "prompt": "A small jungle snake enemy for a cute arcade breakout game, coiled green body, alert eyes, readable silhouette, transparent background.",
+  "dimensions": {
+    "width": 46,
+    "height": 28
+  },
+  "settings": {
+    "format": "svg",
+    "background": "transparent"
+  },
+  "activeVersion": "default",
+  "versions": {
+    "default": {
+      "name": "default",
+      "file": "/assets/enemy.snake.default.svg",
+      "prompt": "A small jungle snake enemy for a cute arcade breakout game, coiled green body, alert eyes, readable silhouette, transparent background.",
+      "createdAt": "2026-07-03T00:00:00.000Z",
+      "model": "manual-svg"
+    }
+  },
+  "tags": [
+    "enemy",
+    "snake"
+  ]
+}
