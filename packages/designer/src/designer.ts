@@ -660,48 +660,68 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
   function renderBehaviorInstanceLists(scene: SceneDefinition, layer: SceneLayer): HTMLElement {
     const wrapper = document.createElement("div");
     const behaviors = behaviorDefinitions();
+    const addRow = document.createElement("div");
+    addRow.className = "scene-designer__row";
+    const behaviorSelect = document.createElement("select");
+    behaviorSelect.className = "scene-designer__select";
+    for (const behavior of behaviors) {
+      const option = document.createElement("option");
+      option.value = behavior.id;
+      option.textContent = behavior.name;
+      behaviorSelect.append(option);
+    }
+    const add = button("Add...");
+    addRow.append(behaviorSelect, add);
+    wrapper.append(addRow);
+
+    add.addEventListener("click", () => {
+      const behavior = manifest.behaviors?.[behaviorSelect.value];
+      if (!behavior) return;
+
+      commit(() => {
+        const instance = createBehaviorInstance({
+          behaviorId: behavior.id,
+          name: uniqueBehaviorInstanceName(scene, behavior.name)
+        });
+        layer.behaviors ??= [];
+        layer.behaviors.push(instance);
+        selection = {
+          type: "behavior",
+          sceneId: scene.id,
+          layerId: layer.id,
+          instanceId: instance.id
+        };
+      });
+      emitSelection();
+    });
+
+    let renderedSections = 0;
 
     for (const behavior of behaviors) {
+      const instances = (layer.behaviors ?? []).filter((instance) => instance.behaviorId === behavior.id);
+      if (!instances.length) continue;
+
       const section = document.createElement("div");
       const head = document.createElement("div");
       head.className = "scene-designer__subhead";
       const label = document.createElement("span");
       label.textContent = behavior.name;
-      const add = button(`+ ${behavior.name}`);
-      head.append(label, add);
+      head.append(label);
       section.append(head);
-
-      add.addEventListener("click", () => {
-        commit(() => {
-          const instance = createBehaviorInstance({
-            behaviorId: behavior.id,
-            name: uniqueBehaviorInstanceName(scene, behavior.name)
-          });
-          layer.behaviors ??= [];
-          layer.behaviors.push(instance);
-          selection = {
-            type: "behavior",
-            sceneId: scene.id,
-            layerId: layer.id,
-            instanceId: instance.id
-          };
-        });
-        emitSelection();
-      });
-
-      const instances = (layer.behaviors ?? []).filter((instance) => instance.behaviorId === behavior.id);
-      if (!instances.length) {
-        const empty = document.createElement("div");
-        empty.className = "scene-designer__empty";
-        empty.textContent = `No ${behavior.name} instances`;
-        section.append(empty);
-      }
 
       for (const instance of instances) {
         section.append(renderBehaviorInstanceItem(scene, layer, behavior, instance));
       }
 
       wrapper.append(section);
+      renderedSections += 1;
+    }
+
+    if (renderedSections === 0) {
+      const empty = document.createElement("div");
+      empty.className = "scene-designer__empty";
+      empty.textContent = "No behavior instances on this layer.";
+      wrapper.append(empty);
     }
 
     return wrapper;
