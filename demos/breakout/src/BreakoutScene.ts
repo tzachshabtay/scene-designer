@@ -171,6 +171,8 @@ export class BreakoutScene extends Phaser.Scene {
       const banana = child as ArcadeImage;
       if (banana.y > 630 || banana.x < -40 || banana.x > 840) {
         banana.destroy();
+      } else if (banana.body.velocity.lengthSq() > 0) {
+        banana.setRotation(banana.body.velocity.angle());
       }
     }
   }
@@ -532,8 +534,8 @@ export class BreakoutScene extends Phaser.Scene {
     banana.setRotation(direction.angle());
     banana.body.allowGravity = false;
     banana.setCollideWorldBounds(false);
-    banana.setVelocity(direction.x * bananaSpeed, direction.y * bananaSpeed);
     this.bananas.add(banana);
+    banana.setVelocity(direction.x * bananaSpeed, direction.y * bananaSpeed);
   }
 
   private queueLevelReload(): void {
