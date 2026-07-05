@@ -11,9 +11,9 @@
     "typecheck": "npm run generate && tsc --noEmit"
   },
   "dependencies": {
-    "@ai-game-assets/core": "^0.5.4",
-    "@ai-game-assets/dev": "^0.5.4",
-    "@ai-game-assets/phaser": "^0.5.4",
+    "@ai-game-assets/core": "^0.5.5",
+    "@ai-game-assets/dev": "^0.5.5",
+    "@ai-game-assets/phaser": "^0.5.5",
     "@scene-designer/core": "0.1.0",
     "@scene-designer/dev": "0.1.0",
     "@scene-designer/phaser": "0.1.0",

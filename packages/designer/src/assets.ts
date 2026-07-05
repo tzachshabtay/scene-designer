@@ -1,23 +1,18 @@
-import { resolveAiAsset, type AiAssetDefinition, type AiAssetManifest } from "@ai-game-assets/core";
+import {
+  resolveAiAsset,
+  topLevelAiAssetIds,
+  type AiAssetDefinition,
+  type AiAssetManifest
+} from "@ai-game-assets/core";
 
 export type GraphicAiAsset = AiAssetDefinition & {
   kind: "image" | "spritesheet" | "animation";
 };
 
 export function graphicAssetIds(manifest: AiAssetManifest): string[] {
-  const targetVariantAssetIds = new Set(
-    Object.values(manifest.targets ?? {}).flatMap((target) => Object.values(target.variants))
-  );
-  const linkedAnimationAssetIds = new Set(
-    Object.values(manifest.assets)
-      .flatMap((asset) => Object.values(asset.linkedAnimationAssets ?? {}))
-      .map((linkedAnimation) => linkedAnimation.assetId)
-  );
-
-  return Object.values(manifest.assets)
+  return topLevelAiAssetIds(manifest)
+    .map((assetId) => manifest.assets[assetId])
     .filter((asset): asset is GraphicAiAsset => isGraphicAsset(asset))
-    .filter((asset) => !targetVariantAssetIds.has(asset.id))
-    .filter((asset) => !linkedAnimationAssetIds.has(asset.id))
     .map((asset) => asset.id)
     .sort((a, b) => a.localeCompare(b));
 }
