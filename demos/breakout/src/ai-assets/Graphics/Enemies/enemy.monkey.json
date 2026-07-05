@@ -1,16 +1,17 @@
 {
   "id": "enemy.monkey",
   "kind": "image",
-  "prompt": "A mischievous jungle monkey enemy for a cute arcade breakout game, playful face, raised arms, small readable body, transparent background.",
+  "prompt": "A mischievous jungle monkey enemy looking down for a cute arcade breakout game, playful face, raised arms, small readable body, transparent background.",
   "dimensions": {
-    "width": 44,
-    "height": 38
+    "width": 72,
+    "height": 128
   },
   "settings": {
-    "format": "svg",
-    "background": "transparent"
+    "format": "png",
+    "background": "auto",
+    "model": "gpt-image-2"
   },
-  "activeVersion": "default",
+  "activeVersion": "promoted-1783135961965",
   "versions": {
     "default": {
       "name": "default",
@@ -18,10 +19,44 @@
       "prompt": "A mischievous jungle monkey enemy for a cute arcade breakout game, playful face, raised arms, small readable body, transparent background.",
       "createdAt": "2026-07-03T00:00:00.000Z",
       "model": "manual-svg"
+    },
+    "promoted-1783135961965": {
+      "name": "promoted-1783135961965",
+      "file": "/assets/enemy.monkey.promoted-1783135961965.png",
+      "prompt": "A mischievous jungle monkey enemy looking down for a cute arcade breakout game, playful face, raised arms, small readable body, transparent background.",
+      "createdAt": "2026-07-04T03:32:41.994Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "format": "png",
+        "background": "auto",
+        "model": "gpt-image-2"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "default",
+      "notes": "Promoted from the AI asset designer."
     }
   },
   "tags": [
     "enemy",
     "monkey"
-  ]
+  ],
+  "audioSettings": {},
+  "audioPlayback": {},
+  "voiceSettings": {},
+  "linkedAnimationAssets": {
+    "idle": {
+      "label": "Idle",
+      "assetId": "enemy.monkey.idle"
+    },
+    "throwing": {
+      "label": "Throwing Banana",
+      "assetId": "enemy.monkey.throwing"
+    },
+    "destroyed": {
+      "label": "Destroyed",
+      "assetId": "enemy.monkey.destroyed"
+    }
+  }
 }

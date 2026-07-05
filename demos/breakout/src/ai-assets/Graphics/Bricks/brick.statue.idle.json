@@ -1,0 +1,99 @@
+{
+  "id": "brick.statue.idle",
+  "kind": "animation",
+  "prompt": "A 4-frame idle animation spritesheet for the jungle breakout brick statue, based on the source image, subtle breathing/leafy sway, transparent background.",
+  "dimensions": {
+    "width": 232,
+    "height": 32
+  },
+  "frameGrid": {
+    "frameCount": 4,
+    "frameWidth": 58,
+    "frameHeight": 32,
+    "columns": 4,
+    "rows": 1
+  },
+  "animations": [
+    {
+      "key": "brick.statue.idle",
+      "frames": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "frameRate": 6,
+      "repeat": -1,
+      "prompt": "A 4-frame idle animation spritesheet for the jungle breakout brick statue, based on the source image, subtle breathing/leafy sway, transparent background.",
+      "frameTimings": [
+        {
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotation": 0,
+          "tag": "idle-1"
+        },
+        {
+          "offsetX": 1,
+          "offsetY": -2,
+          "scaleX": 1.025,
+          "scaleY": 1.01,
+          "rotation": -2,
+          "tag": "idle-2"
+        },
+        {
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotation": 0,
+          "tag": "idle-3"
+        },
+        {
+          "offsetX": -1,
+          "offsetY": 1,
+          "scaleX": 0.985,
+          "scaleY": 0.99,
+          "rotation": 2,
+          "tag": "idle-4"
+        }
+      ]
+    }
+  ],
+  "settings": {
+    "format": "png",
+    "background": "auto",
+    "model": "gpt-image-2",
+    "referenceAssetIds": [
+      "brick.statue"
+    ]
+  },
+  "activeVersion": "default",
+  "versions": {
+    "default": {
+      "name": "default",
+      "file": "/assets/brick.statue.idle.default.svg",
+      "prompt": "A 4-frame idle animation spritesheet for the jungle breakout brick statue, based on the source image, subtle breathing/leafy sway, transparent background.",
+      "createdAt": "2026-07-05T00:00:00.000Z",
+      "model": "base-image-spritesheet",
+      "settings": {
+        "format": "png",
+        "background": "auto",
+        "model": "gpt-image-2",
+        "referenceAssetIds": [
+          "brick.statue"
+        ]
+      },
+      "parentVersion": "promoted-1783130593116",
+      "notes": "Default animation spritesheet derived from the current base image."
+    }
+  },
+  "tags": [
+    "brick",
+    "tough",
+    "statue",
+    "animation",
+    "idle"
+  ]
+}

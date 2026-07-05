@@ -44,5 +44,19 @@
   ],
   "audioSettings": {},
   "audioPlayback": {},
-  "voiceSettings": {}
+  "voiceSettings": {},
+  "linkedAnimationAssets": {
+    "idle": {
+      "label": "Idle",
+      "assetId": "hero.paddle.normal.idle"
+    },
+    "hit": {
+      "label": "Getting Hit",
+      "assetId": "hero.paddle.normal.hit"
+    },
+    "destroyed": {
+      "label": "Destroyed",
+      "assetId": "hero.paddle.normal.destroyed"
+    }
+  }
 }

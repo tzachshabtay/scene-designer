@@ -1,16 +1,17 @@
 {
   "id": "ball.core",
   "kind": "image",
-  "prompt": "A glowing arcade energy ball, gold center with white highlight, transparent background.",
+  "prompt": "A coconut ball, transparent background, should cover most of the image.",
   "dimensions": {
     "width": 24,
     "height": 24
   },
   "settings": {
-    "format": "svg",
-    "background": "transparent"
+    "format": "png",
+    "background": "auto",
+    "model": "gpt-image-2"
   },
-  "activeVersion": "default",
+  "activeVersion": "promoted-1783136853660",
   "versions": {
     "default": {
       "name": "default",
@@ -18,9 +19,29 @@
       "prompt": "A glowing arcade energy ball, gold center with white highlight, transparent background.",
       "createdAt": "2026-07-03T00:00:00.000Z",
       "model": "manual-svg"
+    },
+    "promoted-1783136853660": {
+      "name": "promoted-1783136853660",
+      "file": "/assets/ball.core.promoted-1783136853660.png",
+      "prompt": "A coconut ball, transparent background, should cover most of the image.",
+      "createdAt": "2026-07-04T03:47:33.686Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "format": "png",
+        "background": "auto",
+        "model": "gpt-image-2"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "default",
+      "notes": "Promoted from the AI asset designer."
     }
   },
   "tags": [
     "ball"
-  ]
+  ],
+  "audioSettings": {},
+  "audioPlayback": {},
+  "voiceSettings": {}
 }

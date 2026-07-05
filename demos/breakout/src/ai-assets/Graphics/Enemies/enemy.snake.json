@@ -1,16 +1,17 @@
 {
   "id": "enemy.snake",
   "kind": "image",
-  "prompt": "A small jungle snake enemy for a cute arcade breakout game, coiled green body, alert eyes, readable silhouette, transparent background.",
+  "prompt": "A small jungle poisonous snake enemy for a cute arcade breakout game, coiled colorful body, alert eyes, vertical with face down and looking down, readable silhouette, transparent background.",
   "dimensions": {
-    "width": 46,
-    "height": 28
+    "width": 64,
+    "height": 128
   },
   "settings": {
-    "format": "svg",
-    "background": "transparent"
+    "format": "png",
+    "background": "auto",
+    "model": "gpt-image-2"
   },
-  "activeVersion": "default",
+  "activeVersion": "promoted-1783135705211",
   "versions": {
     "default": {
       "name": "default",
@@ -18,10 +19,44 @@
       "prompt": "A small jungle snake enemy for a cute arcade breakout game, coiled green body, alert eyes, readable silhouette, transparent background.",
       "createdAt": "2026-07-03T00:00:00.000Z",
       "model": "manual-svg"
+    },
+    "promoted-1783135705211": {
+      "name": "promoted-1783135705211",
+      "file": "/assets/enemy.snake.promoted-1783135705211.png",
+      "prompt": "A small jungle poisonous snake enemy for a cute arcade breakout game, coiled colorful body, alert eyes, vertical with face down and looking down, readable silhouette, transparent background.",
+      "createdAt": "2026-07-04T03:28:25.235Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "format": "png",
+        "background": "auto",
+        "model": "gpt-image-2"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "default",
+      "notes": "Promoted from the AI asset designer."
     }
   },
   "tags": [
     "enemy",
     "snake"
-  ]
+  ],
+  "audioSettings": {},
+  "audioPlayback": {},
+  "voiceSettings": {},
+  "linkedAnimationAssets": {
+    "idle": {
+      "label": "Idle",
+      "assetId": "enemy.snake.idle"
+    },
+    "biting": {
+      "label": "Biting",
+      "assetId": "enemy.snake.biting"
+    },
+    "destroyed": {
+      "label": "Destroyed",
+      "assetId": "enemy.snake.destroyed"
+    }
+  }
 }

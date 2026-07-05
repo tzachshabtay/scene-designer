@@ -27,7 +27,8 @@ import {
 import Phaser from "phaser";
 
 type ArcadeImage = Phaser.Types.Physics.Arcade.ImageWithDynamicBody;
-type BrickImage = Phaser.GameObjects.Image;
+type ArcadeSprite = Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
+type BrickSprite = Phaser.GameObjects.Sprite;
 
 type AlphaMask = {
   width: number;
@@ -60,6 +61,7 @@ const bananaSpeed = 360;
 const bananaSpinSpeed = 720;
 const ballSpinSpeed = 520;
 const paddleKeyboardSpeed = 430;
+const paddleInvulnerabilityMs = 650;
 
 export type BreakoutSceneOptions = {
   aiAssets: AiAssetManifest;
@@ -81,9 +83,9 @@ export class BreakoutScene extends Phaser.Scene {
   private sceneManifest: SceneDesignerManifest;
   private levelIndex = 0;
   private currentSceneId = levelIds[0];
-  private paddle!: ArcadeImage;
+  private paddle!: ArcadeSprite;
   private ball!: ArcadeImage;
-  private brickObjects: BrickImage[] = [];
+  private brickObjects: BrickSprite[] = [];
   private wallPlatforms: ScenePlatform[] = [];
   private wallLastHitAt = new Map<string, number>();
   private enemies!: Phaser.Physics.Arcade.Group;
@@ -99,6 +101,7 @@ export class BreakoutScene extends Phaser.Scene {
   private firstEnemySpawnTimer?: Phaser.Time.TimerEvent;
   private pointerWasDown = false;
   private paddlePointerDragActive = false;
+  private levelAdvanceScheduled = false;
   private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
   private readonly previewTextures = new Map<string, string>();
 
@@ -130,6 +133,7 @@ export class BreakoutScene extends Phaser.Scene {
     });
     this.physics.world.setBounds(0, 0, 800, 600, true, true, true, false);
     this.cursors = this.input.keyboard?.createCursorKeys();
+    this.registerAiAnimations();
 
     this.hud = this.add.text(16, 16, "", {
       fontFamily: "ui-sans-serif, system-ui",
@@ -201,10 +205,10 @@ export class BreakoutScene extends Phaser.Scene {
     }
 
     for (const child of this.enemies.children) {
-      const enemy = child as ArcadeImage;
+      const enemy = child as ArcadeSprite;
       if (enemy.y > 620) {
         enemy.destroy();
-      } else if (enemy.getData("assetId") === monkeyAssetId) {
+      } else if (enemy.getData("baseAssetId") === monkeyAssetId) {
         this.updateMonkey(enemy);
       } else {
         this.steerEnemyTowardPaddle(enemy);
@@ -250,9 +254,15 @@ export class BreakoutScene extends Phaser.Scene {
 
     const paddleDefinition = levelObjects.find((object) => object.tag === paddleTag);
     const paddleAssetId = paddleDefinition?.assetId ?? "hero.paddle.normal";
-    this.paddle = this.physics.add.image(paddleDefinition?.x ?? 400, paddleDefinition?.y ?? 564, this.textureForAsset(paddleAssetId));
-    this.paddle.setData("assetId", paddleAssetId);
-    this.bindAiAssetTexture(this.paddle, paddleAssetId);
+    const paddleIdleAssetId = this.linkedAnimationAssetId(paddleAssetId, "idle");
+    this.paddle = this.physics.add.sprite(
+      paddleDefinition?.x ?? 400,
+      paddleDefinition?.y ?? 564,
+      this.textureForAsset(paddleIdleAssetId)
+    );
+    this.paddle.setData("baseAssetId", paddleAssetId);
+    this.bindAiAssetTexture(this.paddle, paddleIdleAssetId);
+    this.playLinkedAnimation(this.paddle, paddleAssetId, "idle");
     if (paddleDefinition) {
       applyObjectTransform(this.paddle, paddleDefinition);
     }
@@ -302,6 +312,7 @@ export class BreakoutScene extends Phaser.Scene {
     this.brickObjects = [];
     this.wallPlatforms = [];
     this.wallLastHitAt.clear();
+    this.levelAdvanceScheduled = false;
     this.platformRenderer?.clear();
     this.enemies?.destroy(true);
     this.bananas?.destroy(true);
@@ -327,9 +338,11 @@ export class BreakoutScene extends Phaser.Scene {
   }
 
   private createBrick(object: SceneObject): void {
-    const brick = this.add.image(object.x, object.y, this.textureForAsset(object.assetId));
-    brick.setData("assetId", object.assetId);
-    this.bindAiAssetTexture(brick, object.assetId);
+    const idleAssetId = this.linkedAnimationAssetId(object.assetId, "idle");
+    const brick = this.add.sprite(object.x, object.y, this.textureForAsset(idleAssetId));
+    brick.setData("baseAssetId", object.assetId);
+    this.bindAiAssetTexture(brick, idleAssetId);
+    this.playLinkedAnimation(brick, object.assetId, "idle");
     brick.setData("sceneObject", object);
     applyObjectTransform(brick, object);
     brick.setDepth(500);
@@ -391,6 +404,7 @@ export class BreakoutScene extends Phaser.Scene {
 
     for (const brick of this.brickObjects) {
       if (!brick.active || !brick.visible) continue;
+      if (brick.getData("destroying")) continue;
 
       const lastHitAt = Number(brick.getData("lastHitAt") ?? -Infinity);
       if (this.time.now - lastHitAt < 80) continue;
@@ -424,8 +438,9 @@ export class BreakoutScene extends Phaser.Scene {
     if (!this.ball?.active || !this.enemies) return;
 
     for (const child of this.enemies.children) {
-      const enemy = child as ArcadeImage;
+      const enemy = child as ArcadeSprite;
       if (!enemy.active || !enemy.visible) continue;
+      if (enemy.getData("destroying")) continue;
 
       const lastHitAt = Number(enemy.getData("lastHitAt") ?? -Infinity);
       if (this.time.now - lastHitAt < 80) continue;
@@ -452,7 +467,7 @@ export class BreakoutScene extends Phaser.Scene {
     collisionPoint: Phaser.Math.Vector2
   ): void {
     const ball = ballObject as ArcadeImage;
-    const brick = brickObject as BrickImage;
+    const brick = brickObject as BrickSprite;
     this.reflectBallFromObject(ball, brick, collisionPoint);
 
     const hp = Math.max(0, Number(brick.getData("hp") ?? 1) - 1);
@@ -463,20 +478,23 @@ export class BreakoutScene extends Phaser.Scene {
       return;
     }
 
-    brick.destroy();
+    brick.setData("destroying", true);
+    const baseAssetId = String(brick.getData("baseAssetId") ?? brick.getData("assetId"));
+    const duration = this.playLinkedAnimation(brick, baseAssetId, "destroyed");
     this.score += 50;
     this.updateHud();
+    this.time.delayedCall(Math.max(duration, 180) + 60, () => {
+      if (brick.active) {
+        brick.destroy();
+      }
 
-    if (!this.brickObjects.some((candidate) => candidate.active)) {
-      const nextIndex = Phaser.Math.Wrap((this.levelIndex < 0 ? 0 : this.levelIndex) + 1, 0, levelIds.length);
-      this.score += 250;
-      this.time.delayedCall(550, () => this.loadLevel(nextIndex));
-    }
+      this.checkLevelCleared();
+    });
   }
 
   private reflectBallFromObject(
     ball: ArcadeImage,
-    target: Phaser.GameObjects.Image,
+    target: PixelCollidable,
     collisionPoint: Phaser.Math.Vector2
   ): void {
     const normal = objectCollisionNormal(target, collisionPoint);
@@ -512,26 +530,27 @@ export class BreakoutScene extends Phaser.Scene {
     collisionPoint: Phaser.Math.Vector2
   ): void {
     const ball = ballObject as ArcadeImage;
-    const enemy = enemyObject as ArcadeImage;
+    const enemy = enemyObject as ArcadeSprite;
+    if (enemy.getData("destroying")) return;
+
     this.reflectBallFromObject(ball, enemy, collisionPoint);
-    enemy.destroy();
-    this.score += 100;
-    this.updateHud();
+    this.destroyEnemy(enemy);
   }
 
   private onPaddleEnemyOverlap(
     _paddleObject: unknown,
     enemyObject: unknown
   ): void {
-    const enemy = enemyObject as ArcadeImage;
-    enemy.destroy();
-    this.lives = Math.max(0, this.lives - 1);
-    this.updateHud();
-    if (this.lives === 0) {
-      this.score = 0;
-      this.lives = 3;
-      this.loadLevel(0);
+    const enemy = enemyObject as ArcadeSprite;
+    if (enemy.getData("destroying")) return;
+
+    if (enemy.getData("baseAssetId") === snakeAssetId) {
+      this.destroyEnemy(enemy, "biting", false);
+    } else {
+      this.destroyEnemy(enemy, "destroyed", false);
     }
+
+    this.damagePaddle();
   }
 
   private onBananaHit(
@@ -550,21 +569,11 @@ export class BreakoutScene extends Phaser.Scene {
   ): void {
     const banana = bananaObject as ArcadeImage;
     banana.destroy();
-    this.lives = Math.max(0, this.lives - 1);
-    this.updateHud();
-    if (this.lives === 0) {
-      this.score = 0;
-      this.lives = 3;
-      this.loadLevel(0);
-    }
+    this.damagePaddle();
   }
 
   private loseBall(): void {
-    this.lives -= 1;
-    if (this.lives <= 0) {
-      this.score = 0;
-      this.lives = 3;
-      this.loadLevel(0);
+    if (this.damagePaddle({ force: true })) {
       return;
     }
 
@@ -585,9 +594,11 @@ export class BreakoutScene extends Phaser.Scene {
 
     const point = randomPointInArea(area);
     const assetId = Math.random() > 0.5 ? snakeAssetId : monkeyAssetId;
-    const enemy = this.physics.add.image(point.x, point.y, this.textureForAsset(assetId));
-    enemy.setData("assetId", assetId);
-    this.bindAiAssetTexture(enemy, assetId);
+    const idleAssetId = this.linkedAnimationAssetId(assetId, "idle");
+    const enemy = this.physics.add.sprite(point.x, point.y, this.textureForAsset(idleAssetId));
+    enemy.setData("baseAssetId", assetId);
+    this.bindAiAssetTexture(enemy, idleAssetId);
+    this.playLinkedAnimation(enemy, assetId, "idle");
     enemy.setDepth(900);
     if (assetId === monkeyAssetId) {
       enemy.setData("spawnY", Phaser.Math.Clamp(point.y, 42, monkeyMaxY - 40));
@@ -602,8 +613,9 @@ export class BreakoutScene extends Phaser.Scene {
     this.enemies.add(enemy);
   }
 
-  private steerEnemyTowardPaddle(enemy: ArcadeImage): void {
+  private steerEnemyTowardPaddle(enemy: ArcadeSprite): void {
     if (!this.paddle?.active) return;
+    if (enemy.getData("destroying")) return;
 
     const direction = new Phaser.Math.Vector2(this.paddle.x - enemy.x, this.paddle.y - enemy.y);
     if (direction.lengthSq() === 0) return;
@@ -611,7 +623,9 @@ export class BreakoutScene extends Phaser.Scene {
     enemy.setVelocity(direction.x, direction.y);
   }
 
-  private updateMonkey(enemy: ArcadeImage): void {
+  private updateMonkey(enemy: ArcadeSprite): void {
+    if (enemy.getData("destroying")) return;
+
     const spawnY = Number(enemy.getData("spawnY") ?? Math.min(enemy.y, monkeyMaxY - 40));
     const phase = Number(enemy.getData("phase") ?? 0);
     const seconds = this.time.now / 1000;
@@ -639,8 +653,21 @@ export class BreakoutScene extends Phaser.Scene {
     }
   }
 
-  private shootBanana(monkey: ArcadeImage): void {
+  private shootBanana(monkey: ArcadeSprite): void {
     if (!this.paddle?.active) return;
+
+    const duration = this.playLinkedAnimation(monkey, monkeyAssetId, "throwing");
+    const launchDelay = Math.max(80, Math.min(260, duration * 0.45));
+    this.time.delayedCall(launchDelay, () => this.launchBanana(monkey));
+    this.time.delayedCall(Math.max(duration, 220) + 20, () => {
+      if (monkey.active && !monkey.getData("destroying")) {
+        this.playLinkedAnimation(monkey, monkeyAssetId, "idle");
+      }
+    });
+  }
+
+  private launchBanana(monkey: ArcadeSprite): void {
+    if (!this.paddle?.active || !monkey.active || monkey.getData("destroying")) return;
 
     const leadTargetX = Phaser.Math.Clamp(
       this.paddle.x + this.paddle.body.velocity.x * bananaAimLeadSeconds,
@@ -743,6 +770,148 @@ export class BreakoutScene extends Phaser.Scene {
     return this.previewTextures.get(assetId) ?? this.aiRuntime.key(assetId);
   }
 
+  private registerAiAnimations(): void {
+    for (const asset of Object.values(this.aiAssets.assets)) {
+      this.createOrRefreshAiAnimations(asset);
+    }
+  }
+
+  private createOrRefreshAiAnimations(asset: AiAssetDefinition, textureKey = this.textureForAsset(asset.id)): void {
+    if (!isAnimationAsset(asset)) return;
+    if (!asset.frameGrid || !asset.animations?.length) return;
+    if (!this.textures.exists(textureKey)) return;
+
+    for (const animation of asset.animations) {
+      if (this.anims.exists(animation.key)) {
+        this.anims.remove(animation.key);
+      }
+
+      const frames = this.anims.generateFrameNumbers(textureKey, {
+        frames: animation.frames
+      });
+      this.anims.create({
+        key: animation.key,
+        frames: Array.isArray(frames)
+          ? frames.map((frame, index) => ({
+            ...frame,
+            duration: animation.frameTimings?.[index]?.delayMs
+          }))
+          : frames,
+        frameRate: animation.frameRate,
+        repeat: animation.repeat ?? -1
+      });
+    }
+  }
+
+  private linkedAnimationAssetId(baseAssetId: string, state: string): string {
+    const linkedAssetId = this.aiAssets.assets[baseAssetId]?.linkedAnimationAssets?.[state]?.assetId;
+    return linkedAssetId && this.aiAssets.assets[linkedAssetId] ? linkedAssetId : baseAssetId;
+  }
+
+  private playLinkedAnimation(
+    sprite: Phaser.GameObjects.Sprite,
+    baseAssetId: string,
+    state: string
+  ): number {
+    const assetId = this.linkedAnimationAssetId(baseAssetId, state);
+    const asset = this.aiAssets.assets[assetId];
+    if (!asset || !isVisualAsset(asset)) return 0;
+
+    const textureKey = this.textureForAsset(assetId);
+    if (this.textures.exists(textureKey)) {
+      sprite.setTexture(textureKey);
+    }
+    sprite.setData("baseAssetId", baseAssetId);
+    sprite.setData("assetId", assetId);
+
+    if (!isAnimationAsset(asset)) {
+      sprite.stop();
+      return 0;
+    }
+
+    const animation = asset.animations?.[0];
+    if (animation && !this.anims.exists(animation.key)) {
+      this.createOrRefreshAiAnimations(asset, textureKey);
+    }
+
+    if (animation && this.anims.exists(animation.key)) {
+      sprite.play(animation.key, true);
+      return animationDurationMs(asset);
+    }
+
+    return 0;
+  }
+
+  private damagePaddle(options: { force?: boolean } = {}): boolean {
+    if (!this.paddle?.active) return false;
+    if (this.paddle.getData("destroying")) return true;
+
+    const invulnerableUntil = Number(this.paddle.getData("invulnerableUntil") ?? 0);
+    if (!options.force && this.time.now < invulnerableUntil) {
+      return false;
+    }
+
+    this.paddle.setData("invulnerableUntil", this.time.now + paddleInvulnerabilityMs);
+    this.lives = Math.max(0, this.lives - 1);
+    this.updateHud();
+
+    if (this.lives === 0) {
+      this.paddle.setData("destroying", true);
+      this.ball?.setVelocity(0, 0);
+      const baseAssetId = String(this.paddle.getData("baseAssetId") ?? "hero.paddle.normal");
+      const duration = this.playLinkedAnimation(this.paddle, baseAssetId, "destroyed");
+      this.time.delayedCall(Math.max(duration, 280) + 120, () => {
+        this.score = 0;
+        this.lives = 3;
+        this.loadLevel(0);
+      });
+      return true;
+    }
+
+    const baseAssetId = String(this.paddle.getData("baseAssetId") ?? "hero.paddle.normal");
+    const duration = this.playLinkedAnimation(this.paddle, baseAssetId, "hit");
+    this.time.delayedCall(Math.max(duration, 160) + 20, () => {
+      if (this.paddle.active && !this.paddle.getData("destroying")) {
+        this.playLinkedAnimation(this.paddle, baseAssetId, "idle");
+      }
+    });
+
+    return false;
+  }
+
+  private destroyEnemy(enemy: ArcadeSprite, state = "destroyed", awardScore = true): void {
+    if (!enemy.active || enemy.getData("destroying")) return;
+
+    enemy.setData("destroying", true);
+    enemy.setVelocity(0, 0);
+    enemy.body.enable = false;
+    const baseAssetId = String(enemy.getData("baseAssetId") ?? enemy.getData("assetId"));
+    const duration = this.playLinkedAnimation(enemy, baseAssetId, state);
+    if (awardScore) {
+      this.score += 100;
+      this.updateHud();
+    }
+    this.time.delayedCall(Math.max(duration, 180) + 60, () => {
+      if (enemy.active) {
+        enemy.destroy();
+      }
+    });
+  }
+
+  private checkLevelCleared(): void {
+    if (this.levelAdvanceScheduled) return;
+
+    const hasActiveBricks = this.brickObjects.some((candidate) => (
+      candidate.active && !candidate.getData("destroying")
+    ));
+    if (hasActiveBricks) return;
+
+    this.levelAdvanceScheduled = true;
+    const nextIndex = Phaser.Math.Wrap((this.levelIndex < 0 ? 0 : this.levelIndex) + 1, 0, levelIds.length);
+    this.score += 250;
+    this.time.delayedCall(550, () => this.loadLevel(nextIndex));
+  }
+
   private assetDesignerIds(): string[] {
     return [
       "audio.sfx.paddle",
@@ -756,24 +925,26 @@ export class BreakoutScene extends Phaser.Scene {
 
     this.previewTextures.set(assetId, textureKey);
     this.pixelCollision.invalidateTexture(textureKey);
+    this.createOrRefreshAiAnimations(asset, textureKey);
 
     for (const object of this.levelObjects) {
-      this.applyTextureToGameObject(object, assetId, textureKey);
+      this.applyTextureToGameObject(object, assetId, textureKey, asset);
     }
 
     for (const object of this.enemies?.children ?? []) {
-      this.applyTextureToGameObject(object, assetId, textureKey);
+      this.applyTextureToGameObject(object, assetId, textureKey, asset);
     }
 
     for (const object of this.bananas?.children ?? []) {
-      this.applyTextureToGameObject(object, assetId, textureKey);
+      this.applyTextureToGameObject(object, assetId, textureKey, asset);
     }
   }
 
   private applyTextureToGameObject(
     object: Phaser.GameObjects.GameObject,
     assetId: string,
-    textureKey: string
+    textureKey: string,
+    asset: AiAssetDefinition
   ): void {
     if (!object.active || object.getData("assetId") !== assetId) return;
 
@@ -790,6 +961,12 @@ export class BreakoutScene extends Phaser.Scene {
     ) return;
 
     object.setTexture(textureKey);
+    if (object instanceof Phaser.GameObjects.Sprite && isAnimationAsset(asset)) {
+      const animation = asset.animations?.[0];
+      if (animation && this.anims.exists(animation.key)) {
+        object.play(animation.key, true);
+      }
+    }
 
     const sceneObject = object.getData("sceneObject") as SceneObject | undefined;
     if (sceneObject && (object instanceof Phaser.GameObjects.Image || object instanceof Phaser.GameObjects.Sprite)) {
@@ -810,6 +987,21 @@ export class BreakoutScene extends Phaser.Scene {
 
 function isVisualAsset(asset: AiAssetDefinition): boolean {
   return asset.kind === "image" || asset.kind === "spritesheet" || asset.kind === "animation";
+}
+
+function isAnimationAsset(asset: AiAssetDefinition): boolean {
+  return (asset.kind === "spritesheet" || asset.kind === "animation") && Boolean(asset.animations?.length);
+}
+
+function animationDurationMs(asset: AiAssetDefinition): number {
+  const animation = asset.animations?.[0];
+  if (!animation) return 0;
+
+  const frameTimingDuration = animation.frameTimings
+    ?.reduce((total, timing) => total + (timing.delayMs ?? 0), 0) ?? 0;
+  if (frameTimingDuration > 0) return frameTimingDuration;
+
+  return Math.round((animation.frames.length / Math.max(1, animation.frameRate)) * 1000);
 }
 
 function platformBallCollision(
@@ -960,7 +1152,7 @@ function pointInPolygon(point: Phaser.Math.Vector2, vertices: Array<{ x: number;
 }
 
 function objectCollisionNormal(
-  target: Phaser.GameObjects.Image,
+  target: PixelCollidable,
   collisionPoint: Phaser.Math.Vector2
 ): Phaser.Math.Vector2 {
   const localPoint = target.getLocalPoint(collisionPoint.x, collisionPoint.y, new Phaser.Math.Vector2());

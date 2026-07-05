@@ -23,5 +23,19 @@
   "tags": [
     "hero",
     "paddle"
-  ]
+  ],
+  "linkedAnimationAssets": {
+    "idle": {
+      "label": "Idle",
+      "assetId": "hero.paddle.short.idle"
+    },
+    "hit": {
+      "label": "Getting Hit",
+      "assetId": "hero.paddle.short.hit"
+    },
+    "destroyed": {
+      "label": "Destroyed",
+      "assetId": "hero.paddle.short.destroyed"
+    }
+  }
 }

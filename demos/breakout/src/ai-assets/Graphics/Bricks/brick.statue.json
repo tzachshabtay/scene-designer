@@ -1,16 +1,17 @@
 {
   "id": "brick.statue",
   "kind": "image",
-  "prompt": "A tough double-hit breakout brick that looks like a carved Easter Island head statue, moai-style stone face, mossy cracks, compact readable block silhouette, transparent background.",
+  "prompt": "A tough double-hit breakout brick that looks like a tiki statue, mossy cracks, compact readable block silhouette, transparent background.",
   "dimensions": {
     "width": 58,
-    "height": 24
+    "height": 32
   },
   "settings": {
-    "format": "svg",
-    "background": "transparent"
+    "format": "png",
+    "background": "auto",
+    "model": "gpt-image-2"
   },
-  "activeVersion": "default",
+  "activeVersion": "promoted-1783130593116",
   "versions": {
     "default": {
       "name": "default",
@@ -18,11 +19,58 @@
       "prompt": "A tough double-hit breakout brick that looks like a carved Easter Island head statue, moai-style stone face, mossy cracks, compact readable block silhouette, transparent background.",
       "createdAt": "2026-07-03T00:00:00.000Z",
       "model": "manual-svg"
+    },
+    "promoted-1783130105634": {
+      "name": "promoted-1783130105634",
+      "file": "/assets/brick.statue.promoted-1783130105634.png",
+      "prompt": "A tough double-hit breakout brick that looks like a carved Easter Island head statue, moai-style stone face, mossy cracks, compact readable block silhouette, transparent background.",
+      "createdAt": "2026-07-04T01:55:05.703Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "format": "png",
+        "background": "auto",
+        "model": "gpt-image-2"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "default",
+      "notes": "Promoted from the AI asset designer."
+    },
+    "promoted-1783130593116": {
+      "name": "promoted-1783130593116",
+      "file": "/assets/brick.statue.promoted-1783130593116.png",
+      "prompt": "A tough double-hit breakout brick that looks like a tiki statue, mossy cracks, compact readable block silhouette, transparent background.",
+      "createdAt": "2026-07-04T02:03:13.146Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "format": "png",
+        "background": "auto",
+        "model": "gpt-image-2"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "promoted-1783130105634",
+      "notes": "Promoted from the AI asset designer."
     }
   },
   "tags": [
     "brick",
     "tough",
     "statue"
-  ]
+  ],
+  "audioSettings": {},
+  "audioPlayback": {},
+  "voiceSettings": {},
+  "linkedAnimationAssets": {
+    "idle": {
+      "label": "Idle",
+      "assetId": "brick.statue.idle"
+    },
+    "destroyed": {
+      "label": "Destroyed",
+      "assetId": "brick.statue.destroyed"
+    }
+  }
 }

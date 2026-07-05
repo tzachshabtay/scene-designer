@@ -1,16 +1,17 @@
 {
   "id": "brick.vines",
   "kind": "image",
-  "prompt": "A bundled tangle of jungle vines shaped like a breakout brick, twisting green stems with small leaves and a readable chunky silhouette, transparent background.",
+  "prompt": "A very thick jungle vine twisting horizontally with a heavy shadow, transparent background.",
   "dimensions": {
     "width": 58,
-    "height": 24
+    "height": 32
   },
   "settings": {
-    "format": "svg",
-    "background": "transparent"
+    "format": "png",
+    "background": "auto",
+    "model": "gpt-image-2"
   },
-  "activeVersion": "default",
+  "activeVersion": "promoted-1783131313782",
   "versions": {
     "default": {
       "name": "default",
@@ -18,10 +19,57 @@
       "prompt": "A bundled tangle of jungle vines shaped like a breakout brick, twisting green stems with small leaves and a readable chunky silhouette, transparent background.",
       "createdAt": "2026-07-03T00:00:00.000Z",
       "model": "manual-svg"
+    },
+    "promoted-1783131153452": {
+      "name": "promoted-1783131153452",
+      "file": "/assets/brick.vines.promoted-1783131153452.png",
+      "prompt": "A very thick jungle vine twisting horizontally, transparent background.",
+      "createdAt": "2026-07-04T02:12:33.485Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "format": "png",
+        "background": "auto",
+        "model": "gpt-image-2"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "default",
+      "notes": "Promoted from the AI asset designer."
+    },
+    "promoted-1783131313782": {
+      "name": "promoted-1783131313782",
+      "file": "/assets/brick.vines.promoted-1783131313782.png",
+      "prompt": "A very thick jungle vine twisting horizontally with a heavy shadow, transparent background.",
+      "createdAt": "2026-07-04T02:15:13.820Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "format": "png",
+        "background": "auto",
+        "model": "gpt-image-2"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "promoted-1783131153452",
+      "notes": "Promoted from the AI asset designer."
     }
   },
   "tags": [
     "brick",
     "vines"
-  ]
+  ],
+  "audioSettings": {},
+  "audioPlayback": {},
+  "voiceSettings": {},
+  "linkedAnimationAssets": {
+    "idle": {
+      "label": "Idle",
+      "assetId": "brick.vines.idle"
+    },
+    "destroyed": {
+      "label": "Destroyed",
+      "assetId": "brick.vines.destroyed"
+    }
+  }
 }

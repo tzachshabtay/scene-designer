@@ -1,0 +1,98 @@
+{
+  "id": "enemy.monkey.idle",
+  "kind": "animation",
+  "prompt": "A 4-frame idle animation spritesheet for the mischievous jungle monkey enemy, based on the source image, subtle bounce and arm movement, transparent background.",
+  "dimensions": {
+    "width": 288,
+    "height": 128
+  },
+  "frameGrid": {
+    "frameCount": 4,
+    "frameWidth": 72,
+    "frameHeight": 128,
+    "columns": 4,
+    "rows": 1
+  },
+  "animations": [
+    {
+      "key": "enemy.monkey.idle",
+      "frames": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "frameRate": 7,
+      "repeat": -1,
+      "prompt": "A 4-frame idle animation spritesheet for the mischievous jungle monkey enemy, based on the source image, subtle bounce and arm movement, transparent background.",
+      "frameTimings": [
+        {
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotation": 0,
+          "tag": "idle-1"
+        },
+        {
+          "offsetX": 1,
+          "offsetY": -2,
+          "scaleX": 1.025,
+          "scaleY": 1.01,
+          "rotation": -2,
+          "tag": "idle-2"
+        },
+        {
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotation": 0,
+          "tag": "idle-3"
+        },
+        {
+          "offsetX": -1,
+          "offsetY": 1,
+          "scaleX": 0.985,
+          "scaleY": 0.99,
+          "rotation": 2,
+          "tag": "idle-4"
+        }
+      ]
+    }
+  ],
+  "settings": {
+    "format": "png",
+    "background": "auto",
+    "model": "gpt-image-2",
+    "referenceAssetIds": [
+      "enemy.monkey"
+    ]
+  },
+  "activeVersion": "default",
+  "versions": {
+    "default": {
+      "name": "default",
+      "file": "/assets/enemy.monkey.idle.default.svg",
+      "prompt": "A 4-frame idle animation spritesheet for the mischievous jungle monkey enemy, based on the source image, subtle bounce and arm movement, transparent background.",
+      "createdAt": "2026-07-05T00:00:00.000Z",
+      "model": "base-image-spritesheet",
+      "settings": {
+        "format": "png",
+        "background": "auto",
+        "model": "gpt-image-2",
+        "referenceAssetIds": [
+          "enemy.monkey"
+        ]
+      },
+      "parentVersion": "promoted-1783135961965",
+      "notes": "Default animation spritesheet derived from the current base image."
+    }
+  },
+  "tags": [
+    "enemy",
+    "monkey",
+    "animation",
+    "idle"
+  ]
+}

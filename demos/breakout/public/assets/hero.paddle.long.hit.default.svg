@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="624" height="18" viewBox="0 0 624 18">
+  <defs>
+    <image id="base" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNTYiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxNTYgMTgiPgogIDxyZWN0IHg9IjEiIHk9IjMiIHdpZHRoPSIxNTQiIGhlaWdodD0iMTIiIHJ4PSI2IiBmaWxsPSIjMTIyNDJjIiBzdHJva2U9IiM0NmQ5ZmYiIHN0cm9rZS13aWR0aD0iMiIvPgogIDxyZWN0IHg9IjE4IiB5PSI2IiB3aWR0aD0iMTIwIiBoZWlnaHQ9IjMiIHJ4PSIxLjUiIGZpbGw9IiNmNmZiZmYiIG9wYWNpdHk9Ii45Ii8+CiAgPHJlY3QgeD0iNDIiIHk9IjExIiB3aWR0aD0iNzIiIGhlaWdodD0iMiIgcng9IjEiIGZpbGw9IiM0NmQzOWEiLz4KPC9zdmc+Cg==" width="156" height="18" preserveAspectRatio="xMidYMid meet"/>
+  </defs>
+  <g transform="translate(78 9) rotate(0) scale(1 1)" opacity="1"><use href="#base" x="-78" y="-9"/></g>
+  <g transform="translate(230 10) rotate(-2) scale(1.08 0.9)" opacity="1"><use href="#base" x="-78" y="-9"/></g>
+  <g transform="translate(394 8) rotate(2) scale(0.96 1.12)" opacity="1"><use href="#base" x="-78" y="-9"/></g>
+  <g transform="translate(546 9) rotate(0) scale(1 1)" opacity="1"><use href="#base" x="-78" y="-9"/></g>
+</svg>

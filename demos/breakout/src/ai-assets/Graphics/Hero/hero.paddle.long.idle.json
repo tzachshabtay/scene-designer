@@ -1,0 +1,98 @@
+{
+  "id": "hero.paddle.long.idle",
+  "kind": "animation",
+  "prompt": "A 4-frame idle animation spritesheet for the long jungle breakout hero paddle, based on the source image, subtle ready movement, transparent background.",
+  "dimensions": {
+    "width": 624,
+    "height": 18
+  },
+  "frameGrid": {
+    "frameCount": 4,
+    "frameWidth": 156,
+    "frameHeight": 18,
+    "columns": 4,
+    "rows": 1
+  },
+  "animations": [
+    {
+      "key": "hero.paddle.long.idle",
+      "frames": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "frameRate": 6,
+      "repeat": -1,
+      "prompt": "A 4-frame idle animation spritesheet for the long jungle breakout hero paddle, based on the source image, subtle ready movement, transparent background.",
+      "frameTimings": [
+        {
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotation": 0,
+          "tag": "idle-1"
+        },
+        {
+          "offsetX": 0,
+          "offsetY": -1,
+          "scaleX": 1.015,
+          "scaleY": 1,
+          "rotation": 0,
+          "tag": "idle-2"
+        },
+        {
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotation": 0,
+          "tag": "idle-3"
+        },
+        {
+          "offsetX": 0,
+          "offsetY": 1,
+          "scaleX": 0.985,
+          "scaleY": 1,
+          "rotation": 0,
+          "tag": "idle-4"
+        }
+      ]
+    }
+  ],
+  "settings": {
+    "format": "png",
+    "background": "auto",
+    "model": "gpt-image-2",
+    "referenceAssetIds": [
+      "hero.paddle.long"
+    ]
+  },
+  "activeVersion": "default",
+  "versions": {
+    "default": {
+      "name": "default",
+      "file": "/assets/hero.paddle.long.idle.default.svg",
+      "prompt": "A 4-frame idle animation spritesheet for the long jungle breakout hero paddle, based on the source image, subtle ready movement, transparent background.",
+      "createdAt": "2026-07-05T00:00:00.000Z",
+      "model": "base-image-spritesheet",
+      "settings": {
+        "format": "png",
+        "background": "auto",
+        "model": "gpt-image-2",
+        "referenceAssetIds": [
+          "hero.paddle.long"
+        ]
+      },
+      "parentVersion": "default",
+      "notes": "Default animation spritesheet derived from the current base image."
+    }
+  },
+  "tags": [
+    "hero",
+    "paddle",
+    "animation",
+    "idle"
+  ]
+}

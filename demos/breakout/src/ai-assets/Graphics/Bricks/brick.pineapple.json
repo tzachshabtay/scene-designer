@@ -4,13 +4,14 @@
   "prompt": "A cute pineapple-themed breakout brick made from golden pineapple segments with leafy green crown details, juicy tropical colors, transparent background.",
   "dimensions": {
     "width": 58,
-    "height": 24
+    "height": 32
   },
   "settings": {
-    "format": "svg",
-    "background": "transparent"
+    "format": "png",
+    "background": "auto",
+    "model": "gpt-image-2"
   },
-  "activeVersion": "default",
+  "activeVersion": "promoted-1783128876390",
   "versions": {
     "default": {
       "name": "default",
@@ -18,10 +19,40 @@
       "prompt": "A cute pineapple-themed breakout brick made from golden pineapple segments with leafy green crown details, juicy tropical colors, transparent background.",
       "createdAt": "2026-07-03T00:00:00.000Z",
       "model": "manual-svg"
+    },
+    "promoted-1783128876390": {
+      "name": "promoted-1783128876390",
+      "file": "/assets/brick.pineapple.promoted-1783128876390.png",
+      "prompt": "A cute pineapple-themed breakout brick made from golden pineapple segments with leafy green crown details, juicy tropical colors, transparent background.",
+      "createdAt": "2026-07-04T01:34:36.417Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "format": "png",
+        "background": "auto",
+        "model": "gpt-image-2"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "default",
+      "notes": "Promoted from the AI asset designer."
     }
   },
   "tags": [
     "brick",
     "pineapple"
-  ]
+  ],
+  "audioSettings": {},
+  "audioPlayback": {},
+  "voiceSettings": {},
+  "linkedAnimationAssets": {
+    "idle": {
+      "label": "Idle",
+      "assetId": "brick.pineapple.idle"
+    },
+    "destroyed": {
+      "label": "Destroyed",
+      "assetId": "brick.pineapple.destroyed"
+    }
+  }
 }

@@ -1,16 +1,17 @@
 {
   "id": "brick.leaves",
   "kind": "image",
-  "prompt": "A lush cluster of overlapping jungle leaves arranged like a breakout brick, broad tropical leaves with crisp silhouettes, bright veins, transparent background.",
+  "prompt": "one big jungle leaf arranged like a breakout brick, broad tropical leaves with crisp silhouettes, bright veins, high contrast, transparent background.",
   "dimensions": {
     "width": 58,
-    "height": 24
+    "height": 32
   },
   "settings": {
-    "format": "svg",
-    "background": "transparent"
+    "format": "png",
+    "background": "auto",
+    "model": "gpt-image-2"
   },
-  "activeVersion": "default",
+  "activeVersion": "promoted-1783129990860",
   "versions": {
     "default": {
       "name": "default",
@@ -18,10 +19,40 @@
       "prompt": "A lush cluster of overlapping jungle leaves arranged like a breakout brick, broad tropical leaves with crisp silhouettes, bright veins, transparent background.",
       "createdAt": "2026-07-03T00:00:00.000Z",
       "model": "manual-svg"
+    },
+    "promoted-1783129990860": {
+      "name": "promoted-1783129990860",
+      "file": "/assets/brick.leaves.promoted-1783129990860.png",
+      "prompt": "one big jungle leaf arranged like a breakout brick, broad tropical leaves with crisp silhouettes, bright veins, high contrast, transparent background.",
+      "createdAt": "2026-07-04T01:53:10.886Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "format": "png",
+        "background": "auto",
+        "model": "gpt-image-2"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "default",
+      "notes": "Promoted from the AI asset designer."
     }
   },
   "tags": [
     "brick",
     "leaves"
-  ]
+  ],
+  "audioSettings": {},
+  "audioPlayback": {},
+  "voiceSettings": {},
+  "linkedAnimationAssets": {
+    "idle": {
+      "label": "Idle",
+      "assetId": "brick.leaves.idle"
+    },
+    "destroyed": {
+      "label": "Destroyed",
+      "assetId": "brick.leaves.destroyed"
+    }
+  }
 }

@@ -1,0 +1,98 @@
+{
+  "id": "hero.paddle.short.hit",
+  "kind": "animation",
+  "prompt": "A 4-frame getting-hit animation spritesheet for the short jungle breakout hero paddle, based on the source image, quick recoil, transparent background.",
+  "dimensions": {
+    "width": 288,
+    "height": 18
+  },
+  "frameGrid": {
+    "frameCount": 4,
+    "frameWidth": 72,
+    "frameHeight": 18,
+    "columns": 4,
+    "rows": 1
+  },
+  "animations": [
+    {
+      "key": "hero.paddle.short.hit",
+      "frames": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "frameRate": 12,
+      "repeat": 0,
+      "prompt": "A 4-frame getting-hit animation spritesheet for the short jungle breakout hero paddle, based on the source image, quick recoil, transparent background.",
+      "frameTimings": [
+        {
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotation": 0,
+          "tag": "hit-1"
+        },
+        {
+          "offsetX": -4,
+          "offsetY": 1,
+          "scaleX": 1.08,
+          "scaleY": 0.9,
+          "rotation": -2,
+          "tag": "hit-2"
+        },
+        {
+          "offsetX": 4,
+          "offsetY": -1,
+          "scaleX": 0.96,
+          "scaleY": 1.12,
+          "rotation": 2,
+          "tag": "hit-3"
+        },
+        {
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotation": 0,
+          "tag": "hit-4"
+        }
+      ]
+    }
+  ],
+  "settings": {
+    "format": "png",
+    "background": "auto",
+    "model": "gpt-image-2",
+    "referenceAssetIds": [
+      "hero.paddle.short"
+    ]
+  },
+  "activeVersion": "default",
+  "versions": {
+    "default": {
+      "name": "default",
+      "file": "/assets/hero.paddle.short.hit.default.svg",
+      "prompt": "A 4-frame getting-hit animation spritesheet for the short jungle breakout hero paddle, based on the source image, quick recoil, transparent background.",
+      "createdAt": "2026-07-05T00:00:00.000Z",
+      "model": "base-image-spritesheet",
+      "settings": {
+        "format": "png",
+        "background": "auto",
+        "model": "gpt-image-2",
+        "referenceAssetIds": [
+          "hero.paddle.short"
+        ]
+      },
+      "parentVersion": "default",
+      "notes": "Default animation spritesheet derived from the current base image."
+    }
+  },
+  "tags": [
+    "hero",
+    "paddle",
+    "animation",
+    "hit"
+  ]
+}
