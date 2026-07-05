@@ -7,7 +7,23 @@ In-game scene design tooling for TypeScript 2D games. The project mirrors the `a
 - `@scene-designer/phaser`: Phaser runtime helpers plus canvas selection, dragging, resizing, rotation, anchors, and area editing.
 - `@scene-designer/dev`: local manifest reader/writer, TypeScript module builder, and promotion server.
 
-The scene manifest is JSON-first. A scene contains layers, each layer contains objects and areas, and each object references a graphic asset from an `@ai-game-assets/core` manifest.
+The scene manifest is JSON-first. A scene contains layers, each layer contains behavior instances, objects, areas, and platforms. Objects and platforms reference graphic assets from an `@ai-game-assets/core` manifest.
+
+## Phaser Platform Rendering
+
+Platforms are defined in `@scene-designer/core`, edited in the designer, and rendered for Phaser with `ScenePlatformRenderer` from `@scene-designer/phaser`. The renderer clips the platform asset to the actual area shape, supports `fit` and tiled paint modes, handles tile mirroring, and owns cleanup for generated Phaser canvas textures.
+
+```ts
+import { ScenePlatformRenderer } from "@scene-designer/phaser";
+
+const platformRenderer = new ScenePlatformRenderer(scene);
+const image = platformRenderer.create(platform, aiRuntime.key(platform.assetId), {
+  depth: 470
+});
+
+// When reloading/changing scenes:
+platformRenderer.clear();
+```
 
 ## Demo
 

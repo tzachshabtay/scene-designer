@@ -30,3 +30,14 @@ export type {
 export {
   PhaserSceneDesignerCanvas
 } from "./canvas-editor.js";
+
+export type {
+  CreatedScenePlatformImage,
+  CreateScenePlatformImageOptions,
+  ScenePlatformRendererOptions
+} from "./platform-renderer.js";
+
+export {
+  createScenePlatformImage,
+  ScenePlatformRenderer
+} from "./platform-renderer.js";

@@ -21,6 +21,7 @@ import {
   applyObjectTransform,
   type InstalledPhaserSceneDesigner,
   installPhaserSceneDesigner,
+  ScenePlatformRenderer,
   SceneDesignerDebugClient
 } from "@scene-designer/phaser";
 import Phaser from "phaser";
@@ -32,16 +33,6 @@ type AlphaMask = {
   width: number;
   height: number;
   alpha: Uint8ClampedArray;
-};
-
-type TextureFrameSource = {
-  image: CanvasImageSource;
-  sx: number;
-  sy: number;
-  sw: number;
-  sh: number;
-  width: number;
-  height: number;
 };
 
 const levelIds = ["level.one", "level.two", "level.three"];
@@ -86,6 +77,7 @@ export class BreakoutScene extends Phaser.Scene {
   private aiRuntime!: AiAssetRuntime;
   private pixelCollision!: PixelCollision;
   private sceneDesigner?: InstalledPhaserSceneDesigner;
+  private platformRenderer?: ScenePlatformRenderer;
   private sceneManifest: SceneDesignerManifest;
   private levelIndex = 0;
   private currentSceneId = levelIds[0];
@@ -109,8 +101,6 @@ export class BreakoutScene extends Phaser.Scene {
   private paddlePointerDragActive = false;
   private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
   private readonly previewTextures = new Map<string, string>();
-  private readonly platformTextureKeys = new Set<string>();
-  private platformTextureVersion = 0;
 
   constructor(options: BreakoutSceneOptions) {
     super("breakout");
@@ -135,6 +125,9 @@ export class BreakoutScene extends Phaser.Scene {
     );
     const aiDesignerCallbacks = this.aiRuntime.designerCallbacks();
     this.pixelCollision = new PixelCollision(this);
+    this.platformRenderer = new ScenePlatformRenderer(this, {
+      keyPrefix: "breakout-wall-platform"
+    });
     this.physics.world.setBounds(0, 0, 800, 600, true, true, true, false);
     this.cursors = this.input.keyboard?.createCursorKeys();
 
@@ -189,7 +182,7 @@ export class BreakoutScene extends Phaser.Scene {
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.sceneDesigner?.destroy();
       this.debugPauseButton?.remove();
-      this.clearGeneratedPlatformTextures();
+      this.platformRenderer?.destroy();
     });
   }
 
@@ -309,7 +302,7 @@ export class BreakoutScene extends Phaser.Scene {
     this.brickObjects = [];
     this.wallPlatforms = [];
     this.wallLastHitAt.clear();
-    this.clearGeneratedPlatformTextures();
+    this.platformRenderer?.clear();
     this.enemies?.destroy(true);
     this.bananas?.destroy(true);
     this.firstEnemySpawnTimer?.remove(false);
@@ -346,88 +339,13 @@ export class BreakoutScene extends Phaser.Scene {
   }
 
   private createWallPlatform(platform: ScenePlatform, index: number): void {
-    const bounds = boundsFromPoints(platformBoundaryPoints(platform));
-    if (!bounds) return;
+    const visual = this.platformRenderer?.create(platform, this.textureForAsset(platform.assetId), {
+      depth: 470 + index,
+      index
+    });
+    if (!visual) return;
 
-    const width = Math.max(1, bounds.right - bounds.left);
-    const height = Math.max(1, bounds.bottom - bounds.top);
-    const textureKey = this.textureForAsset(platform.assetId);
-    const clippedTextureKey = this.createPlatformTexture(platform, index, textureKey, bounds, width, height);
-    if (!clippedTextureKey) return;
-
-    const visual = this.add.image(bounds.left + width / 2, bounds.top + height / 2, clippedTextureKey);
-
-    visual.setData("assetId", platform.assetId);
-    visual.setData("scenePlatform", platform);
-    visual.setOrigin(0.5, 0.5);
-    visual.setDepth(470 + index);
     this.levelObjects.push(visual);
-  }
-
-  private createPlatformTexture(
-    platform: ScenePlatform,
-    index: number,
-    textureKey: string,
-    bounds: { left: number; top: number; right: number; bottom: number },
-    width: number,
-    height: number
-  ): string | undefined {
-    if (typeof document === "undefined") return undefined;
-
-    const canvas = document.createElement("canvas");
-    canvas.width = Math.max(1, Math.ceil(width));
-    canvas.height = Math.max(1, Math.ceil(height));
-
-    const context = canvas.getContext("2d");
-    if (!context) return undefined;
-
-    const source = textureFrameSource(this, textureKey);
-    context.save();
-    tracePlatformCanvasPath(context, platform, -bounds.left, -bounds.top);
-    context.clip();
-
-    if (source) {
-      if (platform.paint.mode === "tile") {
-        paintPlatformTiles(
-          context,
-          source,
-          width,
-          height,
-          Boolean(platform.paint.mirrorX),
-          Boolean(platform.paint.mirrorY)
-        );
-      } else {
-        drawTextureFrame(context, source, 0, 0, width, height);
-      }
-    } else {
-      context.fillStyle = "rgba(80, 64, 42, 0.82)";
-      context.fillRect(0, 0, width, height);
-    }
-
-    context.restore();
-
-    const safeId = platform.id.replace(/[^a-zA-Z0-9_-]/g, "_");
-    const clippedTextureKey = `wall-platform-${safeId}-${index}-${this.platformTextureVersion}`;
-    this.platformTextureVersion += 1;
-
-    if (this.textures.exists(clippedTextureKey)) {
-      this.textures.remove(clippedTextureKey);
-    }
-
-    const texture = this.textures.addCanvas(clippedTextureKey, canvas);
-    if (!texture) return undefined;
-
-    this.platformTextureKeys.add(clippedTextureKey);
-    return clippedTextureKey;
-  }
-
-  private clearGeneratedPlatformTextures(): void {
-    for (const textureKey of this.platformTextureKeys) {
-      if (this.textures.exists(textureKey)) {
-        this.textures.remove(textureKey);
-      }
-    }
-    this.platformTextureKeys.clear();
   }
 
   private updatePaddleControl(): void {
@@ -892,126 +810,6 @@ export class BreakoutScene extends Phaser.Scene {
 
 function isVisualAsset(asset: AiAssetDefinition): boolean {
   return asset.kind === "image" || asset.kind === "spritesheet" || asset.kind === "animation";
-}
-
-function textureFrameSource(scene: Phaser.Scene, textureKey: string): TextureFrameSource | undefined {
-  if (!scene.textures.exists(textureKey)) return undefined;
-
-  const texture = scene.textures.get(textureKey);
-  const frame = texture.get();
-  const image = frame.source.image as CanvasImageSource | undefined;
-  if (!image) return undefined;
-
-  return {
-    image,
-    sx: frame.cutX,
-    sy: frame.cutY,
-    sw: frame.cutWidth,
-    sh: frame.cutHeight,
-    width: Math.max(1, frame.cutWidth),
-    height: Math.max(1, frame.cutHeight)
-  };
-}
-
-function tracePlatformCanvasPath(
-  context: CanvasRenderingContext2D,
-  platform: ScenePlatform,
-  offsetX: number,
-  offsetY: number
-): void {
-  const [first] = platform.vertices;
-  if (!first) return;
-
-  context.beginPath();
-  context.moveTo(first.x + offsetX, first.y + offsetY);
-  const edgeCount = platform.closed ? platform.vertices.length : platform.vertices.length - 1;
-  for (let index = 0; index < edgeCount; index += 1) {
-    const from = platform.vertices[index];
-    const to = platform.vertices[(index + 1) % platform.vertices.length];
-    if (from.curve) {
-      context.quadraticCurveTo(
-        from.curve.cx + offsetX,
-        from.curve.cy + offsetY,
-        to.x + offsetX,
-        to.y + offsetY
-      );
-    } else {
-      context.lineTo(to.x + offsetX, to.y + offsetY);
-    }
-  }
-  if (platform.closed && platform.vertices.length > 2) {
-    context.closePath();
-  }
-}
-
-function paintPlatformTiles(
-  context: CanvasRenderingContext2D,
-  source: TextureFrameSource,
-  width: number,
-  height: number,
-  mirrorX: boolean,
-  mirrorY: boolean
-): void {
-  const patternCanvas = createPlatformPatternCanvas(source, mirrorX, mirrorY);
-  const pattern = context.createPattern(patternCanvas, "repeat");
-  if (!pattern) {
-    drawTextureFrame(context, source, 0, 0, width, height);
-    return;
-  }
-
-  context.fillStyle = pattern;
-  context.fillRect(0, 0, width, height);
-}
-
-function createPlatformPatternCanvas(
-  source: TextureFrameSource,
-  mirrorX: boolean,
-  mirrorY: boolean
-): HTMLCanvasElement {
-  const tileWidth = Math.max(1, Math.ceil(source.width));
-  const tileHeight = Math.max(1, Math.ceil(source.height));
-  const columns = mirrorX ? 2 : 1;
-  const rows = mirrorY ? 2 : 1;
-  const canvas = document.createElement("canvas");
-  canvas.width = tileWidth * columns;
-  canvas.height = tileHeight * rows;
-
-  const context = canvas.getContext("2d");
-  if (!context) return canvas;
-
-  for (let row = 0; row < rows; row += 1) {
-    for (let column = 0; column < columns; column += 1) {
-      drawTextureFrame(
-        context,
-        source,
-        column * tileWidth,
-        row * tileHeight,
-        tileWidth,
-        tileHeight,
-        mirrorX && column % 2 === 1,
-        mirrorY && row % 2 === 1
-      );
-    }
-  }
-
-  return canvas;
-}
-
-function drawTextureFrame(
-  context: CanvasRenderingContext2D,
-  source: TextureFrameSource,
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-  flipX = false,
-  flipY = false
-): void {
-  context.save();
-  context.translate(x + (flipX ? width : 0), y + (flipY ? height : 0));
-  context.scale(flipX ? -1 : 1, flipY ? -1 : 1);
-  context.drawImage(source.image, source.sx, source.sy, source.sw, source.sh, 0, 0, width, height);
-  context.restore();
 }
 
 function platformBallCollision(
