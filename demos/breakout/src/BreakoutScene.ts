@@ -949,6 +949,8 @@ export class BreakoutScene extends Phaser.Scene {
       }
     }
 
+    add(snakeAssetId);
+    add(monkeyAssetId);
     add(bananaAssetId);
 
     return [...ids];
