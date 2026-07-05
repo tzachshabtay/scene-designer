@@ -20,6 +20,6 @@
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
-    "@ai-game-assets/core": "^0.5.3"
+    "@ai-game-assets/core": "^0.5.4"
   }
 }
