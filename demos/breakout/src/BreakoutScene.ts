@@ -2,7 +2,7 @@ import {
   AiAssetDebugClient,
   AiAssetRuntime,
   installAiAssetDesigner,
-  loadAiAssets,
+  loadAiAsset,
   loadAiAudioAssets
 } from "@ai-game-assets/phaser";
 import type { AiAssetDefinition, AiAssetManifest } from "@ai-game-assets/core";
@@ -116,7 +116,9 @@ export class BreakoutScene extends Phaser.Scene {
 
   preload(): void {
     const loadOptions = this.assetBaseUrl ? { baseUrl: this.assetBaseUrl } : undefined;
-    loadAiAssets(this, this.aiAssets, loadOptions);
+    for (const assetId of this.preloadAssetIds()) {
+      loadAiAsset(this, this.aiAssets, assetId, loadOptions);
+    }
     loadAiAudioAssets(this, this.aiAssets, loadOptions);
   }
 
@@ -913,10 +915,43 @@ export class BreakoutScene extends Phaser.Scene {
   }
 
   private assetDesignerIds(): string[] {
+    const hiddenAssetIds = new Set([
+      ...linkedAnimationAssetIds(this.aiAssets),
+      ...Object.values(this.aiAssets.targets ?? {}).flatMap((target) => Object.values(target.variants))
+    ]);
+    const publicAssetIds = Object.keys(this.aiAssets.assets).filter((assetId) => !hiddenAssetIds.has(assetId));
+
     return [
       "audio.sfx.paddle",
-      ...Object.keys(this.aiAssets.assets).filter((assetId) => assetId !== "audio.sfx.paddle")
+      ...publicAssetIds.filter((assetId) => assetId !== "audio.sfx.paddle")
     ];
+  }
+
+  private preloadAssetIds(): string[] {
+    const ids = new Set<string>();
+
+    const add = (assetId: string | undefined) => {
+      const asset = assetId ? this.aiAssets.assets[assetId] : undefined;
+      if (!asset || !isVisualAsset(asset)) return;
+
+      ids.add(asset.id);
+      for (const linkedAnimation of Object.values(asset.linkedAnimationAssets ?? {})) {
+        add(linkedAnimation.assetId);
+      }
+    };
+
+    for (const scene of Object.values(this.sceneManifest.scenes)) {
+      for (const object of sceneObjects(this.sceneManifest, scene)) {
+        add(object.assetId);
+      }
+      for (const platform of scenePlatforms(this.sceneManifest, scene)) {
+        add(platform.assetId);
+      }
+    }
+
+    add(bananaAssetId);
+
+    return [...ids];
   }
 
   private applyAiAssetTexture(assetId: string, textureKey: string, asset: AiAssetDefinition): void {
@@ -991,6 +1026,12 @@ function isVisualAsset(asset: AiAssetDefinition): boolean {
 
 function isAnimationAsset(asset: AiAssetDefinition): boolean {
   return (asset.kind === "spritesheet" || asset.kind === "animation") && Boolean(asset.animations?.length);
+}
+
+function linkedAnimationAssetIds(manifest: AiAssetManifest): string[] {
+  return Object.values(manifest.assets)
+    .flatMap((asset) => Object.values(asset.linkedAnimationAssets ?? {}))
+    .map((linkedAnimation) => linkedAnimation.assetId);
 }
 
 function animationDurationMs(asset: AiAssetDefinition): number {
