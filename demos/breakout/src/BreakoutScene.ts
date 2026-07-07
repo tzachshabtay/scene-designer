@@ -7,7 +7,9 @@ import {
 } from "@ai-game-assets/phaser";
 import {
   topLevelAiAssetIds,
+  type AiAssetAnimation,
   type AiAssetDefinition,
+  type AiAssetAnimationFrameTiming,
   type AiAssetManifest
 } from "@ai-game-assets/core";
 import {
@@ -40,6 +42,18 @@ type AlphaMask = {
   alpha: Uint8ClampedArray;
 };
 
+type AiAnimationFrameTransformState = {
+  timing?: AiAssetAnimationFrameTiming;
+};
+
+type AiAnimationBaseTransform = {
+  x: number;
+  y: number;
+  scaleX: number;
+  scaleY: number;
+  angle: number;
+};
+
 const levelIds = ["level.one", "level.two", "level.three"];
 const brickTag = "brick";
 const backgroundTag = "background";
@@ -66,6 +80,7 @@ const bananaSpinSpeed = 720;
 const ballSpinSpeed = 520;
 const paddleKeyboardSpeed = 430;
 const paddleInvulnerabilityMs = 650;
+const aiAnimationFrameTransformKey = "aiAnimationFrameTransform";
 
 export type BreakoutSceneOptions = {
   aiAssets: AiAssetManifest;
@@ -225,6 +240,8 @@ export class BreakoutScene extends Phaser.Scene {
         banana.destroy();
       }
     }
+
+    this.applyAiAnimationFrameTransforms();
   }
 
   private loadLevel(index: number): void {
@@ -266,10 +283,10 @@ export class BreakoutScene extends Phaser.Scene {
     );
     this.paddle.setData("baseAssetId", paddleAssetId);
     this.bindAiAssetTexture(this.paddle, paddleIdleAssetId);
-    this.playLinkedAnimation(this.paddle, paddleAssetId, "idle");
     if (paddleDefinition) {
       applyObjectTransform(this.paddle, paddleDefinition);
     }
+    this.playLinkedAnimation(this.paddle, paddleAssetId, "idle");
     this.paddle.setImmovable(true);
     this.paddle.setCollideWorldBounds(true);
     this.paddle.setDepth(1200);
@@ -346,9 +363,9 @@ export class BreakoutScene extends Phaser.Scene {
     const brick = this.add.sprite(object.x, object.y, this.textureForAsset(idleAssetId));
     brick.setData("baseAssetId", object.assetId);
     this.bindAiAssetTexture(brick, idleAssetId);
-    this.playLinkedAnimation(brick, object.assetId, "idle");
     brick.setData("sceneObject", object);
     applyObjectTransform(brick, object);
+    this.playLinkedAnimation(brick, object.assetId, "idle");
     brick.setDepth(500);
     brick.setData("hp", object.assetId === statueBrickAssetId ? 2 : 1);
     this.brickObjects.push(brick);
@@ -822,6 +839,7 @@ export class BreakoutScene extends Phaser.Scene {
     if (!asset || !isVisualAsset(asset)) return 0;
 
     const textureKey = this.textureForAsset(assetId);
+    this.resetAiAnimationFrameTransform(sprite);
     if (this.textures.exists(textureKey)) {
       sprite.setTexture(textureKey);
     }
@@ -840,6 +858,7 @@ export class BreakoutScene extends Phaser.Scene {
 
     if (animation && this.anims.exists(animation.key)) {
       sprite.play(animation.key, true);
+      this.applyAiAnimationFrameTransform(sprite, animation);
       return animationDurationMs(asset);
     }
 
@@ -990,17 +1009,22 @@ export class BreakoutScene extends Phaser.Scene {
       !(object instanceof Phaser.GameObjects.TileSprite)
     ) return;
 
-    object.setTexture(textureKey);
-    if (object instanceof Phaser.GameObjects.Sprite && isAnimationAsset(asset)) {
-      const animation = asset.animations?.[0];
-      if (animation && this.anims.exists(animation.key)) {
-        object.play(animation.key, true);
-      }
+    if (object instanceof Phaser.GameObjects.Sprite) {
+      this.resetAiAnimationFrameTransform(object);
     }
+    object.setTexture(textureKey);
 
     const sceneObject = object.getData("sceneObject") as SceneObject | undefined;
     if (sceneObject && (object instanceof Phaser.GameObjects.Image || object instanceof Phaser.GameObjects.Sprite)) {
       applyObjectTransform(object, sceneObject);
+    }
+
+    if (object instanceof Phaser.GameObjects.Sprite && isAnimationAsset(asset)) {
+      const animation = asset.animations?.[0];
+      if (animation && this.anims.exists(animation.key)) {
+        object.play(animation.key, true);
+        this.applyAiAnimationFrameTransform(object, animation);
+      }
     }
   }
 
@@ -1013,14 +1037,122 @@ export class BreakoutScene extends Phaser.Scene {
     });
     object.once("destroy", () => binding.destroy());
   }
+
+  private applyAiAnimationFrameTransforms(): void {
+    for (const object of this.levelObjects) {
+      this.applyAiAnimationFrameTransformToObject(object);
+    }
+
+    for (const object of this.enemies?.children ?? []) {
+      this.applyAiAnimationFrameTransformToObject(object);
+    }
+  }
+
+  private applyAiAnimationFrameTransformToObject(object: Phaser.GameObjects.GameObject): void {
+    if (!(object instanceof Phaser.GameObjects.Sprite)) return;
+
+    const assetId = object.getData("assetId") as string | undefined;
+    const asset = assetId ? this.aiAssets.assets[assetId] : undefined;
+    const animationKey = object.anims.currentAnim?.key;
+    const animation = isAnimationAsset(asset)
+      ? asset.animations?.find((candidate) => candidate.key === animationKey)
+      : undefined;
+
+    if (!animation) {
+      this.resetAiAnimationFrameTransform(object);
+      return;
+    }
+
+    this.applyAiAnimationFrameTransform(object, animation);
+  }
+
+  private applyAiAnimationFrameTransform(
+    sprite: Phaser.GameObjects.Sprite,
+    animation: AiAssetAnimation
+  ): void {
+    const frameIndex = Math.max(0, (sprite.anims.currentFrame?.index ?? 1) - 1);
+    const timing = animation.frameTimings?.[frameIndex];
+
+    if (!timing) {
+      this.resetAiAnimationFrameTransform(sprite);
+      return;
+    }
+
+    const state = getAiAnimationFrameTransformState(sprite);
+    const base = aiAnimationBaseTransform(sprite, state.timing);
+    const offset = aiAnimationFrameOffset(timing, base);
+
+    sprite.setPosition(base.x + offset.x, base.y + offset.y);
+    sprite.setScale(base.scaleX * (timing.scaleX ?? 1), base.scaleY * (timing.scaleY ?? 1));
+    sprite.setAngle(base.angle + (timing.rotation ?? 0));
+    state.timing = timing;
+    sprite.setData(aiAnimationFrameTransformKey, state);
+  }
+
+  private resetAiAnimationFrameTransform(sprite: Phaser.GameObjects.Sprite): void {
+    const state = sprite.getData(aiAnimationFrameTransformKey) as AiAnimationFrameTransformState | undefined;
+    if (!state?.timing) return;
+
+    const base = aiAnimationBaseTransform(sprite, state.timing);
+    sprite.setPosition(base.x, base.y);
+    sprite.setScale(base.scaleX, base.scaleY);
+    sprite.setAngle(base.angle);
+    state.timing = undefined;
+    sprite.setData(aiAnimationFrameTransformKey, state);
+  }
 }
 
 function isVisualAsset(asset: AiAssetDefinition): boolean {
   return asset.kind === "image" || asset.kind === "spritesheet" || asset.kind === "animation";
 }
 
-function isAnimationAsset(asset: AiAssetDefinition): boolean {
-  return (asset.kind === "spritesheet" || asset.kind === "animation") && Boolean(asset.animations?.length);
+function isAnimationAsset(asset: AiAssetDefinition | undefined): asset is AiAssetDefinition {
+  return (asset?.kind === "spritesheet" || asset?.kind === "animation") && Boolean(asset.animations?.length);
+}
+
+function getAiAnimationFrameTransformState(sprite: Phaser.GameObjects.Sprite): AiAnimationFrameTransformState {
+  const existing = sprite.getData(aiAnimationFrameTransformKey) as AiAnimationFrameTransformState | undefined;
+  if (existing) return existing;
+
+  const state: AiAnimationFrameTransformState = {};
+  sprite.setData(aiAnimationFrameTransformKey, state);
+  return state;
+}
+
+function aiAnimationBaseTransform(
+  sprite: Phaser.GameObjects.Sprite,
+  appliedTiming: AiAssetAnimationFrameTiming | undefined
+): AiAnimationBaseTransform {
+  const scaleX = sprite.scaleX / (appliedTiming?.scaleX ?? 1);
+  const scaleY = sprite.scaleY / (appliedTiming?.scaleY ?? 1);
+  const angle = sprite.angle - (appliedTiming?.rotation ?? 0);
+  const offset = appliedTiming
+    ? aiAnimationFrameOffset(appliedTiming, { scaleX, scaleY, angle })
+    : { x: 0, y: 0 };
+
+  return {
+    x: sprite.x - offset.x,
+    y: sprite.y - offset.y,
+    scaleX,
+    scaleY,
+    angle
+  };
+}
+
+function aiAnimationFrameOffset(
+  timing: AiAssetAnimationFrameTiming,
+  base: Pick<AiAnimationBaseTransform, "scaleX" | "scaleY" | "angle">
+): { x: number; y: number } {
+  const offsetX = (timing.offsetX ?? 0) * base.scaleX;
+  const offsetY = (timing.offsetY ?? 0) * base.scaleY;
+  const radians = Phaser.Math.DegToRad(base.angle);
+  const cos = Math.cos(radians);
+  const sin = Math.sin(radians);
+
+  return {
+    x: offsetX * cos - offsetY * sin,
+    y: offsetX * sin + offsetY * cos
+  };
 }
 
 function animationDurationMs(asset: AiAssetDefinition): number {
