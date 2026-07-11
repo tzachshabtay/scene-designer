@@ -1150,11 +1150,17 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     }));
 
     for (const attribute of behavior.attributes) {
+      const section = document.createElement("div");
+      section.className = "scene-designer__attribute";
+      const heading = document.createElement("div");
+      heading.className = "scene-designer__subhead";
+      const title = document.createElement("span");
+      title.textContent = `${attribute.name} ${attributeKindLabel(attribute.kind)}`;
+      heading.append(title);
+
       if (attribute.kind === "number") {
         const override = instance.overrides?.[attribute.id] as { value?: number } | undefined;
-        const row = document.createElement("div");
-        row.className = "scene-designer__attribute";
-        row.append(numberControl(
+        section.append(heading, numberControl(
           `${attribute.name}${override?.value === undefined ? " (inherited)" : ""}`,
           attribute.number,
           override?.value ?? attribute.number.value,
@@ -1162,49 +1168,47 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
             (ensureBehaviorOverride(instance, attribute.id) as { value?: number }).value = value;
           })
         ));
-        const clear = button("Clear override");
-        clear.disabled = override?.value === undefined;
-        clear.addEventListener("click", () => commit(() => {
-          if (instance.overrides) delete instance.overrides[attribute.id];
-        }));
-        row.append(clear);
-        stack.append(row);
+        section.append(clearAttributeOverrideButton(instance, attribute.id, override?.value !== undefined));
+        stack.append(section);
         continue;
       }
 
-      const row = document.createElement("div");
-      row.className = "scene-designer__row scene-designer__attribute-row";
-      const label = document.createElement("div");
-      label.className = "scene-designer__item-title";
-      label.textContent = attribute.name;
-      const edit = button(attribute.kind === "object" ? "Edit object" : `Edit ${attributeKindLabel(attribute.kind)}`);
-      const clear = button("Clear overrides");
-      row.append(label, edit, clear);
-      edit.addEventListener("click", () => {
-        selection = attribute.kind === "object"
-          ? {
-              type: "object",
-              sceneId: scene.id,
-              layerId: layer.id,
-              objectId: behaviorAttributeId(instance.id, attribute.id)
-            }
-          : {
-              type: "area",
-              sceneId: scene.id,
-              layerId: layer.id,
-              areaId: behaviorAttributeId(instance.id, attribute.id)
-            };
-        mode = isAreaLikeAttribute(attribute) ? "area-draw" : "select";
-        render();
-        emitSelection();
-        options.onModeChange?.(mode);
-      });
-      clear.addEventListener("click", () => commit(() => {
-        if (instance.overrides) {
-          delete instance.overrides[attribute.id];
+      const attributeId = behaviorAttributeId(instance.id, attribute.id);
+      const hasOverride = instance.overrides?.[attribute.id] !== undefined;
+      if (attribute.kind === "object") {
+        const object = findObject(attributeId).object;
+        section.append(heading);
+        appendObjectPreview(section, object);
+        appendObjectControls(section, object, (patch) => api.updateObject(object.id, patch));
+        const browser = document.createElement("div");
+        browser.className = "scene-designer__asset-browser";
+        renderAssetBrowser(browser, object, (assetId) => api.updateObject(object.id, { assetId }));
+        section.append(browser);
+      } else {
+        const area = findArea(attributeId).area;
+        const editShape = button("Edit shape");
+        editShape.addEventListener("click", () => {
+          selection = {
+            type: "area",
+            sceneId: scene.id,
+            layerId: layer.id,
+            areaId: attributeId
+          };
+          mode = area.closed ? "select" : "area-draw";
+          render();
+          emitSelection();
+          options.onModeChange?.(mode);
+        });
+        heading.append(editShape);
+        section.append(heading);
+        if (attribute.kind === "platform" && isScenePlatform(area)) {
+          appendPlatformControls(section, area, (patch) => api.updateArea(area.id, patch));
+        } else {
+          appendAreaControls(section, area, (patch) => api.updateArea(area.id, patch));
         }
-      }));
-      stack.append(row);
+      }
+      section.append(clearAttributeOverrideButton(instance, attribute.id, hasOverride));
+      stack.append(section);
     }
 
     const actions = document.createElement("div");
@@ -1247,11 +1251,11 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     promote.addEventListener("click", () => void api.promote(`Promoted object "${object.tag || object.id}".`));
     duplicate.addEventListener("click", () => api.duplicateSelectedObject());
     if (resolved.behaviorInstance && resolved.behaviorAttribute) {
-      const clear = button("Clear overrides");
-      actions.append(clear);
-      clear.addEventListener("click", () => commit(() => {
-        delete resolved.behaviorInstance!.overrides?.[resolved.behaviorAttribute!.id];
-      }));
+      actions.append(clearAttributeOverrideButton(
+        resolved.behaviorInstance,
+        resolved.behaviorAttribute.id,
+        resolved.behaviorInstance.overrides?.[resolved.behaviorAttribute.id] !== undefined
+      ));
     }
     stack.append(actions);
     elements.editor.append(stack);
@@ -1295,11 +1299,11 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     });
     promote.addEventListener("click", () => void api.promote(`Promoted area "${area.tag || area.id}".`));
     if (resolved.behaviorInstance && resolved.behaviorAttribute) {
-      const clear = button("Clear overrides");
-      actions.append(clear);
-      clear.addEventListener("click", () => commit(() => {
-        delete resolved.behaviorInstance!.overrides?.[resolved.behaviorAttribute!.id];
-      }));
+      actions.append(clearAttributeOverrideButton(
+        resolved.behaviorInstance,
+        resolved.behaviorAttribute.id,
+        resolved.behaviorInstance.overrides?.[resolved.behaviorAttribute.id] !== undefined
+      ));
     }
     stack.append(actions);
     elements.editor.append(stack);
@@ -1917,6 +1921,20 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     });
     wrapper.append(text, field);
     return wrapper;
+  }
+
+  function clearAttributeOverrideButton(
+    instance: SceneBehaviorInstance,
+    attributeId: string,
+    hasOverride: boolean
+  ): HTMLButtonElement {
+    const clear = button("Clear override");
+    clear.disabled = !hasOverride;
+    clear.addEventListener("mousedown", (event) => event.preventDefault());
+    clear.addEventListener("click", () => commit(() => {
+      if (instance.overrides) delete instance.overrides[attributeId];
+    }));
+    return clear;
   }
 
   function isScenePlatform(area: SceneArea): area is ScenePlatform {
