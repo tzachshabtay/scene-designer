@@ -1049,7 +1049,8 @@ export class BreakoutScene extends Phaser.Scene {
   }
 
   private applyAiAnimationFrameTransformToObject(object: Phaser.GameObjects.GameObject): void {
-    if (!(object instanceof Phaser.GameObjects.Sprite)) return;
+    // Phaser removes the animation component before group membership during teardown.
+    if (!(object instanceof Phaser.GameObjects.Sprite) || !object.active || !object.anims) return;
 
     const assetId = object.getData("assetId") as string | undefined;
     const asset = assetId ? this.aiAssets.assets[assetId] : undefined;
@@ -1070,6 +1071,8 @@ export class BreakoutScene extends Phaser.Scene {
     sprite: Phaser.GameObjects.Sprite,
     animation: AiAssetAnimation
   ): void {
+    if (!sprite.active || !sprite.anims) return;
+
     const frameIndex = Math.max(0, (sprite.anims.currentFrame?.index ?? 1) - 1);
     const timing = animation.frameTimings?.[frameIndex];
 
