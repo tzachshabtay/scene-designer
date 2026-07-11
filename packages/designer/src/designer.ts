@@ -82,6 +82,7 @@ export type SceneDesigner = {
   removeAreaVertex(areaId: string, vertexId: string, options?: SceneDesignerEditOptions): void;
   closeArea(areaId: string, options?: SceneDesignerEditOptions): void;
   duplicateSelectedObject(): void;
+  deleteSelected(): void;
   undo(): void;
   redo(): void;
   promote(label?: string): Promise<void>;
@@ -330,6 +331,50 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
         };
       });
       emitSelection();
+    },
+    deleteSelected() {
+      const currentSelection = selection;
+      if (!currentSelection || !selectedSceneId) return;
+      if (
+        currentSelection.type !== "object"
+        && currentSelection.type !== "objects"
+        && currentSelection.type !== "area"
+      ) return;
+
+      const objectIds = currentSelection.type === "object"
+        ? [currentSelection.objectId]
+        : currentSelection.type === "objects"
+          ? currentSelection.objectIds
+          : [];
+      const areaIds = currentSelection.type === "area" ? [currentSelection.areaId] : [];
+
+      commit(() => {
+        const behaviorInstanceIds = new Set<string>();
+        const directObjectIds = new Set<string>();
+        const directAreaIds = new Set<string>();
+
+        for (const objectId of objectIds) {
+          const resolved = findObject(objectId);
+          if (resolved.behaviorInstance) behaviorInstanceIds.add(resolved.behaviorInstance.id);
+          else directObjectIds.add(resolved.object.id);
+        }
+        for (const areaId of areaIds) {
+          const resolved = findArea(areaId);
+          if (resolved.behaviorInstance) behaviorInstanceIds.add(resolved.behaviorInstance.id);
+          else directAreaIds.add(resolved.area.id);
+        }
+
+        const scene = getScene(manifest, selectedSceneId);
+        for (const layer of scene.layers) {
+          layer.behaviors = (layer.behaviors ?? []).filter((instance) => !behaviorInstanceIds.has(instance.id));
+          layer.objects = layer.objects.filter((object) => !directObjectIds.has(object.id));
+          layer.areas = layer.areas.filter((area) => !directAreaIds.has(area.id));
+        }
+        selection = { type: "scene", sceneId: scene.id };
+        mode = "select";
+      });
+      emitSelection();
+      options.onModeChange?.(mode);
     },
     undo() {
       const previous = past.pop();

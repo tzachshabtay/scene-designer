@@ -534,6 +534,7 @@ export class PhaserSceneDesignerCanvas {
   private onPointerDown(pointer: Phaser.Input.Pointer): void {
     if (!this.isOpen) return;
 
+    this.releaseDesignerToolbarFocus();
     const point = pointerPosition(pointer);
     if (this.isBehaviorView()) {
       this.onBehaviorPointerDown(point);
@@ -709,10 +710,11 @@ export class PhaserSceneDesignerCanvas {
   }
 
   private onBackspace(event: KeyboardEvent): void {
-    if (!this.isOpen) return;
+    if (!this.isOpen || isEditableTarget(event.target)) return;
 
     if (this.selection?.type === "behavior-vertex") {
       event.preventDefault();
+      event.stopPropagation();
       this.options.designer.removeAreaVertex(
         behaviorAttributeId(this.selection.behaviorId, this.selection.attributeId),
         this.selection.vertexId
@@ -720,9 +722,31 @@ export class PhaserSceneDesignerCanvas {
       return;
     }
 
+    if (
+      this.selection?.type === "object"
+      || this.selection?.type === "objects"
+      || this.selection?.type === "area"
+    ) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.options.designer.deleteSelected();
+      return;
+    }
+
     if (!this.selection || this.selection.type !== "vertex") return;
     event.preventDefault();
+    event.stopPropagation();
     this.options.designer.removeAreaVertex(this.selection.areaId, this.selection.vertexId);
+  }
+
+  private releaseDesignerToolbarFocus(): void {
+    const activeElement = this.options.scene.game.canvas.ownerDocument.activeElement;
+    if (
+      activeElement instanceof HTMLElement
+      && activeElement.closest(".ai-game-assets-in-game-designer-dock")
+    ) {
+      activeElement.blur();
+    }
   }
 
   private onKeyDown(event: KeyboardEvent): void {
