@@ -54,7 +54,8 @@ export type SceneBehaviorDefinition = {
 export type SceneBehaviorAttribute =
   | SceneBehaviorObjectAttribute
   | SceneBehaviorAreaAttribute
-  | SceneBehaviorPlatformAttribute;
+  | SceneBehaviorPlatformAttribute
+  | SceneBehaviorNumberAttribute;
 
 export type SceneBehaviorAreaLikeAttribute =
   | SceneBehaviorAreaAttribute
@@ -79,6 +80,21 @@ export type SceneBehaviorPlatformAttribute = {
   name: string;
   kind: "platform";
   platform: ScenePlatformDefaults;
+};
+
+export type SceneBehaviorNumberAttribute = {
+  id: string;
+  name: string;
+  kind: "number";
+  number: SceneBehaviorNumberDefaults;
+};
+
+export type SceneBehaviorNumberDefaults = {
+  value: number;
+  min?: number;
+  max?: number;
+  step?: number;
+  unit?: "number" | "seconds" | "percent" | "pixels-per-second" | "multiplier";
 };
 
 export type SceneDefinition = {
@@ -112,7 +128,8 @@ export type SceneBehaviorInstance = {
 export type SceneBehaviorAttributeOverride =
   | Partial<SceneObjectDefaults>
   | Partial<SceneAreaDefaults>
-  | Partial<ScenePlatformDefaults>;
+  | Partial<ScenePlatformDefaults>
+  | { value?: number };
 
 export type SceneObject = {
   id: string;

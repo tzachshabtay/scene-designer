@@ -172,8 +172,32 @@ export function assertBehaviorAttribute(attribute: SceneBehaviorAttribute, label
     assertObjectDefaults(attribute.object, `${label}.object`);
   } else if (attribute.kind === "area") {
     assertAreaDefaults(attribute.area, `${label}.area`);
-  } else {
+  } else if (attribute.kind === "platform") {
     assertPlatformDefaults(attribute.platform, `${label}.platform`);
+  } else {
+    assertFiniteNumber(attribute.number.value, `${label}.number.value`);
+    if (attribute.number.min !== undefined) assertFiniteNumber(attribute.number.min, `${label}.number.min`);
+    if (attribute.number.max !== undefined) assertFiniteNumber(attribute.number.max, `${label}.number.max`);
+    if (attribute.number.step !== undefined) assertPositiveFinite(attribute.number.step, `${label}.number.step`);
+    if (
+      attribute.number.unit !== undefined
+      && !["number", "seconds", "percent", "pixels-per-second", "multiplier"].includes(attribute.number.unit)
+    ) {
+      throw new Error(`${label}.number.unit is not supported.`);
+    }
+    if (
+      attribute.number.min !== undefined
+      && attribute.number.max !== undefined
+      && attribute.number.min > attribute.number.max
+    ) {
+      throw new Error(`${label}.number.min must not exceed ${label}.number.max.`);
+    }
+    if (attribute.number.min !== undefined && attribute.number.value < attribute.number.min) {
+      throw new Error(`${label}.number.value must be at least ${attribute.number.min}.`);
+    }
+    if (attribute.number.max !== undefined && attribute.number.value > attribute.number.max) {
+      throw new Error(`${label}.number.value must be at most ${attribute.number.max}.`);
+    }
   }
 }
 
@@ -527,6 +551,26 @@ export function ensureBehaviorOverride(
   instance.overrides ??= {};
   instance.overrides[attributeId] ??= {};
   return instance.overrides[attributeId];
+}
+
+export function resolveBehaviorNumber(
+  manifest: SceneDesignerManifest,
+  behaviorId: string,
+  attributeId: string,
+  instance?: SceneBehaviorInstance
+): number {
+  const behavior = manifest.behaviors?.[behaviorId];
+  const attribute = behavior?.attributes.find((candidate) => (
+    candidate.id === attributeId && candidate.kind === "number"
+  ));
+  if (!attribute || attribute.kind !== "number") {
+    throw new Error(`Unknown number attribute "${behaviorId}.${attributeId}".`);
+  }
+
+  const override = instance?.behaviorId === behaviorId
+    ? instance.overrides?.[attributeId] as { value?: number } | undefined
+    : undefined;
+  return override?.value ?? attribute.number.value;
 }
 
 function areaDefaultsForAttribute(attribute: SceneBehaviorAreaLikeAttribute): SceneAreaDefaults | ScenePlatformDefaults {

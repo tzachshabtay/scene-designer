@@ -107,6 +107,30 @@
             }
           ]
         }
+      },
+      {
+        "id": "spawn-interval",
+        "name": "Spawn interval",
+        "kind": "number",
+        "number": {
+          "value": 18,
+          "min": 1,
+          "max": 120,
+          "step": 1,
+          "unit": "seconds"
+        }
+      },
+      {
+        "id": "snake-chance",
+        "name": "Snake probability",
+        "kind": "number",
+        "number": {
+          "value": 50,
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "percent"
+        }
       }
     ]
   },
@@ -224,6 +248,54 @@
           "visible": true,
           "locked": false
         }
+      },
+      {
+        "id": "launch-speed",
+        "name": "Launch speed",
+        "kind": "number",
+        "number": {
+          "value": 326.1518,
+          "min": 50,
+          "max": 1000,
+          "step": 1,
+          "unit": "pixels-per-second"
+        }
+      },
+      {
+        "id": "collision-acceleration",
+        "name": "Speed increase per collision",
+        "kind": "number",
+        "number": {
+          "value": 1.5,
+          "min": 0,
+          "max": 25,
+          "step": 0.1,
+          "unit": "percent"
+        }
+      },
+      {
+        "id": "minimum-speed",
+        "name": "Minimum speed",
+        "kind": "number",
+        "number": {
+          "value": 260,
+          "min": 0,
+          "max": 1000,
+          "step": 5,
+          "unit": "pixels-per-second"
+        }
+      },
+      {
+        "id": "maximum-speed",
+        "name": "Maximum speed",
+        "kind": "number",
+        "number": {
+          "value": 520,
+          "min": 50,
+          "max": 2000,
+          "step": 5,
+          "unit": "pixels-per-second"
+        }
       }
     ]
   },
@@ -247,6 +319,18 @@
           "anchorY": 0.5,
           "visible": true,
           "locked": false
+        }
+      },
+      {
+        "id": "keyboard-speed",
+        "name": "Keyboard speed",
+        "kind": "number",
+        "number": {
+          "value": 430,
+          "min": 0,
+          "max": 1200,
+          "step": 10,
+          "unit": "pixels-per-second"
         }
       }
     ]

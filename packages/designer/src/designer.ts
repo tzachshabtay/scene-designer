@@ -27,6 +27,7 @@ import {
   type SceneBehaviorAreaLikeAttribute,
   type SceneBehaviorDefinition,
   type SceneBehaviorInstance,
+  type SceneBehaviorNumberDefaults,
   type SceneObjectDefaults,
   type SceneDefinition,
   type SceneDesignerManifest,
@@ -638,13 +639,19 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
             Object.assign(attribute.area, withoutId(patch));
           });
         });
-      } else {
+      } else if (attribute.kind === "platform") {
         const platform = { id: behaviorAttributeId(behavior.id, attribute.id), ...attribute.platform };
         appendPlatformControls(section, platform, (patch) => {
           commit(() => {
             Object.assign(attribute.platform, withoutId(patch));
           });
         });
+      } else {
+        section.append(numberControl(attribute.name, attribute.number, attribute.number.value, (value) => {
+          commit(() => {
+            attribute.number.value = value;
+          });
+        }));
       }
 
       stack.append(section);
@@ -1143,6 +1150,28 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     }));
 
     for (const attribute of behavior.attributes) {
+      if (attribute.kind === "number") {
+        const override = instance.overrides?.[attribute.id] as { value?: number } | undefined;
+        const row = document.createElement("div");
+        row.className = "scene-designer__attribute";
+        row.append(numberControl(
+          `${attribute.name}${override?.value === undefined ? " (inherited)" : ""}`,
+          attribute.number,
+          override?.value ?? attribute.number.value,
+          (value) => commit(() => {
+            (ensureBehaviorOverride(instance, attribute.id) as { value?: number }).value = value;
+          })
+        ));
+        const clear = button("Clear override");
+        clear.disabled = override?.value === undefined;
+        clear.addEventListener("click", () => commit(() => {
+          if (instance.overrides) delete instance.overrides[attribute.id];
+        }));
+        row.append(clear);
+        stack.append(row);
+        continue;
+      }
+
       const row = document.createElement("div");
       row.className = "scene-designer__row scene-designer__attribute-row";
       const label = document.createElement("div");
@@ -1851,7 +1880,43 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
         return "area";
       case "platform":
         return "platform";
+      case "number":
+        return "number";
     }
+  }
+
+  function numberControl(
+    label: string,
+    defaults: SceneBehaviorNumberDefaults,
+    value: number,
+    onChange: (value: number) => void
+  ): HTMLLabelElement {
+    const suffixes: Partial<Record<NonNullable<SceneBehaviorNumberDefaults["unit"]>, string>> = {
+      seconds: "s",
+      percent: "%",
+      "pixels-per-second": "px/s",
+      multiplier: "x"
+    };
+    const suffix = defaults.unit ? suffixes[defaults.unit] : undefined;
+    const wrapper = document.createElement("label");
+    wrapper.className = "scene-designer__label";
+    const text = document.createElement("span");
+    text.textContent = suffix ? `${label} (${suffix})` : label;
+    const field = input(String(value));
+    field.type = "number";
+    if (defaults.min !== undefined) field.min = String(defaults.min);
+    if (defaults.max !== undefined) field.max = String(defaults.max);
+    field.step = String(defaults.step ?? 1);
+    field.addEventListener("change", () => {
+      const parsed = Number(field.value);
+      if (!Number.isFinite(parsed)) {
+        field.value = String(value);
+        return;
+      }
+      onChange(Math.min(defaults.max ?? Infinity, Math.max(defaults.min ?? -Infinity, parsed)));
+    });
+    wrapper.append(text, field);
+    return wrapper;
   }
 
   function isScenePlatform(area: SceneArea): area is ScenePlatform {

@@ -4,6 +4,7 @@ import type {
   SceneBehaviorAreaAttribute,
   SceneBehaviorDefinition,
   SceneBehaviorInstance,
+  SceneBehaviorNumberAttribute,
   SceneBehaviorObjectAttribute,
   SceneBehaviorPlatformAttribute,
   SceneDefinition,
@@ -164,6 +165,15 @@ export function createBehaviorPlatformAttribute(
   return {
     ...structuredClone(input),
     kind: "platform"
+  };
+}
+
+export function createBehaviorNumberAttribute(
+  input: Omit<SceneBehaviorNumberAttribute, "kind">
+): SceneBehaviorNumberAttribute {
+  return {
+    ...structuredClone(input),
+    kind: "number"
   };
 }
 

@@ -13,7 +13,9 @@ import {
   type AiAssetManifest
 } from "@ai-game-assets/core";
 import {
+  behaviorInstanceIdFromAttributeId,
   getScene,
+  resolveBehaviorNumber,
   sceneAreas,
   sceneObjects,
   scenePlatforms,
@@ -65,7 +67,7 @@ const statueBrickAssetId = "brick.statue";
 const snakeAssetId = "enemy.snake";
 const monkeyAssetId = "enemy.monkey";
 const bananaAssetId = "projectile.banana";
-const enemySpawnDelayMs = 18000;
+const defaultEnemySpawnIntervalSeconds = 18;
 const firstEnemySpawnDelayMs = 5000;
 const maxActiveEnemies = 2;
 const snakeSpeed = 38;
@@ -78,7 +80,11 @@ const bananaLaunchOffset = 22;
 const bananaSpeed = 360;
 const bananaSpinSpeed = 720;
 const ballSpinSpeed = 520;
-const paddleKeyboardSpeed = 430;
+const defaultBallLaunchSpeed = Math.hypot(190, 265);
+const defaultBallCollisionAccelerationPercent = 1.5;
+const defaultBallMinimumSpeed = 260;
+const defaultBallMaximumSpeed = 520;
+const defaultPaddleKeyboardSpeed = 430;
 const paddleInvulnerabilityMs = 650;
 const aiAnimationFrameTransformKey = "aiAnimationFrameTransform";
 
@@ -121,6 +127,11 @@ export class BreakoutScene extends Phaser.Scene {
   private pointerWasDown = false;
   private paddlePointerDragActive = false;
   private levelAdvanceScheduled = false;
+  private ballLaunchSpeed = defaultBallLaunchSpeed;
+  private ballCollisionAccelerationPercent = defaultBallCollisionAccelerationPercent;
+  private ballMinimumSpeed = defaultBallMinimumSpeed;
+  private ballMaximumSpeed = defaultBallMaximumSpeed;
+  private paddleKeyboardSpeed = defaultPaddleKeyboardSpeed;
   private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
   private readonly previewTextures = new Map<string, string>();
 
@@ -277,6 +288,13 @@ export class BreakoutScene extends Phaser.Scene {
     }
 
     const paddleDefinition = levelObjects.find((object) => object.tag === paddleTag);
+    const paddleInstanceId = paddleDefinition ? behaviorInstanceIdFromAttributeId(paddleDefinition.id) : undefined;
+    this.paddleKeyboardSpeed = this.behaviorNumber(
+      "paddle",
+      "keyboard-speed",
+      defaultPaddleKeyboardSpeed,
+      paddleInstanceId
+    );
     const paddleAssetId = paddleDefinition?.assetId ?? "hero.paddle.normal";
     const paddleIdleAssetId = this.linkedAnimationAssetId(paddleAssetId, "idle");
     this.paddle = this.physics.add.sprite(
@@ -297,6 +315,16 @@ export class BreakoutScene extends Phaser.Scene {
     this.levelObjects.push(this.paddle);
 
     const ballDefinition = levelObjects.find((object) => object.tag === ballTag);
+    const ballInstanceId = ballDefinition ? behaviorInstanceIdFromAttributeId(ballDefinition.id) : undefined;
+    this.ballLaunchSpeed = this.behaviorNumber("ball", "launch-speed", defaultBallLaunchSpeed, ballInstanceId);
+    this.ballCollisionAccelerationPercent = this.behaviorNumber(
+      "ball",
+      "collision-acceleration",
+      defaultBallCollisionAccelerationPercent,
+      ballInstanceId
+    );
+    this.ballMinimumSpeed = this.behaviorNumber("ball", "minimum-speed", defaultBallMinimumSpeed, ballInstanceId);
+    this.ballMaximumSpeed = this.behaviorNumber("ball", "maximum-speed", defaultBallMaximumSpeed, ballInstanceId);
     const ballAssetId = ballDefinition?.assetId ?? "ball.core";
     this.ball = this.physics.add.image(ballDefinition?.x ?? 400, ballDefinition?.y ?? 520, this.textureForAsset(ballAssetId));
     this.ball.setData("assetId", ballAssetId);
@@ -308,7 +336,7 @@ export class BreakoutScene extends Phaser.Scene {
     }
     this.ball.setCollideWorldBounds(true);
     this.ball.setBounce(1, 1);
-    this.ball.setVelocity(190, -265);
+    this.setBallLaunchVelocity(190, -265);
     this.ball.setDepth(1201);
     this.ball.body.onWorldBounds = true;
     this.levelObjects.push(this.ball);
@@ -319,11 +347,11 @@ export class BreakoutScene extends Phaser.Scene {
     this.physics.add.overlap(this.paddle, this.bananas, this.onPaddleBananaOverlap, undefined, this);
 
     this.firstEnemySpawnTimer = this.time.delayedCall(firstEnemySpawnDelayMs, () => this.spawnEnemy(level));
-    this.enemySpawnTimer = this.time.addEvent({
-      delay: enemySpawnDelayMs,
-      loop: true,
-      callback: () => this.spawnEnemy(level)
-    });
+    this.scheduleEnemySpawn(level, this.behaviorNumber(
+      "spawn-area",
+      "spawn-interval",
+      defaultEnemySpawnIntervalSeconds
+    ));
 
     this.updateHud();
   }
@@ -394,7 +422,7 @@ export class BreakoutScene extends Phaser.Scene {
     if (keyboardDirection !== 0) {
       this.paddlePointerDragActive = false;
       this.pointerWasDown = pointerDown;
-      this.paddle.setVelocityX(keyboardDirection * paddleKeyboardSpeed);
+      this.paddle.setVelocityX(keyboardDirection * this.paddleKeyboardSpeed);
       return;
     }
 
@@ -533,7 +561,7 @@ export class BreakoutScene extends Phaser.Scene {
     const velocity = new Phaser.Math.Vector2(ball.body.velocity.x, ball.body.velocity.y);
 
     if (velocity.lengthSq() === 0) {
-      ball.setVelocity(0, -260);
+      this.setBallLaunchVelocity(0, -1);
       return;
     }
 
@@ -542,7 +570,10 @@ export class BreakoutScene extends Phaser.Scene {
     }
 
     const reflected = velocity.subtract(normal.clone().scale(2 * velocity.dot(normal)));
-    const speed = Math.max(260, Math.min(520, reflected.length() * 1.015));
+    const minimumSpeed = Math.min(this.ballMinimumSpeed, this.ballMaximumSpeed);
+    const maximumSpeed = Math.max(this.ballMinimumSpeed, this.ballMaximumSpeed);
+    const acceleration = 1 + this.ballCollisionAccelerationPercent / 100;
+    const speed = Math.max(minimumSpeed, Math.min(maximumSpeed, reflected.length() * acceleration));
     reflected.normalize().scale(speed);
     ball.setPosition(ball.x + normal.x * 7, ball.y + normal.y * 7);
     ball.setVelocity(reflected.x, reflected.y);
@@ -602,22 +633,29 @@ export class BreakoutScene extends Phaser.Scene {
     }
 
     this.ball.setPosition(400, 520);
-    this.ball.setVelocity(180, -260);
+    this.setBallLaunchVelocity(180, -260);
     this.updateHud();
   }
 
-  private spawnEnemy(level: SceneDefinition): void {
-    if (this.gameplayPaused) return;
-    if (this.enemies.countActive(true) >= maxActiveEnemies) return;
-
+  private spawnEnemy(level: SceneDefinition): number {
     const areas = sceneAreas(this.sceneManifest, level).filter((area) => (
       area.tag === spawnTag || area.tag.startsWith(`${spawnTag}.`)
     ) && area.closed);
     const area = Phaser.Utils.Array.GetRandom(areas);
-    if (!area) return;
+    if (!area) return defaultEnemySpawnIntervalSeconds;
+
+    const instanceId = behaviorInstanceIdFromAttributeId(area.id);
+    const interval = this.behaviorNumber(
+      "spawn-area",
+      "spawn-interval",
+      defaultEnemySpawnIntervalSeconds,
+      instanceId
+    );
+    if (this.gameplayPaused || this.enemies.countActive(true) >= maxActiveEnemies) return interval;
 
     const point = randomPointInArea(area);
-    const assetId = Math.random() > 0.5 ? snakeAssetId : monkeyAssetId;
+    const snakeChance = this.behaviorNumber("spawn-area", "snake-chance", 50, instanceId);
+    const assetId = Math.random() * 100 < snakeChance ? snakeAssetId : monkeyAssetId;
     const idleAssetId = this.linkedAnimationAssetId(assetId, "idle");
     const enemy = this.physics.add.sprite(point.x, point.y, this.textureForAsset(idleAssetId));
     enemy.setData("baseAssetId", assetId);
@@ -647,6 +685,37 @@ export class BreakoutScene extends Phaser.Scene {
         this.steerEnemyTowardPaddle(enemy);
       }
     });
+    return interval;
+  }
+
+  private scheduleEnemySpawn(level: SceneDefinition, intervalSeconds: number): void {
+    this.enemySpawnTimer?.remove(false);
+    this.enemySpawnTimer = this.time.delayedCall(Math.max(1, intervalSeconds) * 1000, () => {
+      this.scheduleEnemySpawn(level, this.spawnEnemy(level));
+    });
+  }
+
+  private setBallLaunchVelocity(directionX: number, directionY: number): void {
+    const direction = new Phaser.Math.Vector2(directionX, directionY).normalize().scale(this.ballLaunchSpeed);
+    this.ball.setVelocity(direction.x, direction.y);
+  }
+
+  private behaviorNumber(
+    behaviorId: string,
+    attributeId: string,
+    fallback: number,
+    instanceId?: string
+  ): number {
+    const level = this.sceneManifest.scenes[this.currentSceneId];
+    const instances = level?.layers.flatMap((layer) => layer.behaviors ?? []) ?? [];
+    const instance = instanceId
+      ? instances.find((candidate) => candidate.id === instanceId)
+      : instances.find((candidate) => candidate.behaviorId === behaviorId);
+    try {
+      return resolveBehaviorNumber(this.sceneManifest, behaviorId, attributeId, instance);
+    } catch {
+      return fallback;
+    }
   }
 
   private steerEnemyTowardPaddle(enemy: ArcadeSprite): void {
