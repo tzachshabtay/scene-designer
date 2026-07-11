@@ -54,7 +54,7 @@ type AiAnimationBaseTransform = {
   angle: number;
 };
 
-const levelIds = ["level.one", "level.two", "level.three"];
+const initialLevelOrder = ["level.one", "level.two", "level.three"];
 const brickTag = "brick";
 const backgroundTag = "background";
 const spawnTag = "enemy.spawn";
@@ -101,7 +101,7 @@ export class BreakoutScene extends Phaser.Scene {
   private platformRenderer?: ScenePlatformRenderer;
   private sceneManifest: SceneDesignerManifest;
   private levelIndex = 0;
-  private currentSceneId = levelIds[0];
+  private currentSceneId = "";
   private paddle!: ArcadeSprite;
   private ball!: ArcadeImage;
   private brickObjects: BrickSprite[] = [];
@@ -131,6 +131,7 @@ export class BreakoutScene extends Phaser.Scene {
     this.assetBaseUrl = options.assetBaseUrl;
     this.sceneApi = options.sceneApi;
     this.sceneManifest = options.sceneManifest;
+    this.currentSceneId = this.levelIds()[0] ?? "";
   }
 
   preload(): void {
@@ -245,6 +246,8 @@ export class BreakoutScene extends Phaser.Scene {
   }
 
   private loadLevel(index: number): void {
+    const levelIds = this.levelIds();
+    if (!levelIds.length) return;
     this.levelIndex = Phaser.Math.Wrap(index, 0, levelIds.length);
     this.loadSceneById(levelIds[this.levelIndex]);
   }
@@ -252,7 +255,7 @@ export class BreakoutScene extends Phaser.Scene {
   private loadSceneById(sceneId: string): void {
     if (!this.sceneManifest.scenes[sceneId]) return;
     this.currentSceneId = sceneId;
-    this.levelIndex = levelIds.indexOf(sceneId);
+    this.levelIndex = this.levelIds().indexOf(sceneId);
     this.syncSceneDesignerToCurrentScene();
     this.clearLevel();
 
@@ -951,9 +954,18 @@ export class BreakoutScene extends Phaser.Scene {
     if (hasActiveBricks) return;
 
     this.levelAdvanceScheduled = true;
+    const levelIds = this.levelIds();
+    if (!levelIds.length) return;
     const nextIndex = Phaser.Math.Wrap((this.levelIndex < 0 ? 0 : this.levelIndex) + 1, 0, levelIds.length);
     this.score += 250;
     this.time.delayedCall(550, () => this.loadLevel(nextIndex));
+  }
+
+  private levelIds(): string[] {
+    const availableIds = Object.keys(this.sceneManifest.scenes);
+    const initialIds = initialLevelOrder.filter((sceneId) => this.sceneManifest.scenes[sceneId]);
+    const initialIdSet = new Set(initialIds);
+    return [...initialIds, ...availableIds.filter((sceneId) => !initialIdSet.has(sceneId))];
   }
 
   private assetDesignerIds(): string[] {
