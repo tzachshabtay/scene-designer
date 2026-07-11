@@ -123,6 +123,7 @@ export class BreakoutScene extends Phaser.Scene {
   private levelAdvanceScheduled = false;
   private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
   private readonly previewTextures = new Map<string, string>();
+  private readonly previewAssets = new Map<string, AiAssetDefinition>();
 
   constructor(options: BreakoutSceneOptions) {
     super("breakout");
@@ -973,6 +974,7 @@ export class BreakoutScene extends Phaser.Scene {
     if (!this.textures.exists(textureKey)) return;
 
     this.previewTextures.set(assetId, textureKey);
+    this.previewAssets.set(assetId, asset);
     this.pixelCollision.invalidateTexture(textureKey);
     this.createOrRefreshAiAnimations(asset, textureKey);
 
@@ -1053,7 +1055,9 @@ export class BreakoutScene extends Phaser.Scene {
     if (!(object instanceof Phaser.GameObjects.Sprite) || !object.active || !object.anims) return;
 
     const assetId = object.getData("assetId") as string | undefined;
-    const asset = assetId ? this.aiAssets.assets[assetId] : undefined;
+    const asset = assetId
+      ? this.previewAssets.get(assetId) ?? this.aiAssets.assets[assetId]
+      : undefined;
     const animationKey = object.anims.currentAnim?.key;
     const animation = isAnimationAsset(asset)
       ? asset.animations?.find((candidate) => candidate.key === animationKey)
