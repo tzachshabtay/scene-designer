@@ -365,7 +365,7 @@ export class BreakoutScene extends Phaser.Scene {
     this.bindAiAssetTexture(brick, idleAssetId);
     brick.setData("sceneObject", object);
     applyObjectTransform(brick, object);
-    this.playLinkedAnimation(brick, object.assetId, "idle");
+    this.playLinkedAnimation(brick, object.assetId, "idle", { randomFrame: true });
     brick.setDepth(500);
     brick.setData("hp", object.assetId === statueBrickAssetId ? 2 : 1);
     this.brickObjects.push(brick);
@@ -619,24 +619,36 @@ export class BreakoutScene extends Phaser.Scene {
     const enemy = this.physics.add.sprite(point.x, point.y, this.textureForAsset(idleAssetId));
     enemy.setData("baseAssetId", assetId);
     this.bindAiAssetTexture(enemy, idleAssetId);
-    this.playLinkedAnimation(enemy, assetId, "idle");
+    enemy.setData("spawning", true);
     enemy.setDepth(900);
     if (assetId === monkeyAssetId) {
       enemy.setData("spawnY", Phaser.Math.Clamp(point.y, 42, monkeyMaxY - 40));
       enemy.setData("phase", Phaser.Math.FloatBetween(0, Math.PI * 2));
       enemy.setData("nextShotAt", this.time.now + Phaser.Math.Between(monkeyMinShotDelayMs, monkeyMaxShotDelayMs));
-      this.updateMonkey(enemy);
-    } else {
-      this.steerEnemyTowardPaddle(enemy);
     }
     enemy.setBounce(0, 0);
     enemy.setCollideWorldBounds(true);
+    enemy.body.enable = false;
     this.enemies.add(enemy);
+
+    const entranceDuration = this.playLinkedAnimation(enemy, assetId, "destroyed", { reverse: true });
+    this.time.delayedCall(Math.max(entranceDuration, 180) + 20, () => {
+      if (!enemy.active || enemy.getData("destroying")) return;
+
+      enemy.setData("spawning", false);
+      enemy.body.enable = true;
+      this.playLinkedAnimation(enemy, assetId, "idle");
+      if (assetId === monkeyAssetId) {
+        this.updateMonkey(enemy);
+      } else {
+        this.steerEnemyTowardPaddle(enemy);
+      }
+    });
   }
 
   private steerEnemyTowardPaddle(enemy: ArcadeSprite): void {
     if (!this.paddle?.active) return;
-    if (enemy.getData("destroying")) return;
+    if (enemy.getData("destroying") || enemy.getData("spawning")) return;
 
     const direction = new Phaser.Math.Vector2(this.paddle.x - enemy.x, this.paddle.y - enemy.y);
     if (direction.lengthSq() === 0) return;
@@ -645,7 +657,7 @@ export class BreakoutScene extends Phaser.Scene {
   }
 
   private updateMonkey(enemy: ArcadeSprite): void {
-    if (enemy.getData("destroying")) return;
+    if (enemy.getData("destroying") || enemy.getData("spawning")) return;
 
     const spawnY = Number(enemy.getData("spawnY") ?? Math.min(enemy.y, monkeyMaxY - 40));
     const phase = Number(enemy.getData("phase") ?? 0);
@@ -832,7 +844,8 @@ export class BreakoutScene extends Phaser.Scene {
   private playLinkedAnimation(
     sprite: Phaser.GameObjects.Sprite,
     baseAssetId: string,
-    state: string
+    state: string,
+    options: { randomFrame?: boolean; reverse?: boolean } = {}
   ): number {
     const assetId = this.linkedAnimationAssetId(baseAssetId, state);
     const asset = this.aiAssets.assets[assetId];
@@ -857,7 +870,15 @@ export class BreakoutScene extends Phaser.Scene {
     }
 
     if (animation && this.anims.exists(animation.key)) {
-      sprite.play(animation.key, true);
+      const playConfig: Phaser.Types.Animations.PlayAnimationConfig = {
+        key: animation.key,
+        randomFrame: options.randomFrame
+      };
+      if (options.reverse) {
+        sprite.playReverse(playConfig, true);
+      } else {
+        sprite.play(playConfig, true);
+      }
       this.applyAiAnimationFrameTransform(sprite, animation);
       return animationDurationMs(asset);
     }
