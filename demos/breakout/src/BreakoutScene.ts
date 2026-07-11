@@ -346,12 +346,9 @@ export class BreakoutScene extends Phaser.Scene {
     this.physics.add.overlap(this.ball, this.bananas, this.onBananaHit, undefined, this);
     this.physics.add.overlap(this.paddle, this.bananas, this.onPaddleBananaOverlap, undefined, this);
 
-    this.firstEnemySpawnTimer = this.time.delayedCall(firstEnemySpawnDelayMs, () => this.spawnEnemy(level));
-    this.scheduleEnemySpawn(level, this.behaviorNumber(
-      "spawn-area",
-      "spawn-interval",
-      defaultEnemySpawnIntervalSeconds
-    ));
+    this.firstEnemySpawnTimer = this.time.delayedCall(firstEnemySpawnDelayMs, () => {
+      this.scheduleEnemySpawn(level, this.spawnEnemy(level));
+    });
 
     this.updateHud();
   }
