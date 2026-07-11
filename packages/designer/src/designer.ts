@@ -1,4 +1,7 @@
-import type { AiAssetManifest } from "@ai-game-assets/core";
+import {
+  registerInGameDesignerPanel,
+  type AiAssetManifest
+} from "@ai-game-assets/core";
 import {
   assertSceneManifest,
   cloneSceneManifest,
@@ -140,6 +143,27 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
   const elements = createElements(options.title ?? "Scenes");
   const mount = options.mount ?? document.body;
   mount.append(elements.root);
+  const sceneDockPanel = registerInGameDesignerPanel({
+    id: "scene-designer.scenes",
+    label: "Scenes",
+    panel: elements.panel,
+    button: elements.toggle,
+    order: 20,
+    ariaLabel: "Toggle scene designer",
+    onOpenChange: syncDockOpenState
+  });
+  const behaviorDockPanel = registerInGameDesignerPanel({
+    id: "scene-designer.behaviors",
+    label: "Behaviors",
+    panel: elements.behaviorPanel,
+    button: elements.behaviorToggle,
+    order: 30,
+    ariaLabel: "Toggle behavior designer",
+    onOpenChange(isOpen) {
+      syncDockOpenState();
+      if (isOpen) selectBehaviorDefinition(selectedBehaviorId);
+    }
+  });
 
   const api: SceneDesigner = {
     root: elements.root,
@@ -154,6 +178,8 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     },
     destroy() {
       window.removeEventListener("keydown", onKeyDown, true);
+      sceneDockPanel.destroy();
+      behaviorDockPanel.destroy();
       elements.root.remove();
     },
     getManifest() {
@@ -344,16 +370,6 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     }
   };
 
-  elements.toggle.addEventListener("click", () => {
-    setOpen(elements.root.dataset.open === "scenes" ? false : "scenes");
-  });
-  elements.behaviorToggle.addEventListener("click", () => {
-    const nextView = elements.root.dataset.open === "behaviors" ? false : "behaviors";
-    setOpen(nextView);
-    if (nextView === "behaviors") {
-      selectBehaviorDefinition(selectedBehaviorId);
-    }
-  });
   elements.sceneSelect.addEventListener("change", () => {
     selectedSceneId = elements.sceneSelect.value;
     selection = { type: "scene", sceneId: selectedSceneId };
@@ -1694,16 +1710,32 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
   }
 
   function setOpen(view: SceneDesignerOpenView): void {
-    elements.root.dataset.open = view === false ? "false" : view;
-    elements.toggle.setAttribute("aria-expanded", String(view === "scenes"));
-    elements.behaviorToggle.setAttribute("aria-expanded", String(view === "behaviors"));
-    options.onOpenChange?.(view !== false);
+    if (view === "scenes") {
+      sceneDockPanel.open();
+    } else if (view === "behaviors") {
+      behaviorDockPanel.open();
+    } else if (sceneDockPanel.isOpen()) {
+      sceneDockPanel.close();
+    } else if (behaviorDockPanel.isOpen()) {
+      behaviorDockPanel.close();
+    }
   }
 
   function openView(): SceneDesignerOpenView {
-    return elements.root.dataset.open === "scenes" || elements.root.dataset.open === "behaviors"
-      ? elements.root.dataset.open
-      : false;
+    if (sceneDockPanel.isOpen()) return "scenes";
+    if (behaviorDockPanel.isOpen()) return "behaviors";
+    return false;
+  }
+
+  function syncDockOpenState(): void {
+    const previousOpen = elements.root.dataset.open !== "false";
+    const view = openView();
+    elements.root.dataset.open = view === false ? "false" : view;
+    elements.toggle.setAttribute("aria-expanded", String(view === "scenes"));
+    elements.behaviorToggle.setAttribute("aria-expanded", String(view === "behaviors"));
+    if (previousOpen !== (view !== false)) {
+      options.onOpenChange?.(view !== false);
+    }
   }
 
   function setStatus(message: string, tone: StatusTone): void {
