@@ -1828,7 +1828,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
   }
 
   function onKeyDown(event: KeyboardEvent): void {
-    if (!api.isOpen()) return;
+    if (!api.isOpen() || isEditableElement(event.target)) return;
 
     const isModifier = event.metaKey || event.ctrlKey;
     if (!isModifier) return;
@@ -2114,6 +2114,13 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     }
     return false;
   }
+}
+
+function isEditableElement(target: EventTarget | null): boolean {
+  return target instanceof HTMLInputElement
+    || target instanceof HTMLTextAreaElement
+    || target instanceof HTMLSelectElement
+    || (target instanceof HTMLElement && target.isContentEditable);
 }
 
 function button(label: string, className = "scene-designer__button"): HTMLButtonElement {

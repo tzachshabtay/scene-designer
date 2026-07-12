@@ -175,6 +175,7 @@ export class PhaserSceneDesignerCanvas {
   }>();
   private readonly areaGraphics: Phaser.GameObjects.Graphics;
   private readonly overlay: Phaser.GameObjects.Graphics;
+  private readonly releaseKeyboardCapture: () => void;
   private isOpen = false;
   private hoverObjectId: string | undefined;
   private selectedVertexId: string | undefined;
@@ -218,6 +219,7 @@ export class PhaserSceneDesignerCanvas {
     this.selection = options.designer.getSelection();
     this.areaGraphics = options.scene.add.graphics();
     this.overlay = options.scene.add.graphics();
+    this.releaseKeyboardCapture = bindDesignerKeyboardCapture(options.designer.root, options.scene);
     this.areaGraphics.setDepth(options.areaDepth ?? 9996);
     this.overlay.setDepth((options.areaDepth ?? 9996) + 1);
 
@@ -270,6 +272,7 @@ export class PhaserSceneDesignerCanvas {
     this.options.scene.input.keyboard?.off("keydown-BACKSPACE", this.onBackspace, this);
     this.options.scene.input.keyboard?.off("keydown-DELETE", this.onBackspace, this);
     window.removeEventListener("keydown", this.onWindowKeyDown, true);
+    this.releaseKeyboardCapture();
     this.endDrag();
     for (const sprite of this.objects.values()) {
       sprite.destroy();
@@ -1660,6 +1663,84 @@ function isEditableTarget(target: EventTarget | null): boolean {
     || target instanceof HTMLTextAreaElement
     || target instanceof HTMLSelectElement
     || (target instanceof HTMLElement && target.isContentEditable);
+}
+
+function bindDesignerKeyboardCapture(
+  root: HTMLElement,
+  scene: Phaser.Scene
+): () => void {
+  const stopKeyboardEvent = (event: KeyboardEvent) => {
+    if (isEditableTarget(event.target)) {
+      if (event.type === "keydown") restoreTextCaretMovement(event);
+      event.stopPropagation();
+    }
+  };
+  const setKeyboardEnabled = (enabled: boolean) => {
+    if (scene.input.keyboard) {
+      scene.input.keyboard.enabled = enabled;
+      if (enabled) {
+        if (scene.input.keyboard.getCaptures().length > 0) {
+          scene.input.keyboard.enableGlobalCapture();
+        }
+      } else {
+        scene.input.keyboard.disableGlobalCapture();
+      }
+    }
+    root.dataset.keyboardCaptured = String(!enabled);
+  };
+  const onFocusIn = (event: FocusEvent) => {
+    if (isEditableTarget(event.target)) setKeyboardEnabled(false);
+  };
+  const onPointerDown = (event: PointerEvent) => {
+    if (isEditableTarget(event.target)) setKeyboardEnabled(false);
+  };
+  const onFocusOut = (event: FocusEvent) => {
+    const nextTarget = event.relatedTarget;
+    if (!(nextTarget instanceof Node) || !root.contains(nextTarget) || !isEditableTarget(nextTarget)) {
+      setKeyboardEnabled(true);
+    }
+  };
+
+  root.addEventListener("keydown", stopKeyboardEvent, true);
+  root.addEventListener("keyup", stopKeyboardEvent, true);
+  root.addEventListener("pointerdown", onPointerDown, true);
+  root.addEventListener("focusin", onFocusIn, true);
+  root.addEventListener("focusout", onFocusOut, true);
+  return () => {
+    root.removeEventListener("keydown", stopKeyboardEvent, true);
+    root.removeEventListener("keyup", stopKeyboardEvent, true);
+    root.removeEventListener("pointerdown", onPointerDown, true);
+    root.removeEventListener("focusin", onFocusIn, true);
+    root.removeEventListener("focusout", onFocusOut, true);
+    setKeyboardEnabled(true);
+  };
+}
+
+function restoreTextCaretMovement(event: KeyboardEvent): void {
+  if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+  if (event.altKey || event.ctrlKey || event.metaKey) return;
+  const field = event.target;
+  if (!(field instanceof HTMLInputElement) || field.type !== "text") return;
+  const start = field.selectionStart;
+  const end = field.selectionEnd;
+  if (start === null || end === null) return;
+
+  event.preventDefault();
+  if (!event.shiftKey) {
+    const position = event.key === "ArrowLeft"
+      ? (start === end ? Math.max(0, start - 1) : start)
+      : (start === end ? Math.min(field.value.length, end + 1) : end);
+    field.setSelectionRange(position, position);
+    return;
+  }
+
+  if (event.key === "ArrowLeft") {
+    const nextStart = Math.max(0, start - 1);
+    field.setSelectionRange(nextStart, end, "backward");
+  } else {
+    const nextEnd = Math.min(field.value.length, end + 1);
+    field.setSelectionRange(start, nextEnd, "forward");
+  }
 }
 
 function pointInArea(point: { x: number; y: number }, area: SceneArea): boolean {
