@@ -861,9 +861,17 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
       });
       layer.behaviors ??= [];
       layer.behaviors.push(instance);
-      const emptyAreaAttribute = behavior.attributes.find((attribute) => (
+      const emptyAreaAttributes = behavior.attributes.filter((attribute) => (
         isAreaLikeAttribute(attribute) && areaDefaultsForAttribute(attribute).vertices.length === 0
       ));
+      instance.overrides ??= {};
+      for (const attribute of emptyAreaAttributes) {
+        instance.overrides[attribute.id] = {
+          closed: false,
+          vertices: []
+        };
+      }
+      const emptyAreaAttribute = emptyAreaAttributes[0];
       if (emptyAreaAttribute) {
         selection = {
           type: "area",
@@ -1079,7 +1087,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     item.append(title, visibility, lock, remove);
     item.addEventListener("click", () => {
       selection = { type: "area", sceneId: scene.id, layerId: layer.id, areaId: area.id };
-      mode = area.closed ? "select" : "area-draw";
+      mode = area.vertices.length === 0 || !area.closed ? "area-draw" : "select";
       render();
       emitSelection();
       options.onModeChange?.(mode);
@@ -1215,7 +1223,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
             layerId: layer.id,
             areaId: attributeId
           };
-          mode = area.closed ? "select" : "area-draw";
+          mode = area.vertices.length === 0 || !area.closed ? "area-draw" : "select";
           render();
           emitSelection();
           options.onModeChange?.(mode);
@@ -1969,12 +1977,13 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     selectedBehaviorId = behavior.id;
     const firstArea = behavior.attributes.find(isAreaLikeAttribute);
     if (firstArea) {
+      const defaults = areaDefaultsForAttribute(firstArea);
       selection = {
         type: "behavior-area",
         behaviorId: behavior.id,
         attributeId: firstArea.id
       };
-      mode = areaDefaultsForAttribute(firstArea).closed ? "select" : "area-draw";
+      mode = defaults.vertices.length === 0 || !defaults.closed ? "area-draw" : "select";
     } else {
       selection = {
         type: "behavior-definition",
@@ -1996,12 +2005,13 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     if (!behavior || !attribute) return;
 
     selectedBehaviorId = behaviorId;
+    const defaults = areaDefaultsForAttribute(attribute);
     selection = {
       type: "behavior-area",
       behaviorId,
       attributeId
     };
-    mode = areaDefaultsForAttribute(attribute).closed ? "select" : "area-draw";
+    mode = defaults.vertices.length === 0 || !defaults.closed ? "area-draw" : "select";
     render();
     emitSelection();
     options.onModeChange?.(mode);

@@ -9,6 +9,12 @@ In-game scene design tooling for TypeScript 2D games. The project mirrors the `a
 
 The scene manifest is JSON-first. A scene contains layers, each layer contains behavior instances, objects, areas, and platforms. Objects and platforms reference graphic assets from an `@ai-game-assets/core` manifest.
 
+## Behavior Inheritance
+
+Behavior instance overrides are partial: every omitted field continues to inherit from the behavior definition. When changing a behavior default, preserve any existing resolved value that should not change by writing it into those instances first.
+
+Empty area and platform attributes are a special creation case. The designer gives each new instance an explicit open, empty override while it is being drawn, then stores `closed: true` when the user closes the shape. This keeps the behavior's semantic default independent from the temporary drawing state.
+
 ## Phaser Platform Rendering
 
 Platforms are defined in `@scene-designer/core`, edited in the designer, and rendered for Phaser with `ScenePlatformRenderer` from `@scene-designer/phaser`. The renderer clips the platform asset to the actual area shape, supports `fit` and tiled paint modes, handles tile mirroring, and owns cleanup for generated Phaser canvas textures.

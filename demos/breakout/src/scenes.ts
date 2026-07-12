@@ -1930,7 +1930,7 @@ export const scenes = defineSceneManifest(
             "assetId": "wall.stone",
             "visible": true,
             "locked": false,
-            "closed": false,
+            "closed": true,
             "vertices": [],
             "paint": {
               "mode": "tile",
