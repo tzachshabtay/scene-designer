@@ -3,61 +3,26 @@
   "kind": "animation",
   "prompt": "A 4-frame idle animation spritesheet for the jungle breakout brick leaves, based on the source image, subtle breathing/leafy sway, transparent background.",
   "dimensions": {
-    "width": 232,
-    "height": 32
+    "width": 116,
+    "height": 116
   },
   "frameGrid": {
     "frameCount": 4,
     "frameWidth": 58,
-    "frameHeight": 32,
-    "columns": 4,
-    "rows": 1
+    "frameHeight": 58,
+    "columns": 2,
+    "rows": 2
   },
   "animations": [
     {
       "key": "brick.leaves.idle",
+      "frameRate": 6,
+      "repeat": -1,
       "frames": [
         0,
         1,
         2,
         3
-      ],
-      "frameRate": 6,
-      "repeat": -1,
-      "prompt": "A 4-frame idle animation spritesheet for the jungle breakout brick leaves, based on the source image, subtle breathing/leafy sway, transparent background.",
-      "frameTimings": [
-        {
-          "offsetX": 0,
-          "offsetY": 0,
-          "scaleX": 1,
-          "scaleY": 1,
-          "rotation": 0,
-          "tag": "idle-1"
-        },
-        {
-          "offsetX": 1,
-          "offsetY": -2,
-          "scaleX": 1.025,
-          "scaleY": 1.01,
-          "rotation": -2,
-          "tag": "idle-2"
-        },
-        {
-          "offsetX": 0,
-          "offsetY": 0,
-          "scaleX": 1,
-          "scaleY": 1,
-          "rotation": 0,
-          "tag": "idle-3"
-        },
-        {
-          "offsetX": -1,
-          "offsetY": 1,
-          "scaleX": 0.985,
-          "scaleY": 0.99,
-          "rotation": 2,
-          "tag": "idle-4"
-        }
       ]
     }
   ],
@@ -69,7 +34,7 @@
       "brick.leaves"
     ]
   },
-  "activeVersion": "default",
+  "activeVersion": "promoted-1783779446946",
   "versions": {
     "default": {
       "name": "default",
@@ -87,6 +52,26 @@
       },
       "parentVersion": "promoted-1783129990860",
       "notes": "Default animation spritesheet derived from the current base image."
+    },
+    "promoted-1783779446946": {
+      "name": "promoted-1783779446946",
+      "file": "/assets/brick.leaves.idle.promoted-1783779446946.png",
+      "prompt": "A 4-frame idle animation spritesheet for the jungle breakout brick leaves, based on the source image, subtle breathing/leafy sway, transparent background.",
+      "createdAt": "2026-07-11T14:17:26.994Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "format": "png",
+        "background": "auto",
+        "model": "gpt-image-2",
+        "referenceAssetIds": [
+          "brick.leaves"
+        ]
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "default",
+      "notes": "Promoted from the AI asset designer."
     }
   },
   "tags": [
@@ -94,5 +79,8 @@
     "leaves",
     "animation",
     "idle"
-  ]
+  ],
+  "audioSettings": {},
+  "audioPlayback": {},
+  "voiceSettings": {}
 }

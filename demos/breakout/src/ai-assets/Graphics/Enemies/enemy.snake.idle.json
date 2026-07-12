@@ -1,63 +1,28 @@
 {
   "id": "enemy.snake.idle",
   "kind": "animation",
-  "prompt": "A 4-frame idle animation spritesheet for the jungle snake enemy, based on the source image, subtle slither movement, transparent background.",
+  "prompt": "A 4-frame idle animation spritesheet for the jungle snake enemy, based on the source image, subtle slither movement and tongue movement, transparent background.",
   "dimensions": {
-    "width": 256,
-    "height": 128
+    "width": 128,
+    "height": 256
   },
   "frameGrid": {
     "frameCount": 4,
     "frameWidth": 64,
     "frameHeight": 128,
-    "columns": 4,
-    "rows": 1
+    "columns": 2,
+    "rows": 2
   },
   "animations": [
     {
       "key": "enemy.snake.idle",
+      "frameRate": 7,
+      "repeat": -1,
       "frames": [
         0,
         1,
         2,
         3
-      ],
-      "frameRate": 7,
-      "repeat": -1,
-      "prompt": "A 4-frame idle animation spritesheet for the jungle snake enemy, based on the source image, subtle slither movement, transparent background.",
-      "frameTimings": [
-        {
-          "offsetX": 0,
-          "offsetY": 0,
-          "scaleX": 1,
-          "scaleY": 1,
-          "rotation": 0,
-          "tag": "idle-1"
-        },
-        {
-          "offsetX": 1,
-          "offsetY": -2,
-          "scaleX": 1.025,
-          "scaleY": 1.01,
-          "rotation": -2,
-          "tag": "idle-2"
-        },
-        {
-          "offsetX": 0,
-          "offsetY": 0,
-          "scaleX": 1,
-          "scaleY": 1,
-          "rotation": 0,
-          "tag": "idle-3"
-        },
-        {
-          "offsetX": -1,
-          "offsetY": 1,
-          "scaleX": 0.985,
-          "scaleY": 0.99,
-          "rotation": 2,
-          "tag": "idle-4"
-        }
       ]
     }
   ],
@@ -67,9 +32,10 @@
     "model": "gpt-image-2",
     "referenceAssetIds": [
       "enemy.snake"
-    ]
+    ],
+    "frameAlignment": "center"
   },
-  "activeVersion": "default",
+  "activeVersion": "promoted-1783786066969",
   "versions": {
     "default": {
       "name": "default",
@@ -87,6 +53,47 @@
       },
       "parentVersion": "promoted-1783135705211",
       "notes": "Default animation spritesheet derived from the current base image."
+    },
+    "promoted-1783781183904": {
+      "name": "promoted-1783781183904",
+      "file": "/assets/enemy.snake.idle.promoted-1783781183904.svg",
+      "prompt": "A 4-frame idle animation spritesheet for the jungle snake enemy, based on the source image, subtle slither movement, transparent background.",
+      "createdAt": "2026-07-11T14:46:23.950Z",
+      "model": "base-image-spritesheet",
+      "settings": {
+        "format": "png",
+        "background": "auto",
+        "model": "gpt-image-2",
+        "referenceAssetIds": [
+          "enemy.snake"
+        ]
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "default",
+      "notes": "Promoted from the AI asset designer."
+    },
+    "promoted-1783786066969": {
+      "name": "promoted-1783786066969",
+      "file": "/assets/enemy.snake.idle.promoted-1783786066969.png",
+      "prompt": "A 4-frame idle animation spritesheet for the jungle snake enemy, based on the source image, subtle slither movement and tongue movement, transparent background.",
+      "createdAt": "2026-07-11T16:07:47.059Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "format": "png",
+        "background": "auto",
+        "model": "gpt-image-2",
+        "referenceAssetIds": [
+          "enemy.snake"
+        ],
+        "frameAlignment": "center"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "promoted-1783781183904",
+      "notes": "Promoted from the AI asset designer."
     }
   },
   "tags": [
@@ -94,5 +101,8 @@
     "snake",
     "animation",
     "idle"
-  ]
+  ],
+  "audioSettings": {},
+  "audioPlayback": {},
+  "voiceSettings": {}
 }

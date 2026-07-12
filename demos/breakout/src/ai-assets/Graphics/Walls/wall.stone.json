@@ -11,7 +11,7 @@
     "background": "opaque",
     "model": "gpt-image-2"
   },
-  "activeVersion": "default",
+  "activeVersion": "promoted-1783779885113",
   "versions": {
     "default": {
       "name": "default",
@@ -19,6 +19,23 @@
       "prompt": "A seamless jungle ruin wall texture tile for a breakout obstacle, mossy carved stone blocks with vines, readable pixel-art details, tileable edges.",
       "createdAt": "2026-07-04T00:00:00.000Z",
       "model": "manual-svg"
+    },
+    "promoted-1783779885113": {
+      "name": "promoted-1783779885113",
+      "file": "/assets/wall.stone.promoted-1783779885113.png",
+      "prompt": "A seamless jungle ruin wall texture tile for a breakout obstacle, mossy carved stone blocks with vines, readable pixel-art details, tileable edges.",
+      "createdAt": "2026-07-11T14:24:45.158Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "format": "png",
+        "background": "opaque",
+        "model": "gpt-image-2"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "default",
+      "notes": "Promoted from the AI asset designer."
     }
   },
   "tags": [

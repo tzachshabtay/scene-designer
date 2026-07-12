@@ -1,17 +1,17 @@
 {
   "id": "enemy.monkey.idle",
   "kind": "animation",
-  "prompt": "A 4-frame idle animation spritesheet for the mischievous jungle monkey enemy, based on the source image, subtle bounce and arm movement, transparent background.",
+  "prompt": "mischievous jungle monkey enemy, based on the source image, subtle bounce and arm movement, transparent background.",
   "dimensions": {
-    "width": 288,
-    "height": 128
+    "width": 216,
+    "height": 384
   },
   "frameGrid": {
-    "frameCount": 4,
+    "frameCount": 8,
     "frameWidth": 72,
     "frameHeight": 128,
-    "columns": 4,
-    "rows": 1
+    "columns": 3,
+    "rows": 3
   },
   "animations": [
     {
@@ -20,13 +20,18 @@
         0,
         1,
         2,
-        3
+        3,
+        4,
+        5,
+        6,
+        7
       ],
       "frameRate": 7,
       "repeat": -1,
       "prompt": "A 4-frame idle animation spritesheet for the mischievous jungle monkey enemy, based on the source image, subtle bounce and arm movement, transparent background.",
       "frameTimings": [
         {
+          "delayMs": 143,
           "offsetX": 0,
           "offsetY": 0,
           "scaleX": 1,
@@ -35,6 +40,7 @@
           "tag": "idle-1"
         },
         {
+          "delayMs": 143,
           "offsetX": 1,
           "offsetY": -2,
           "scaleX": 1.025,
@@ -43,6 +49,7 @@
           "tag": "idle-2"
         },
         {
+          "delayMs": 143,
           "offsetX": 0,
           "offsetY": 0,
           "scaleX": 1,
@@ -51,12 +58,45 @@
           "tag": "idle-3"
         },
         {
+          "delayMs": 143,
           "offsetX": -1,
           "offsetY": 1,
           "scaleX": 0.985,
           "scaleY": 0.99,
           "rotation": 2,
           "tag": "idle-4"
+        },
+        {
+          "delayMs": 143,
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotation": 0
+        },
+        {
+          "delayMs": 143,
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotation": 0
+        },
+        {
+          "delayMs": 143,
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotation": 0
+        },
+        {
+          "delayMs": 143,
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotation": 0
         }
       ]
     }
@@ -69,7 +109,7 @@
       "enemy.monkey"
     ]
   },
-  "activeVersion": "default",
+  "activeVersion": "promoted-1783261900537",
   "versions": {
     "default": {
       "name": "default",
@@ -87,6 +127,46 @@
       },
       "parentVersion": "promoted-1783135961965",
       "notes": "Default animation spritesheet derived from the current base image."
+    },
+    "promoted-1783221370180": {
+      "name": "promoted-1783221370180",
+      "file": "/assets/enemy.monkey.idle.promoted-1783221370180.png",
+      "prompt": "mischievous jungle monkey enemy, based on the source image, subtle bounce and arm movement, transparent background.",
+      "createdAt": "2026-07-05T03:16:10.230Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "format": "png",
+        "background": "auto",
+        "model": "gpt-image-2",
+        "referenceAssetIds": [
+          "enemy.monkey"
+        ]
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "default",
+      "notes": "Promoted from the AI asset designer."
+    },
+    "promoted-1783261900537": {
+      "name": "promoted-1783261900537",
+      "file": "/assets/enemy.monkey.idle.promoted-1783261900537.png",
+      "prompt": "mischievous jungle monkey enemy, based on the source image, subtle bounce and arm movement, transparent background.",
+      "createdAt": "2026-07-05T14:31:40.598Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "format": "png",
+        "background": "auto",
+        "model": "gpt-image-2",
+        "referenceAssetIds": [
+          "enemy.monkey"
+        ]
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "promoted-1783221370180",
+      "notes": "Promoted from the AI asset designer."
     }
   },
   "tags": [
@@ -94,5 +174,8 @@
     "monkey",
     "animation",
     "idle"
-  ]
+  ],
+  "audioSettings": {},
+  "audioPlayback": {},
+  "voiceSettings": {}
 }

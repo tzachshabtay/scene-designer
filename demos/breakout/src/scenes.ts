@@ -139,7 +139,7 @@ export const scenes = defineSceneManifest(
               "overrides": {
                 "sprite": {
                   "x": 180,
-                  "y": 150,
+                  "y": 170,
                   "assetId": "brick.vines"
                 }
               }
@@ -152,7 +152,7 @@ export const scenes = defineSceneManifest(
               "overrides": {
                 "sprite": {
                   "x": 260,
-                  "y": 150,
+                  "y": 170,
                   "assetId": "brick.leaves"
                 }
               }
@@ -165,7 +165,7 @@ export const scenes = defineSceneManifest(
               "overrides": {
                 "sprite": {
                   "x": 340,
-                  "y": 150
+                  "y": 170
                 }
               }
             },
@@ -177,7 +177,7 @@ export const scenes = defineSceneManifest(
               "overrides": {
                 "sprite": {
                   "x": 420,
-                  "y": 150
+                  "y": 170
                 }
               }
             },
@@ -189,7 +189,7 @@ export const scenes = defineSceneManifest(
               "overrides": {
                 "sprite": {
                   "x": 500,
-                  "y": 150,
+                  "y": 170,
                   "assetId": "brick.leaves"
                 }
               }
@@ -202,7 +202,7 @@ export const scenes = defineSceneManifest(
               "overrides": {
                 "sprite": {
                   "x": 580,
-                  "y": 150,
+                  "y": 170,
                   "assetId": "brick.vines"
                 }
               }
@@ -215,7 +215,7 @@ export const scenes = defineSceneManifest(
               "overrides": {
                 "sprite": {
                   "x": 260,
-                  "y": 186,
+                  "y": 216,
                   "assetId": "brick.pineapple"
                 }
               }
@@ -228,7 +228,7 @@ export const scenes = defineSceneManifest(
               "overrides": {
                 "sprite": {
                   "x": 340,
-                  "y": 186,
+                  "y": 216,
                   "assetId": "brick.leaves"
                 }
               }
@@ -241,7 +241,7 @@ export const scenes = defineSceneManifest(
               "overrides": {
                 "sprite": {
                   "x": 420,
-                  "y": 186,
+                  "y": 216,
                   "assetId": "brick.vines"
                 }
               }
@@ -254,7 +254,7 @@ export const scenes = defineSceneManifest(
               "overrides": {
                 "sprite": {
                   "x": 500,
-                  "y": 186,
+                  "y": 216,
                   "assetId": "brick.pineapple"
                 }
               }
@@ -279,25 +279,40 @@ export const scenes = defineSceneManifest(
                   "vertices": [
                     {
                       "id": "l1-wall-center-v1",
-                      "x": 302,
-                      "y": 314
+                      "x": 298.933550274004,
+                      "y": 316.0442930153322
                     },
                     {
                       "id": "l1-wall-center-v2",
-                      "x": 498,
-                      "y": 314
+                      "x": 494.933550274004,
+                      "y": 316.0442930153322
                     },
                     {
                       "id": "l1-wall-center-v3",
-                      "x": 498,
-                      "y": 342
+                      "x": 494.933550274004,
+                      "y": 344.0442930153322,
+                      "curve": {
+                        "cx": 346.5088190375421,
+                        "cy": 344.4633730834753
+                      }
                     },
                     {
                       "id": "l1-wall-center-v4",
-                      "x": 302,
-                      "y": 342
+                      "x": 298.933550274004,
+                      "y": 344.0442930153322
                     }
-                  ]
+                  ],
+                  "tag": "wall",
+                  "visible": true,
+                  "locked": false,
+                  "closed": true,
+                  "assetId": "wall.stone",
+                  "paint": {
+                    "mode": "tile",
+                    "mirrorX": true,
+                    "mirrorY": false
+                  },
+                  "id": "l1-wall-center::platform"
                 }
               }
             }
@@ -340,7 +355,7 @@ export const scenes = defineSceneManifest(
         {
           "id": "layer-areas",
           "name": "Spawn Areas",
-          "visible": true,
+          "visible": false,
           "locked": false,
           "objects": [],
           "areas": [],
@@ -554,7 +569,7 @@ export const scenes = defineSceneManifest(
               "overrides": {
                 "sprite": {
                   "x": 260,
-                  "y": 186,
+                  "y": 196,
                   "assetId": "brick.leaves"
                 }
               }
@@ -567,7 +582,7 @@ export const scenes = defineSceneManifest(
               "overrides": {
                 "sprite": {
                   "x": 340,
-                  "y": 186,
+                  "y": 196,
                   "assetId": "brick.vines"
                 }
               }
@@ -580,7 +595,7 @@ export const scenes = defineSceneManifest(
               "overrides": {
                 "sprite": {
                   "x": 460,
-                  "y": 186,
+                  "y": 196,
                   "assetId": "brick.vines"
                 }
               }
@@ -593,7 +608,7 @@ export const scenes = defineSceneManifest(
               "overrides": {
                 "sprite": {
                   "x": 540,
-                  "y": 186,
+                  "y": 196,
                   "assetId": "brick.leaves"
                 }
               }
@@ -606,7 +621,7 @@ export const scenes = defineSceneManifest(
               "overrides": {
                 "sprite": {
                   "x": 340,
-                  "y": 226,
+                  "y": 256,
                   "assetId": "brick.pineapple"
                 }
               }
@@ -619,7 +634,7 @@ export const scenes = defineSceneManifest(
               "overrides": {
                 "sprite": {
                   "x": 460,
-                  "y": 226,
+                  "y": 256,
                   "assetId": "brick.pineapple"
                 }
               }
@@ -710,7 +725,7 @@ export const scenes = defineSceneManifest(
         {
           "id": "layer-areas",
           "name": "Spawn Areas",
-          "visible": true,
+          "visible": false,
           "locked": false,
           "objects": [],
           "areas": [],
@@ -938,7 +953,7 @@ export const scenes = defineSceneManifest(
               "overrides": {
                 "sprite": {
                   "x": 240,
-                  "y": 144,
+                  "y": 164,
                   "assetId": "brick.pineapple"
                 }
               }
@@ -951,7 +966,7 @@ export const scenes = defineSceneManifest(
               "overrides": {
                 "sprite": {
                   "x": 320,
-                  "y": 144,
+                  "y": 164,
                   "assetId": "brick.leaves"
                 }
               }
@@ -964,7 +979,7 @@ export const scenes = defineSceneManifest(
               "overrides": {
                 "sprite": {
                   "x": 400,
-                  "y": 144,
+                  "y": 164,
                   "assetId": "brick.vines"
                 }
               }
@@ -977,7 +992,7 @@ export const scenes = defineSceneManifest(
               "overrides": {
                 "sprite": {
                   "x": 480,
-                  "y": 144,
+                  "y": 164,
                   "assetId": "brick.leaves"
                 }
               }
@@ -990,7 +1005,7 @@ export const scenes = defineSceneManifest(
               "overrides": {
                 "sprite": {
                   "x": 560,
-                  "y": 144,
+                  "y": 164,
                   "assetId": "brick.pineapple"
                 }
               }
@@ -1003,7 +1018,7 @@ export const scenes = defineSceneManifest(
               "overrides": {
                 "sprite": {
                   "x": 320,
-                  "y": 184,
+                  "y": 231.15502555366268,
                   "assetId": "brick.leaves"
                 }
               }
@@ -1016,7 +1031,7 @@ export const scenes = defineSceneManifest(
               "overrides": {
                 "sprite": {
                   "x": 400,
-                  "y": 184
+                  "y": 231.15502555366268
                 }
               }
             },
@@ -1028,7 +1043,7 @@ export const scenes = defineSceneManifest(
               "overrides": {
                 "sprite": {
                   "x": 480,
-                  "y": 184,
+                  "y": 231.15502555366268,
                   "assetId": "brick.leaves"
                 }
               }
@@ -1040,8 +1055,8 @@ export const scenes = defineSceneManifest(
               "locked": false,
               "overrides": {
                 "sprite": {
-                  "x": 400,
-                  "y": 224,
+                  "x": 398.9778500913347,
+                  "y": 275.2436115843271,
                   "assetId": "brick.vines"
                 }
               }
@@ -1159,7 +1174,7 @@ export const scenes = defineSceneManifest(
         {
           "id": "layer-areas",
           "name": "Spawn Areas",
-          "visible": true,
+          "visible": false,
           "locked": false,
           "objects": [],
           "areas": [],
@@ -1188,8 +1203,8 @@ export const scenes = defineSceneManifest(
                       "x": 616,
                       "y": 330,
                       "curve": {
-                        "cx": 682,
-                        "cy": 296
+                        "cx": 535.6065521406255,
+                        "cy": 124.70187393526405
                       }
                     },
                     {
@@ -1201,7 +1216,11 @@ export const scenes = defineSceneManifest(
                         "cy": 296
                       }
                     }
-                  ]
+                  ],
+                  "tag": "enemy.spawn",
+                  "visible": true,
+                  "locked": false,
+                  "id": "l2-enemy-spawn::area"
                 }
               }
             }
@@ -1323,6 +1342,30 @@ export const scenes = defineSceneManifest(
               }
             ]
           }
+        },
+        {
+          "id": "spawn-interval",
+          "name": "Spawn interval",
+          "kind": "number",
+          "number": {
+            "value": 18,
+            "min": 1,
+            "max": 120,
+            "step": 1,
+            "unit": "seconds"
+          }
+        },
+        {
+          "id": "snake-chance",
+          "name": "Snake probability",
+          "kind": "number",
+          "number": {
+            "value": 50,
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "unit": "percent"
+          }
         }
       ]
     },
@@ -1440,6 +1483,54 @@ export const scenes = defineSceneManifest(
             "visible": true,
             "locked": false
           }
+        },
+        {
+          "id": "launch-speed",
+          "name": "Launch speed",
+          "kind": "number",
+          "number": {
+            "value": 326.1518,
+            "min": 50,
+            "max": 1000,
+            "step": 1,
+            "unit": "pixels-per-second"
+          }
+        },
+        {
+          "id": "collision-acceleration",
+          "name": "Speed increase per collision",
+          "kind": "number",
+          "number": {
+            "value": 1.5,
+            "min": 0,
+            "max": 25,
+            "step": 0.1,
+            "unit": "percent"
+          }
+        },
+        {
+          "id": "minimum-speed",
+          "name": "Minimum speed",
+          "kind": "number",
+          "number": {
+            "value": 260,
+            "min": 0,
+            "max": 1000,
+            "step": 5,
+            "unit": "pixels-per-second"
+          }
+        },
+        {
+          "id": "maximum-speed",
+          "name": "Maximum speed",
+          "kind": "number",
+          "number": {
+            "value": 520,
+            "min": 50,
+            "max": 2000,
+            "step": 5,
+            "unit": "pixels-per-second"
+          }
         }
       ]
     },
@@ -1463,6 +1554,18 @@ export const scenes = defineSceneManifest(
             "anchorY": 0.5,
             "visible": true,
             "locked": false
+          }
+        },
+        {
+          "id": "keyboard-speed",
+          "name": "Keyboard speed",
+          "kind": "number",
+          "number": {
+            "value": 430,
+            "min": 0,
+            "max": 1200,
+            "step": 10,
+            "unit": "pixels-per-second"
           }
         }
       ]

@@ -3,61 +3,26 @@
   "kind": "animation",
   "prompt": "A 4-frame biting animation spritesheet for the jungle snake enemy, based on the source image, lunge and bite pose, transparent background.",
   "dimensions": {
-    "width": 256,
-    "height": 128
+    "width": 128,
+    "height": 256
   },
   "frameGrid": {
     "frameCount": 4,
     "frameWidth": 64,
     "frameHeight": 128,
-    "columns": 4,
-    "rows": 1
+    "columns": 2,
+    "rows": 2
   },
   "animations": [
     {
       "key": "enemy.snake.biting",
+      "frameRate": 12,
+      "repeat": 0,
       "frames": [
         0,
         1,
         2,
         3
-      ],
-      "frameRate": 12,
-      "repeat": 0,
-      "prompt": "A 4-frame biting animation spritesheet for the jungle snake enemy, based on the source image, lunge and bite pose, transparent background.",
-      "frameTimings": [
-        {
-          "offsetX": 0,
-          "offsetY": 0,
-          "scaleX": 1,
-          "scaleY": 1,
-          "rotation": 0,
-          "tag": "biting-1"
-        },
-        {
-          "offsetX": 2,
-          "offsetY": 4,
-          "scaleX": 1.06,
-          "scaleY": 1.02,
-          "rotation": -4,
-          "tag": "biting-2"
-        },
-        {
-          "offsetX": 5,
-          "offsetY": 8,
-          "scaleX": 1.12,
-          "scaleY": 0.96,
-          "rotation": 5,
-          "tag": "biting-3"
-        },
-        {
-          "offsetX": 0,
-          "offsetY": 0,
-          "scaleX": 1,
-          "scaleY": 1,
-          "rotation": 0,
-          "tag": "biting-4"
-        }
       ]
     }
   ],
@@ -67,9 +32,10 @@
     "model": "gpt-image-2",
     "referenceAssetIds": [
       "enemy.snake"
-    ]
+    ],
+    "frameAlignment": "center"
   },
-  "activeVersion": "default",
+  "activeVersion": "promoted-1783786282343",
   "versions": {
     "default": {
       "name": "default",
@@ -87,6 +53,47 @@
       },
       "parentVersion": "promoted-1783135705211",
       "notes": "Default animation spritesheet derived from the current base image."
+    },
+    "promoted-1783786118282": {
+      "name": "promoted-1783786118282",
+      "file": "/assets/enemy.snake.biting.promoted-1783786118282.svg",
+      "prompt": "A 4-frame biting animation spritesheet for the jungle snake enemy, based on the source image, lunge and bite pose, transparent background.",
+      "createdAt": "2026-07-11T16:08:38.321Z",
+      "model": "base-image-spritesheet",
+      "settings": {
+        "format": "png",
+        "background": "auto",
+        "model": "gpt-image-2",
+        "referenceAssetIds": [
+          "enemy.snake"
+        ]
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "default",
+      "notes": "Promoted from the AI asset designer."
+    },
+    "promoted-1783786282343": {
+      "name": "promoted-1783786282343",
+      "file": "/assets/enemy.snake.biting.promoted-1783786282343.png",
+      "prompt": "A 4-frame biting animation spritesheet for the jungle snake enemy, based on the source image, lunge and bite pose, transparent background.",
+      "createdAt": "2026-07-11T16:11:22.386Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "format": "png",
+        "background": "auto",
+        "model": "gpt-image-2",
+        "referenceAssetIds": [
+          "enemy.snake"
+        ],
+        "frameAlignment": "center"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "promoted-1783786118282",
+      "notes": "Promoted from the AI asset designer."
     }
   },
   "tags": [
@@ -94,5 +101,8 @@
     "snake",
     "animation",
     "biting"
-  ]
+  ],
+  "audioSettings": {},
+  "audioPlayback": {},
+  "voiceSettings": {}
 }

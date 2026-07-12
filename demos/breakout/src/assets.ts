@@ -187,61 +187,26 @@ export const assets = defineAiAssets(
     "kind": "animation",
     "prompt": "A 4-frame idle animation spritesheet for the jungle breakout brick leaves, based on the source image, subtle breathing/leafy sway, transparent background.",
     "dimensions": {
-      "width": 232,
-      "height": 32
+      "width": 116,
+      "height": 116
     },
     "frameGrid": {
       "frameCount": 4,
       "frameWidth": 58,
-      "frameHeight": 32,
-      "columns": 4,
-      "rows": 1
+      "frameHeight": 58,
+      "columns": 2,
+      "rows": 2
     },
     "animations": [
       {
         "key": "brick.leaves.idle",
+        "frameRate": 6,
+        "repeat": -1,
         "frames": [
           0,
           1,
           2,
           3
-        ],
-        "frameRate": 6,
-        "repeat": -1,
-        "prompt": "A 4-frame idle animation spritesheet for the jungle breakout brick leaves, based on the source image, subtle breathing/leafy sway, transparent background.",
-        "frameTimings": [
-          {
-            "offsetX": 0,
-            "offsetY": 0,
-            "scaleX": 1,
-            "scaleY": 1,
-            "rotation": 0,
-            "tag": "idle-1"
-          },
-          {
-            "offsetX": 1,
-            "offsetY": -2,
-            "scaleX": 1.025,
-            "scaleY": 1.01,
-            "rotation": -2,
-            "tag": "idle-2"
-          },
-          {
-            "offsetX": 0,
-            "offsetY": 0,
-            "scaleX": 1,
-            "scaleY": 1,
-            "rotation": 0,
-            "tag": "idle-3"
-          },
-          {
-            "offsetX": -1,
-            "offsetY": 1,
-            "scaleX": 0.985,
-            "scaleY": 0.99,
-            "rotation": 2,
-            "tag": "idle-4"
-          }
         ]
       }
     ],
@@ -253,7 +218,7 @@ export const assets = defineAiAssets(
         "brick.leaves"
       ]
     },
-    "activeVersion": "default",
+    "activeVersion": "promoted-1783779446946",
     "versions": {
       "default": {
         "name": "default",
@@ -271,6 +236,26 @@ export const assets = defineAiAssets(
         },
         "parentVersion": "promoted-1783129990860",
         "notes": "Default animation spritesheet derived from the current base image."
+      },
+      "promoted-1783779446946": {
+        "name": "promoted-1783779446946",
+        "file": "/assets/brick.leaves.idle.promoted-1783779446946.png",
+        "prompt": "A 4-frame idle animation spritesheet for the jungle breakout brick leaves, based on the source image, subtle breathing/leafy sway, transparent background.",
+        "createdAt": "2026-07-11T14:17:26.994Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "format": "png",
+          "background": "auto",
+          "model": "gpt-image-2",
+          "referenceAssetIds": [
+            "brick.leaves"
+          ]
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "default",
+        "notes": "Promoted from the AI asset designer."
       }
     },
     "tags": [
@@ -278,7 +263,10 @@ export const assets = defineAiAssets(
       "leaves",
       "animation",
       "idle"
-    ]
+    ],
+    "audioSettings": {},
+    "audioPlayback": {},
+    "voiceSettings": {}
   },
   "brick.leaves": {
     "id": "brick.leaves",
@@ -286,14 +274,14 @@ export const assets = defineAiAssets(
     "prompt": "one big jungle leaf arranged like a breakout brick, broad tropical leaves with crisp silhouettes, bright veins, high contrast, transparent background.",
     "dimensions": {
       "width": 58,
-      "height": 32
+      "height": 58
     },
     "settings": {
       "format": "png",
       "background": "auto",
       "model": "gpt-image-2"
     },
-    "activeVersion": "promoted-1783129990860",
+    "activeVersion": "promoted-1783779398759",
     "versions": {
       "default": {
         "name": "default",
@@ -317,6 +305,23 @@ export const assets = defineAiAssets(
         "audioPlayback": {},
         "voiceSettings": {},
         "parentVersion": "default",
+        "notes": "Promoted from the AI asset designer."
+      },
+      "promoted-1783779398759": {
+        "name": "promoted-1783779398759",
+        "file": "/assets/brick.leaves.promoted-1783779398759.png",
+        "prompt": "one big jungle leaf arranged like a breakout brick, broad tropical leaves with crisp silhouettes, bright veins, high contrast, transparent background.",
+        "createdAt": "2026-07-11T14:16:38.790Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "format": "png",
+          "background": "auto",
+          "model": "gpt-image-2"
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1783129990860",
         "notes": "Promoted from the AI asset designer."
       }
     },
@@ -459,60 +464,59 @@ export const assets = defineAiAssets(
     "kind": "animation",
     "prompt": "A 4-frame idle animation spritesheet for the jungle breakout brick pineapple, based on the source image, subtle breathing/leafy sway, transparent background.",
     "dimensions": {
-      "width": 232,
-      "height": 32
+      "width": 116,
+      "height": 116
     },
     "frameGrid": {
       "frameCount": 4,
       "frameWidth": 58,
-      "frameHeight": 32,
-      "columns": 4,
-      "rows": 1
+      "frameHeight": 58,
+      "columns": 2,
+      "rows": 2
     },
     "animations": [
       {
         "key": "brick.pineapple.idle",
+        "frameRate": 6,
+        "repeat": -1,
         "frames": [
           0,
           1,
           2,
           3
         ],
-        "frameRate": 6,
-        "repeat": -1,
-        "prompt": "A 4-frame idle animation spritesheet for the jungle breakout brick pineapple, based on the source image, subtle breathing/leafy sway, transparent background.",
         "frameTimings": [
           {
+            "delayMs": 167,
+            "offsetX": -3,
+            "offsetY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "rotation": 0
+          },
+          {
+            "delayMs": 167,
             "offsetX": 0,
             "offsetY": 0,
             "scaleX": 1,
             "scaleY": 1,
-            "rotation": 0,
-            "tag": "idle-1"
+            "rotation": 0
           },
           {
-            "offsetX": 1,
-            "offsetY": -2,
-            "scaleX": 1.025,
-            "scaleY": 1.01,
-            "rotation": -2,
-            "tag": "idle-2"
+            "delayMs": 167,
+            "offsetX": -4,
+            "offsetY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "rotation": 0
           },
           {
+            "delayMs": 167,
             "offsetX": 0,
             "offsetY": 0,
             "scaleX": 1,
             "scaleY": 1,
-            "rotation": 0,
-            "tag": "idle-3"
-          },
-          {
-            "offsetX": -1,
-            "offsetY": 1,
-            "scaleX": 0.985,
-            "scaleY": 0.99,
-            "rotation": 2,
-            "tag": "idle-4"
+            "rotation": 0
           }
         ]
       }
@@ -525,7 +529,7 @@ export const assets = defineAiAssets(
         "brick.pineapple"
       ]
     },
-    "activeVersion": "default",
+    "activeVersion": "promoted-1783779300905",
     "versions": {
       "default": {
         "name": "default",
@@ -543,6 +547,46 @@ export const assets = defineAiAssets(
         },
         "parentVersion": "promoted-1783128876390",
         "notes": "Default animation spritesheet derived from the current base image."
+      },
+      "promoted-1783779249700": {
+        "name": "promoted-1783779249700",
+        "file": "/assets/brick.pineapple.idle.promoted-1783779249700.png",
+        "prompt": "A 4-frame idle animation spritesheet for the jungle breakout brick pineapple, based on the source image, subtle breathing/leafy sway, transparent background.",
+        "createdAt": "2026-07-11T14:14:09.742Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "format": "png",
+          "background": "auto",
+          "model": "gpt-image-2",
+          "referenceAssetIds": [
+            "brick.pineapple"
+          ]
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "default",
+        "notes": "Promoted from the AI asset designer."
+      },
+      "promoted-1783779300905": {
+        "name": "promoted-1783779300905",
+        "file": "/assets/brick.pineapple.idle.promoted-1783779300905.png",
+        "prompt": "A 4-frame idle animation spritesheet for the jungle breakout brick pineapple, based on the source image, subtle breathing/leafy sway, transparent background.",
+        "createdAt": "2026-07-11T14:15:00.940Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "format": "png",
+          "background": "auto",
+          "model": "gpt-image-2",
+          "referenceAssetIds": [
+            "brick.pineapple"
+          ]
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1783779249700",
+        "notes": "Promoted from the AI asset designer."
       }
     },
     "tags": [
@@ -550,7 +594,10 @@ export const assets = defineAiAssets(
       "pineapple",
       "animation",
       "idle"
-    ]
+    ],
+    "audioSettings": {},
+    "audioPlayback": {},
+    "voiceSettings": {}
   },
   "brick.pineapple": {
     "id": "brick.pineapple",
@@ -558,14 +605,14 @@ export const assets = defineAiAssets(
     "prompt": "A cute pineapple-themed breakout brick made from golden pineapple segments with leafy green crown details, juicy tropical colors, transparent background.",
     "dimensions": {
       "width": 58,
-      "height": 32
+      "height": 58
     },
     "settings": {
       "format": "png",
       "background": "auto",
       "model": "gpt-image-2"
     },
-    "activeVersion": "promoted-1783128876390",
+    "activeVersion": "promoted-1783779175463",
     "versions": {
       "default": {
         "name": "default",
@@ -589,6 +636,23 @@ export const assets = defineAiAssets(
         "audioPlayback": {},
         "voiceSettings": {},
         "parentVersion": "default",
+        "notes": "Promoted from the AI asset designer."
+      },
+      "promoted-1783779175463": {
+        "name": "promoted-1783779175463",
+        "file": "/assets/brick.pineapple.promoted-1783779175463.png",
+        "prompt": "A cute pineapple-themed breakout brick made from golden pineapple segments with leafy green crown details, juicy tropical colors, transparent background.",
+        "createdAt": "2026-07-11T14:12:55.496Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "format": "png",
+          "background": "auto",
+          "model": "gpt-image-2"
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1783128876390",
         "notes": "Promoted from the AI asset designer."
       }
     },
@@ -730,17 +794,17 @@ export const assets = defineAiAssets(
   "brick.statue.idle": {
     "id": "brick.statue.idle",
     "kind": "animation",
-    "prompt": "A 4-frame idle animation spritesheet for the jungle breakout brick statue, based on the source image, subtle breathing/leafy sway, transparent background.",
+    "prompt": "A 4-frame idle animation spritesheet for the jungle breakout brick statue, based on the source image, the brick status itself should not move, only subtle movement for the grass, transparent background.",
     "dimensions": {
-      "width": 232,
-      "height": 32
+      "width": 116,
+      "height": 116
     },
     "frameGrid": {
       "frameCount": 4,
       "frameWidth": 58,
-      "frameHeight": 32,
-      "columns": 4,
-      "rows": 1
+      "frameHeight": 58,
+      "columns": 2,
+      "rows": 2
     },
     "animations": [
       {
@@ -756,35 +820,39 @@ export const assets = defineAiAssets(
         "prompt": "A 4-frame idle animation spritesheet for the jungle breakout brick statue, based on the source image, subtle breathing/leafy sway, transparent background.",
         "frameTimings": [
           {
-            "offsetX": 0,
-            "offsetY": 0,
+            "delayMs": 167,
+            "offsetX": -5,
+            "offsetY": -5,
             "scaleX": 1,
             "scaleY": 1,
             "rotation": 0,
             "tag": "idle-1"
           },
           {
+            "delayMs": 167,
             "offsetX": 1,
-            "offsetY": -2,
-            "scaleX": 1.025,
-            "scaleY": 1.01,
-            "rotation": -2,
+            "offsetY": -5,
+            "scaleX": 1,
+            "scaleY": 1,
+            "rotation": 0,
             "tag": "idle-2"
           },
           {
-            "offsetX": 0,
-            "offsetY": 0,
+            "delayMs": 167,
+            "offsetX": -5,
+            "offsetY": 3,
             "scaleX": 1,
             "scaleY": 1,
             "rotation": 0,
             "tag": "idle-3"
           },
           {
-            "offsetX": -1,
-            "offsetY": 1,
-            "scaleX": 0.985,
-            "scaleY": 0.99,
-            "rotation": 2,
+            "delayMs": 167,
+            "offsetX": 0,
+            "offsetY": 3,
+            "scaleX": 1,
+            "scaleY": 1,
+            "rotation": 0,
             "tag": "idle-4"
           }
         ]
@@ -798,7 +866,7 @@ export const assets = defineAiAssets(
         "brick.statue"
       ]
     },
-    "activeVersion": "default",
+    "activeVersion": "promoted-1783747234247",
     "versions": {
       "default": {
         "name": "default",
@@ -816,6 +884,106 @@ export const assets = defineAiAssets(
         },
         "parentVersion": "promoted-1783130593116",
         "notes": "Default animation spritesheet derived from the current base image."
+      },
+      "promoted-1783467469888": {
+        "name": "promoted-1783467469888",
+        "file": "/assets/brick.statue.idle.promoted-1783467469888.png",
+        "prompt": "A 4-frame idle animation spritesheet for the jungle breakout brick statue, based on the source image, the brick status itself should not move, only subtle movement for the grass, transparent background.",
+        "createdAt": "2026-07-07T23:37:49.937Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "format": "png",
+          "background": "auto",
+          "model": "gpt-image-2",
+          "referenceAssetIds": [
+            "brick.statue"
+          ]
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "default",
+        "notes": "Promoted from the AI asset designer."
+      },
+      "promoted-1783467515283": {
+        "name": "promoted-1783467515283",
+        "file": "/assets/brick.statue.idle.promoted-1783467515283.png",
+        "prompt": "A 4-frame idle animation spritesheet for the jungle breakout brick statue, based on the source image, the brick status itself should not move, only subtle movement for the grass, transparent background.",
+        "createdAt": "2026-07-07T23:38:35.320Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "format": "png",
+          "background": "auto",
+          "model": "gpt-image-2",
+          "referenceAssetIds": [
+            "brick.statue"
+          ]
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1783467469888",
+        "notes": "Promoted from the AI asset designer."
+      },
+      "promoted-1783467577199": {
+        "name": "promoted-1783467577199",
+        "file": "/assets/brick.statue.idle.promoted-1783467577199.png",
+        "prompt": "A 4-frame idle animation spritesheet for the jungle breakout brick statue, based on the source image, the brick status itself should not move, only subtle movement for the grass, transparent background.",
+        "createdAt": "2026-07-07T23:39:37.236Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "format": "png",
+          "background": "auto",
+          "model": "gpt-image-2",
+          "referenceAssetIds": [
+            "brick.statue"
+          ]
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1783467515283",
+        "notes": "Promoted from the AI asset designer."
+      },
+      "promoted-1783747214993": {
+        "name": "promoted-1783747214993",
+        "file": "/assets/brick.statue.idle.promoted-1783747214993.png",
+        "prompt": "A 4-frame idle animation spritesheet for the jungle breakout brick statue, based on the source image, the brick status itself should not move, only subtle movement for the grass, transparent background.",
+        "createdAt": "2026-07-11T05:20:15.062Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "format": "png",
+          "background": "auto",
+          "model": "gpt-image-2",
+          "referenceAssetIds": [
+            "brick.statue"
+          ]
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1783467577199",
+        "notes": "Promoted from the AI asset designer."
+      },
+      "promoted-1783747234247": {
+        "name": "promoted-1783747234247",
+        "file": "/assets/brick.statue.idle.promoted-1783747234247.png",
+        "prompt": "A 4-frame idle animation spritesheet for the jungle breakout brick statue, based on the source image, the brick status itself should not move, only subtle movement for the grass, transparent background.",
+        "createdAt": "2026-07-11T05:20:34.283Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "format": "png",
+          "background": "auto",
+          "model": "gpt-image-2",
+          "referenceAssetIds": [
+            "brick.statue"
+          ]
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1783747214993",
+        "notes": "Promoted from the AI asset designer."
       }
     },
     "tags": [
@@ -824,7 +992,10 @@ export const assets = defineAiAssets(
       "statue",
       "animation",
       "idle"
-    ]
+    ],
+    "audioSettings": {},
+    "audioPlayback": {},
+    "voiceSettings": {}
   },
   "brick.statue": {
     "id": "brick.statue",
@@ -832,14 +1003,14 @@ export const assets = defineAiAssets(
     "prompt": "A tough double-hit breakout brick that looks like a tiki statue, mossy cracks, compact readable block silhouette, transparent background.",
     "dimensions": {
       "width": 58,
-      "height": 32
+      "height": 58
     },
     "settings": {
       "format": "png",
       "background": "auto",
       "model": "gpt-image-2"
     },
-    "activeVersion": "promoted-1783130593116",
+    "activeVersion": "promoted-1783467236439",
     "versions": {
       "default": {
         "name": "default",
@@ -880,6 +1051,23 @@ export const assets = defineAiAssets(
         "audioPlayback": {},
         "voiceSettings": {},
         "parentVersion": "promoted-1783130105634",
+        "notes": "Promoted from the AI asset designer."
+      },
+      "promoted-1783467236439": {
+        "name": "promoted-1783467236439",
+        "file": "/assets/brick.statue.promoted-1783467236439.png",
+        "prompt": "A tough double-hit breakout brick that looks like a tiki statue, mossy cracks, compact readable block silhouette, transparent background.",
+        "createdAt": "2026-07-07T23:33:56.521Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "format": "png",
+          "background": "auto",
+          "model": "gpt-image-2"
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1783130593116",
         "notes": "Promoted from the AI asset designer."
       }
     },
@@ -1023,61 +1211,26 @@ export const assets = defineAiAssets(
     "kind": "animation",
     "prompt": "A 4-frame idle animation spritesheet for the jungle breakout brick vines, based on the source image, subtle breathing/leafy sway, transparent background.",
     "dimensions": {
-      "width": 232,
-      "height": 32
+      "width": 116,
+      "height": 116
     },
     "frameGrid": {
       "frameCount": 4,
       "frameWidth": 58,
-      "frameHeight": 32,
-      "columns": 4,
-      "rows": 1
+      "frameHeight": 58,
+      "columns": 2,
+      "rows": 2
     },
     "animations": [
       {
         "key": "brick.vines.idle",
+        "frameRate": 6,
+        "repeat": -1,
         "frames": [
           0,
           1,
           2,
           3
-        ],
-        "frameRate": 6,
-        "repeat": -1,
-        "prompt": "A 4-frame idle animation spritesheet for the jungle breakout brick vines, based on the source image, subtle breathing/leafy sway, transparent background.",
-        "frameTimings": [
-          {
-            "offsetX": 0,
-            "offsetY": 0,
-            "scaleX": 1,
-            "scaleY": 1,
-            "rotation": 0,
-            "tag": "idle-1"
-          },
-          {
-            "offsetX": 1,
-            "offsetY": -2,
-            "scaleX": 1.025,
-            "scaleY": 1.01,
-            "rotation": -2,
-            "tag": "idle-2"
-          },
-          {
-            "offsetX": 0,
-            "offsetY": 0,
-            "scaleX": 1,
-            "scaleY": 1,
-            "rotation": 0,
-            "tag": "idle-3"
-          },
-          {
-            "offsetX": -1,
-            "offsetY": 1,
-            "scaleX": 0.985,
-            "scaleY": 0.99,
-            "rotation": 2,
-            "tag": "idle-4"
-          }
         ]
       }
     ],
@@ -1089,7 +1242,7 @@ export const assets = defineAiAssets(
         "brick.vines"
       ]
     },
-    "activeVersion": "default",
+    "activeVersion": "promoted-1783779766663",
     "versions": {
       "default": {
         "name": "default",
@@ -1107,6 +1260,26 @@ export const assets = defineAiAssets(
         },
         "parentVersion": "promoted-1783131313782",
         "notes": "Default animation spritesheet derived from the current base image."
+      },
+      "promoted-1783779766663": {
+        "name": "promoted-1783779766663",
+        "file": "/assets/brick.vines.idle.promoted-1783779766663.png",
+        "prompt": "A 4-frame idle animation spritesheet for the jungle breakout brick vines, based on the source image, subtle breathing/leafy sway, transparent background.",
+        "createdAt": "2026-07-11T14:22:46.694Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "format": "png",
+          "background": "auto",
+          "model": "gpt-image-2",
+          "referenceAssetIds": [
+            "brick.vines"
+          ]
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "default",
+        "notes": "Promoted from the AI asset designer."
       }
     },
     "tags": [
@@ -1114,22 +1287,25 @@ export const assets = defineAiAssets(
       "vines",
       "animation",
       "idle"
-    ]
+    ],
+    "audioSettings": {},
+    "audioPlayback": {},
+    "voiceSettings": {}
   },
   "brick.vines": {
     "id": "brick.vines",
     "kind": "image",
-    "prompt": "A very thick jungle vine twisting horizontally with a heavy shadow, transparent background.",
+    "prompt": "A very thick bundle of jungle vines twisting with a heavy shadow, transparent background.",
     "dimensions": {
       "width": 58,
-      "height": 32
+      "height": 58
     },
     "settings": {
       "format": "png",
       "background": "auto",
       "model": "gpt-image-2"
     },
-    "activeVersion": "promoted-1783131313782",
+    "activeVersion": "promoted-1783779715673",
     "versions": {
       "default": {
         "name": "default",
@@ -1170,6 +1346,40 @@ export const assets = defineAiAssets(
         "audioPlayback": {},
         "voiceSettings": {},
         "parentVersion": "promoted-1783131153452",
+        "notes": "Promoted from the AI asset designer."
+      },
+      "promoted-1783779653621": {
+        "name": "promoted-1783779653621",
+        "file": "/assets/brick.vines.promoted-1783779653621.png",
+        "prompt": "A very thick jungle vine twisting horizontally with a heavy shadow, transparent background.",
+        "createdAt": "2026-07-11T14:20:53.695Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "format": "png",
+          "background": "auto",
+          "model": "gpt-image-2"
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1783131313782",
+        "notes": "Promoted from the AI asset designer."
+      },
+      "promoted-1783779715673": {
+        "name": "promoted-1783779715673",
+        "file": "/assets/brick.vines.promoted-1783779715673.png",
+        "prompt": "A very thick bundle of jungle vines twisting with a heavy shadow, transparent background.",
+        "createdAt": "2026-07-11T14:21:55.711Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "format": "png",
+          "background": "auto",
+          "model": "gpt-image-2"
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1783779653621",
         "notes": "Promoted from the AI asset designer."
       }
     },
@@ -1310,17 +1520,17 @@ export const assets = defineAiAssets(
   "enemy.monkey.idle": {
     "id": "enemy.monkey.idle",
     "kind": "animation",
-    "prompt": "A 4-frame idle animation spritesheet for the mischievous jungle monkey enemy, based on the source image, subtle bounce and arm movement, transparent background.",
+    "prompt": "mischievous jungle monkey enemy, based on the source image, subtle bounce and arm movement, transparent background.",
     "dimensions": {
-      "width": 288,
-      "height": 128
+      "width": 216,
+      "height": 384
     },
     "frameGrid": {
-      "frameCount": 4,
+      "frameCount": 8,
       "frameWidth": 72,
       "frameHeight": 128,
-      "columns": 4,
-      "rows": 1
+      "columns": 3,
+      "rows": 3
     },
     "animations": [
       {
@@ -1329,13 +1539,18 @@ export const assets = defineAiAssets(
           0,
           1,
           2,
-          3
+          3,
+          4,
+          5,
+          6,
+          7
         ],
         "frameRate": 7,
         "repeat": -1,
         "prompt": "A 4-frame idle animation spritesheet for the mischievous jungle monkey enemy, based on the source image, subtle bounce and arm movement, transparent background.",
         "frameTimings": [
           {
+            "delayMs": 143,
             "offsetX": 0,
             "offsetY": 0,
             "scaleX": 1,
@@ -1344,6 +1559,7 @@ export const assets = defineAiAssets(
             "tag": "idle-1"
           },
           {
+            "delayMs": 143,
             "offsetX": 1,
             "offsetY": -2,
             "scaleX": 1.025,
@@ -1352,6 +1568,7 @@ export const assets = defineAiAssets(
             "tag": "idle-2"
           },
           {
+            "delayMs": 143,
             "offsetX": 0,
             "offsetY": 0,
             "scaleX": 1,
@@ -1360,12 +1577,45 @@ export const assets = defineAiAssets(
             "tag": "idle-3"
           },
           {
+            "delayMs": 143,
             "offsetX": -1,
             "offsetY": 1,
             "scaleX": 0.985,
             "scaleY": 0.99,
             "rotation": 2,
             "tag": "idle-4"
+          },
+          {
+            "delayMs": 143,
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "rotation": 0
+          },
+          {
+            "delayMs": 143,
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "rotation": 0
+          },
+          {
+            "delayMs": 143,
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "rotation": 0
+          },
+          {
+            "delayMs": 143,
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "rotation": 0
           }
         ]
       }
@@ -1378,7 +1628,7 @@ export const assets = defineAiAssets(
         "enemy.monkey"
       ]
     },
-    "activeVersion": "default",
+    "activeVersion": "promoted-1783261900537",
     "versions": {
       "default": {
         "name": "default",
@@ -1396,6 +1646,46 @@ export const assets = defineAiAssets(
         },
         "parentVersion": "promoted-1783135961965",
         "notes": "Default animation spritesheet derived from the current base image."
+      },
+      "promoted-1783221370180": {
+        "name": "promoted-1783221370180",
+        "file": "/assets/enemy.monkey.idle.promoted-1783221370180.png",
+        "prompt": "mischievous jungle monkey enemy, based on the source image, subtle bounce and arm movement, transparent background.",
+        "createdAt": "2026-07-05T03:16:10.230Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "format": "png",
+          "background": "auto",
+          "model": "gpt-image-2",
+          "referenceAssetIds": [
+            "enemy.monkey"
+          ]
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "default",
+        "notes": "Promoted from the AI asset designer."
+      },
+      "promoted-1783261900537": {
+        "name": "promoted-1783261900537",
+        "file": "/assets/enemy.monkey.idle.promoted-1783261900537.png",
+        "prompt": "mischievous jungle monkey enemy, based on the source image, subtle bounce and arm movement, transparent background.",
+        "createdAt": "2026-07-05T14:31:40.598Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "format": "png",
+          "background": "auto",
+          "model": "gpt-image-2",
+          "referenceAssetIds": [
+            "enemy.monkey"
+          ]
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1783221370180",
+        "notes": "Promoted from the AI asset designer."
       }
     },
     "tags": [
@@ -1403,7 +1693,10 @@ export const assets = defineAiAssets(
       "monkey",
       "animation",
       "idle"
-    ]
+    ],
+    "audioSettings": {},
+    "audioPlayback": {},
+    "voiceSettings": {}
   },
   "enemy.monkey": {
     "id": "enemy.monkey",
@@ -1570,61 +1863,26 @@ export const assets = defineAiAssets(
     "kind": "animation",
     "prompt": "A 4-frame biting animation spritesheet for the jungle snake enemy, based on the source image, lunge and bite pose, transparent background.",
     "dimensions": {
-      "width": 256,
-      "height": 128
+      "width": 128,
+      "height": 256
     },
     "frameGrid": {
       "frameCount": 4,
       "frameWidth": 64,
       "frameHeight": 128,
-      "columns": 4,
-      "rows": 1
+      "columns": 2,
+      "rows": 2
     },
     "animations": [
       {
         "key": "enemy.snake.biting",
+        "frameRate": 12,
+        "repeat": 0,
         "frames": [
           0,
           1,
           2,
           3
-        ],
-        "frameRate": 12,
-        "repeat": 0,
-        "prompt": "A 4-frame biting animation spritesheet for the jungle snake enemy, based on the source image, lunge and bite pose, transparent background.",
-        "frameTimings": [
-          {
-            "offsetX": 0,
-            "offsetY": 0,
-            "scaleX": 1,
-            "scaleY": 1,
-            "rotation": 0,
-            "tag": "biting-1"
-          },
-          {
-            "offsetX": 2,
-            "offsetY": 4,
-            "scaleX": 1.06,
-            "scaleY": 1.02,
-            "rotation": -4,
-            "tag": "biting-2"
-          },
-          {
-            "offsetX": 5,
-            "offsetY": 8,
-            "scaleX": 1.12,
-            "scaleY": 0.96,
-            "rotation": 5,
-            "tag": "biting-3"
-          },
-          {
-            "offsetX": 0,
-            "offsetY": 0,
-            "scaleX": 1,
-            "scaleY": 1,
-            "rotation": 0,
-            "tag": "biting-4"
-          }
         ]
       }
     ],
@@ -1634,9 +1892,10 @@ export const assets = defineAiAssets(
       "model": "gpt-image-2",
       "referenceAssetIds": [
         "enemy.snake"
-      ]
+      ],
+      "frameAlignment": "center"
     },
-    "activeVersion": "default",
+    "activeVersion": "promoted-1783786282343",
     "versions": {
       "default": {
         "name": "default",
@@ -1654,6 +1913,47 @@ export const assets = defineAiAssets(
         },
         "parentVersion": "promoted-1783135705211",
         "notes": "Default animation spritesheet derived from the current base image."
+      },
+      "promoted-1783786118282": {
+        "name": "promoted-1783786118282",
+        "file": "/assets/enemy.snake.biting.promoted-1783786118282.svg",
+        "prompt": "A 4-frame biting animation spritesheet for the jungle snake enemy, based on the source image, lunge and bite pose, transparent background.",
+        "createdAt": "2026-07-11T16:08:38.321Z",
+        "model": "base-image-spritesheet",
+        "settings": {
+          "format": "png",
+          "background": "auto",
+          "model": "gpt-image-2",
+          "referenceAssetIds": [
+            "enemy.snake"
+          ]
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "default",
+        "notes": "Promoted from the AI asset designer."
+      },
+      "promoted-1783786282343": {
+        "name": "promoted-1783786282343",
+        "file": "/assets/enemy.snake.biting.promoted-1783786282343.png",
+        "prompt": "A 4-frame biting animation spritesheet for the jungle snake enemy, based on the source image, lunge and bite pose, transparent background.",
+        "createdAt": "2026-07-11T16:11:22.386Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "format": "png",
+          "background": "auto",
+          "model": "gpt-image-2",
+          "referenceAssetIds": [
+            "enemy.snake"
+          ],
+          "frameAlignment": "center"
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1783786118282",
+        "notes": "Promoted from the AI asset designer."
       }
     },
     "tags": [
@@ -1661,7 +1961,10 @@ export const assets = defineAiAssets(
       "snake",
       "animation",
       "biting"
-    ]
+    ],
+    "audioSettings": {},
+    "audioPlayback": {},
+    "voiceSettings": {}
   },
   "enemy.snake.destroyed": {
     "id": "enemy.snake.destroyed",
@@ -1782,63 +2085,28 @@ export const assets = defineAiAssets(
   "enemy.snake.idle": {
     "id": "enemy.snake.idle",
     "kind": "animation",
-    "prompt": "A 4-frame idle animation spritesheet for the jungle snake enemy, based on the source image, subtle slither movement, transparent background.",
+    "prompt": "A 4-frame idle animation spritesheet for the jungle snake enemy, based on the source image, subtle slither movement and tongue movement, transparent background.",
     "dimensions": {
-      "width": 256,
-      "height": 128
+      "width": 128,
+      "height": 256
     },
     "frameGrid": {
       "frameCount": 4,
       "frameWidth": 64,
       "frameHeight": 128,
-      "columns": 4,
-      "rows": 1
+      "columns": 2,
+      "rows": 2
     },
     "animations": [
       {
         "key": "enemy.snake.idle",
+        "frameRate": 7,
+        "repeat": -1,
         "frames": [
           0,
           1,
           2,
           3
-        ],
-        "frameRate": 7,
-        "repeat": -1,
-        "prompt": "A 4-frame idle animation spritesheet for the jungle snake enemy, based on the source image, subtle slither movement, transparent background.",
-        "frameTimings": [
-          {
-            "offsetX": 0,
-            "offsetY": 0,
-            "scaleX": 1,
-            "scaleY": 1,
-            "rotation": 0,
-            "tag": "idle-1"
-          },
-          {
-            "offsetX": 1,
-            "offsetY": -2,
-            "scaleX": 1.025,
-            "scaleY": 1.01,
-            "rotation": -2,
-            "tag": "idle-2"
-          },
-          {
-            "offsetX": 0,
-            "offsetY": 0,
-            "scaleX": 1,
-            "scaleY": 1,
-            "rotation": 0,
-            "tag": "idle-3"
-          },
-          {
-            "offsetX": -1,
-            "offsetY": 1,
-            "scaleX": 0.985,
-            "scaleY": 0.99,
-            "rotation": 2,
-            "tag": "idle-4"
-          }
         ]
       }
     ],
@@ -1848,9 +2116,10 @@ export const assets = defineAiAssets(
       "model": "gpt-image-2",
       "referenceAssetIds": [
         "enemy.snake"
-      ]
+      ],
+      "frameAlignment": "center"
     },
-    "activeVersion": "default",
+    "activeVersion": "promoted-1783786066969",
     "versions": {
       "default": {
         "name": "default",
@@ -1868,6 +2137,47 @@ export const assets = defineAiAssets(
         },
         "parentVersion": "promoted-1783135705211",
         "notes": "Default animation spritesheet derived from the current base image."
+      },
+      "promoted-1783781183904": {
+        "name": "promoted-1783781183904",
+        "file": "/assets/enemy.snake.idle.promoted-1783781183904.svg",
+        "prompt": "A 4-frame idle animation spritesheet for the jungle snake enemy, based on the source image, subtle slither movement, transparent background.",
+        "createdAt": "2026-07-11T14:46:23.950Z",
+        "model": "base-image-spritesheet",
+        "settings": {
+          "format": "png",
+          "background": "auto",
+          "model": "gpt-image-2",
+          "referenceAssetIds": [
+            "enemy.snake"
+          ]
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "default",
+        "notes": "Promoted from the AI asset designer."
+      },
+      "promoted-1783786066969": {
+        "name": "promoted-1783786066969",
+        "file": "/assets/enemy.snake.idle.promoted-1783786066969.png",
+        "prompt": "A 4-frame idle animation spritesheet for the jungle snake enemy, based on the source image, subtle slither movement and tongue movement, transparent background.",
+        "createdAt": "2026-07-11T16:07:47.059Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "format": "png",
+          "background": "auto",
+          "model": "gpt-image-2",
+          "referenceAssetIds": [
+            "enemy.snake"
+          ],
+          "frameAlignment": "center"
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1783781183904",
+        "notes": "Promoted from the AI asset designer."
       }
     },
     "tags": [
@@ -1875,7 +2185,10 @@ export const assets = defineAiAssets(
       "snake",
       "animation",
       "idle"
-    ]
+    ],
+    "audioSettings": {},
+    "audioPlayback": {},
+    "voiceSettings": {}
   },
   "enemy.snake": {
     "id": "enemy.snake",
@@ -3106,7 +3419,7 @@ export const assets = defineAiAssets(
       "background": "opaque",
       "model": "gpt-image-2"
     },
-    "activeVersion": "default",
+    "activeVersion": "promoted-1783779885113",
     "versions": {
       "default": {
         "name": "default",
@@ -3114,6 +3427,23 @@ export const assets = defineAiAssets(
         "prompt": "A seamless jungle ruin wall texture tile for a breakout obstacle, mossy carved stone blocks with vines, readable pixel-art details, tileable edges.",
         "createdAt": "2026-07-04T00:00:00.000Z",
         "model": "manual-svg"
+      },
+      "promoted-1783779885113": {
+        "name": "promoted-1783779885113",
+        "file": "/assets/wall.stone.promoted-1783779885113.png",
+        "prompt": "A seamless jungle ruin wall texture tile for a breakout obstacle, mossy carved stone blocks with vines, readable pixel-art details, tileable edges.",
+        "createdAt": "2026-07-11T14:24:45.158Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "format": "png",
+          "background": "opaque",
+          "model": "gpt-image-2"
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "default",
+        "notes": "Promoted from the AI asset designer."
       }
     },
     "tags": [

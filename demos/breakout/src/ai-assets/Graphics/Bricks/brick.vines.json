@@ -1,17 +1,17 @@
 {
   "id": "brick.vines",
   "kind": "image",
-  "prompt": "A very thick jungle vine twisting horizontally with a heavy shadow, transparent background.",
+  "prompt": "A very thick bundle of jungle vines twisting with a heavy shadow, transparent background.",
   "dimensions": {
     "width": 58,
-    "height": 32
+    "height": 58
   },
   "settings": {
     "format": "png",
     "background": "auto",
     "model": "gpt-image-2"
   },
-  "activeVersion": "promoted-1783131313782",
+  "activeVersion": "promoted-1783779715673",
   "versions": {
     "default": {
       "name": "default",
@@ -52,6 +52,40 @@
       "audioPlayback": {},
       "voiceSettings": {},
       "parentVersion": "promoted-1783131153452",
+      "notes": "Promoted from the AI asset designer."
+    },
+    "promoted-1783779653621": {
+      "name": "promoted-1783779653621",
+      "file": "/assets/brick.vines.promoted-1783779653621.png",
+      "prompt": "A very thick jungle vine twisting horizontally with a heavy shadow, transparent background.",
+      "createdAt": "2026-07-11T14:20:53.695Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "format": "png",
+        "background": "auto",
+        "model": "gpt-image-2"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "promoted-1783131313782",
+      "notes": "Promoted from the AI asset designer."
+    },
+    "promoted-1783779715673": {
+      "name": "promoted-1783779715673",
+      "file": "/assets/brick.vines.promoted-1783779715673.png",
+      "prompt": "A very thick bundle of jungle vines twisting with a heavy shadow, transparent background.",
+      "createdAt": "2026-07-11T14:21:55.711Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "format": "png",
+        "background": "auto",
+        "model": "gpt-image-2"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "promoted-1783779653621",
       "notes": "Promoted from the AI asset designer."
     }
   },

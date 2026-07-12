@@ -3,60 +3,59 @@
   "kind": "animation",
   "prompt": "A 4-frame idle animation spritesheet for the jungle breakout brick pineapple, based on the source image, subtle breathing/leafy sway, transparent background.",
   "dimensions": {
-    "width": 232,
-    "height": 32
+    "width": 116,
+    "height": 116
   },
   "frameGrid": {
     "frameCount": 4,
     "frameWidth": 58,
-    "frameHeight": 32,
-    "columns": 4,
-    "rows": 1
+    "frameHeight": 58,
+    "columns": 2,
+    "rows": 2
   },
   "animations": [
     {
       "key": "brick.pineapple.idle",
+      "frameRate": 6,
+      "repeat": -1,
       "frames": [
         0,
         1,
         2,
         3
       ],
-      "frameRate": 6,
-      "repeat": -1,
-      "prompt": "A 4-frame idle animation spritesheet for the jungle breakout brick pineapple, based on the source image, subtle breathing/leafy sway, transparent background.",
       "frameTimings": [
         {
+          "delayMs": 167,
+          "offsetX": -3,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotation": 0
+        },
+        {
+          "delayMs": 167,
           "offsetX": 0,
           "offsetY": 0,
           "scaleX": 1,
           "scaleY": 1,
-          "rotation": 0,
-          "tag": "idle-1"
+          "rotation": 0
         },
         {
-          "offsetX": 1,
-          "offsetY": -2,
-          "scaleX": 1.025,
-          "scaleY": 1.01,
-          "rotation": -2,
-          "tag": "idle-2"
+          "delayMs": 167,
+          "offsetX": -4,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotation": 0
         },
         {
+          "delayMs": 167,
           "offsetX": 0,
           "offsetY": 0,
           "scaleX": 1,
           "scaleY": 1,
-          "rotation": 0,
-          "tag": "idle-3"
-        },
-        {
-          "offsetX": -1,
-          "offsetY": 1,
-          "scaleX": 0.985,
-          "scaleY": 0.99,
-          "rotation": 2,
-          "tag": "idle-4"
+          "rotation": 0
         }
       ]
     }
@@ -69,7 +68,7 @@
       "brick.pineapple"
     ]
   },
-  "activeVersion": "default",
+  "activeVersion": "promoted-1783779300905",
   "versions": {
     "default": {
       "name": "default",
@@ -87,6 +86,46 @@
       },
       "parentVersion": "promoted-1783128876390",
       "notes": "Default animation spritesheet derived from the current base image."
+    },
+    "promoted-1783779249700": {
+      "name": "promoted-1783779249700",
+      "file": "/assets/brick.pineapple.idle.promoted-1783779249700.png",
+      "prompt": "A 4-frame idle animation spritesheet for the jungle breakout brick pineapple, based on the source image, subtle breathing/leafy sway, transparent background.",
+      "createdAt": "2026-07-11T14:14:09.742Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "format": "png",
+        "background": "auto",
+        "model": "gpt-image-2",
+        "referenceAssetIds": [
+          "brick.pineapple"
+        ]
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "default",
+      "notes": "Promoted from the AI asset designer."
+    },
+    "promoted-1783779300905": {
+      "name": "promoted-1783779300905",
+      "file": "/assets/brick.pineapple.idle.promoted-1783779300905.png",
+      "prompt": "A 4-frame idle animation spritesheet for the jungle breakout brick pineapple, based on the source image, subtle breathing/leafy sway, transparent background.",
+      "createdAt": "2026-07-11T14:15:00.940Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "format": "png",
+        "background": "auto",
+        "model": "gpt-image-2",
+        "referenceAssetIds": [
+          "brick.pineapple"
+        ]
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "promoted-1783779249700",
+      "notes": "Promoted from the AI asset designer."
     }
   },
   "tags": [
@@ -94,5 +133,8 @@
     "pineapple",
     "animation",
     "idle"
-  ]
+  ],
+  "audioSettings": {},
+  "audioPlayback": {},
+  "voiceSettings": {}
 }

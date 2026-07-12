@@ -131,7 +131,7 @@
           "overrides": {
             "sprite": {
               "x": 240,
-              "y": 144,
+              "y": 164,
               "assetId": "brick.pineapple"
             }
           }
@@ -144,7 +144,7 @@
           "overrides": {
             "sprite": {
               "x": 320,
-              "y": 144,
+              "y": 164,
               "assetId": "brick.leaves"
             }
           }
@@ -157,7 +157,7 @@
           "overrides": {
             "sprite": {
               "x": 400,
-              "y": 144,
+              "y": 164,
               "assetId": "brick.vines"
             }
           }
@@ -170,7 +170,7 @@
           "overrides": {
             "sprite": {
               "x": 480,
-              "y": 144,
+              "y": 164,
               "assetId": "brick.leaves"
             }
           }
@@ -183,7 +183,7 @@
           "overrides": {
             "sprite": {
               "x": 560,
-              "y": 144,
+              "y": 164,
               "assetId": "brick.pineapple"
             }
           }
@@ -196,7 +196,7 @@
           "overrides": {
             "sprite": {
               "x": 320,
-              "y": 184,
+              "y": 231.15502555366268,
               "assetId": "brick.leaves"
             }
           }
@@ -209,7 +209,7 @@
           "overrides": {
             "sprite": {
               "x": 400,
-              "y": 184
+              "y": 231.15502555366268
             }
           }
         },
@@ -221,7 +221,7 @@
           "overrides": {
             "sprite": {
               "x": 480,
-              "y": 184,
+              "y": 231.15502555366268,
               "assetId": "brick.leaves"
             }
           }
@@ -233,8 +233,8 @@
           "locked": false,
           "overrides": {
             "sprite": {
-              "x": 400,
-              "y": 224,
+              "x": 398.9778500913347,
+              "y": 275.2436115843271,
               "assetId": "brick.vines"
             }
           }
@@ -352,7 +352,7 @@
     {
       "id": "layer-areas",
       "name": "Spawn Areas",
-      "visible": true,
+      "visible": false,
       "locked": false,
       "objects": [],
       "areas": [],
@@ -381,8 +381,8 @@
                   "x": 616,
                   "y": 330,
                   "curve": {
-                    "cx": 682,
-                    "cy": 296
+                    "cx": 535.6065521406255,
+                    "cy": 124.70187393526405
                   }
                 },
                 {
@@ -394,7 +394,11 @@
                     "cy": 296
                   }
                 }
-              ]
+              ],
+              "tag": "enemy.spawn",
+              "visible": true,
+              "locked": false,
+              "id": "l2-enemy-spawn::area"
             }
           }
         }
