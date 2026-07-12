@@ -10,7 +10,8 @@ import {
   type AiAssetAnimation,
   type AiAssetDefinition,
   type AiAssetAnimationFrameTiming,
-  type AiAssetManifest
+  type AiAssetManifest,
+  type AiAudioPlaybackSettings
 } from "@ai-game-assets/core";
 import {
   behaviorInstanceIdFromAttributeId,
@@ -56,6 +57,11 @@ type AiAnimationBaseTransform = {
   angle: number;
 };
 
+type PreviewAudioSource = {
+  src: string;
+  playback?: AiAudioPlaybackSettings;
+};
+
 const initialLevelOrder = ["level.one", "level.two", "level.three"];
 const brickTag = "brick";
 const backgroundTag = "background";
@@ -67,6 +73,11 @@ const statueBrickAssetId = "brick.statue";
 const snakeAssetId = "enemy.snake";
 const monkeyAssetId = "enemy.monkey";
 const bananaAssetId = "projectile.banana";
+const paddleSfxAssetId = "audio.sfx.paddle";
+const brickSfxAssetId = "audio.sfx.brick";
+const wallSfxAssetId = "audio.sfx.wall";
+const enemySfxAssetId = "audio.sfx.enemy";
+const levelSfxAssetId = "audio.sfx.level";
 const defaultEnemySpawnIntervalSeconds = 18;
 const firstEnemySpawnDelayMs = 5000;
 const maxActiveEnemies = 2;
@@ -139,6 +150,8 @@ export class BreakoutScene extends Phaser.Scene {
   private paddleKeyboardSpeed = defaultPaddleKeyboardSpeed;
   private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
   private readonly previewTextures = new Map<string, string>();
+  private readonly previewAudioSources = new Map<string, PreviewAudioSource>();
+  private readonly activeAudioElements = new Set<HTMLAudioElement>();
 
   constructor(options: BreakoutSceneOptions) {
     super("breakout");
@@ -190,10 +203,12 @@ export class BreakoutScene extends Phaser.Scene {
         },
         onPreview: (assetId, textureKey, asset) => {
           aiDesignerCallbacks.onPreview(assetId, textureKey, asset);
+          this.applyAiAssetAudio(assetId, textureKey, asset);
           this.applyAiAssetTexture(assetId, textureKey, asset);
         },
         onAssetReady: (assetId, textureKey, asset) => {
           aiDesignerCallbacks.onAssetReady(assetId, textureKey, asset);
+          this.applyAiAssetAudio(assetId, textureKey, asset);
           this.applyAiAssetTexture(assetId, textureKey, asset);
         }
       });
@@ -223,6 +238,7 @@ export class BreakoutScene extends Phaser.Scene {
       this.sceneDesigner?.destroy();
       this.debugPauseButton?.remove();
       this.platformRenderer?.destroy();
+      this.stopActiveAudio();
     });
   }
 
@@ -484,6 +500,7 @@ export class BreakoutScene extends Phaser.Scene {
 
       this.wallLastHitAt.set(platform.id, this.time.now);
       this.reflectBallFromNormal(this.ball, hit.normal, hit.point);
+      this.playSfx(wallSfxAssetId);
       break;
     }
   }
@@ -513,6 +530,7 @@ export class BreakoutScene extends Phaser.Scene {
     const offset = Phaser.Math.Clamp((ball.x - this.paddle.x) / 64, -1, 1);
     ball.setVelocityX(offset * 310);
     ball.setVelocityY(-Math.abs(ball.body.velocity.y) - 8);
+    this.playSfx(paddleSfxAssetId);
   }
 
   private onBrickHit(
@@ -523,6 +541,7 @@ export class BreakoutScene extends Phaser.Scene {
     const ball = ballObject as ArcadeImage;
     const brick = brickObject as BrickSprite;
     this.reflectBallFromObject(ball, brick, collisionPoint);
+    this.playSfx(brickSfxAssetId);
 
     const hp = Math.max(0, Number(brick.getData("hp") ?? 1) - 1);
 
@@ -1069,6 +1088,7 @@ export class BreakoutScene extends Phaser.Scene {
     enemy.setData("destroying", true);
     enemy.setVelocity(0, 0);
     enemy.body.enable = false;
+    this.playSfx(enemySfxAssetId);
     const baseAssetId = String(enemy.getData("baseAssetId") ?? enemy.getData("assetId"));
     const duration = this.playLinkedAnimation(enemy, baseAssetId, state);
     if (awardScore) {
@@ -1091,6 +1111,7 @@ export class BreakoutScene extends Phaser.Scene {
     if (hasActiveBricks) return;
 
     this.levelAdvanceScheduled = true;
+    this.playSfx(levelSfxAssetId);
     const levelIds = this.levelIds();
     if (!levelIds.length) return;
     const nextIndex = Phaser.Math.Wrap((this.levelIndex < 0 ? 0 : this.levelIndex) + 1, 0, levelIds.length);
@@ -1157,6 +1178,81 @@ export class BreakoutScene extends Phaser.Scene {
     for (const object of this.bananas?.children ?? []) {
       this.applyTextureToGameObject(object, assetId, textureKey, asset);
     }
+  }
+
+  private applyAiAssetAudio(assetId: string, src: string, asset: AiAssetDefinition): void {
+    if (!isAudioAsset(asset)) return;
+
+    const activeVersion = asset.versions[asset.activeVersion];
+    this.previewAudioSources.set(assetId, {
+      src,
+      playback: asset.audioPlayback ?? activeVersion?.audioPlayback
+    });
+  }
+
+  private playSfx(assetId: string): void {
+    const asset = this.aiAssets.assets[assetId];
+    if (!asset || !isAudioAsset(asset)) return;
+
+    const activeVersion = asset.versions[asset.activeVersion];
+    const preview = this.previewAudioSources.get(assetId);
+    const src = preview?.src ?? (activeVersion?.file ? this.aiRuntime.url(assetId) : undefined);
+    if (!src) return;
+
+    const playback = preview?.playback ?? asset.audioPlayback ?? activeVersion?.audioPlayback;
+    const audio = new Audio(src);
+    const trimStart = Math.max(0, playback?.trimStartSeconds ?? 0);
+    const trimEnd = Math.max(trimStart, playback?.trimEndSeconds ?? 0);
+    const shouldLoop = Boolean(playback?.loop);
+    let disposed = false;
+    const cleanup = () => {
+      if (disposed) return;
+      disposed = true;
+      audio.removeEventListener("timeupdate", enforceTrim);
+      audio.removeEventListener("loadedmetadata", start);
+      this.activeAudioElements.delete(audio);
+      audio.removeAttribute("src");
+      audio.load();
+    };
+    const enforceTrim = () => {
+      if (trimEnd <= trimStart || audio.currentTime < trimEnd) return;
+      if (shouldLoop) {
+        audio.currentTime = trimStart;
+        void audio.play().catch(() => cleanup());
+      } else {
+        audio.pause();
+        cleanup();
+      }
+    };
+    const start = () => {
+      if (disposed) return;
+      audio.volume = Phaser.Math.Clamp(playback?.volume ?? 1, 0, 1);
+      const pitchRate = 2 ** ((playback?.pitchSemitones ?? 0) / 12);
+      audio.playbackRate = Phaser.Math.Clamp((playback?.playbackRate ?? 1) * pitchRate, 0.25, 4);
+      audio.loop = shouldLoop && trimEnd <= trimStart;
+      if (trimStart > 0) audio.currentTime = trimStart;
+      void audio.play().catch(() => cleanup());
+    };
+
+    this.activeAudioElements.add(audio);
+    audio.addEventListener("timeupdate", enforceTrim);
+    audio.addEventListener("ended", cleanup, { once: true });
+    audio.addEventListener("error", cleanup, { once: true });
+    if (audio.readyState >= HTMLMediaElement.HAVE_METADATA) {
+      start();
+    } else {
+      audio.addEventListener("loadedmetadata", start, { once: true });
+      audio.load();
+    }
+  }
+
+  private stopActiveAudio(): void {
+    for (const audio of this.activeAudioElements) {
+      audio.pause();
+      audio.removeAttribute("src");
+      audio.load();
+    }
+    this.activeAudioElements.clear();
   }
 
   private applyTextureToGameObject(
@@ -1273,6 +1369,13 @@ export class BreakoutScene extends Phaser.Scene {
     state.timing = undefined;
     sprite.setData(aiAnimationFrameTransformKey, state);
   }
+}
+
+function isAudioAsset(asset: AiAssetDefinition): boolean {
+  return asset.kind === "sound"
+    || asset.kind === "music"
+    || asset.kind === "voice"
+    || asset.kind === "voice-line";
 }
 
 function isVisualAsset(asset: AiAssetDefinition): boolean {
