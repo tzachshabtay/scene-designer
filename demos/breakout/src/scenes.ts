@@ -1231,6 +1231,50 @@ export const scenes = defineSceneManifest(
         "breakout",
         "level"
       ]
+    },
+    "scene-mrhvg0st-tw853l": {
+      "id": "scene-mrhvg0st-tw853l",
+      "name": "Level 4",
+      "width": 800,
+      "height": 600,
+      "layers": [
+        {
+          "id": "layer-mrhvg0st-tu9sgt",
+          "name": "Background",
+          "visible": true,
+          "locked": false,
+          "behaviors": [
+            {
+              "id": "behavior-instance-mrhvgviv-yciimd",
+              "behaviorId": "background",
+              "name": "Background",
+              "visible": true,
+              "locked": false,
+              "overrides": {}
+            }
+          ],
+          "objects": [],
+          "areas": []
+        },
+        {
+          "id": "layer-mrhvhke9-hwqb8f",
+          "name": "Bricks",
+          "visible": true,
+          "locked": false,
+          "behaviors": [],
+          "objects": [],
+          "areas": []
+        },
+        {
+          "id": "layer-mrhvj9lb-i59wls",
+          "name": "Walls",
+          "visible": true,
+          "locked": false,
+          "behaviors": [],
+          "objects": [],
+          "areas": []
+        }
+      ]
     }
   },
   "behaviors": {
@@ -1382,29 +1426,8 @@ export const scenes = defineSceneManifest(
             "assetId": "wall.stone",
             "visible": true,
             "locked": false,
-            "closed": true,
-            "vertices": [
-              {
-                "id": "wall-default-top-left",
-                "x": 260,
-                "y": 260
-              },
-              {
-                "id": "wall-default-top-right",
-                "x": 540,
-                "y": 260
-              },
-              {
-                "id": "wall-default-bottom-right",
-                "x": 540,
-                "y": 292
-              },
-              {
-                "id": "wall-default-bottom-left",
-                "x": 260,
-                "y": 292
-              }
-            ],
+            "closed": false,
+            "vertices": [],
             "paint": {
               "mode": "tile",
               "mirrorX": true,
@@ -1574,7 +1597,8 @@ export const scenes = defineSceneManifest(
   "scenePaths": {
     "level.one": [],
     "level.three": [],
-    "level.two": []
+    "level.two": [],
+    "scene-mrhvg0st-tw853l": []
   }
 }
 );

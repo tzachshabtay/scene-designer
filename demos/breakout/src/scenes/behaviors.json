@@ -147,29 +147,8 @@
           "assetId": "wall.stone",
           "visible": true,
           "locked": false,
-          "closed": true,
-          "vertices": [
-            {
-              "id": "wall-default-top-left",
-              "x": 260,
-              "y": 260
-            },
-            {
-              "id": "wall-default-top-right",
-              "x": 540,
-              "y": 260
-            },
-            {
-              "id": "wall-default-bottom-right",
-              "x": 540,
-              "y": 292
-            },
-            {
-              "id": "wall-default-bottom-left",
-              "x": 260,
-              "y": 292
-            }
-          ],
+          "closed": false,
+          "vertices": [],
           "paint": {
             "mode": "tile",
             "mirrorX": true,

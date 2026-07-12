@@ -861,14 +861,29 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
       });
       layer.behaviors ??= [];
       layer.behaviors.push(instance);
-      selection = {
-        type: "behavior",
-        sceneId: scene.id,
-        layerId: layer.id,
-        instanceId: instance.id
-      };
+      const emptyAreaAttribute = behavior.attributes.find((attribute) => (
+        isAreaLikeAttribute(attribute) && areaDefaultsForAttribute(attribute).vertices.length === 0
+      ));
+      if (emptyAreaAttribute) {
+        selection = {
+          type: "area",
+          sceneId: scene.id,
+          layerId: layer.id,
+          areaId: behaviorAttributeId(instance.id, emptyAreaAttribute.id)
+        };
+        mode = "area-draw";
+      } else {
+        selection = {
+          type: "behavior",
+          sceneId: scene.id,
+          layerId: layer.id,
+          instanceId: instance.id
+        };
+        mode = "select";
+      }
     });
     emitSelection();
+    options.onModeChange?.(mode);
   }
 
   function renderBehaviorInstanceItem(

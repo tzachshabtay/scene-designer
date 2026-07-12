@@ -1,0 +1,44 @@
+{
+  "id": "scene-mrhvg0st-tw853l",
+  "name": "Level 4",
+  "width": 800,
+  "height": 600,
+  "layers": [
+    {
+      "id": "layer-mrhvg0st-tu9sgt",
+      "name": "Background",
+      "visible": true,
+      "locked": false,
+      "behaviors": [
+        {
+          "id": "behavior-instance-mrhvgviv-yciimd",
+          "behaviorId": "background",
+          "name": "Background",
+          "visible": true,
+          "locked": false,
+          "overrides": {}
+        }
+      ],
+      "objects": [],
+      "areas": []
+    },
+    {
+      "id": "layer-mrhvhke9-hwqb8f",
+      "name": "Bricks",
+      "visible": true,
+      "locked": false,
+      "behaviors": [],
+      "objects": [],
+      "areas": []
+    },
+    {
+      "id": "layer-mrhvj9lb-i59wls",
+      "name": "Walls",
+      "visible": true,
+      "locked": false,
+      "behaviors": [],
+      "objects": [],
+      "areas": []
+    }
+  ]
+}
