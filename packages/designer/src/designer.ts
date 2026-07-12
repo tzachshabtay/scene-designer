@@ -108,6 +108,8 @@ type Elements = {
   behaviorToggle: HTMLButtonElement;
   panel: HTMLDivElement;
   behaviorPanel: HTMLDivElement;
+  sceneTitle: HTMLDivElement;
+  behaviorTitle: HTMLDivElement;
   sceneSelect: HTMLSelectElement;
   behaviorSelect: HTMLSelectElement;
   layerList: HTMLDivElement;
@@ -149,6 +151,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     id: "scene-designer.scenes",
     label: "Scenes",
     panel: elements.panel,
+    dragHandle: elements.sceneTitle,
     button: elements.toggle,
     order: 20,
     ariaLabel: "Toggle scene designer",
@@ -158,6 +161,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     id: "scene-designer.behaviors",
     label: "Behaviors",
     panel: elements.behaviorPanel,
+    dragHandle: elements.behaviorTitle,
     button: elements.behaviorToggle,
     order: 30,
     ariaLabel: "Toggle behavior designer",
@@ -528,6 +532,8 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
       behaviorToggle,
       panel,
       behaviorPanel,
+      sceneTitle: titleElement,
+      behaviorTitle,
       sceneSelect,
       behaviorSelect,
       layerList,
