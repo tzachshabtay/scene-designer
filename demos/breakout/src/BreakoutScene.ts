@@ -72,12 +72,19 @@ const firstEnemySpawnDelayMs = 5000;
 const maxActiveEnemies = 2;
 const snakeSpeed = 38;
 const monkeyHavocSpeed = 82;
-const monkeyMinShotDelayMs = 1900;
-const monkeyMaxShotDelayMs = 3300;
-const monkeyMaxY = 250;
+const defaultSnakeMinimumX = 0;
+const defaultSnakeMaximumX = 800;
+const defaultSnakeMinimumY = 0;
+const defaultSnakeMaximumY = 600;
+const defaultMonkeyMinimumX = 42;
+const defaultMonkeyMaximumX = 758;
+const defaultMonkeyMinimumY = 38;
+const defaultMonkeyMaximumY = 250;
+const defaultMonkeyMinimumThrowIntervalSeconds = 1.9;
+const defaultMonkeyMaximumThrowIntervalSeconds = 3.3;
 const bananaAimLeadSeconds = 0.45;
 const bananaLaunchOffset = 22;
-const bananaSpeed = 360;
+const defaultBananaSpeed = 360;
 const bananaSpinSpeed = 720;
 const ballSpinSpeed = 520;
 const defaultBallLaunchSpeed = Math.hypot(190, 265);
@@ -87,6 +94,7 @@ const defaultBallMaximumSpeed = 520;
 const defaultPaddleKeyboardSpeed = 430;
 const paddleInvulnerabilityMs = 650;
 const aiAnimationFrameTransformKey = "aiAnimationFrameTransform";
+const initialLives = 5;
 
 export type BreakoutSceneOptions = {
   aiAssets: AiAssetManifest;
@@ -117,7 +125,7 @@ export class BreakoutScene extends Phaser.Scene {
   private bananas!: Phaser.Physics.Arcade.Group;
   private levelObjects: Phaser.GameObjects.GameObject[] = [];
   private score = 0;
-  private lives = 3;
+  private lives = initialLives;
   private gameplayPaused = false;
   private debugPauseButton?: HTMLButtonElement;
   private hud!: Phaser.GameObjects.Text;
@@ -660,9 +668,35 @@ export class BreakoutScene extends Phaser.Scene {
     enemy.setData("spawning", true);
     enemy.setDepth(900);
     if (assetId === monkeyAssetId) {
-      enemy.setData("spawnY", Phaser.Math.Clamp(point.y, 42, monkeyMaxY - 40));
+      const minimumX = this.behaviorNumber("monkey", "minimum-x", defaultMonkeyMinimumX);
+      const maximumX = this.behaviorNumber("monkey", "maximum-x", defaultMonkeyMaximumX);
+      const minimumY = this.behaviorNumber("monkey", "minimum-y", defaultMonkeyMinimumY);
+      const maximumY = this.behaviorNumber("monkey", "maximum-y", defaultMonkeyMaximumY);
+      enemy.setData("minimumX", Math.min(minimumX, maximumX));
+      enemy.setData("maximumX", Math.max(minimumX, maximumX));
+      const lowerY = Math.min(minimumY, maximumY);
+      const upperY = Math.max(minimumY, maximumY);
+      enemy.setData("minimumY", lowerY);
+      enemy.setData("maximumY", upperY);
+      enemy.setData("minimumThrowInterval", this.behaviorNumber(
+        "monkey",
+        "minimum-throw-interval",
+        defaultMonkeyMinimumThrowIntervalSeconds
+      ));
+      enemy.setData("maximumThrowInterval", this.behaviorNumber(
+        "monkey",
+        "maximum-throw-interval",
+        defaultMonkeyMaximumThrowIntervalSeconds
+      ));
+      enemy.setData("bananaSpeed", this.behaviorNumber("monkey", "banana-speed", defaultBananaSpeed));
+      enemy.setData("spawnY", Phaser.Math.Clamp(point.y, lowerY + 4, Math.max(lowerY + 4, upperY - 40)));
       enemy.setData("phase", Phaser.Math.FloatBetween(0, Math.PI * 2));
-      enemy.setData("nextShotAt", this.time.now + Phaser.Math.Between(monkeyMinShotDelayMs, monkeyMaxShotDelayMs));
+      enemy.setData("nextShotAt", this.time.now + this.monkeyThrowDelay(enemy));
+    } else {
+      enemy.setData("minimumX", this.behaviorNumber("snake", "minimum-x", defaultSnakeMinimumX));
+      enemy.setData("maximumX", this.behaviorNumber("snake", "maximum-x", defaultSnakeMaximumX));
+      enemy.setData("minimumY", this.behaviorNumber("snake", "minimum-y", defaultSnakeMinimumY));
+      enemy.setData("maximumY", this.behaviorNumber("snake", "maximum-y", defaultSnakeMaximumY));
     }
     enemy.setBounce(0, 0);
     enemy.setCollideWorldBounds(true);
@@ -721,6 +755,16 @@ export class BreakoutScene extends Phaser.Scene {
 
     const direction = new Phaser.Math.Vector2(this.paddle.x - enemy.x, this.paddle.y - enemy.y);
     if (direction.lengthSq() === 0) return;
+    const minimumX = Math.min(Number(enemy.getData("minimumX")), Number(enemy.getData("maximumX")));
+    const maximumX = Math.max(Number(enemy.getData("minimumX")), Number(enemy.getData("maximumX")));
+    const minimumY = Math.min(Number(enemy.getData("minimumY")), Number(enemy.getData("maximumY")));
+    const maximumY = Math.max(Number(enemy.getData("minimumY")), Number(enemy.getData("maximumY")));
+    enemy.x = Phaser.Math.Clamp(enemy.x, minimumX, maximumX);
+    enemy.y = Phaser.Math.Clamp(enemy.y, minimumY, maximumY);
+    if (enemy.x <= minimumX && direction.x < 0) direction.x = Math.abs(direction.x);
+    if (enemy.x >= maximumX && direction.x > 0) direction.x = -Math.abs(direction.x);
+    if (enemy.y <= minimumY && direction.y < 0) direction.y = Math.abs(direction.y);
+    if (enemy.y >= maximumY && direction.y > 0) direction.y = -Math.abs(direction.y);
     direction.normalize().scale(snakeSpeed);
     enemy.setVelocity(direction.x, direction.y);
   }
@@ -728,7 +772,11 @@ export class BreakoutScene extends Phaser.Scene {
   private updateMonkey(enemy: ArcadeSprite): void {
     if (enemy.getData("destroying") || enemy.getData("spawning")) return;
 
-    const spawnY = Number(enemy.getData("spawnY") ?? Math.min(enemy.y, monkeyMaxY - 40));
+    const minimumY = Math.min(Number(enemy.getData("minimumY")), Number(enemy.getData("maximumY")));
+    const maximumY = Math.max(Number(enemy.getData("minimumY")), Number(enemy.getData("maximumY")));
+    const spawnY = Number(enemy.getData("spawnY") ?? Math.min(enemy.y, maximumY - 40));
+    const minimumX = Math.min(Number(enemy.getData("minimumX")), Number(enemy.getData("maximumX")));
+    const maximumX = Math.max(Number(enemy.getData("minimumX")), Number(enemy.getData("maximumX")));
     const phase = Number(enemy.getData("phase") ?? 0);
     const seconds = this.time.now / 1000;
     const horizontal = (
@@ -737,21 +785,22 @@ export class BreakoutScene extends Phaser.Scene {
     );
     const targetY = Phaser.Math.Clamp(
       spawnY + Math.sin(seconds * 1.45 + phase) * 34,
-      38,
-      monkeyMaxY
+      minimumY,
+      maximumY
     );
     const vertical = Phaser.Math.Clamp((targetY - enemy.y) * 3, -70, 70);
 
     let velocityX = horizontal;
-    if (enemy.x < 42) velocityX = Math.abs(velocityX) + 36;
-    if (enemy.x > 758) velocityX = -Math.abs(velocityX) - 36;
+    enemy.x = Phaser.Math.Clamp(enemy.x, minimumX, maximumX);
+    if (enemy.x <= minimumX) velocityX = Math.abs(velocityX) + 36;
+    if (enemy.x >= maximumX) velocityX = -Math.abs(velocityX) - 36;
 
     enemy.setVelocity(velocityX, vertical);
 
     const nextShotAt = Number(enemy.getData("nextShotAt") ?? 0);
     if (this.time.now >= nextShotAt) {
       this.shootBanana(enemy);
-      enemy.setData("nextShotAt", this.time.now + Phaser.Math.Between(monkeyMinShotDelayMs, monkeyMaxShotDelayMs));
+      enemy.setData("nextShotAt", this.time.now + this.monkeyThrowDelay(enemy));
     }
   }
 
@@ -796,7 +845,8 @@ export class BreakoutScene extends Phaser.Scene {
     banana.body.allowGravity = false;
     banana.setCollideWorldBounds(false);
     this.bananas.add(banana);
-    banana.setVelocity(direction.x * bananaSpeed, direction.y * bananaSpeed);
+    const speed = Number(monkey.getData("bananaSpeed") ?? defaultBananaSpeed);
+    banana.setVelocity(direction.x * speed, direction.y * speed);
     banana.setAngularVelocity(Phaser.Math.RND.sign() * bananaSpinSpeed);
   }
 
@@ -805,6 +855,14 @@ export class BreakoutScene extends Phaser.Scene {
     this.reloadTimer = this.time.delayedCall(250, () => {
       this.loadSceneById(this.currentSceneId);
     });
+  }
+
+  private monkeyThrowDelay(monkey: ArcadeSprite): number {
+    const minimum = Number(monkey.getData("minimumThrowInterval") ?? defaultMonkeyMinimumThrowIntervalSeconds);
+    const maximum = Number(monkey.getData("maximumThrowInterval") ?? defaultMonkeyMaximumThrowIntervalSeconds);
+    const minimumMs = Math.max(100, Math.round(Math.min(minimum, maximum) * 1000));
+    const maximumMs = Math.max(minimumMs, Math.round(Math.max(minimum, maximum) * 1000));
+    return Phaser.Math.Between(minimumMs, maximumMs);
   }
 
   private syncSceneDesignerToCurrentScene(): void {
@@ -975,7 +1033,7 @@ export class BreakoutScene extends Phaser.Scene {
       const duration = this.playLinkedAnimation(this.paddle, baseAssetId, "destroyed");
       this.time.delayedCall(Math.max(duration, 280) + 120, () => {
         this.score = 0;
-        this.lives = 3;
+        this.lives = initialLives;
         this.loadLevel(0);
       });
       return true;

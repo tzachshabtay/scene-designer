@@ -1234,7 +1234,7 @@ export const scenes = defineSceneManifest(
     },
     "scene-mrhvg0st-tw853l": {
       "id": "scene-mrhvg0st-tw853l",
-      "name": "Level 4",
+      "name": "Level 4 - The Maze",
       "width": 800,
       "height": 600,
       "layers": [
@@ -1261,16 +1261,517 @@ export const scenes = defineSceneManifest(
           "name": "Bricks",
           "visible": true,
           "locked": false,
-          "behaviors": [],
+          "behaviors": [
+            {
+              "id": "behavior-instance-mrhw4axb-6kzuzl",
+              "behaviorId": "double-brick",
+              "name": "Double Brick",
+              "visible": true,
+              "locked": false,
+              "overrides": {
+                "sprite": {
+                  "x": 336,
+                  "y": 96
+                }
+              }
+            },
+            {
+              "id": "behavior-instance-mrhw4axb-6kzuzl-copy",
+              "behaviorId": "double-brick",
+              "name": "Double Brick 2",
+              "visible": true,
+              "locked": false,
+              "overrides": {
+                "sprite": {
+                  "x": 384,
+                  "y": 96
+                }
+              }
+            },
+            {
+              "id": "behavior-instance-mrhw4axb-6kzuzl-copy-copy",
+              "behaviorId": "double-brick",
+              "name": "Double Brick 3",
+              "visible": true,
+              "locked": false,
+              "overrides": {
+                "sprite": {
+                  "x": 432,
+                  "y": 96
+                }
+              }
+            },
+            {
+              "id": "behavior-instance-mrhw78m1-j8fjdk",
+              "behaviorId": "single-brick",
+              "name": "Single Brick",
+              "visible": true,
+              "locked": false,
+              "overrides": {
+                "sprite": {
+                  "x": 496,
+                  "y": 64
+                }
+              }
+            },
+            {
+              "id": "behavior-instance-mrhw78m1-j8fjdk-copy",
+              "behaviorId": "single-brick",
+              "name": "Single Brick 2",
+              "visible": true,
+              "locked": false,
+              "overrides": {
+                "sprite": {
+                  "x": 560,
+                  "y": 64
+                }
+              }
+            },
+            {
+              "id": "behavior-instance-mrhw78m1-j8fjdk-copy-copy",
+              "behaviorId": "single-brick",
+              "name": "Single Brick 3",
+              "visible": true,
+              "locked": false,
+              "overrides": {
+                "sprite": {
+                  "x": 640,
+                  "y": 64
+                }
+              }
+            },
+            {
+              "id": "behavior-instance-mrhw78m1-j8fjdk-copy-copy-copy",
+              "behaviorId": "single-brick",
+              "name": "Single Brick 4",
+              "visible": true,
+              "locked": false,
+              "overrides": {
+                "sprite": {
+                  "x": 720,
+                  "y": 64
+                }
+              }
+            },
+            {
+              "id": "behavior-instance-mrhw78m1-j8fjdk-copy-2",
+              "behaviorId": "single-brick",
+              "name": "Single Brick 5",
+              "visible": true,
+              "locked": false,
+              "overrides": {
+                "sprite": {
+                  "x": 544,
+                  "y": 224,
+                  "assetId": "brick.pineapple"
+                }
+              }
+            },
+            {
+              "id": "behavior-instance-mrhw78m1-j8fjdk-copy-2-copy",
+              "behaviorId": "single-brick",
+              "name": "Single Brick 6",
+              "visible": true,
+              "locked": false,
+              "overrides": {
+                "sprite": {
+                  "x": 224,
+                  "y": 240,
+                  "assetId": "brick.pineapple"
+                }
+              }
+            },
+            {
+              "id": "behavior-instance-mrhw78m1-j8fjdk-copy-2-copy-copy",
+              "behaviorId": "single-brick",
+              "name": "Single Brick 7",
+              "visible": true,
+              "locked": false,
+              "overrides": {
+                "sprite": {
+                  "x": 688,
+                  "y": 224,
+                  "assetId": "brick.pineapple"
+                }
+              }
+            },
+            {
+              "id": "behavior-instance-mrhw78m1-j8fjdk-copy-2-copy-copy-copy",
+              "behaviorId": "single-brick",
+              "name": "Single Brick 8",
+              "visible": true,
+              "locked": false,
+              "overrides": {
+                "sprite": {
+                  "x": 640,
+                  "y": 224,
+                  "assetId": "brick.pineapple"
+                }
+              }
+            },
+            {
+              "id": "behavior-instance-mrhw78m1-j8fjdk-copy-2-copy-copy-copy-copy",
+              "behaviorId": "single-brick",
+              "name": "Single Brick 9",
+              "visible": true,
+              "locked": false,
+              "overrides": {
+                "sprite": {
+                  "x": 592,
+                  "y": 224,
+                  "assetId": "brick.pineapple"
+                }
+              }
+            },
+            {
+              "id": "behavior-instance-mrhw78m1-j8fjdk-copy-2-copy-copy-2",
+              "behaviorId": "single-brick",
+              "name": "Single Brick 10",
+              "visible": true,
+              "locked": false,
+              "overrides": {
+                "sprite": {
+                  "x": 80,
+                  "y": 240,
+                  "assetId": "brick.pineapple"
+                }
+              }
+            },
+            {
+              "id": "behavior-instance-mrhw78m1-j8fjdk-copy-2-copy-copy-2-copy",
+              "behaviorId": "single-brick",
+              "name": "Single Brick 11",
+              "visible": true,
+              "locked": false,
+              "overrides": {
+                "sprite": {
+                  "x": 128,
+                  "y": 240,
+                  "assetId": "brick.pineapple"
+                }
+              }
+            },
+            {
+              "id": "behavior-instance-mrhw78m1-j8fjdk-copy-2-copy-copy-2-copy-copy",
+              "behaviorId": "single-brick",
+              "name": "Single Brick 12",
+              "visible": true,
+              "locked": false,
+              "overrides": {
+                "sprite": {
+                  "x": 176,
+                  "y": 240,
+                  "assetId": "brick.pineapple"
+                }
+              }
+            },
+            {
+              "id": "behavior-instance-mrhw78m1-j8fjdk-copy-2-copy-copy-3",
+              "behaviorId": "single-brick",
+              "name": "Single Brick 13",
+              "visible": true,
+              "locked": false,
+              "overrides": {
+                "sprite": {
+                  "x": 336,
+                  "y": 176,
+                  "assetId": "brick.vines"
+                }
+              }
+            },
+            {
+              "id": "behavior-instance-mrhw78m1-j8fjdk-copy-2-copy-copy-3-copy",
+              "behaviorId": "single-brick",
+              "name": "Single Brick 14",
+              "visible": true,
+              "locked": false,
+              "overrides": {
+                "sprite": {
+                  "x": 384,
+                  "y": 176,
+                  "assetId": "brick.vines"
+                }
+              }
+            },
+            {
+              "id": "behavior-instance-mrhw78m1-j8fjdk-copy-2-copy-copy-3-copy-copy",
+              "behaviorId": "single-brick",
+              "name": "Single Brick 15",
+              "visible": true,
+              "locked": false,
+              "overrides": {
+                "sprite": {
+                  "x": 336,
+                  "y": 242,
+                  "assetId": "brick.vines"
+                }
+              }
+            },
+            {
+              "id": "behavior-instance-mrhw78m1-j8fjdk-copy-2-copy-copy-3-copy-copy-copy",
+              "behaviorId": "single-brick",
+              "name": "Single Brick 16",
+              "visible": true,
+              "locked": false,
+              "overrides": {
+                "sprite": {
+                  "x": 384,
+                  "y": 242,
+                  "assetId": "brick.vines"
+                }
+              }
+            },
+            {
+              "id": "behavior-instance-mrhw78m1-j8fjdk-copy-2-copy-copy-3-copy-copy-copy-copy",
+              "behaviorId": "single-brick",
+              "name": "Single Brick 17",
+              "visible": true,
+              "locked": false,
+              "overrides": {
+                "sprite": {
+                  "x": 432,
+                  "y": 242,
+                  "assetId": "brick.vines"
+                }
+              }
+            },
+            {
+              "id": "behavior-instance-mrhw78m1-j8fjdk-copy-2-copy-copy-3-copy-copy-copy-copy-copy",
+              "behaviorId": "single-brick",
+              "name": "Single Brick 18",
+              "visible": true,
+              "locked": false,
+              "overrides": {
+                "sprite": {
+                  "x": 432,
+                  "y": 176,
+                  "assetId": "brick.vines"
+                }
+              }
+            }
+          ],
           "objects": [],
           "areas": []
         },
         {
           "id": "layer-mrhvj9lb-i59wls",
           "name": "Walls",
+          "visible": false,
+          "locked": false,
+          "behaviors": [
+            {
+              "id": "behavior-instance-mrhw1gta-yi9cm0",
+              "behaviorId": "wall",
+              "name": "Wall",
+              "visible": true,
+              "locked": false,
+              "overrides": {
+                "platform": {
+                  "tag": "wall",
+                  "visible": true,
+                  "locked": false,
+                  "closed": true,
+                  "vertices": [
+                    {
+                      "id": "vertex-mrhw1r4q-ztrtc8",
+                      "x": 18.367346938775512,
+                      "y": 47.95918367346939
+                    },
+                    {
+                      "id": "vertex-mrhw1sop-r1k2rs",
+                      "x": 284.6938775510204,
+                      "y": 50
+                    },
+                    {
+                      "id": "vertex-mrhw1tpq-3dq9oi",
+                      "x": 285.7142857142857,
+                      "y": 76.53061224489797
+                    },
+                    {
+                      "id": "vertex-mrhw1vsc-szuok7",
+                      "x": 39.79591836734694,
+                      "y": 73.46938775510205
+                    },
+                    {
+                      "id": "vertex-mrhw1zh8-jr17xo",
+                      "x": 41.83673469387755,
+                      "y": 242.85714285714286
+                    },
+                    {
+                      "id": "vertex-mrhw22gx-5njd04",
+                      "x": 254.08163265306123,
+                      "y": 243.87755102040816
+                    },
+                    {
+                      "id": "vertex-mrhw23sd-mjjiyk",
+                      "x": 252.04081632653063,
+                      "y": 154.08163265306123
+                    },
+                    {
+                      "id": "vertex-mrhw24te-9wl6o9",
+                      "x": 126.53061224489797,
+                      "y": 146.9387755102041
+                    },
+                    {
+                      "id": "vertex-mrhw25wp-6e0373",
+                      "x": 126.53061224489797,
+                      "y": 116.3265306122449
+                    },
+                    {
+                      "id": "vertex-mrhw278v-3ernxs",
+                      "x": 283.6734693877551,
+                      "y": 115.3061224489796
+                    },
+                    {
+                      "id": "vertex-mrhw28x3-v6lim8",
+                      "x": 282.6530612244898,
+                      "y": 276.53061224489795
+                    },
+                    {
+                      "id": "vertex-mrhw2abk-4lyvq3",
+                      "x": 15.306122448979592,
+                      "y": 276.53061224489795
+                    }
+                  ],
+                  "assetId": "wall.stone",
+                  "paint": {
+                    "mode": "tile",
+                    "mirrorX": true,
+                    "mirrorY": false
+                  },
+                  "id": "behavior-instance-mrhw1gta-yi9cm0::platform"
+                }
+              }
+            },
+            {
+              "id": "behavior-instance-mrhw314p-6ixuty",
+              "behaviorId": "wall",
+              "name": "Wall 2",
+              "visible": true,
+              "locked": false,
+              "overrides": {
+                "platform": {
+                  "tag": "wall",
+                  "visible": true,
+                  "locked": false,
+                  "closed": true,
+                  "vertices": [
+                    {
+                      "id": "vertex-mrhw35b7-6q2569",
+                      "x": 474.48979591836735,
+                      "y": 55.10204081632653
+                    },
+                    {
+                      "id": "vertex-mrhw36uj-kp1be6",
+                      "x": 736.7346938775511,
+                      "y": 58.16326530612245
+                    },
+                    {
+                      "id": "vertex-mrhw38w6-mor93m",
+                      "x": 741.8367346938776,
+                      "y": 264.2857142857143
+                    },
+                    {
+                      "id": "vertex-mrhw3a6z-bjxbw1",
+                      "x": 468.36734693877554,
+                      "y": 267.3469387755102
+                    },
+                    {
+                      "id": "vertex-mrhw3bv7-sived5",
+                      "x": 471.42857142857144,
+                      "y": 116.3265306122449
+                    },
+                    {
+                      "id": "vertex-mrhw3cxb-002flo",
+                      "x": 623.469387755102,
+                      "y": 113.26530612244898
+                    },
+                    {
+                      "id": "vertex-mrhw3drq-f69ntl",
+                      "x": 622.4489795918367,
+                      "y": 146.9387755102041
+                    },
+                    {
+                      "id": "vertex-mrhw3ek3-xp6zau",
+                      "x": 520.4081632653061,
+                      "y": 146.9387755102041
+                    },
+                    {
+                      "id": "vertex-mrhw3fr1-n6y4w4",
+                      "x": 520.4081632653061,
+                      "y": 227.55102040816328
+                    },
+                    {
+                      "id": "vertex-mrhw3grb-j5tqha",
+                      "x": 705.1020408163265,
+                      "y": 228.57142857142858
+                    },
+                    {
+                      "id": "vertex-mrhw3iz0-riqjmb",
+                      "x": 710.2040816326531,
+                      "y": 80.61224489795919
+                    },
+                    {
+                      "id": "vertex-mrhw3kbw-zvwxzr",
+                      "x": 475.51020408163265,
+                      "y": 77.55102040816327
+                    }
+                  ],
+                  "assetId": "wall.stone",
+                  "paint": {
+                    "mode": "tile",
+                    "mirrorX": true,
+                    "mirrorY": false
+                  },
+                  "id": "behavior-instance-mrhw314p-6ixuty::platform"
+                }
+              }
+            }
+          ],
+          "objects": [],
+          "areas": []
+        },
+        {
+          "id": "layer-mrhwhbb2-ogchkd",
+          "name": "Actors",
           "visible": true,
           "locked": false,
-          "behaviors": [],
+          "behaviors": [
+            {
+              "id": "behavior-instance-mrhwikn7-s8yobl",
+              "behaviorId": "ball",
+              "name": "Ball",
+              "visible": true,
+              "locked": false,
+              "overrides": {}
+            },
+            {
+              "id": "behavior-instance-mrhwitur-wsdr4f",
+              "behaviorId": "paddle",
+              "name": "Paddle",
+              "visible": true,
+              "locked": false,
+              "overrides": {}
+            }
+          ],
+          "objects": [],
+          "areas": []
+        },
+        {
+          "id": "layer-mrhxb0ak-lrj5lv",
+          "name": "Spawn Areas",
+          "visible": true,
+          "locked": false,
+          "behaviors": [
+            {
+              "id": "behavior-instance-mrhxb9r0-16rc62",
+              "behaviorId": "spawn-area",
+              "name": "Spawn Area",
+              "visible": true,
+              "locked": false,
+              "overrides": {}
+            }
+          ],
           "objects": [],
           "areas": []
         }
@@ -1458,6 +1959,50 @@ export const scenes = defineSceneManifest(
             "visible": true,
             "locked": false
           }
+        },
+        {
+          "id": "minimum-x",
+          "name": "Minimum X",
+          "kind": "number",
+          "number": {
+            "value": 0,
+            "min": 0,
+            "max": 800,
+            "step": 10
+          }
+        },
+        {
+          "id": "maximum-x",
+          "name": "Maximum X",
+          "kind": "number",
+          "number": {
+            "value": 800,
+            "min": 0,
+            "max": 800,
+            "step": 10
+          }
+        },
+        {
+          "id": "minimum-y",
+          "name": "Minimum Y",
+          "kind": "number",
+          "number": {
+            "value": 0,
+            "min": 0,
+            "max": 600,
+            "step": 10
+          }
+        },
+        {
+          "id": "maximum-y",
+          "name": "Maximum Y",
+          "kind": "number",
+          "number": {
+            "value": 600,
+            "min": 0,
+            "max": 600,
+            "step": 10
+          }
         }
       ]
     },
@@ -1481,6 +2026,86 @@ export const scenes = defineSceneManifest(
             "anchorY": 0.5,
             "visible": true,
             "locked": false
+          }
+        },
+        {
+          "id": "minimum-x",
+          "name": "Minimum X",
+          "kind": "number",
+          "number": {
+            "value": 42,
+            "min": 0,
+            "max": 800,
+            "step": 10
+          }
+        },
+        {
+          "id": "maximum-x",
+          "name": "Maximum X",
+          "kind": "number",
+          "number": {
+            "value": 758,
+            "min": 0,
+            "max": 800,
+            "step": 10
+          }
+        },
+        {
+          "id": "minimum-y",
+          "name": "Minimum Y",
+          "kind": "number",
+          "number": {
+            "value": 38,
+            "min": 0,
+            "max": 600,
+            "step": 10
+          }
+        },
+        {
+          "id": "maximum-y",
+          "name": "Maximum Y",
+          "kind": "number",
+          "number": {
+            "value": 250,
+            "min": 0,
+            "max": 600,
+            "step": 10
+          }
+        },
+        {
+          "id": "minimum-throw-interval",
+          "name": "Minimum throw interval",
+          "kind": "number",
+          "number": {
+            "value": 1.9,
+            "min": 0.1,
+            "max": 60,
+            "step": 0.1,
+            "unit": "seconds"
+          }
+        },
+        {
+          "id": "maximum-throw-interval",
+          "name": "Maximum throw interval",
+          "kind": "number",
+          "number": {
+            "value": 3.3,
+            "min": 0.1,
+            "max": 60,
+            "step": 0.1,
+            "unit": "seconds"
+          }
+        },
+        {
+          "id": "banana-speed",
+          "name": "Banana speed",
+          "kind": "number",
+          "number": {
+            "value": 360,
+            "min": 10,
+            "max": 1200,
+            "step": 10,
+            "unit": "pixels-per-second"
           }
         }
       ]
