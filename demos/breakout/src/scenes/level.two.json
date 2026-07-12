@@ -256,6 +256,7 @@
           "locked": false,
           "overrides": {
             "platform": {
+              "closed": true,
               "vertices": [
                 {
                   "id": "l2-wall-left-v1",
@@ -288,6 +289,7 @@
           "locked": false,
           "overrides": {
             "platform": {
+              "closed": true,
               "vertices": [
                 {
                   "id": "l2-wall-right-v1",

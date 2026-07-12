@@ -656,6 +656,7 @@ export const scenes = defineSceneManifest(
               "locked": false,
               "overrides": {
                 "platform": {
+                  "closed": true,
                   "vertices": [
                     {
                       "id": "l3-wall-shield-v1",
@@ -1078,6 +1079,7 @@ export const scenes = defineSceneManifest(
               "locked": false,
               "overrides": {
                 "platform": {
+                  "closed": true,
                   "vertices": [
                     {
                       "id": "l2-wall-left-v1",
@@ -1110,6 +1112,7 @@ export const scenes = defineSceneManifest(
               "locked": false,
               "overrides": {
                 "platform": {
+                  "closed": true,
                   "vertices": [
                     {
                       "id": "l2-wall-right-v1",

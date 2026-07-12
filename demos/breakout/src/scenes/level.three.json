@@ -279,6 +279,7 @@
           "locked": false,
           "overrides": {
             "platform": {
+              "closed": true,
               "vertices": [
                 {
                   "id": "l3-wall-shield-v1",
