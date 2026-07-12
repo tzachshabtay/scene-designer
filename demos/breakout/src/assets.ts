@@ -3503,32 +3503,88 @@ export const assets = defineAiAssets(
   "audio.sfx.paddle": {
     "id": "audio.sfx.paddle",
     "kind": "sound",
-    "prompt": "Short bright paddle deflection blip.",
+    "prompt": "a ping pong ball hits the racket with reverb, single hit",
     "audioSettings": {
       "provider": "elevenlabs",
       "format": "mp3",
-      "durationSeconds": 1
+      "durationSeconds": 0.5,
+      "loop": true
     },
-    "activeVersion": "",
-    "versions": {},
+    "activeVersion": "promoted-1783890738564",
+    "versions": {
+      "promoted-1783890738564": {
+        "name": "promoted-1783890738564",
+        "file": "/assets/audio.sfx.paddle.promoted-1783890738564.mp3",
+        "prompt": "a ping pong ball hits the racket with reverb, single hit",
+        "createdAt": "2026-07-12T21:12:18.636Z",
+        "model": "eleven_text_to_sound_v2",
+        "settings": {},
+        "audioSettings": {
+          "provider": "elevenlabs",
+          "format": "mp3",
+          "durationSeconds": 0.5,
+          "loop": true
+        },
+        "audioPlayback": {
+          "volume": 1,
+          "trimStartSeconds": 0.6316964876853814,
+          "trimEndSeconds": 1.0407811672404663,
+          "playbackRate": 1
+        },
+        "voiceSettings": {},
+        "durationSeconds": 0.5,
+        "notes": "Promoted from the AI asset designer."
+      }
+    },
     "tags": [
       "sfx"
-    ]
+    ],
+    "settings": {},
+    "audioPlayback": {
+      "volume": 1,
+      "trimStartSeconds": 0.6316964876853814,
+      "trimEndSeconds": 1.0407811672404663,
+      "playbackRate": 1
+    },
+    "voiceSettings": {}
   },
   "audio.sfx.wall": {
     "id": "audio.sfx.wall",
     "kind": "sound",
-    "prompt": "Soft electronic wall rebound tick.",
+    "prompt": "ping pong ball hitting a wall, reverb, single hit",
     "audioSettings": {
       "provider": "elevenlabs",
       "format": "mp3",
-      "durationSeconds": 1
+      "durationSeconds": 0.5,
+      "loop": false
     },
-    "activeVersion": "",
-    "versions": {},
+    "activeVersion": "promoted-1783890863509",
+    "versions": {
+      "promoted-1783890863509": {
+        "name": "promoted-1783890863509",
+        "file": "/assets/audio.sfx.wall.promoted-1783890863509.mp3",
+        "prompt": "ping pong ball hitting a wall, reverb, single hit",
+        "createdAt": "2026-07-12T21:14:23.559Z",
+        "model": "eleven_text_to_sound_v2",
+        "settings": {},
+        "audioSettings": {
+          "provider": "elevenlabs",
+          "format": "mp3",
+          "durationSeconds": 0.5,
+          "loop": false
+        },
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "durationSeconds": 0.5,
+        "notes": "Promoted from the AI asset designer."
+      }
+    },
     "tags": [
       "sfx"
-    ]
+    ],
+    "settings": {},
+    "audioPlayback": {},
+    "voiceSettings": {}
   }
 },
 {

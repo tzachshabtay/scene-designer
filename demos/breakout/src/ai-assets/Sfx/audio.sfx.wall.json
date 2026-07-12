@@ -1,15 +1,38 @@
 {
   "id": "audio.sfx.wall",
   "kind": "sound",
-  "prompt": "Soft electronic wall rebound tick.",
+  "prompt": "ping pong ball hitting a wall, reverb, single hit",
   "audioSettings": {
     "provider": "elevenlabs",
     "format": "mp3",
-    "durationSeconds": 1
+    "durationSeconds": 0.5,
+    "loop": false
   },
-  "activeVersion": "",
-  "versions": {},
+  "activeVersion": "promoted-1783890863509",
+  "versions": {
+    "promoted-1783890863509": {
+      "name": "promoted-1783890863509",
+      "file": "/assets/audio.sfx.wall.promoted-1783890863509.mp3",
+      "prompt": "ping pong ball hitting a wall, reverb, single hit",
+      "createdAt": "2026-07-12T21:14:23.559Z",
+      "model": "eleven_text_to_sound_v2",
+      "settings": {},
+      "audioSettings": {
+        "provider": "elevenlabs",
+        "format": "mp3",
+        "durationSeconds": 0.5,
+        "loop": false
+      },
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "durationSeconds": 0.5,
+      "notes": "Promoted from the AI asset designer."
+    }
+  },
   "tags": [
     "sfx"
-  ]
+  ],
+  "settings": {},
+  "audioPlayback": {},
+  "voiceSettings": {}
 }
