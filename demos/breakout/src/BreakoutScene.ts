@@ -72,6 +72,7 @@ const firstEnemySpawnDelayMs = 5000;
 const maxActiveEnemies = 2;
 const defaultSnakeSpeed = 38;
 const defaultMonkeyHavocSpeed = 82;
+const defaultMonkeyVerticalSpeed = 70;
 const monkeyMinimumX = 42;
 const monkeyMaximumX = 758;
 const monkeyMinimumY = 38;
@@ -241,7 +242,7 @@ export class BreakoutScene extends Phaser.Scene {
 
     for (const child of this.enemies.children) {
       const enemy = child as ArcadeSprite;
-      if (enemy.y > 620) {
+      if (enemy.getBounds().top > 600) {
         enemy.destroy();
       } else if (enemy.getData("baseAssetId") === monkeyAssetId) {
         this.updateMonkey(enemy);
@@ -664,11 +665,17 @@ export class BreakoutScene extends Phaser.Scene {
     enemy.setData("spawning", true);
     enemy.setDepth(900);
     if (assetId === monkeyAssetId) {
-      enemy.setData("movementSpeed", this.randomBehaviorNumberRange(
+      enemy.setData("movementSpeedX", this.randomBehaviorNumberRange(
         "monkey",
-        "minimum-speed",
-        "maximum-speed",
+        "minimum-x-speed",
+        "maximum-x-speed",
         defaultMonkeyHavocSpeed
+      ));
+      enemy.setData("movementSpeedY", this.randomBehaviorNumberRange(
+        "monkey",
+        "minimum-y-speed",
+        "maximum-y-speed",
+        defaultMonkeyVerticalSpeed
       ));
       enemy.setData("minimumThrowInterval", this.behaviorNumber(
         "monkey",
@@ -685,15 +692,21 @@ export class BreakoutScene extends Phaser.Scene {
       enemy.setData("phase", Phaser.Math.FloatBetween(0, Math.PI * 2));
       enemy.setData("nextShotAt", this.time.now + this.monkeyThrowDelay(enemy));
     } else {
-      enemy.setData("movementSpeed", this.randomBehaviorNumberRange(
+      enemy.setData("movementSpeedX", this.randomBehaviorNumberRange(
         "snake",
-        "minimum-speed",
-        "maximum-speed",
+        "minimum-x-speed",
+        "maximum-x-speed",
+        defaultSnakeSpeed
+      ));
+      enemy.setData("movementSpeedY", this.randomBehaviorNumberRange(
+        "snake",
+        "minimum-y-speed",
+        "maximum-y-speed",
         defaultSnakeSpeed
       ));
     }
     enemy.setBounce(0, 0);
-    enemy.setCollideWorldBounds(true);
+    enemy.setCollideWorldBounds(assetId === monkeyAssetId);
     enemy.body.enable = false;
     this.enemies.add(enemy);
 
@@ -758,10 +771,11 @@ export class BreakoutScene extends Phaser.Scene {
     if (!this.paddle?.active) return;
     if (enemy.getData("destroying") || enemy.getData("spawning")) return;
 
-    const direction = new Phaser.Math.Vector2(this.paddle.x - enemy.x, this.paddle.y - enemy.y);
-    if (direction.lengthSq() === 0) return;
-    direction.normalize().scale(Number(enemy.getData("movementSpeed") ?? defaultSnakeSpeed));
-    enemy.setVelocity(direction.x, direction.y);
+    const horizontalDelta = this.paddle.x - enemy.x;
+    const horizontalSpeed = Number(enemy.getData("movementSpeedX") ?? defaultSnakeSpeed);
+    const verticalSpeed = Number(enemy.getData("movementSpeedY") ?? defaultSnakeSpeed);
+    const velocityX = Math.abs(horizontalDelta) < 2 ? 0 : Math.sign(horizontalDelta) * horizontalSpeed;
+    enemy.setVelocity(velocityX, verticalSpeed);
   }
 
   private updateMonkey(enemy: ArcadeSprite): void {
@@ -769,24 +783,30 @@ export class BreakoutScene extends Phaser.Scene {
 
     const spawnY = Number(enemy.getData("spawnY") ?? Math.min(enemy.y, monkeyMaximumY - 40));
     const phase = Number(enemy.getData("phase") ?? 0);
-    const movementSpeed = Number(enemy.getData("movementSpeed") ?? defaultMonkeyHavocSpeed);
-    const speedScale = movementSpeed / defaultMonkeyHavocSpeed;
+    const movementSpeedX = Number(enemy.getData("movementSpeedX") ?? defaultMonkeyHavocSpeed);
+    const movementSpeedY = Number(enemy.getData("movementSpeedY") ?? defaultMonkeyVerticalSpeed);
+    const horizontalScale = movementSpeedX / defaultMonkeyHavocSpeed;
+    const verticalScale = movementSpeedY / defaultMonkeyVerticalSpeed;
     const seconds = this.time.now / 1000;
     const horizontal = (
-      Math.sin(seconds * 2.1 + phase) * movementSpeed +
-      Math.cos(seconds * 3.7 + phase * 0.6) * 34 * speedScale
+      Math.sin(seconds * 2.1 + phase) * movementSpeedX +
+      Math.cos(seconds * 3.7 + phase * 0.6) * 34 * horizontalScale
     );
     const targetY = Phaser.Math.Clamp(
       spawnY + Math.sin(seconds * 1.45 + phase) * 34,
       monkeyMinimumY,
       monkeyMaximumY
     );
-    const vertical = Phaser.Math.Clamp((targetY - enemy.y) * 3 * speedScale, -70 * speedScale, 70 * speedScale);
+    const vertical = Phaser.Math.Clamp(
+      (targetY - enemy.y) * 3 * verticalScale,
+      -movementSpeedY,
+      movementSpeedY
+    );
 
     let velocityX = horizontal;
     enemy.x = Phaser.Math.Clamp(enemy.x, monkeyMinimumX, monkeyMaximumX);
-    if (enemy.x <= monkeyMinimumX) velocityX = Math.abs(velocityX) + 36 * speedScale;
-    if (enemy.x >= monkeyMaximumX) velocityX = -Math.abs(velocityX) - 36 * speedScale;
+    if (enemy.x <= monkeyMinimumX) velocityX = Math.abs(velocityX) + 36 * horizontalScale;
+    if (enemy.x >= monkeyMaximumX) velocityX = -Math.abs(velocityX) - 36 * horizontalScale;
 
     enemy.setVelocity(velocityX, vertical);
 

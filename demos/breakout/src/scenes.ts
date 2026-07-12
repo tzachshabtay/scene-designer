@@ -1961,8 +1961,8 @@ export const scenes = defineSceneManifest(
           }
         },
         {
-          "id": "minimum-speed",
-          "name": "Minimum movement speed",
+          "id": "minimum-x-speed",
+          "name": "Minimum X speed",
           "kind": "number",
           "number": {
             "value": 38,
@@ -1973,8 +1973,32 @@ export const scenes = defineSceneManifest(
           }
         },
         {
-          "id": "maximum-speed",
-          "name": "Maximum movement speed",
+          "id": "maximum-x-speed",
+          "name": "Maximum X speed",
+          "kind": "number",
+          "number": {
+            "value": 38,
+            "min": 0,
+            "max": 500,
+            "step": 1,
+            "unit": "pixels-per-second"
+          }
+        },
+        {
+          "id": "minimum-y-speed",
+          "name": "Minimum Y speed",
+          "kind": "number",
+          "number": {
+            "value": 38,
+            "min": 0,
+            "max": 500,
+            "step": 1,
+            "unit": "pixels-per-second"
+          }
+        },
+        {
+          "id": "maximum-y-speed",
+          "name": "Maximum Y speed",
           "kind": "number",
           "number": {
             "value": 38,
@@ -2009,8 +2033,8 @@ export const scenes = defineSceneManifest(
           }
         },
         {
-          "id": "minimum-speed",
-          "name": "Minimum movement speed",
+          "id": "minimum-x-speed",
+          "name": "Minimum X speed",
           "kind": "number",
           "number": {
             "value": 82,
@@ -2021,11 +2045,35 @@ export const scenes = defineSceneManifest(
           }
         },
         {
-          "id": "maximum-speed",
-          "name": "Maximum movement speed",
+          "id": "maximum-x-speed",
+          "name": "Maximum X speed",
           "kind": "number",
           "number": {
             "value": 82,
+            "min": 0,
+            "max": 500,
+            "step": 1,
+            "unit": "pixels-per-second"
+          }
+        },
+        {
+          "id": "minimum-y-speed",
+          "name": "Minimum Y speed",
+          "kind": "number",
+          "number": {
+            "value": 70,
+            "min": 0,
+            "max": 500,
+            "step": 1,
+            "unit": "pixels-per-second"
+          }
+        },
+        {
+          "id": "maximum-y-speed",
+          "name": "Maximum Y speed",
+          "kind": "number",
+          "number": {
+            "value": 70,
             "min": 0,
             "max": 500,
             "step": 1,
