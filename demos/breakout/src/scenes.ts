@@ -1961,47 +1961,27 @@ export const scenes = defineSceneManifest(
           }
         },
         {
-          "id": "minimum-x",
-          "name": "Minimum X",
+          "id": "minimum-speed",
+          "name": "Minimum movement speed",
           "kind": "number",
           "number": {
-            "value": 0,
+            "value": 38,
             "min": 0,
-            "max": 800,
-            "step": 10
+            "max": 500,
+            "step": 1,
+            "unit": "pixels-per-second"
           }
         },
         {
-          "id": "maximum-x",
-          "name": "Maximum X",
+          "id": "maximum-speed",
+          "name": "Maximum movement speed",
           "kind": "number",
           "number": {
-            "value": 800,
+            "value": 38,
             "min": 0,
-            "max": 800,
-            "step": 10
-          }
-        },
-        {
-          "id": "minimum-y",
-          "name": "Minimum Y",
-          "kind": "number",
-          "number": {
-            "value": 0,
-            "min": 0,
-            "max": 600,
-            "step": 10
-          }
-        },
-        {
-          "id": "maximum-y",
-          "name": "Maximum Y",
-          "kind": "number",
-          "number": {
-            "value": 600,
-            "min": 0,
-            "max": 600,
-            "step": 10
+            "max": 500,
+            "step": 1,
+            "unit": "pixels-per-second"
           }
         }
       ]
@@ -2029,47 +2009,27 @@ export const scenes = defineSceneManifest(
           }
         },
         {
-          "id": "minimum-x",
-          "name": "Minimum X",
+          "id": "minimum-speed",
+          "name": "Minimum movement speed",
           "kind": "number",
           "number": {
-            "value": 42,
+            "value": 82,
             "min": 0,
-            "max": 800,
-            "step": 10
+            "max": 500,
+            "step": 1,
+            "unit": "pixels-per-second"
           }
         },
         {
-          "id": "maximum-x",
-          "name": "Maximum X",
+          "id": "maximum-speed",
+          "name": "Maximum movement speed",
           "kind": "number",
           "number": {
-            "value": 758,
+            "value": 82,
             "min": 0,
-            "max": 800,
-            "step": 10
-          }
-        },
-        {
-          "id": "minimum-y",
-          "name": "Minimum Y",
-          "kind": "number",
-          "number": {
-            "value": 38,
-            "min": 0,
-            "max": 600,
-            "step": 10
-          }
-        },
-        {
-          "id": "maximum-y",
-          "name": "Maximum Y",
-          "kind": "number",
-          "number": {
-            "value": 250,
-            "min": 0,
-            "max": 600,
-            "step": 10
+            "max": 500,
+            "step": 1,
+            "unit": "pixels-per-second"
           }
         },
         {
