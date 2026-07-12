@@ -1,0 +1,13 @@
+{
+  "id": "background.waterfall.large",
+  "kind": "image",
+  "prompt": "Exact large lower-left waterfall patch from the jungle background, preserving surrounding rocks, plants, and river for seamless placement.",
+  "dimensions": { "width": 144, "height": 160 },
+  "settings": { "format": "png", "background": "opaque", "model": "manual-crop" },
+  "activeVersion": "default",
+  "versions": {
+    "default": { "name": "default", "file": "/assets/background.waterfall.large.default.png", "prompt": "Exact large waterfall patch.", "createdAt": "2026-07-12T00:00:00.000Z", "model": "manual-crop" }
+  },
+  "tags": ["background", "waterfall"],
+  "linkedAnimationAssets": { "idle": { "label": "Idle", "assetId": "background.waterfall.large.idle" } }
+}

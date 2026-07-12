@@ -1,0 +1,20 @@
+{
+  "id": "background.parrot.idle",
+  "kind": "animation",
+  "prompt": "A 4-frame seamless idle spritesheet from the exact source patch. Animate only the parrot with subtle blinking, breathing, and tail movement. Keep the branch, foliage, framing, colors, and every surrounding background pixel perfectly fixed and identical in all frames.",
+  "dimensions": { "width": 288, "height": 288 },
+  "frameGrid": { "frameCount": 4, "frameWidth": 144, "frameHeight": 144, "columns": 2, "rows": 2 },
+  "animations": [{ "key": "background.parrot.idle", "frameRate": 5, "repeat": -1, "frames": [0, 1, 2, 3] }],
+  "settings": { "format": "png", "background": "opaque", "model": "gpt-image-2", "referenceAssetIds": ["background.parrot"] },
+  "activeVersion": "default",
+  "versions": {
+    "default": {
+      "name": "default",
+      "file": "/assets/background.parrot.idle.default.png",
+      "prompt": "Static 4-frame spritesheet derived from the exact parrot patch.",
+      "createdAt": "2026-07-12T00:00:00.000Z",
+      "model": "base-image-spritesheet"
+    }
+  },
+  "tags": ["background", "parrot", "animation", "idle"]
+}

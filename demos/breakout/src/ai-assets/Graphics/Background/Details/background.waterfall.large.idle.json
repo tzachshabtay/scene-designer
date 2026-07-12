@@ -1,0 +1,14 @@
+{
+  "id": "background.waterfall.large.idle",
+  "kind": "animation",
+  "prompt": "A 4-frame seamless looping spritesheet from the exact source patch. Animate only the waterfall flow, foam, and small water ripples. Keep all rocks, plants, patch edges, framing, and surrounding pixels perfectly fixed and identical in every frame.",
+  "dimensions": { "width": 288, "height": 320 },
+  "frameGrid": { "frameCount": 4, "frameWidth": 144, "frameHeight": 160, "columns": 2, "rows": 2 },
+  "animations": [{ "key": "background.waterfall.large.idle", "frameRate": 7, "repeat": -1, "frames": [0, 1, 2, 3] }],
+  "settings": { "format": "png", "background": "opaque", "model": "gpt-image-2", "referenceAssetIds": ["background.waterfall.large"] },
+  "activeVersion": "default",
+  "versions": {
+    "default": { "name": "default", "file": "/assets/background.waterfall.large.idle.default.png", "prompt": "Static 4-frame spritesheet derived from the exact large waterfall patch.", "createdAt": "2026-07-12T00:00:00.000Z", "model": "base-image-spritesheet" }
+  },
+  "tags": ["background", "waterfall", "animation", "idle"]
+}

@@ -377,18 +377,21 @@ export class BreakoutScene extends Phaser.Scene {
   }
 
   private addSceneBackground(level: SceneDefinition): void {
-    const background = sceneObjects(this.sceneManifest, level)
-      .find((object) => object.tag === backgroundTag);
+    const backgrounds = sceneObjects(this.sceneManifest, level)
+      .filter((object) => object.tag === backgroundTag || object.tag.startsWith(`${backgroundTag}.`));
 
-    if (!background) return;
-
-    const sprite = this.add.sprite(background.x, background.y, this.textureForAsset(background.assetId));
-    sprite.setData("assetId", background.assetId);
-    this.bindAiAssetTexture(sprite, background.assetId);
-    sprite.setData("sceneObject", background);
-    applyObjectTransform(sprite, background);
-    sprite.setDepth(-10);
-    this.levelObjects.push(sprite);
+    backgrounds.forEach((background, index) => {
+      const idleAssetId = this.linkedAnimationAssetId(background.assetId, "idle");
+      const sprite = this.add.sprite(background.x, background.y, this.textureForAsset(idleAssetId));
+      sprite.setData("baseAssetId", background.assetId);
+      sprite.setData("assetId", idleAssetId);
+      this.bindAiAssetTexture(sprite, idleAssetId);
+      sprite.setData("sceneObject", background);
+      applyObjectTransform(sprite, background);
+      this.playLinkedAnimation(sprite, background.assetId, "idle");
+      sprite.setDepth(-10 + index);
+      this.levelObjects.push(sprite);
+    });
   }
 
   private createBrick(object: SceneObject): void {

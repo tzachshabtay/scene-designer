@@ -1,0 +1,14 @@
+{
+  "id": "background.torch.idle",
+  "kind": "animation",
+  "prompt": "A 4-frame seamless looping spritesheet from the exact source patch. Animate only the torch flame with a subtle flicker and glow variation. Keep the torch stand, leaves, flowers, ground, framing, and every patch-edge pixel perfectly fixed and identical in all frames.",
+  "dimensions": { "width": 208, "height": 480 },
+  "frameGrid": { "frameCount": 4, "frameWidth": 104, "frameHeight": 240, "columns": 2, "rows": 2 },
+  "animations": [{ "key": "background.torch.idle", "frameRate": 8, "repeat": -1, "frames": [0, 1, 2, 3] }],
+  "settings": { "format": "png", "background": "opaque", "model": "gpt-image-2", "referenceAssetIds": ["background.torch"] },
+  "activeVersion": "default",
+  "versions": {
+    "default": { "name": "default", "file": "/assets/background.torch.idle.default.png", "prompt": "Static 4-frame spritesheet derived from the exact torch patch.", "createdAt": "2026-07-12T00:00:00.000Z", "model": "base-image-spritesheet" }
+  },
+  "tags": ["background", "torch", "animation", "idle"]
+}

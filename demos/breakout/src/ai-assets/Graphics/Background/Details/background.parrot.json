@@ -1,0 +1,19 @@
+{
+  "id": "background.parrot",
+  "kind": "image",
+  "prompt": "Exact upper-right parrot patch from the jungle background, preserving the surrounding branch and foliage for seamless placement.",
+  "dimensions": { "width": 144, "height": 144 },
+  "settings": { "format": "png", "background": "opaque", "model": "manual-crop" },
+  "activeVersion": "default",
+  "versions": {
+    "default": {
+      "name": "default",
+      "file": "/assets/background.parrot.default.png",
+      "prompt": "Exact upper-right parrot patch from the jungle background.",
+      "createdAt": "2026-07-12T00:00:00.000Z",
+      "model": "manual-crop"
+    }
+  },
+  "tags": ["background", "parrot"],
+  "linkedAnimationAssets": { "idle": { "label": "Idle", "assetId": "background.parrot.idle" } }
+}
