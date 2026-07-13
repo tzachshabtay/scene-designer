@@ -1231,10 +1231,10 @@ export class BreakoutScene extends Phaser.Scene {
       strokeThickness: 2
     };
     const levelLabel = this.add.text(0, 0, "LEVEL", labelStyle);
-    this.hudLevelValue = this.add.text(62, 0, "1", valueStyle);
-    const scoreLabel = this.add.text(102, 0, "SCORE", labelStyle);
-    this.hudScoreValue = this.add.text(165, 0, "0", valueStyle);
-    const livesLabel = this.add.text(224, 0, "LIVES", labelStyle);
+    this.hudLevelValue = this.add.text(68, 0, "1", valueStyle);
+    const scoreLabel = this.add.text(112, 0, "SCORE", labelStyle);
+    this.hudScoreValue = this.add.text(181, 0, "0", valueStyle);
+    const livesLabel = this.add.text(244, 0, "LIVES", labelStyle);
     const ballTexture = this.textureForAsset("ball.core");
     const children: Phaser.GameObjects.GameObject[] = [
       levelLabel,
@@ -1245,12 +1245,12 @@ export class BreakoutScene extends Phaser.Scene {
     ];
 
     this.hudLifeIcons = Array.from({ length: initialLives }, (_, index) => {
-      const x = 294 + index * 25;
-      const outline = this.add.image(x, 10, ballTexture)
+      const x = 316 + index * 25;
+      const outline = this.add.image(x, 13, ballTexture)
         .setDisplaySize(23, 23)
         .setTint(0x10210f)
         .setTintMode(Phaser.TintModes.FILL);
-      const coconut = this.add.image(x, 10, ballTexture).setDisplaySize(18, 18);
+      const coconut = this.add.image(x, 13, ballTexture).setDisplaySize(18, 18);
       this.bindAiAssetTexture(outline, "ball.core");
       this.bindAiAssetTexture(coconut, "ball.core");
       children.push(outline, coconut);
