@@ -1,0 +1,18 @@
+{
+  "id": "audio.sfx.life-lost",
+  "kind": "sound",
+  "prompt": "Short jungle arcade life lost sound, startled wooden percussion drop with a soft disappointed flourish, no voice.",
+  "audioSettings": {
+    "provider": "elevenlabs",
+    "format": "mp3",
+    "durationSeconds": 1.5,
+    "loop": false
+  },
+  "activeVersion": "",
+  "versions": {},
+  "tags": [
+    "sfx",
+    "player",
+    "life"
+  ]
+}

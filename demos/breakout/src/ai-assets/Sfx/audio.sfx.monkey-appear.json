@@ -1,19 +1,53 @@
 {
   "id": "audio.sfx.monkey-appear",
   "kind": "sound",
-  "prompt": "Long mischievous jungle monkey entrance, excited distant monkey calls with rustling branches, playful arcade game sound.",
+  "prompt": "mischievous monkey",
   "audioSettings": {
     "provider": "elevenlabs",
     "format": "mp3",
-    "durationSeconds": 4,
-    "loop": false
+    "durationSeconds": 30,
+    "loop": true
   },
-  "activeVersion": "",
-  "versions": {},
+  "activeVersion": "promoted-1783906905212",
+  "versions": {
+    "promoted-1783906905212": {
+      "name": "promoted-1783906905212",
+      "file": "/assets/audio.sfx.monkey-appear.promoted-1783906905212.mp3",
+      "prompt": "mischievous monkey",
+      "createdAt": "2026-07-13T01:41:45.289Z",
+      "model": "eleven_text_to_sound_v2",
+      "settings": {},
+      "audioSettings": {
+        "provider": "elevenlabs",
+        "format": "mp3",
+        "durationSeconds": 30,
+        "loop": true
+      },
+      "audioPlayback": {
+        "volume": 0.35,
+        "trimStartSeconds": 0,
+        "trimEndSeconds": 30,
+        "playbackRate": 1,
+        "loop": true
+      },
+      "voiceSettings": {},
+      "durationSeconds": 30,
+      "notes": "Promoted from the AI asset designer."
+    }
+  },
   "tags": [
     "sfx",
     "enemy",
     "monkey",
     "appearance"
-  ]
+  ],
+  "settings": {},
+  "audioPlayback": {
+    "volume": 0.35,
+    "trimStartSeconds": 0,
+    "trimEndSeconds": 30,
+    "playbackRate": 1,
+    "loop": true
+  },
+  "voiceSettings": {}
 }

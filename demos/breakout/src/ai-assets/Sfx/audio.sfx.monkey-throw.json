@@ -1,0 +1,19 @@
+{
+  "id": "audio.sfx.monkey-throw",
+  "kind": "sound",
+  "prompt": "Quick mischievous monkey banana throw sound, playful whoop with a fast cartoony jungle projectile swoosh, no words.",
+  "audioSettings": {
+    "provider": "elevenlabs",
+    "format": "mp3",
+    "durationSeconds": 1,
+    "loop": false
+  },
+  "activeVersion": "",
+  "versions": {},
+  "tags": [
+    "sfx",
+    "enemy",
+    "monkey",
+    "projectile"
+  ]
+}

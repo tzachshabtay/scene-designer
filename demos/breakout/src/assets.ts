@@ -3455,20 +3455,75 @@ export const assets = defineAiAssets(
     "audioPlayback": {},
     "voiceSettings": {}
   },
-  "audio.sfx.brick": {
-    "id": "audio.sfx.brick",
-    "kind": "sound",
-    "prompt": "Punchy glass brick crack with arcade sparkle.",
+  "audio.music.game": {
+    "id": "audio.music.game",
+    "kind": "music",
+    "prompt": "Loopable adventurous jungle arcade gameplay music, lively hand percussion, marimba melody and playful tropical energy, instrumental, no vocals.",
     "audioSettings": {
       "provider": "elevenlabs",
       "format": "mp3",
-      "durationSeconds": 1
+      "durationSeconds": 24,
+      "loop": true
     },
     "activeVersion": "",
     "versions": {},
     "tags": [
+      "music",
+      "gameplay",
+      "jungle"
+    ],
+    "audioPlayback": {
+      "volume": 0.65,
+      "loop": true
+    }
+  },
+  "audio.sfx.brick": {
+    "id": "audio.sfx.brick",
+    "kind": "sound",
+    "prompt": "single high pitched marimba musical note",
+    "audioSettings": {
+      "provider": "elevenlabs",
+      "format": "mp3",
+      "durationSeconds": 0.5,
+      "loop": true
+    },
+    "activeVersion": "promoted-1783906619923",
+    "versions": {
+      "promoted-1783906619923": {
+        "name": "promoted-1783906619923",
+        "file": "/assets/audio.sfx.brick.promoted-1783906619923.mp3",
+        "prompt": "single high pitched marimba musical note",
+        "createdAt": "2026-07-13T01:36:59.992Z",
+        "model": "eleven_text_to_sound_v2",
+        "settings": {},
+        "audioSettings": {
+          "provider": "elevenlabs",
+          "format": "mp3",
+          "durationSeconds": 0.5,
+          "loop": true
+        },
+        "audioPlayback": {
+          "volume": 1,
+          "trimStartSeconds": 0.36298778469279663,
+          "trimEndSeconds": 0.9426070908368644,
+          "playbackRate": 1
+        },
+        "voiceSettings": {},
+        "durationSeconds": 0.5,
+        "notes": "Promoted from the AI asset designer."
+      }
+    },
+    "tags": [
       "sfx"
-    ]
+    ],
+    "settings": {},
+    "audioPlayback": {
+      "volume": 1,
+      "trimStartSeconds": 0.36298778469279663,
+      "trimEndSeconds": 0.9426070908368644,
+      "playbackRate": 1
+    },
+    "voiceSettings": {}
   },
   "audio.sfx.enemy": {
     "id": "audio.sfx.enemy",
@@ -3518,6 +3573,24 @@ export const assets = defineAiAssets(
     },
     "voiceSettings": {}
   },
+  "audio.sfx.game-over": {
+    "id": "audio.sfx.game-over",
+    "kind": "sound",
+    "prompt": "Dramatic jungle arcade game over sting, descending marimba and deep ceremonial drum ending with a playful defeat flourish, no voice.",
+    "audioSettings": {
+      "provider": "elevenlabs",
+      "format": "mp3",
+      "durationSeconds": 4,
+      "loop": false
+    },
+    "activeVersion": "",
+    "versions": {},
+    "tags": [
+      "sfx",
+      "player",
+      "game-over"
+    ]
+  },
   "audio.sfx.level": {
     "id": "audio.sfx.level",
     "kind": "sound",
@@ -3566,14 +3639,85 @@ export const assets = defineAiAssets(
     },
     "voiceSettings": {}
   },
-  "audio.sfx.monkey-appear": {
-    "id": "audio.sfx.monkey-appear",
+  "audio.sfx.life-lost": {
+    "id": "audio.sfx.life-lost",
     "kind": "sound",
-    "prompt": "Long mischievous jungle monkey entrance, excited distant monkey calls with rustling branches, playful arcade game sound.",
+    "prompt": "Short jungle arcade life lost sound, startled wooden percussion drop with a soft disappointed flourish, no voice.",
     "audioSettings": {
       "provider": "elevenlabs",
       "format": "mp3",
-      "durationSeconds": 4,
+      "durationSeconds": 1.5,
+      "loop": false
+    },
+    "activeVersion": "",
+    "versions": {},
+    "tags": [
+      "sfx",
+      "player",
+      "life"
+    ]
+  },
+  "audio.sfx.monkey-appear": {
+    "id": "audio.sfx.monkey-appear",
+    "kind": "sound",
+    "prompt": "mischievous monkey",
+    "audioSettings": {
+      "provider": "elevenlabs",
+      "format": "mp3",
+      "durationSeconds": 30,
+      "loop": true
+    },
+    "activeVersion": "promoted-1783906905212",
+    "versions": {
+      "promoted-1783906905212": {
+        "name": "promoted-1783906905212",
+        "file": "/assets/audio.sfx.monkey-appear.promoted-1783906905212.mp3",
+        "prompt": "mischievous monkey",
+        "createdAt": "2026-07-13T01:41:45.289Z",
+        "model": "eleven_text_to_sound_v2",
+        "settings": {},
+        "audioSettings": {
+          "provider": "elevenlabs",
+          "format": "mp3",
+          "durationSeconds": 30,
+          "loop": true
+        },
+        "audioPlayback": {
+          "volume": 0.35,
+          "trimStartSeconds": 0,
+          "trimEndSeconds": 30,
+          "playbackRate": 1,
+          "loop": true
+        },
+        "voiceSettings": {},
+        "durationSeconds": 30,
+        "notes": "Promoted from the AI asset designer."
+      }
+    },
+    "tags": [
+      "sfx",
+      "enemy",
+      "monkey",
+      "appearance"
+    ],
+    "settings": {},
+    "audioPlayback": {
+      "volume": 0.35,
+      "trimStartSeconds": 0,
+      "trimEndSeconds": 30,
+      "playbackRate": 1,
+      "loop": true
+    },
+    "voiceSettings": {}
+  },
+  "audio.sfx.monkey-throw": {
+    "id": "audio.sfx.monkey-throw",
+    "kind": "sound",
+    "prompt": "Quick mischievous monkey banana throw sound, playful whoop with a fast cartoony jungle projectile swoosh, no words.",
+    "audioSettings": {
+      "provider": "elevenlabs",
+      "format": "mp3",
+      "durationSeconds": 1,
       "loop": false
     },
     "activeVersion": "",
@@ -3582,7 +3726,7 @@ export const assets = defineAiAssets(
       "sfx",
       "enemy",
       "monkey",
-      "appearance"
+      "projectile"
     ]
   },
   "audio.sfx.paddle": {
@@ -3595,7 +3739,7 @@ export const assets = defineAiAssets(
       "durationSeconds": 0.5,
       "loop": true
     },
-    "activeVersion": "promoted-1783890738564",
+    "activeVersion": "promoted-1783906547988",
     "versions": {
       "promoted-1783890738564": {
         "name": "promoted-1783890738564",
@@ -3619,6 +3763,30 @@ export const assets = defineAiAssets(
         "voiceSettings": {},
         "durationSeconds": 0.5,
         "notes": "Promoted from the AI asset designer."
+      },
+      "promoted-1783906547988": {
+        "name": "promoted-1783906547988",
+        "file": "/assets/audio.sfx.paddle.promoted-1783906547988.mp3",
+        "prompt": "a ping pong ball hits the racket with reverb, single hit",
+        "createdAt": "2026-07-13T01:35:48.038Z",
+        "model": "eleven_text_to_sound_v2",
+        "settings": {},
+        "audioSettings": {
+          "provider": "elevenlabs",
+          "format": "mp3",
+          "durationSeconds": 0.5,
+          "loop": true
+        },
+        "audioPlayback": {
+          "volume": 0.33,
+          "trimStartSeconds": 0.6316964876853814,
+          "trimEndSeconds": 1.0407811672404663,
+          "playbackRate": 1
+        },
+        "voiceSettings": {},
+        "durationSeconds": 0.5,
+        "parentVersion": "promoted-1783890738564",
+        "notes": "Promoted from the AI asset designer."
       }
     },
     "tags": [
@@ -3626,7 +3794,7 @@ export const assets = defineAiAssets(
     ],
     "settings": {},
     "audioPlayback": {
-      "volume": 1,
+      "volume": 0.33,
       "trimStartSeconds": 0.6316964876853814,
       "trimEndSeconds": 1.0407811672404663,
       "playbackRate": 1
@@ -3640,17 +3808,68 @@ export const assets = defineAiAssets(
     "audioSettings": {
       "provider": "elevenlabs",
       "format": "mp3",
-      "durationSeconds": 4,
-      "loop": false
+      "durationSeconds": 30,
+      "loop": true
     },
-    "activeVersion": "",
-    "versions": {},
+    "activeVersion": "promoted-1783906997052",
+    "versions": {
+      "promoted-1783906961042": {
+        "name": "promoted-1783906961042",
+        "file": "/assets/audio.sfx.snake-appear.promoted-1783906961042.mp3",
+        "prompt": "Long ominous jungle snake entrance, sustained slithering through leaves with a rising hiss, playful arcade game sound.",
+        "createdAt": "2026-07-13T01:42:41.099Z",
+        "model": "eleven_text_to_sound_v2",
+        "settings": {},
+        "audioSettings": {
+          "provider": "elevenlabs",
+          "format": "mp3",
+          "durationSeconds": 30,
+          "loop": true
+        },
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "durationSeconds": 30,
+        "notes": "Promoted from the AI asset designer."
+      },
+      "promoted-1783906997052": {
+        "name": "promoted-1783906997052",
+        "file": "/assets/audio.sfx.snake-appear.promoted-1783906997052.mp3",
+        "prompt": "Long ominous jungle snake entrance, sustained slithering through leaves with a rising hiss, playful arcade game sound.",
+        "createdAt": "2026-07-13T01:43:17.106Z",
+        "model": "eleven_text_to_sound_v2",
+        "settings": {},
+        "audioSettings": {
+          "provider": "elevenlabs",
+          "format": "mp3",
+          "durationSeconds": 30,
+          "loop": true
+        },
+        "audioPlayback": {
+          "volume": 0.07,
+          "trimStartSeconds": 0,
+          "trimEndSeconds": 30,
+          "playbackRate": 1
+        },
+        "voiceSettings": {},
+        "durationSeconds": 30,
+        "parentVersion": "promoted-1783906961042",
+        "notes": "Promoted from the AI asset designer."
+      }
+    },
     "tags": [
       "sfx",
       "enemy",
       "snake",
       "appearance"
-    ]
+    ],
+    "settings": {},
+    "audioPlayback": {
+      "volume": 0.07,
+      "trimStartSeconds": 0,
+      "trimEndSeconds": 30,
+      "playbackRate": 1
+    },
+    "voiceSettings": {}
   },
   "audio.sfx.snake-bite": {
     "id": "audio.sfx.snake-bite",
@@ -3662,13 +3881,35 @@ export const assets = defineAiAssets(
       "durationSeconds": 0.8,
       "loop": false
     },
-    "activeVersion": "",
-    "versions": {},
+    "activeVersion": "promoted-1783907017874",
+    "versions": {
+      "promoted-1783907017874": {
+        "name": "promoted-1783907017874",
+        "file": "/assets/audio.sfx.snake-bite.promoted-1783907017874.mp3",
+        "prompt": "Quick jungle snake bite strike, sharp hiss and small venomous snap, single arcade game hit sound.",
+        "createdAt": "2026-07-13T01:43:37.920Z",
+        "model": "eleven_text_to_sound_v2",
+        "settings": {},
+        "audioSettings": {
+          "provider": "elevenlabs",
+          "format": "mp3",
+          "durationSeconds": 0.8,
+          "loop": false
+        },
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "durationSeconds": 0.8,
+        "notes": "Promoted from the AI asset designer."
+      }
+    },
     "tags": [
       "sfx",
       "enemy",
       "snake"
-    ]
+    ],
+    "settings": {},
+    "audioPlayback": {},
+    "voiceSettings": {}
   },
   "audio.sfx.wall": {
     "id": "audio.sfx.wall",

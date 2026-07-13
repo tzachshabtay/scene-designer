@@ -8,11 +8,33 @@
     "durationSeconds": 0.8,
     "loop": false
   },
-  "activeVersion": "",
-  "versions": {},
+  "activeVersion": "promoted-1783907017874",
+  "versions": {
+    "promoted-1783907017874": {
+      "name": "promoted-1783907017874",
+      "file": "/assets/audio.sfx.snake-bite.promoted-1783907017874.mp3",
+      "prompt": "Quick jungle snake bite strike, sharp hiss and small venomous snap, single arcade game hit sound.",
+      "createdAt": "2026-07-13T01:43:37.920Z",
+      "model": "eleven_text_to_sound_v2",
+      "settings": {},
+      "audioSettings": {
+        "provider": "elevenlabs",
+        "format": "mp3",
+        "durationSeconds": 0.8,
+        "loop": false
+      },
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "durationSeconds": 0.8,
+      "notes": "Promoted from the AI asset designer."
+    }
+  },
   "tags": [
     "sfx",
     "enemy",
     "snake"
-  ]
+  ],
+  "settings": {},
+  "audioPlayback": {},
+  "voiceSettings": {}
 }

@@ -64,6 +64,7 @@ type PreviewAudioSource = {
 
 type SfxPlaybackOptions = {
   randomPitchSemitones?: number;
+  pitchStepsSemitones?: readonly number[];
 };
 
 const initialLevelOrder = ["level.one", "level.two", "level.three"];
@@ -85,7 +86,12 @@ const levelSfxAssetId = "audio.sfx.level";
 const snakeBiteSfxAssetId = "audio.sfx.snake-bite";
 const snakeAppearSfxAssetId = "audio.sfx.snake-appear";
 const monkeyAppearSfxAssetId = "audio.sfx.monkey-appear";
+const lifeLostSfxAssetId = "audio.sfx.life-lost";
+const gameOverSfxAssetId = "audio.sfx.game-over";
+const monkeyThrowSfxAssetId = "audio.sfx.monkey-throw";
+const gameMusicAssetId = "audio.music.game";
 const hitPitchVariationSemitones = 1.5;
+const brickPitchStepsSemitones = [-3, -2, -1, 0, 1, 2, 3] as const;
 const defaultEnemySpawnIntervalSeconds = 18;
 const firstEnemySpawnDelayMs = 5000;
 const maxActiveEnemies = 2;
@@ -161,6 +167,7 @@ export class BreakoutScene extends Phaser.Scene {
   private readonly previewAudioSources = new Map<string, PreviewAudioSource>();
   private readonly activeAudioElements = new Set<HTMLAudioElement>();
   private readonly enemyAppearanceAudioStops = new Map<ArcadeSprite, () => void>();
+  private gameMusicStop?: () => void;
   private lastWorldBoundsHitAt = -Infinity;
 
   constructor(options: BreakoutSceneOptions) {
@@ -249,6 +256,8 @@ export class BreakoutScene extends Phaser.Scene {
 
     this.createDebugPauseButton();
     this.loadLevel(0);
+    this.input.once("pointerdown", this.startGameMusic, this);
+    this.input.keyboard?.once("keydown", this.startGameMusic, this);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.sceneDesigner?.destroy();
       this.debugPauseButton?.remove();
@@ -258,6 +267,7 @@ export class BreakoutScene extends Phaser.Scene {
         this.onWorldBoundsHit,
         this
       );
+      this.stopGameMusic();
       this.stopActiveAudio();
     });
   }
@@ -563,7 +573,7 @@ export class BreakoutScene extends Phaser.Scene {
     const ball = ballObject as ArcadeImage;
     const brick = brickObject as BrickSprite;
     this.reflectBallFromObject(ball, brick, collisionPoint);
-    this.playHitSfx(brickSfxAssetId);
+    this.playSfx(brickSfxAssetId, { pitchStepsSemitones: brickPitchStepsSemitones });
 
     const hp = Math.max(0, Number(brick.getData("hp") ?? 1) - 1);
 
@@ -756,7 +766,9 @@ export class BreakoutScene extends Phaser.Scene {
       ? monkeyAppearSfxAssetId
       : snakeAppearSfxAssetId;
     const stopAppearanceAudio = this.playSfx(appearanceSfxAssetId);
-    this.enemyAppearanceAudioStops.set(enemy, stopAppearanceAudio);
+    if (stopAppearanceAudio) {
+      this.enemyAppearanceAudioStops.set(enemy, stopAppearanceAudio);
+    }
     enemy.once(Phaser.GameObjects.Events.DESTROY, () => {
       this.stopEnemyAppearanceAudio(enemy);
     });
@@ -883,6 +895,8 @@ export class BreakoutScene extends Phaser.Scene {
 
   private launchBanana(monkey: ArcadeSprite): void {
     if (!this.paddle?.active || !monkey.active || monkey.getData("destroying")) return;
+
+    this.playSfx(monkeyThrowSfxAssetId);
 
     const leadTargetX = Phaser.Math.Clamp(
       this.paddle.x + this.paddle.body.velocity.x * bananaAimLeadSeconds,
@@ -1091,6 +1105,7 @@ export class BreakoutScene extends Phaser.Scene {
     this.updateHud();
 
     if (this.lives === 0) {
+      this.playSfx(gameOverSfxAssetId);
       this.paddle.setData("destroying", true);
       this.ball?.setVelocity(0, 0);
       const baseAssetId = String(this.paddle.getData("baseAssetId") ?? "hero.paddle.normal");
@@ -1103,6 +1118,7 @@ export class BreakoutScene extends Phaser.Scene {
       return true;
     }
 
+    this.playSfx(lifeLostSfxAssetId);
     const baseAssetId = String(this.paddle.getData("baseAssetId") ?? "hero.paddle.normal");
     const duration = this.playLinkedAnimation(this.paddle, baseAssetId, "hit");
     this.time.delayedCall(Math.max(duration, 160) + 20, () => {
@@ -1220,6 +1236,11 @@ export class BreakoutScene extends Phaser.Scene {
       src,
       playback: asset.audioPlayback ?? activeVersion?.audioPlayback
     });
+
+    if (assetId === gameMusicAssetId) {
+      this.stopGameMusic();
+      this.startGameMusic();
+    }
   }
 
   private playHitSfx(assetId: string): void {
@@ -1234,14 +1255,25 @@ export class BreakoutScene extends Phaser.Scene {
     this.playHitSfx(wallSfxAssetId);
   }
 
-  private playSfx(assetId: string, options: SfxPlaybackOptions = {}): () => void {
+  private startGameMusic(): void {
+    if (this.gameMusicStop) return;
+
+    this.gameMusicStop = this.playSfx(gameMusicAssetId);
+  }
+
+  private stopGameMusic(): void {
+    this.gameMusicStop?.();
+    this.gameMusicStop = undefined;
+  }
+
+  private playSfx(assetId: string, options: SfxPlaybackOptions = {}): (() => void) | undefined {
     const asset = this.aiAssets.assets[assetId];
-    if (!asset || !isAudioAsset(asset)) return () => undefined;
+    if (!asset || !isAudioAsset(asset)) return undefined;
 
     const activeVersion = asset.versions[asset.activeVersion];
     const preview = this.previewAudioSources.get(assetId);
     const src = preview?.src ?? (activeVersion?.file ? this.aiRuntime.url(assetId) : undefined);
-    if (!src) return () => undefined;
+    if (!src) return undefined;
 
     const playback = preview?.playback ?? asset.audioPlayback ?? activeVersion?.audioPlayback;
     const audio = new Audio(src);
@@ -1271,9 +1303,12 @@ export class BreakoutScene extends Phaser.Scene {
     const start = () => {
       if (disposed) return;
       audio.volume = Phaser.Math.Clamp(playback?.volume ?? 1, 0, 1);
-      const pitchVariation = options.randomPitchSemitones
-        ? Phaser.Math.FloatBetween(-options.randomPitchSemitones, options.randomPitchSemitones)
-        : 0;
+      const pitchSteps = options.pitchStepsSemitones;
+      const pitchVariation = pitchSteps?.length
+        ? pitchSteps[Phaser.Math.Between(0, pitchSteps.length - 1)] ?? 0
+        : options.randomPitchSemitones
+          ? Phaser.Math.FloatBetween(-options.randomPitchSemitones, options.randomPitchSemitones)
+          : 0;
       const pitchRate = 2 ** (((playback?.pitchSemitones ?? 0) + pitchVariation) / 12);
       audio.preservesPitch = false;
       audio.playbackRate = Phaser.Math.Clamp((playback?.playbackRate ?? 1) * pitchRate, 0.25, 4);

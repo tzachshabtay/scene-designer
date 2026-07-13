@@ -5,15 +5,66 @@
   "audioSettings": {
     "provider": "elevenlabs",
     "format": "mp3",
-    "durationSeconds": 4,
-    "loop": false
+    "durationSeconds": 30,
+    "loop": true
   },
-  "activeVersion": "",
-  "versions": {},
+  "activeVersion": "promoted-1783906997052",
+  "versions": {
+    "promoted-1783906961042": {
+      "name": "promoted-1783906961042",
+      "file": "/assets/audio.sfx.snake-appear.promoted-1783906961042.mp3",
+      "prompt": "Long ominous jungle snake entrance, sustained slithering through leaves with a rising hiss, playful arcade game sound.",
+      "createdAt": "2026-07-13T01:42:41.099Z",
+      "model": "eleven_text_to_sound_v2",
+      "settings": {},
+      "audioSettings": {
+        "provider": "elevenlabs",
+        "format": "mp3",
+        "durationSeconds": 30,
+        "loop": true
+      },
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "durationSeconds": 30,
+      "notes": "Promoted from the AI asset designer."
+    },
+    "promoted-1783906997052": {
+      "name": "promoted-1783906997052",
+      "file": "/assets/audio.sfx.snake-appear.promoted-1783906997052.mp3",
+      "prompt": "Long ominous jungle snake entrance, sustained slithering through leaves with a rising hiss, playful arcade game sound.",
+      "createdAt": "2026-07-13T01:43:17.106Z",
+      "model": "eleven_text_to_sound_v2",
+      "settings": {},
+      "audioSettings": {
+        "provider": "elevenlabs",
+        "format": "mp3",
+        "durationSeconds": 30,
+        "loop": true
+      },
+      "audioPlayback": {
+        "volume": 0.07,
+        "trimStartSeconds": 0,
+        "trimEndSeconds": 30,
+        "playbackRate": 1
+      },
+      "voiceSettings": {},
+      "durationSeconds": 30,
+      "parentVersion": "promoted-1783906961042",
+      "notes": "Promoted from the AI asset designer."
+    }
+  },
   "tags": [
     "sfx",
     "enemy",
     "snake",
     "appearance"
-  ]
+  ],
+  "settings": {},
+  "audioPlayback": {
+    "volume": 0.07,
+    "trimStartSeconds": 0,
+    "trimEndSeconds": 30,
+    "playbackRate": 1
+  },
+  "voiceSettings": {}
 }

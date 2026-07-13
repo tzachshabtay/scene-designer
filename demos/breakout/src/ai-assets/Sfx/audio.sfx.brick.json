@@ -1,15 +1,48 @@
 {
   "id": "audio.sfx.brick",
   "kind": "sound",
-  "prompt": "Punchy glass brick crack with arcade sparkle.",
+  "prompt": "single high pitched marimba musical note",
   "audioSettings": {
     "provider": "elevenlabs",
     "format": "mp3",
-    "durationSeconds": 1
+    "durationSeconds": 0.5,
+    "loop": true
   },
-  "activeVersion": "",
-  "versions": {},
+  "activeVersion": "promoted-1783906619923",
+  "versions": {
+    "promoted-1783906619923": {
+      "name": "promoted-1783906619923",
+      "file": "/assets/audio.sfx.brick.promoted-1783906619923.mp3",
+      "prompt": "single high pitched marimba musical note",
+      "createdAt": "2026-07-13T01:36:59.992Z",
+      "model": "eleven_text_to_sound_v2",
+      "settings": {},
+      "audioSettings": {
+        "provider": "elevenlabs",
+        "format": "mp3",
+        "durationSeconds": 0.5,
+        "loop": true
+      },
+      "audioPlayback": {
+        "volume": 1,
+        "trimStartSeconds": 0.36298778469279663,
+        "trimEndSeconds": 0.9426070908368644,
+        "playbackRate": 1
+      },
+      "voiceSettings": {},
+      "durationSeconds": 0.5,
+      "notes": "Promoted from the AI asset designer."
+    }
+  },
   "tags": [
     "sfx"
-  ]
+  ],
+  "settings": {},
+  "audioPlayback": {
+    "volume": 1,
+    "trimStartSeconds": 0.36298778469279663,
+    "trimEndSeconds": 0.9426070908368644,
+    "playbackRate": 1
+  },
+  "voiceSettings": {}
 }

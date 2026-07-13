@@ -1,0 +1,22 @@
+{
+  "id": "audio.music.game",
+  "kind": "music",
+  "prompt": "Loopable adventurous jungle arcade gameplay music, lively hand percussion, marimba melody and playful tropical energy, instrumental, no vocals.",
+  "audioSettings": {
+    "provider": "elevenlabs",
+    "format": "mp3",
+    "durationSeconds": 24,
+    "loop": true
+  },
+  "activeVersion": "",
+  "versions": {},
+  "tags": [
+    "music",
+    "gameplay",
+    "jungle"
+  ],
+  "audioPlayback": {
+    "volume": 0.65,
+    "loop": true
+  }
+}

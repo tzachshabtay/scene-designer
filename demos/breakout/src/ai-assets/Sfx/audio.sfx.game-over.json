@@ -1,0 +1,18 @@
+{
+  "id": "audio.sfx.game-over",
+  "kind": "sound",
+  "prompt": "Dramatic jungle arcade game over sting, descending marimba and deep ceremonial drum ending with a playful defeat flourish, no voice.",
+  "audioSettings": {
+    "provider": "elevenlabs",
+    "format": "mp3",
+    "durationSeconds": 4,
+    "loop": false
+  },
+  "activeVersion": "",
+  "versions": {},
+  "tags": [
+    "sfx",
+    "player",
+    "game-over"
+  ]
+}
