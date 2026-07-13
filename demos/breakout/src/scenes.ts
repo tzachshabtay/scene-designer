@@ -1904,6 +1904,18 @@ export const scenes = defineSceneManifest(
           }
         },
         {
+          "id": "power-up-spawn-interval",
+          "name": "Power-up spawn interval",
+          "kind": "number",
+          "number": {
+            "value": 40,
+            "min": 5,
+            "max": 180,
+            "step": 1,
+            "unit": "seconds"
+          }
+        },
+        {
           "id": "snake-chance",
           "name": "Snake probability",
           "kind": "number",

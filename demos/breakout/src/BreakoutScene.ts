@@ -130,8 +130,7 @@ const paddleInvulnerabilityMs = 650;
 const aiAnimationFrameTransformKey = "aiAnimationFrameTransform";
 const initialLives = 5;
 const firstPowerUpSpawnDelayMs = 14000;
-const minimumPowerUpSpawnIntervalMs = 32000;
-const maximumPowerUpSpawnIntervalMs = 48000;
+const defaultPowerUpSpawnIntervalSeconds = 40;
 const powerUpFallSpeed = 86;
 const paddleSizeEffectDurationMs = 30000;
 
@@ -575,8 +574,7 @@ export class BreakoutScene extends Phaser.Scene {
       this.scheduleEnemySpawn(level, this.spawnEnemy(level));
     });
     this.powerUpSpawnTimer = this.time.delayedCall(firstPowerUpSpawnDelayMs, () => {
-      this.spawnPowerUp(level);
-      this.schedulePowerUpSpawn(level);
+      this.schedulePowerUpSpawn(level, this.spawnPowerUp(level));
     });
   }
 
@@ -1203,13 +1201,20 @@ export class BreakoutScene extends Phaser.Scene {
     return interval;
   }
 
-  private spawnPowerUp(level: SceneDefinition): void {
-    if (this.gameplayPaused || this.levelIntroActive) return;
+  private spawnPowerUp(level: SceneDefinition): number {
     const areas = sceneAreas(this.sceneManifest, level).filter((area) => (
       area.tag === spawnTag || area.tag.startsWith(`${spawnTag}.`)
     ) && area.closed);
     const area = Phaser.Utils.Array.GetRandom(areas);
-    if (!area) return;
+    if (!area) return defaultPowerUpSpawnIntervalSeconds;
+    const instanceId = behaviorInstanceIdFromAttributeId(area.id);
+    const interval = this.behaviorNumber(
+      "spawn-area",
+      "power-up-spawn-interval",
+      defaultPowerUpSpawnIntervalSeconds,
+      instanceId
+    );
+    if (this.gameplayPaused || this.levelIntroActive) return interval;
 
     const type = Phaser.Utils.Array.GetRandom(Object.keys(powerUpAssetIds)) as PowerUpType;
     const baseAssetId = powerUpAssetIds[type];
@@ -1220,20 +1225,21 @@ export class BreakoutScene extends Phaser.Scene {
     powerUp.setData("baseAssetId", baseAssetId);
     powerUp.setData("assetId", idleAssetId);
     powerUp.setDepth(1050);
-    powerUp.setVelocity(0, powerUpFallSpeed);
     powerUp.body.allowGravity = false;
     this.bindAiAssetTexture(powerUp, idleAssetId);
     this.playLinkedAnimation(powerUp, baseAssetId, "idle", { randomFrame: true });
     this.powerUps.add(powerUp);
+    powerUp.body.enable = true;
+    powerUp.setVelocity(0, powerUpFallSpeed);
+    return interval;
   }
 
-  private schedulePowerUpSpawn(level: SceneDefinition): void {
+  private schedulePowerUpSpawn(level: SceneDefinition, intervalSeconds: number): void {
     this.powerUpSpawnTimer?.remove(false);
     this.powerUpSpawnTimer = this.time.delayedCall(
-      Phaser.Math.Between(minimumPowerUpSpawnIntervalMs, maximumPowerUpSpawnIntervalMs),
+      Math.max(1, intervalSeconds) * 1000,
       () => {
-        this.spawnPowerUp(level);
-        this.schedulePowerUpSpawn(level);
+        this.schedulePowerUpSpawn(level, this.spawnPowerUp(level));
       }
     );
   }
