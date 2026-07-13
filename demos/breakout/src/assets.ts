@@ -3720,11 +3720,58 @@ export const assets = defineAiAssets(
     "audioSettings": {
       "provider": "elevenlabs",
       "format": "mp3",
-      "durationSeconds": 20,
+      "durationSeconds": 30,
       "loop": true
     },
-    "activeVersion": "",
-    "versions": {},
+    "activeVersion": "promoted-1783910532039",
+    "versions": {
+      "promoted-1783910522477": {
+        "name": "promoted-1783910522477",
+        "file": "/assets/audio.sfx.jungle-ambience.promoted-1783910522477.mp3",
+        "prompt": "Long seamless jungle ambience loop, tropical birds, distant waterfall, soft insects and leaves moving in a warm breeze, natural atmosphere, no music and no voices.",
+        "createdAt": "2026-07-13T02:42:02.547Z",
+        "model": "eleven_text_to_sound_v2",
+        "settings": {},
+        "audioSettings": {
+          "provider": "elevenlabs",
+          "format": "mp3",
+          "durationSeconds": 30,
+          "loop": true
+        },
+        "audioPlayback": {
+          "volume": 0.24,
+          "loop": true
+        },
+        "voiceSettings": {},
+        "durationSeconds": 30,
+        "notes": "Promoted from the AI asset designer."
+      },
+      "promoted-1783910532039": {
+        "name": "promoted-1783910532039",
+        "file": "/assets/audio.sfx.jungle-ambience.promoted-1783910532039.mp3",
+        "prompt": "Long seamless jungle ambience loop, tropical birds, distant waterfall, soft insects and leaves moving in a warm breeze, natural atmosphere, no music and no voices.",
+        "createdAt": "2026-07-13T02:42:12.081Z",
+        "model": "eleven_text_to_sound_v2",
+        "settings": {},
+        "audioSettings": {
+          "provider": "elevenlabs",
+          "format": "mp3",
+          "durationSeconds": 30,
+          "loop": true
+        },
+        "audioPlayback": {
+          "volume": 0.52,
+          "loop": true,
+          "trimStartSeconds": 0,
+          "trimEndSeconds": 30,
+          "playbackRate": 1
+        },
+        "voiceSettings": {},
+        "durationSeconds": 30,
+        "parentVersion": "promoted-1783910522477",
+        "notes": "Promoted from the AI asset designer."
+      }
+    },
     "tags": [
       "sfx",
       "ambience",
@@ -3732,9 +3779,14 @@ export const assets = defineAiAssets(
       "loop"
     ],
     "audioPlayback": {
-      "volume": 0.24,
-      "loop": true
-    }
+      "volume": 0.52,
+      "loop": true,
+      "trimStartSeconds": 0,
+      "trimEndSeconds": 30,
+      "playbackRate": 1
+    },
+    "settings": {},
+    "voiceSettings": {}
   },
   "audio.sfx.level": {
     "id": "audio.sfx.level",
@@ -3916,7 +3968,7 @@ export const assets = defineAiAssets(
       "durationSeconds": 0.5,
       "loop": true
     },
-    "activeVersion": "promoted-1783907917175",
+    "activeVersion": "promoted-1783911156347",
     "versions": {
       "promoted-1783907917175": {
         "name": "promoted-1783907917175",
@@ -3940,6 +3992,30 @@ export const assets = defineAiAssets(
         "voiceSettings": {},
         "durationSeconds": 0.5,
         "notes": "Promoted from the AI asset designer."
+      },
+      "promoted-1783911156347": {
+        "name": "promoted-1783911156347",
+        "file": "/assets/audio.sfx.monkey-throw.promoted-1783911156347.mp3",
+        "prompt": "Quick mischievous monkey banana throw sound, playful whoop with a fast cartoony jungle projectile swoosh, no words.",
+        "createdAt": "2026-07-13T02:52:36.403Z",
+        "model": "eleven_text_to_sound_v2",
+        "settings": {},
+        "audioSettings": {
+          "provider": "elevenlabs",
+          "format": "mp3",
+          "durationSeconds": 0.5,
+          "loop": true
+        },
+        "audioPlayback": {
+          "volume": 0.34,
+          "trimStartSeconds": 0.29093956898834744,
+          "trimEndSeconds": 0.8428897146451273,
+          "playbackRate": 1
+        },
+        "voiceSettings": {},
+        "durationSeconds": 0.5,
+        "parentVersion": "promoted-1783907917175",
+        "notes": "Promoted from the AI asset designer."
       }
     },
     "tags": [
@@ -3950,7 +4026,7 @@ export const assets = defineAiAssets(
     ],
     "settings": {},
     "audioPlayback": {
-      "volume": 1,
+      "volume": 0.34,
       "trimStartSeconds": 0.29093956898834744,
       "trimEndSeconds": 0.8428897146451273,
       "playbackRate": 1

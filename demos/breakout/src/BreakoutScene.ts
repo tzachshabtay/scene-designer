@@ -67,6 +67,8 @@ type SfxPlaybackOptions = {
   pitchStepsSemitones?: readonly number[];
 };
 
+type GameMenuMode = "start" | "pause";
+
 const initialLevelOrder = ["level.one", "level.two", "level.three"];
 const brickTag = "brick";
 const backgroundTag = "background";
@@ -150,7 +152,16 @@ export class BreakoutScene extends Phaser.Scene {
   private score = 0;
   private lives = initialLives;
   private gameplayPaused = false;
+  private gameStarted = false;
+  private terminalSequenceActive = false;
   private debugPauseButton?: HTMLButtonElement;
+  private gameMenu?: HTMLDivElement;
+  private gameMenuTitle?: HTMLHeadingElement;
+  private gameMenuSubtitle?: HTMLParagraphElement;
+  private gameMenuButton?: HTMLButtonElement;
+  private masterVolumeInput?: HTMLInputElement;
+  private gameMenuMode?: GameMenuMode;
+  private masterVolume = 0.8;
   private hud!: Phaser.GameObjects.Text;
   private reloadTimer?: Phaser.Time.TimerEvent;
   private enemySpawnTimer?: Phaser.Time.TimerEvent;
@@ -167,6 +178,7 @@ export class BreakoutScene extends Phaser.Scene {
   private readonly previewTextures = new Map<string, string>();
   private readonly previewAudioSources = new Map<string, PreviewAudioSource>();
   private readonly activeAudioElements = new Set<HTMLAudioElement>();
+  private readonly pausedAudioElements = new Set<HTMLAudioElement>();
   private readonly enemyAppearanceAudioStops = new Map<ArcadeSprite, () => void>();
   private gameMusicStop?: () => void;
   private jungleAmbienceStop?: () => void;
@@ -174,6 +186,10 @@ export class BreakoutScene extends Phaser.Scene {
   private levelIntroTween?: Phaser.Tweens.Tween;
   private levelIntroDelay?: Phaser.Time.TimerEvent;
   private levelIntroActive = false;
+  private outcomeContainer?: Phaser.GameObjects.Container;
+  private outcomeTween?: Phaser.Tweens.Tween;
+  private outcomeDelay?: Phaser.Time.TimerEvent;
+  private victoryParticles: Phaser.GameObjects.Ellipse[] = [];
   private lastWorldBoundsHitAt = -Infinity;
 
   constructor(options: BreakoutSceneOptions) {
@@ -261,12 +277,17 @@ export class BreakoutScene extends Phaser.Scene {
     });
 
     this.createDebugPauseButton();
+    this.createGameMenu();
     this.loadLevel(0);
-    this.input.once("pointerdown", this.startBackgroundAudio, this);
-    this.input.keyboard?.once("keydown", this.startBackgroundAudio, this);
+    this.setGameplayPaused(true);
+    this.showGameMenu("start");
+    this.input.keyboard?.on("keydown-ESC", this.handleEscape, this);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.sceneDesigner?.destroy();
       this.debugPauseButton?.remove();
+      this.gameMenu?.remove();
+      this.clearOutcomeSequence();
+      this.input.keyboard?.off("keydown-ESC", this.handleEscape, this);
       this.platformRenderer?.destroy();
       this.physics.world.off(
         Phaser.Physics.Arcade.Events.WORLD_BOUNDS,
@@ -405,7 +426,9 @@ export class BreakoutScene extends Phaser.Scene {
     this.physics.add.overlap(this.paddle, this.bananas, this.onPaddleBananaOverlap, undefined, this);
 
     this.updateHud();
-    this.showLevelIntro(level);
+    if (this.gameStarted) {
+      this.showLevelIntro(level);
+    }
   }
 
   private clearLevel(): void {
@@ -517,6 +540,124 @@ export class BreakoutScene extends Phaser.Scene {
     this.levelIntro?.destroy(true);
     this.levelIntro = undefined;
     this.levelIntroActive = false;
+  }
+
+  private showOutcomeSequence(label: string, victory: boolean): void {
+    this.clearLevelIntro();
+    this.clearOutcomeSequence();
+    this.terminalSequenceActive = true;
+    this.gameplayPaused = true;
+    this.physics.pause();
+    this.debugPauseButton?.setAttribute("hidden", "");
+    this.ball?.setVelocity(0, 0);
+    this.firstEnemySpawnTimer?.remove(false);
+    this.firstEnemySpawnTimer = undefined;
+    this.enemySpawnTimer?.remove(false);
+    this.enemySpawnTimer = undefined;
+
+    const backdrop = this.add.rectangle(0, 0, 800, 600, 0x031109, 0.58).setOrigin(0.5);
+    const title = this.add.text(0, 0, label, {
+      fontFamily: "Georgia, Times New Roman, serif",
+      fontSize: victory ? "70px" : "62px",
+      fontStyle: "bold",
+      color: victory ? "#ffe681" : "#f4c45d",
+      stroke: victory ? "#1f5a29" : "#35170f",
+      strokeThickness: 10,
+      shadow: {
+        offsetX: 0,
+        offsetY: 6,
+        color: "#020704",
+        blur: 10,
+        stroke: true,
+        fill: true
+      }
+    }).setOrigin(0.5);
+    const container = this.add.container(400, 300, [backdrop, title]);
+    container.setDepth(7000);
+    container.setAlpha(0);
+    container.setScale(0.78);
+    this.outcomeContainer = container;
+
+    if (victory) {
+      this.createVictoryParticles();
+    }
+
+    this.outcomeTween = this.tweens.add({
+      targets: container,
+      alpha: 1,
+      scaleX: 1,
+      scaleY: 1,
+      duration: 700,
+      ease: "Back.Out",
+      onComplete: () => {
+        this.outcomeTween = undefined;
+        this.outcomeDelay = this.time.delayedCall(victory ? 1500 : 1100, () => {
+          this.outcomeDelay = undefined;
+          this.outcomeTween = this.tweens.add({
+            targets: container,
+            alpha: 0,
+            scaleX: 1.08,
+            scaleY: 1.08,
+            duration: 650,
+            ease: "Sine.In",
+            onComplete: () => this.finishOutcomeSequence()
+          });
+        });
+      }
+    });
+  }
+
+  private createVictoryParticles(): void {
+    const colors = [0x7fbd45, 0xf5d45d, 0xf17845, 0xd94f84, 0x57b9a5];
+    for (let index = 0; index < 44; index += 1) {
+      const particle = this.add.ellipse(
+        400 + Phaser.Math.Between(-55, 55),
+        300 + Phaser.Math.Between(-24, 24),
+        Phaser.Math.Between(8, 16),
+        Phaser.Math.Between(4, 9),
+        Phaser.Utils.Array.GetRandom(colors),
+        1
+      );
+      particle.setDepth(6900);
+      particle.setRotation(Phaser.Math.FloatBetween(0, Math.PI));
+      this.victoryParticles.push(particle);
+      this.tweens.add({
+        targets: particle,
+        x: Phaser.Math.Between(35, 765),
+        y: Phaser.Math.Between(40, 570),
+        angle: Phaser.Math.Between(-540, 540),
+        alpha: 0,
+        scaleX: Phaser.Math.FloatBetween(0.5, 1.5),
+        scaleY: Phaser.Math.FloatBetween(0.5, 1.5),
+        delay: Phaser.Math.Between(0, 450),
+        duration: Phaser.Math.Between(1500, 2400),
+        ease: "Quad.Out"
+      });
+    }
+  }
+
+  private finishOutcomeSequence(): void {
+    this.clearOutcomeSequence();
+    this.stopBackgroundAudio();
+    this.stopActiveAudio();
+    this.gameStarted = false;
+    this.terminalSequenceActive = false;
+    this.setGameplayPaused(true);
+    this.showGameMenu("start");
+  }
+
+  private clearOutcomeSequence(): void {
+    this.outcomeTween?.stop();
+    this.outcomeTween = undefined;
+    this.outcomeDelay?.remove(false);
+    this.outcomeDelay = undefined;
+    this.outcomeContainer?.destroy(true);
+    this.outcomeContainer = undefined;
+    this.tweens.killTweensOf(this.victoryParticles);
+    for (const particle of this.victoryParticles) {
+      particle.destroy();
+    }
+    this.victoryParticles = [];
   }
 
   private addSceneBackground(level: SceneDefinition): void {
@@ -1055,6 +1196,117 @@ export class BreakoutScene extends Phaser.Scene {
     this.hud.setText(`${levelLabel}   Score ${this.score}   Lives ${this.lives}`);
   }
 
+  private createGameMenu(): void {
+    if (typeof document === "undefined") return;
+    ensureGameMenuStyles();
+
+    const overlay = document.createElement("div");
+    overlay.className = "breakout-game-menu";
+    overlay.hidden = true;
+
+    const content = document.createElement("div");
+    content.className = "breakout-game-menu__content";
+    const title = document.createElement("h1");
+    title.className = "breakout-game-menu__title";
+    const subtitle = document.createElement("p");
+    subtitle.className = "breakout-game-menu__subtitle";
+    const action = document.createElement("button");
+    action.type = "button";
+    action.className = "breakout-game-menu__action";
+    action.addEventListener("click", () => {
+      if (this.gameMenuMode === "pause") {
+        this.resumeGameFromMenu();
+      } else {
+        this.startNewGame();
+      }
+    });
+
+    const volumeLabel = document.createElement("label");
+    volumeLabel.className = "breakout-game-menu__volume";
+    const volumeText = document.createElement("span");
+    volumeText.textContent = "Master volume";
+    const volumeInput = document.createElement("input");
+    volumeInput.type = "range";
+    volumeInput.min = "0";
+    volumeInput.max = "1";
+    volumeInput.step = "0.01";
+    volumeInput.value = String(this.masterVolume);
+    volumeInput.setAttribute("aria-label", "Master volume");
+    volumeInput.addEventListener("input", () => {
+      this.setMasterVolume(Number(volumeInput.value));
+    });
+    volumeLabel.append(volumeText, volumeInput);
+    content.append(title, subtitle, action, volumeLabel);
+    overlay.append(content);
+    document.body.append(overlay);
+
+    this.gameMenu = overlay;
+    this.gameMenuTitle = title;
+    this.gameMenuSubtitle = subtitle;
+    this.gameMenuButton = action;
+    this.masterVolumeInput = volumeInput;
+  }
+
+  private showGameMenu(mode: GameMenuMode): void {
+    if (!this.gameMenu || !this.gameMenuTitle || !this.gameMenuSubtitle || !this.gameMenuButton) return;
+
+    this.gameMenuMode = mode;
+    this.gameMenuTitle.textContent = mode === "start" ? "Jungle Breakout" : "Paused";
+    this.gameMenuSubtitle.textContent = mode === "start"
+      ? "Awaken the ruins. Break through the wild."
+      : "The jungle waits for your return.";
+    this.gameMenuButton.textContent = mode === "start" ? "Start game" : "Resume";
+    this.gameMenu.hidden = false;
+    this.debugPauseButton?.setAttribute("hidden", "");
+    this.gameMenuButton.focus();
+  }
+
+  private hideGameMenu(): void {
+    if (this.gameMenu) this.gameMenu.hidden = true;
+    this.gameMenuMode = undefined;
+    this.debugPauseButton?.removeAttribute("hidden");
+  }
+
+  private startNewGame(): void {
+    this.hideGameMenu();
+    this.clearOutcomeSequence();
+    this.gameStarted = true;
+    this.terminalSequenceActive = false;
+    this.score = 0;
+    this.lives = initialLives;
+    this.setGameplayPaused(false);
+    this.startBackgroundAudio();
+    this.loadLevel(0);
+  }
+
+  private resumeGameFromMenu(): void {
+    this.hideGameMenu();
+    this.setGameplayPaused(false);
+  }
+
+  private handleEscape(): void {
+    if (!this.gameStarted || this.terminalSequenceActive || this.gameMenuMode === "start") return;
+
+    if (this.gameMenuMode === "pause") {
+      this.resumeGameFromMenu();
+      return;
+    }
+
+    this.setGameplayPaused(true);
+    this.showGameMenu("pause");
+  }
+
+  private setMasterVolume(value: number): void {
+    this.masterVolume = Phaser.Math.Clamp(value, 0, 1);
+    if (this.masterVolumeInput) {
+      this.masterVolumeInput.value = String(this.masterVolume);
+    }
+    for (const audio of this.activeAudioElements) {
+      const baseVolume = Number(audio.dataset.baseVolume ?? 1);
+      audio.volume = Phaser.Math.Clamp(baseVolume * this.masterVolume, 0, 1);
+    }
+  }
+
   private createDebugPauseButton(): void {
     if (!import.meta.env.DEV || typeof document === "undefined") return;
 
@@ -1089,8 +1341,14 @@ export class BreakoutScene extends Phaser.Scene {
     this.gameplayPaused = paused;
     if (paused) {
       this.physics.pause();
+      this.time.paused = true;
+      this.tweens.pauseAll();
+      this.pauseActiveAudio();
     } else {
       this.physics.resume();
+      this.time.paused = false;
+      this.tweens.resumeAll();
+      this.resumeActiveAudio();
     }
 
     if (this.debugPauseButton) {
@@ -1200,15 +1458,18 @@ export class BreakoutScene extends Phaser.Scene {
     this.updateHud();
 
     if (this.lives === 0) {
+      this.terminalSequenceActive = true;
+      this.gameplayPaused = true;
+      this.physics.pause();
+      this.debugPauseButton?.setAttribute("hidden", "");
+      this.stopBackgroundAudio();
       this.playSfx(gameOverSfxAssetId);
       this.paddle.setData("destroying", true);
       this.ball?.setVelocity(0, 0);
       const baseAssetId = String(this.paddle.getData("baseAssetId") ?? "hero.paddle.normal");
       const duration = this.playLinkedAnimation(this.paddle, baseAssetId, "destroyed");
-      this.time.delayedCall(Math.max(duration, 280) + 120, () => {
-        this.score = 0;
-        this.lives = initialLives;
-        this.loadLevel(0);
+      this.time.delayedCall(Math.max(duration, 280) + 500, () => {
+        this.showOutcomeSequence("Game Over", false);
       });
       return true;
     }
@@ -1257,9 +1518,15 @@ export class BreakoutScene extends Phaser.Scene {
     this.playSfx(levelSfxAssetId);
     const levelIds = this.levelIds();
     if (!levelIds.length) return;
-    const nextIndex = Phaser.Math.Wrap((this.levelIndex < 0 ? 0 : this.levelIndex) + 1, 0, levelIds.length);
     this.score += 250;
-    this.time.delayedCall(550, () => this.loadLevel(nextIndex));
+    const currentIndex = this.levelIndex < 0 ? 0 : this.levelIndex;
+    if (currentIndex >= levelIds.length - 1) {
+      this.terminalSequenceActive = true;
+      this.time.delayedCall(550, () => this.showOutcomeSequence("Victory!", true));
+      return;
+    }
+
+    this.time.delayedCall(550, () => this.loadLevel(currentIndex + 1));
   }
 
   private levelIds(): string[] {
@@ -1332,10 +1599,10 @@ export class BreakoutScene extends Phaser.Scene {
       playback: asset.audioPlayback ?? activeVersion?.audioPlayback
     });
 
-    if (assetId === gameMusicAssetId) {
+    if (assetId === gameMusicAssetId && this.gameStarted) {
       this.stopGameMusic();
       this.startGameMusic();
-    } else if (assetId === jungleAmbienceAssetId) {
+    } else if (assetId === jungleAmbienceAssetId && this.gameStarted) {
       this.stopJungleAmbience();
       this.startJungleAmbience();
     }
@@ -1407,6 +1674,7 @@ export class BreakoutScene extends Phaser.Scene {
       audio.removeEventListener("loadedmetadata", start);
       audio.removeEventListener("ended", handleEnded);
       this.activeAudioElements.delete(audio);
+      this.pausedAudioElements.delete(audio);
       audio.removeAttribute("src");
       audio.load();
     };
@@ -1431,7 +1699,9 @@ export class BreakoutScene extends Phaser.Scene {
     };
     const start = () => {
       if (disposed) return;
-      audio.volume = Phaser.Math.Clamp(playback?.volume ?? 1, 0, 1);
+      const baseVolume = Phaser.Math.Clamp(playback?.volume ?? 1, 0, 1);
+      audio.dataset.baseVolume = String(baseVolume);
+      audio.volume = Phaser.Math.Clamp(baseVolume * this.masterVolume, 0, 1);
       const pitchSteps = options.pitchStepsSemitones;
       const pitchVariation = pitchSteps?.length
         ? pitchSteps[Phaser.Math.Between(0, pitchSteps.length - 1)] ?? 0
@@ -1475,6 +1745,23 @@ export class BreakoutScene extends Phaser.Scene {
     this.enemyAppearanceAudioStops.clear();
   }
 
+  private pauseActiveAudio(): void {
+    for (const audio of this.activeAudioElements) {
+      if (audio.paused) continue;
+      this.pausedAudioElements.add(audio);
+      audio.pause();
+    }
+  }
+
+  private resumeActiveAudio(): void {
+    const paused = [...this.pausedAudioElements];
+    this.pausedAudioElements.clear();
+    for (const audio of paused) {
+      if (!this.activeAudioElements.has(audio)) continue;
+      void audio.play().catch(() => undefined);
+    }
+  }
+
   private stopActiveAudio(): void {
     for (const audio of this.activeAudioElements) {
       audio.pause();
@@ -1482,6 +1769,7 @@ export class BreakoutScene extends Phaser.Scene {
       audio.load();
     }
     this.activeAudioElements.clear();
+    this.pausedAudioElements.clear();
   }
 
   private applyTextureToGameObject(
@@ -1605,6 +1893,96 @@ function isAudioAsset(asset: AiAssetDefinition): boolean {
     || asset.kind === "music"
     || asset.kind === "voice"
     || asset.kind === "voice-line";
+}
+
+function ensureGameMenuStyles(): void {
+  if (document.getElementById("breakout-game-menu-styles")) return;
+
+  const style = document.createElement("style");
+  style.id = "breakout-game-menu-styles";
+  style.textContent = `
+.breakout-game-menu {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(2, 14, 7, 0.74);
+  color: #f8edb2;
+  font-family: Georgia, "Times New Roman", serif;
+}
+.breakout-game-menu[hidden] { display: none; }
+.breakout-game-menu__content {
+  width: min(520px, calc(100vw - 48px));
+  text-align: center;
+}
+.breakout-game-menu__title {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin: 0;
+  color: #f6d96b;
+  font-size: clamp(42px, 8vw, 72px);
+  line-height: 1;
+  letter-spacing: 0;
+  text-shadow: 0 5px 0 #17391d, 0 10px 24px rgba(0, 0, 0, 0.72);
+}
+.breakout-game-menu__title::before,
+.breakout-game-menu__title::after {
+  content: "";
+  flex: 1;
+  height: 5px;
+  border-top: 3px solid #70aa45;
+  border-bottom: 1px solid #d6b950;
+}
+.breakout-game-menu__subtitle {
+  margin: 18px 0 30px;
+  color: #d9e7bd;
+  font: 600 17px/1.45 Inter, ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: 0;
+  text-shadow: 0 2px 8px #000;
+}
+.breakout-game-menu__action {
+  min-width: 190px;
+  height: 52px;
+  padding: 0 28px;
+  border: 2px solid #e8cf69;
+  border-radius: 6px;
+  background: #285a2f;
+  color: #fff5c7;
+  font: 800 18px/1 Inter, ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: 0;
+  cursor: pointer;
+  box-shadow: 0 6px 0 #12341a, 0 14px 30px rgba(0, 0, 0, 0.42);
+}
+.breakout-game-menu__action:hover,
+.breakout-game-menu__action:focus-visible {
+  background: #34723c;
+  outline: 3px solid rgba(246, 217, 107, 0.38);
+  outline-offset: 4px;
+}
+.breakout-game-menu__volume {
+  display: grid;
+  grid-template-columns: auto minmax(150px, 240px);
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 30px;
+  color: #eef2d2;
+  font: 700 14px/1 Inter, ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: 0;
+}
+.breakout-game-menu__volume input {
+  width: 100%;
+  accent-color: #e8cf69;
+}
+@media (max-width: 520px) {
+  .breakout-game-menu__title { font-size: 40px; }
+  .breakout-game-menu__volume { grid-template-columns: 1fr; gap: 10px; }
+}
+`;
+  document.head.append(style);
 }
 
 function isVisualAsset(asset: AiAssetDefinition): boolean {
