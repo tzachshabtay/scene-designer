@@ -235,7 +235,7 @@ export class BreakoutScene extends Phaser.Scene {
     }).setDepth(5000);
 
     if (this.aiAssetDebugClient) {
-      installAiAssetDesigner({
+      const assetDesigner = installAiAssetDesigner({
         scene: this,
         manifest: this.aiAssets,
         client: this.aiAssetDebugClient,
@@ -256,6 +256,9 @@ export class BreakoutScene extends Phaser.Scene {
           this.applyAiAssetTexture(assetId, textureKey, asset);
         }
       });
+      assetDesigner.root
+        .querySelector<HTMLButtonElement>(".ai-game-assets-designer__asset-breadcrumb")
+        ?.click();
     }
 
     this.sceneDesigner = installPhaserSceneDesigner({
