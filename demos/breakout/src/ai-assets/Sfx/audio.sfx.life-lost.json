@@ -8,7 +8,7 @@
     "durationSeconds": 1.5,
     "loop": false
   },
-  "activeVersion": "promoted-1783907864076",
+  "activeVersion": "promoted-1783909563389",
   "versions": {
     "promoted-1783907864076": {
       "name": "promoted-1783907864076",
@@ -27,6 +27,30 @@
       "voiceSettings": {},
       "durationSeconds": 1.5,
       "notes": "Promoted from the AI asset designer."
+    },
+    "promoted-1783909563389": {
+      "name": "promoted-1783909563389",
+      "file": "/assets/audio.sfx.life-lost.promoted-1783909563389.mp3",
+      "prompt": "Short jungle arcade life lost sound",
+      "createdAt": "2026-07-13T02:26:03.429Z",
+      "model": "eleven_text_to_sound_v2",
+      "settings": {},
+      "audioSettings": {
+        "provider": "elevenlabs",
+        "format": "mp3",
+        "durationSeconds": 1.5,
+        "loop": false
+      },
+      "audioPlayback": {
+        "volume": 0.42,
+        "trimStartSeconds": 0,
+        "trimEndSeconds": 1.48,
+        "playbackRate": 1
+      },
+      "voiceSettings": {},
+      "durationSeconds": 1.5,
+      "parentVersion": "promoted-1783907864076",
+      "notes": "Promoted from the AI asset designer."
     }
   },
   "tags": [
@@ -35,6 +59,11 @@
     "life"
   ],
   "settings": {},
-  "audioPlayback": {},
+  "audioPlayback": {
+    "volume": 0.42,
+    "trimStartSeconds": 0,
+    "trimEndSeconds": 1.48,
+    "playbackRate": 1
+  },
   "voiceSettings": {}
 }

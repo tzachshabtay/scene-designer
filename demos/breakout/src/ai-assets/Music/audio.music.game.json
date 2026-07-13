@@ -5,18 +5,70 @@
   "audioSettings": {
     "provider": "elevenlabs",
     "format": "mp3",
-    "durationSeconds": 24,
+    "durationSeconds": 120,
     "loop": true
   },
-  "activeVersion": "",
-  "versions": {},
+  "activeVersion": "promoted-1783909477997",
+  "versions": {
+    "promoted-1783909451425": {
+      "name": "promoted-1783909451425",
+      "file": "/assets/audio.music.game.promoted-1783909451425.mp3",
+      "prompt": "Loopable adventurous jungle arcade gameplay music, lively hand percussion, marimba melody and playful tropical energy, instrumental, no vocals.",
+      "createdAt": "2026-07-13T02:24:11.490Z",
+      "model": "music_v1",
+      "settings": {},
+      "audioSettings": {
+        "provider": "elevenlabs",
+        "format": "mp3",
+        "durationSeconds": 120,
+        "loop": true
+      },
+      "audioPlayback": {
+        "volume": 0.65,
+        "loop": true
+      },
+      "voiceSettings": {},
+      "durationSeconds": 120,
+      "notes": "Promoted from the AI asset designer."
+    },
+    "promoted-1783909477997": {
+      "name": "promoted-1783909477997",
+      "file": "/assets/audio.music.game.promoted-1783909477997.mp3",
+      "prompt": "Loopable adventurous jungle arcade gameplay music, lively hand percussion, marimba melody and playful tropical energy, instrumental, no vocals.",
+      "createdAt": "2026-07-13T02:24:38.064Z",
+      "model": "music_v1",
+      "settings": {},
+      "audioSettings": {
+        "provider": "elevenlabs",
+        "format": "mp3",
+        "durationSeconds": 120,
+        "loop": true
+      },
+      "audioPlayback": {
+        "volume": 0.28,
+        "loop": true,
+        "trimStartSeconds": 0,
+        "trimEndSeconds": 120.032625,
+        "playbackRate": 1
+      },
+      "voiceSettings": {},
+      "durationSeconds": 120,
+      "parentVersion": "promoted-1783909451425",
+      "notes": "Promoted from the AI asset designer."
+    }
+  },
   "tags": [
     "music",
     "gameplay",
     "jungle"
   ],
   "audioPlayback": {
-    "volume": 0.65,
-    "loop": true
-  }
+    "volume": 0.28,
+    "loop": true,
+    "trimStartSeconds": 0,
+    "trimEndSeconds": 120.032625,
+    "playbackRate": 1
+  },
+  "settings": {},
+  "voiceSettings": {}
 }

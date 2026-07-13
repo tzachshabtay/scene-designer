@@ -90,6 +90,7 @@ const lifeLostSfxAssetId = "audio.sfx.life-lost";
 const gameOverSfxAssetId = "audio.sfx.game-over";
 const monkeyThrowSfxAssetId = "audio.sfx.monkey-throw";
 const gameMusicAssetId = "audio.music.game";
+const jungleAmbienceAssetId = "audio.sfx.jungle-ambience";
 const hitPitchVariationSemitones = 1.5;
 const brickPitchStepsSemitones = [-3, -2, -1, 0, 1, 2, 3] as const;
 const defaultEnemySpawnIntervalSeconds = 18;
@@ -168,6 +169,11 @@ export class BreakoutScene extends Phaser.Scene {
   private readonly activeAudioElements = new Set<HTMLAudioElement>();
   private readonly enemyAppearanceAudioStops = new Map<ArcadeSprite, () => void>();
   private gameMusicStop?: () => void;
+  private jungleAmbienceStop?: () => void;
+  private levelIntro?: Phaser.GameObjects.Container;
+  private levelIntroTween?: Phaser.Tweens.Tween;
+  private levelIntroDelay?: Phaser.Time.TimerEvent;
+  private levelIntroActive = false;
   private lastWorldBoundsHitAt = -Infinity;
 
   constructor(options: BreakoutSceneOptions) {
@@ -256,8 +262,8 @@ export class BreakoutScene extends Phaser.Scene {
 
     this.createDebugPauseButton();
     this.loadLevel(0);
-    this.input.once("pointerdown", this.startGameMusic, this);
-    this.input.keyboard?.once("keydown", this.startGameMusic, this);
+    this.input.once("pointerdown", this.startBackgroundAudio, this);
+    this.input.keyboard?.once("keydown", this.startBackgroundAudio, this);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.sceneDesigner?.destroy();
       this.debugPauseButton?.remove();
@@ -267,14 +273,14 @@ export class BreakoutScene extends Phaser.Scene {
         this.onWorldBoundsHit,
         this
       );
-      this.stopGameMusic();
+      this.stopBackgroundAudio();
       this.stopActiveAudio();
     });
   }
 
   update(): void {
     if (!this.paddle || !this.ball) return;
-    if (this.gameplayPaused) return;
+    if (this.gameplayPaused || this.levelIntroActive) return;
 
     this.updatePaddleControl();
     this.handleBrickCollisions();
@@ -388,7 +394,7 @@ export class BreakoutScene extends Phaser.Scene {
     }
     this.ball.setCollideWorldBounds(true);
     this.ball.setBounce(1, 1);
-    this.setBallLaunchVelocity(190, -265);
+    this.ball.setVelocity(0, 0);
     this.ball.setDepth(1201);
     this.ball.body.onWorldBounds = true;
     this.levelObjects.push(this.ball);
@@ -398,14 +404,12 @@ export class BreakoutScene extends Phaser.Scene {
     this.physics.add.overlap(this.ball, this.bananas, this.onBananaHit, undefined, this);
     this.physics.add.overlap(this.paddle, this.bananas, this.onPaddleBananaOverlap, undefined, this);
 
-    this.firstEnemySpawnTimer = this.time.delayedCall(firstEnemySpawnDelayMs, () => {
-      this.scheduleEnemySpawn(level, this.spawnEnemy(level));
-    });
-
     this.updateHud();
+    this.showLevelIntro(level);
   }
 
   private clearLevel(): void {
+    this.clearLevelIntro();
     for (const object of this.levelObjects) {
       object.destroy();
     }
@@ -422,6 +426,97 @@ export class BreakoutScene extends Phaser.Scene {
     this.firstEnemySpawnTimer = undefined;
     this.enemySpawnTimer?.remove(false);
     this.enemySpawnTimer = undefined;
+  }
+
+  private showLevelIntro(level: SceneDefinition): void {
+    this.clearLevelIntro();
+    this.levelIntroActive = true;
+
+    const title = this.add.text(0, 0, level.name, {
+      fontFamily: "Georgia, Times New Roman, serif",
+      fontSize: "42px",
+      fontStyle: "bold",
+      color: "#f6d96b",
+      align: "center",
+      stroke: "#16351d",
+      strokeThickness: 8,
+      shadow: {
+        offsetX: 0,
+        offsetY: 5,
+        color: "#07150a",
+        blur: 8,
+        stroke: true,
+        fill: true
+      }
+    }).setOrigin(0.5);
+    title.setWordWrapWidth(650, true);
+
+    const ornament = this.add.graphics();
+    const halfWidth = Math.min(310, title.width / 2 + 20);
+    ornament.lineStyle(4, 0x4f8d3a, 0.95);
+    ornament.lineBetween(-halfWidth - 70, 0, -halfWidth, 0);
+    ornament.lineBetween(halfWidth, 0, halfWidth + 70, 0);
+    ornament.fillStyle(0x70aa45, 1);
+    ornament.fillEllipse(-halfWidth - 50, -8, 28, 12);
+    ornament.fillEllipse(-halfWidth - 26, 8, 24, 10);
+    ornament.fillEllipse(halfWidth + 28, -8, 24, 10);
+    ornament.fillEllipse(halfWidth + 52, 8, 28, 12);
+
+    const container = this.add.container(400, 320, [ornament, title]);
+    container.setDepth(6000);
+    container.setAlpha(0);
+    container.setScale(0.86);
+    this.levelIntro = container;
+    this.levelIntroTween = this.tweens.add({
+      targets: container,
+      alpha: 1,
+      scaleX: 1,
+      scaleY: 1,
+      y: 300,
+      duration: 650,
+      ease: "Back.Out",
+      onComplete: () => {
+        this.levelIntroTween = undefined;
+        this.levelIntroDelay = this.time.delayedCall(900, () => {
+          this.levelIntroDelay = undefined;
+          this.levelIntroTween = this.tweens.add({
+            targets: container,
+            alpha: 0,
+            scaleX: 0.92,
+            scaleY: 0.92,
+            y: 286,
+            duration: 550,
+            ease: "Sine.In",
+            onComplete: () => this.finishLevelIntro(level, container)
+          });
+        });
+      }
+    });
+  }
+
+  private finishLevelIntro(level: SceneDefinition, container: Phaser.GameObjects.Container): void {
+    this.levelIntroTween = undefined;
+    if (this.levelIntro === container) {
+      this.levelIntro = undefined;
+    }
+    container.destroy(true);
+    this.levelIntroActive = false;
+    if (this.currentSceneId !== level.id || !this.ball?.active) return;
+
+    this.setBallLaunchVelocity(190, -265);
+    this.firstEnemySpawnTimer = this.time.delayedCall(firstEnemySpawnDelayMs, () => {
+      this.scheduleEnemySpawn(level, this.spawnEnemy(level));
+    });
+  }
+
+  private clearLevelIntro(): void {
+    this.levelIntroTween?.stop();
+    this.levelIntroTween = undefined;
+    this.levelIntroDelay?.remove(false);
+    this.levelIntroDelay = undefined;
+    this.levelIntro?.destroy(true);
+    this.levelIntro = undefined;
+    this.levelIntroActive = false;
   }
 
   private addSceneBackground(level: SceneDefinition): void {
@@ -1240,6 +1335,9 @@ export class BreakoutScene extends Phaser.Scene {
     if (assetId === gameMusicAssetId) {
       this.stopGameMusic();
       this.startGameMusic();
+    } else if (assetId === jungleAmbienceAssetId) {
+      this.stopJungleAmbience();
+      this.startJungleAmbience();
     }
   }
 
@@ -1261,9 +1359,30 @@ export class BreakoutScene extends Phaser.Scene {
     this.gameMusicStop = this.playSfx(gameMusicAssetId);
   }
 
+  private startJungleAmbience(): void {
+    if (this.jungleAmbienceStop) return;
+
+    this.jungleAmbienceStop = this.playSfx(jungleAmbienceAssetId);
+  }
+
+  private startBackgroundAudio(): void {
+    this.startGameMusic();
+    this.startJungleAmbience();
+  }
+
   private stopGameMusic(): void {
     this.gameMusicStop?.();
     this.gameMusicStop = undefined;
+  }
+
+  private stopJungleAmbience(): void {
+    this.jungleAmbienceStop?.();
+    this.jungleAmbienceStop = undefined;
+  }
+
+  private stopBackgroundAudio(): void {
+    this.stopGameMusic();
+    this.stopJungleAmbience();
   }
 
   private playSfx(assetId: string, options: SfxPlaybackOptions = {}): (() => void) | undefined {
@@ -1286,6 +1405,7 @@ export class BreakoutScene extends Phaser.Scene {
       disposed = true;
       audio.removeEventListener("timeupdate", enforceTrim);
       audio.removeEventListener("loadedmetadata", start);
+      audio.removeEventListener("ended", handleEnded);
       this.activeAudioElements.delete(audio);
       audio.removeAttribute("src");
       audio.load();
@@ -1299,6 +1419,15 @@ export class BreakoutScene extends Phaser.Scene {
         audio.pause();
         cleanup();
       }
+    };
+    const handleEnded = () => {
+      if (!shouldLoop) {
+        cleanup();
+        return;
+      }
+
+      audio.currentTime = trimStart;
+      void audio.play().catch(() => cleanup());
     };
     const start = () => {
       if (disposed) return;
@@ -1319,7 +1448,7 @@ export class BreakoutScene extends Phaser.Scene {
 
     this.activeAudioElements.add(audio);
     audio.addEventListener("timeupdate", enforceTrim);
-    audio.addEventListener("ended", cleanup, { once: true });
+    audio.addEventListener("ended", handleEnded);
     audio.addEventListener("error", cleanup, { once: true });
     if (audio.readyState >= HTMLMediaElement.HAVE_METADATA) {
       start();

@@ -8,7 +8,7 @@
     "durationSeconds": 0.5,
     "loop": true
   },
-  "activeVersion": "promoted-1783906619923",
+  "activeVersion": "promoted-1783909606941",
   "versions": {
     "promoted-1783906619923": {
       "name": "promoted-1783906619923",
@@ -32,6 +32,30 @@
       "voiceSettings": {},
       "durationSeconds": 0.5,
       "notes": "Promoted from the AI asset designer."
+    },
+    "promoted-1783909606941": {
+      "name": "promoted-1783909606941",
+      "file": "/assets/audio.sfx.brick.promoted-1783909606941.mp3",
+      "prompt": "single high pitched marimba musical note",
+      "createdAt": "2026-07-13T02:26:46.982Z",
+      "model": "eleven_text_to_sound_v2",
+      "settings": {},
+      "audioSettings": {
+        "provider": "elevenlabs",
+        "format": "mp3",
+        "durationSeconds": 0.5,
+        "loop": true
+      },
+      "audioPlayback": {
+        "volume": 0.36,
+        "trimStartSeconds": 0.36298778469279663,
+        "trimEndSeconds": 0.9426070908368644,
+        "playbackRate": 1
+      },
+      "voiceSettings": {},
+      "durationSeconds": 0.5,
+      "parentVersion": "promoted-1783906619923",
+      "notes": "Promoted from the AI asset designer."
     }
   },
   "tags": [
@@ -39,7 +63,7 @@
   ],
   "settings": {},
   "audioPlayback": {
-    "volume": 1,
+    "volume": 0.36,
     "trimStartSeconds": 0.36298778469279663,
     "trimEndSeconds": 0.9426070908368644,
     "playbackRate": 1

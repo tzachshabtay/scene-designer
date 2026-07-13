@@ -1,0 +1,23 @@
+{
+  "id": "audio.sfx.jungle-ambience",
+  "kind": "sound",
+  "prompt": "Long seamless jungle ambience loop, tropical birds, distant waterfall, soft insects and leaves moving in a warm breeze, natural atmosphere, no music and no voices.",
+  "audioSettings": {
+    "provider": "elevenlabs",
+    "format": "mp3",
+    "durationSeconds": 20,
+    "loop": true
+  },
+  "activeVersion": "",
+  "versions": {},
+  "tags": [
+    "sfx",
+    "ambience",
+    "jungle",
+    "loop"
+  ],
+  "audioPlayback": {
+    "volume": 0.24,
+    "loop": true
+  }
+}

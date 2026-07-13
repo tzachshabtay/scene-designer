@@ -3462,20 +3462,72 @@ export const assets = defineAiAssets(
     "audioSettings": {
       "provider": "elevenlabs",
       "format": "mp3",
-      "durationSeconds": 24,
+      "durationSeconds": 120,
       "loop": true
     },
-    "activeVersion": "",
-    "versions": {},
+    "activeVersion": "promoted-1783909477997",
+    "versions": {
+      "promoted-1783909451425": {
+        "name": "promoted-1783909451425",
+        "file": "/assets/audio.music.game.promoted-1783909451425.mp3",
+        "prompt": "Loopable adventurous jungle arcade gameplay music, lively hand percussion, marimba melody and playful tropical energy, instrumental, no vocals.",
+        "createdAt": "2026-07-13T02:24:11.490Z",
+        "model": "music_v1",
+        "settings": {},
+        "audioSettings": {
+          "provider": "elevenlabs",
+          "format": "mp3",
+          "durationSeconds": 120,
+          "loop": true
+        },
+        "audioPlayback": {
+          "volume": 0.65,
+          "loop": true
+        },
+        "voiceSettings": {},
+        "durationSeconds": 120,
+        "notes": "Promoted from the AI asset designer."
+      },
+      "promoted-1783909477997": {
+        "name": "promoted-1783909477997",
+        "file": "/assets/audio.music.game.promoted-1783909477997.mp3",
+        "prompt": "Loopable adventurous jungle arcade gameplay music, lively hand percussion, marimba melody and playful tropical energy, instrumental, no vocals.",
+        "createdAt": "2026-07-13T02:24:38.064Z",
+        "model": "music_v1",
+        "settings": {},
+        "audioSettings": {
+          "provider": "elevenlabs",
+          "format": "mp3",
+          "durationSeconds": 120,
+          "loop": true
+        },
+        "audioPlayback": {
+          "volume": 0.28,
+          "loop": true,
+          "trimStartSeconds": 0,
+          "trimEndSeconds": 120.032625,
+          "playbackRate": 1
+        },
+        "voiceSettings": {},
+        "durationSeconds": 120,
+        "parentVersion": "promoted-1783909451425",
+        "notes": "Promoted from the AI asset designer."
+      }
+    },
     "tags": [
       "music",
       "gameplay",
       "jungle"
     ],
     "audioPlayback": {
-      "volume": 0.65,
-      "loop": true
-    }
+      "volume": 0.28,
+      "loop": true,
+      "trimStartSeconds": 0,
+      "trimEndSeconds": 120.032625,
+      "playbackRate": 1
+    },
+    "settings": {},
+    "voiceSettings": {}
   },
   "audio.sfx.brick": {
     "id": "audio.sfx.brick",
@@ -3487,7 +3539,7 @@ export const assets = defineAiAssets(
       "durationSeconds": 0.5,
       "loop": true
     },
-    "activeVersion": "promoted-1783906619923",
+    "activeVersion": "promoted-1783909606941",
     "versions": {
       "promoted-1783906619923": {
         "name": "promoted-1783906619923",
@@ -3511,6 +3563,30 @@ export const assets = defineAiAssets(
         "voiceSettings": {},
         "durationSeconds": 0.5,
         "notes": "Promoted from the AI asset designer."
+      },
+      "promoted-1783909606941": {
+        "name": "promoted-1783909606941",
+        "file": "/assets/audio.sfx.brick.promoted-1783909606941.mp3",
+        "prompt": "single high pitched marimba musical note",
+        "createdAt": "2026-07-13T02:26:46.982Z",
+        "model": "eleven_text_to_sound_v2",
+        "settings": {},
+        "audioSettings": {
+          "provider": "elevenlabs",
+          "format": "mp3",
+          "durationSeconds": 0.5,
+          "loop": true
+        },
+        "audioPlayback": {
+          "volume": 0.36,
+          "trimStartSeconds": 0.36298778469279663,
+          "trimEndSeconds": 0.9426070908368644,
+          "playbackRate": 1
+        },
+        "voiceSettings": {},
+        "durationSeconds": 0.5,
+        "parentVersion": "promoted-1783906619923",
+        "notes": "Promoted from the AI asset designer."
       }
     },
     "tags": [
@@ -3518,7 +3594,7 @@ export const assets = defineAiAssets(
     ],
     "settings": {},
     "audioPlayback": {
-      "volume": 1,
+      "volume": 0.36,
       "trimStartSeconds": 0.36298778469279663,
       "trimEndSeconds": 0.9426070908368644,
       "playbackRate": 1
@@ -3535,7 +3611,7 @@ export const assets = defineAiAssets(
       "durationSeconds": 0.5,
       "loop": true
     },
-    "activeVersion": "promoted-1783891888433",
+    "activeVersion": "promoted-1783909621040",
     "versions": {
       "promoted-1783891888433": {
         "name": "promoted-1783891888433",
@@ -3559,6 +3635,30 @@ export const assets = defineAiAssets(
         "voiceSettings": {},
         "durationSeconds": 0.5,
         "notes": "Promoted from the AI asset designer."
+      },
+      "promoted-1783909621040": {
+        "name": "promoted-1783909621040",
+        "file": "/assets/audio.sfx.enemy.promoted-1783909621040.mp3",
+        "prompt": "Small enemy satisfying pop sound.",
+        "createdAt": "2026-07-13T02:27:01.077Z",
+        "model": "eleven_text_to_sound_v2",
+        "settings": {},
+        "audioSettings": {
+          "provider": "elevenlabs",
+          "format": "mp3",
+          "durationSeconds": 0.5,
+          "loop": true
+        },
+        "audioPlayback": {
+          "volume": 0.43,
+          "trimStartSeconds": 0.2886429919226695,
+          "trimEndSeconds": 0.7127932170286018,
+          "playbackRate": 1
+        },
+        "voiceSettings": {},
+        "durationSeconds": 0.5,
+        "parentVersion": "promoted-1783891888433",
+        "notes": "Promoted from the AI asset designer."
       }
     },
     "tags": [
@@ -3566,7 +3666,7 @@ export const assets = defineAiAssets(
     ],
     "settings": {},
     "audioPlayback": {
-      "volume": 1,
+      "volume": 0.43,
       "trimStartSeconds": 0.2886429919226695,
       "trimEndSeconds": 0.7127932170286018,
       "playbackRate": 1
@@ -3583,13 +3683,58 @@ export const assets = defineAiAssets(
       "durationSeconds": 4,
       "loop": false
     },
-    "activeVersion": "",
-    "versions": {},
+    "activeVersion": "promoted-1783909518682",
+    "versions": {
+      "promoted-1783909518682": {
+        "name": "promoted-1783909518682",
+        "file": "/assets/audio.sfx.game-over.promoted-1783909518682.mp3",
+        "prompt": "Dramatic jungle arcade game over sting, descending marimba and deep ceremonial drum ending with a playful defeat flourish, no voice.",
+        "createdAt": "2026-07-13T02:25:18.727Z",
+        "model": "eleven_text_to_sound_v2",
+        "settings": {},
+        "audioSettings": {
+          "provider": "elevenlabs",
+          "format": "mp3",
+          "durationSeconds": 4,
+          "loop": false
+        },
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "durationSeconds": 4,
+        "notes": "Promoted from the AI asset designer."
+      }
+    },
     "tags": [
       "sfx",
       "player",
       "game-over"
-    ]
+    ],
+    "settings": {},
+    "audioPlayback": {},
+    "voiceSettings": {}
+  },
+  "audio.sfx.jungle-ambience": {
+    "id": "audio.sfx.jungle-ambience",
+    "kind": "sound",
+    "prompt": "Long seamless jungle ambience loop, tropical birds, distant waterfall, soft insects and leaves moving in a warm breeze, natural atmosphere, no music and no voices.",
+    "audioSettings": {
+      "provider": "elevenlabs",
+      "format": "mp3",
+      "durationSeconds": 20,
+      "loop": true
+    },
+    "activeVersion": "",
+    "versions": {},
+    "tags": [
+      "sfx",
+      "ambience",
+      "jungle",
+      "loop"
+    ],
+    "audioPlayback": {
+      "volume": 0.24,
+      "loop": true
+    }
   },
   "audio.sfx.level": {
     "id": "audio.sfx.level",
@@ -3649,7 +3794,7 @@ export const assets = defineAiAssets(
       "durationSeconds": 1.5,
       "loop": false
     },
-    "activeVersion": "promoted-1783907864076",
+    "activeVersion": "promoted-1783909563389",
     "versions": {
       "promoted-1783907864076": {
         "name": "promoted-1783907864076",
@@ -3668,6 +3813,30 @@ export const assets = defineAiAssets(
         "voiceSettings": {},
         "durationSeconds": 1.5,
         "notes": "Promoted from the AI asset designer."
+      },
+      "promoted-1783909563389": {
+        "name": "promoted-1783909563389",
+        "file": "/assets/audio.sfx.life-lost.promoted-1783909563389.mp3",
+        "prompt": "Short jungle arcade life lost sound",
+        "createdAt": "2026-07-13T02:26:03.429Z",
+        "model": "eleven_text_to_sound_v2",
+        "settings": {},
+        "audioSettings": {
+          "provider": "elevenlabs",
+          "format": "mp3",
+          "durationSeconds": 1.5,
+          "loop": false
+        },
+        "audioPlayback": {
+          "volume": 0.42,
+          "trimStartSeconds": 0,
+          "trimEndSeconds": 1.48,
+          "playbackRate": 1
+        },
+        "voiceSettings": {},
+        "durationSeconds": 1.5,
+        "parentVersion": "promoted-1783907864076",
+        "notes": "Promoted from the AI asset designer."
       }
     },
     "tags": [
@@ -3676,7 +3845,12 @@ export const assets = defineAiAssets(
       "life"
     ],
     "settings": {},
-    "audioPlayback": {},
+    "audioPlayback": {
+      "volume": 0.42,
+      "trimStartSeconds": 0,
+      "trimEndSeconds": 1.48,
+      "playbackRate": 1
+    },
     "voiceSettings": {}
   },
   "audio.sfx.monkey-appear": {
