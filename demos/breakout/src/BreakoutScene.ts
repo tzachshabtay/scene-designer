@@ -162,7 +162,13 @@ export class BreakoutScene extends Phaser.Scene {
   private masterVolumeInput?: HTMLInputElement;
   private gameMenuMode?: GameMenuMode;
   private masterVolume = 0.8;
-  private hud!: Phaser.GameObjects.Text;
+  private hud!: Phaser.GameObjects.Container;
+  private hudLevelValue!: Phaser.GameObjects.Text;
+  private hudScoreValue!: Phaser.GameObjects.Text;
+  private hudLifeIcons: Array<{
+    outline: Phaser.GameObjects.Image;
+    coconut: Phaser.GameObjects.Image;
+  }> = [];
   private reloadTimer?: Phaser.Time.TimerEvent;
   private enemySpawnTimer?: Phaser.Time.TimerEvent;
   private firstEnemySpawnTimer?: Phaser.Time.TimerEvent;
@@ -228,11 +234,7 @@ export class BreakoutScene extends Phaser.Scene {
     this.cursors = this.input.keyboard?.createCursorKeys();
     this.registerAiAnimations();
 
-    this.hud = this.add.text(16, 16, "", {
-      fontFamily: "ui-sans-serif, system-ui",
-      fontSize: "18px",
-      color: "#eef2f7"
-    }).setDepth(5000);
+    this.createHud();
 
     if (this.aiAssetDebugClient) {
       const assetDesigner = installAiAssetDesigner({
@@ -1194,9 +1196,68 @@ export class BreakoutScene extends Phaser.Scene {
 
   private updateHud(): void {
     const levelLabel = this.levelIndex >= 0
-      ? `Level ${this.levelIndex + 1}`
+      ? String(this.levelIndex + 1)
       : getScene(this.sceneManifest, this.currentSceneId).name;
-    this.hud.setText(`${levelLabel}   Score ${this.score}   Lives ${this.lives}`);
+    this.hudLevelValue.setText(levelLabel);
+    this.hudScoreValue.setText(String(this.score));
+    this.hudLifeIcons.forEach(({ outline, coconut }, index) => {
+      const active = index < this.lives;
+      outline.setAlpha(active ? 0.9 : 0.34);
+      coconut.setAlpha(active ? 1 : 0.38);
+    });
+  }
+
+  private createHud(): void {
+    const labelStyle: Phaser.Types.GameObjects.Text.TextStyle = {
+      fontFamily: "Georgia, Times New Roman, serif",
+      fontSize: "17px",
+      fontStyle: "bold",
+      color: "#f6d96b",
+      stroke: "#16351d",
+      strokeThickness: 4,
+      shadow: {
+        offsetX: 0,
+        offsetY: 2,
+        color: "#07150a",
+        blur: 4,
+        stroke: true,
+        fill: true
+      }
+    };
+    const valueStyle: Phaser.Types.GameObjects.Text.TextStyle = {
+      ...labelStyle,
+      color: "#d9f2b4",
+      stroke: "#234f29",
+      strokeThickness: 2
+    };
+    const levelLabel = this.add.text(0, 0, "LEVEL", labelStyle);
+    this.hudLevelValue = this.add.text(62, 0, "1", valueStyle);
+    const scoreLabel = this.add.text(102, 0, "SCORE", labelStyle);
+    this.hudScoreValue = this.add.text(165, 0, "0", valueStyle);
+    const livesLabel = this.add.text(224, 0, "LIVES", labelStyle);
+    const ballTexture = this.textureForAsset("ball.core");
+    const children: Phaser.GameObjects.GameObject[] = [
+      levelLabel,
+      this.hudLevelValue,
+      scoreLabel,
+      this.hudScoreValue,
+      livesLabel
+    ];
+
+    this.hudLifeIcons = Array.from({ length: initialLives }, (_, index) => {
+      const x = 294 + index * 25;
+      const outline = this.add.image(x, 10, ballTexture)
+        .setDisplaySize(23, 23)
+        .setTint(0x10210f)
+        .setTintMode(Phaser.TintModes.FILL);
+      const coconut = this.add.image(x, 10, ballTexture).setDisplaySize(18, 18);
+      this.bindAiAssetTexture(outline, "ball.core");
+      this.bindAiAssetTexture(coconut, "ball.core");
+      children.push(outline, coconut);
+      return { outline, coconut };
+    });
+
+    this.hud = this.add.container(16, 15, children).setDepth(5000);
   }
 
   private createGameMenu(): void {
