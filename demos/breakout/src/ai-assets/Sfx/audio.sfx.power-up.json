@@ -1,0 +1,22 @@
+{
+  "id": "audio.sfx.power-up",
+  "kind": "sound",
+  "prompt": "Short magical jungle arcade power-up pickup chime with wooden percussion and sparkling leaves.",
+  "audioSettings": { "provider": "elevenlabs", "format": "mp3", "durationSeconds": 1.2, "loop": false },
+  "activeVersion": "default",
+  "versions": {
+    "default": {
+      "name": "default",
+      "file": "/assets/audio.sfx.level.promoted-1783891716410.mp3",
+      "prompt": "Short magical jungle arcade power-up pickup chime.",
+      "createdAt": "2026-07-13T00:00:00.000Z",
+      "model": "placeholder-audio",
+      "audioSettings": { "provider": "elevenlabs", "format": "mp3", "durationSeconds": 1.2, "loop": false },
+      "audioPlayback": { "volume": 0.55 }
+    }
+  },
+  "tags": ["sfx", "power-up", "pickup"],
+  "settings": {},
+  "audioPlayback": { "volume": 0.55 },
+  "voiceSettings": {}
+}

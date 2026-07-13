@@ -1,0 +1,14 @@
+{
+  "id": "power-up.life",
+  "kind": "image",
+  "prompt": "A magical jungle extra-life power-up for a cute breakout game, glowing coconut with a small golden heart, readable icon, transparent background.",
+  "dimensions": { "width": 48, "height": 48 },
+  "settings": { "format": "png", "background": "transparent", "model": "gpt-image-2" },
+  "activeVersion": "default",
+  "versions": { "default": { "name": "default", "file": "/assets/power-up.life.default.svg", "prompt": "Glowing coconut extra-life icon.", "createdAt": "2026-07-13T00:00:00.000Z", "model": "manual-svg" } },
+  "tags": ["power-up", "life"],
+  "linkedAnimationAssets": {
+    "idle": { "label": "Idle", "assetId": "power-up.life.idle" },
+    "destroyed": { "label": "Destroyed", "assetId": "power-up.life.destroyed" }
+  }
+}

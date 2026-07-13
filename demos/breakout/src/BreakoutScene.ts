@@ -67,6 +67,8 @@ type SfxPlaybackOptions = {
   pitchStepsSemitones?: readonly number[];
 };
 
+type PowerUpType = "life" | "shield" | "long-paddle" | "short-paddle";
+
 type GameMenuMode = "start" | "pause";
 
 const initialLevelOrder = ["level.one", "level.two", "level.three"];
@@ -93,6 +95,13 @@ const gameOverSfxAssetId = "audio.sfx.game-over";
 const monkeyThrowSfxAssetId = "audio.sfx.monkey-throw";
 const gameMusicAssetId = "audio.music.game";
 const jungleAmbienceAssetId = "audio.sfx.jungle-ambience";
+const powerUpSfxAssetId = "audio.sfx.power-up";
+const powerUpAssetIds: Record<PowerUpType, string> = {
+  life: "power-up.life",
+  shield: "power-up.shield",
+  "long-paddle": "power-up.long-paddle",
+  "short-paddle": "power-up.short-paddle"
+};
 const hitPitchVariationSemitones = 1.5;
 const brickPitchStepsSemitones = [-3, -2, -1, 0, 1, 2, 3] as const;
 const defaultEnemySpawnIntervalSeconds = 18;
@@ -120,6 +129,11 @@ const defaultPaddleKeyboardSpeed = 430;
 const paddleInvulnerabilityMs = 650;
 const aiAnimationFrameTransformKey = "aiAnimationFrameTransform";
 const initialLives = 5;
+const firstPowerUpSpawnDelayMs = 14000;
+const minimumPowerUpSpawnIntervalMs = 32000;
+const maximumPowerUpSpawnIntervalMs = 48000;
+const powerUpFallSpeed = 86;
+const paddleSizeEffectDurationMs = 30000;
 
 export type BreakoutSceneOptions = {
   aiAssets: AiAssetManifest;
@@ -148,6 +162,7 @@ export class BreakoutScene extends Phaser.Scene {
   private wallLastHitAt = new Map<string, number>();
   private enemies!: Phaser.Physics.Arcade.Group;
   private bananas!: Phaser.Physics.Arcade.Group;
+  private powerUps!: Phaser.Physics.Arcade.Group;
   private levelObjects: Phaser.GameObjects.GameObject[] = [];
   private score = 0;
   private lives = initialLives;
@@ -172,6 +187,13 @@ export class BreakoutScene extends Phaser.Scene {
   private reloadTimer?: Phaser.Time.TimerEvent;
   private enemySpawnTimer?: Phaser.Time.TimerEvent;
   private firstEnemySpawnTimer?: Phaser.Time.TimerEvent;
+  private powerUpSpawnTimer?: Phaser.Time.TimerEvent;
+  private paddleSizeTimer?: Phaser.Time.TimerEvent;
+  private paddleSizeTween?: Phaser.Tweens.Tween;
+  private paddleBaseScaleX = 1;
+  private paddleSizeMultiplier = 1;
+  private shieldHalo?: Phaser.GameObjects.Ellipse;
+  private shieldTween?: Phaser.Tweens.Tween;
   private pointerWasDown = false;
   private paddlePointerDragActive = false;
   private levelAdvanceScheduled = false;
@@ -337,6 +359,16 @@ export class BreakoutScene extends Phaser.Scene {
       }
     }
 
+    for (const child of this.powerUps.children) {
+      const powerUp = child as ArcadeSprite;
+      if (powerUp.y > 640) powerUp.destroy();
+    }
+
+    if (this.shieldHalo?.active && this.paddle.active) {
+      this.shieldHalo.setPosition(this.paddle.x, this.paddle.y);
+      this.shieldHalo.setDisplaySize(this.paddle.displayWidth + 30, this.paddle.displayHeight + 24);
+    }
+
     this.applyAiAnimationFrameTransforms();
   }
 
@@ -364,6 +396,7 @@ export class BreakoutScene extends Phaser.Scene {
 
     this.enemies = this.physics.add.group({ allowGravity: false });
     this.bananas = this.physics.add.group({ allowGravity: false });
+    this.powerUps = this.physics.add.group({ allowGravity: false });
 
     for (const object of levelObjects) {
       if (object.tag === brickTag && object.visible) {
@@ -391,6 +424,7 @@ export class BreakoutScene extends Phaser.Scene {
     if (paddleDefinition) {
       applyObjectTransform(this.paddle, paddleDefinition);
     }
+    this.paddleBaseScaleX = this.paddle.scaleX;
     this.playLinkedAnimation(this.paddle, paddleAssetId, "idle");
     this.paddle.setImmovable(true);
     this.paddle.setCollideWorldBounds(true);
@@ -429,6 +463,7 @@ export class BreakoutScene extends Phaser.Scene {
     this.physics.add.overlap(this.paddle, this.enemies, this.onPaddleEnemyOverlap, undefined, this);
     this.physics.add.overlap(this.ball, this.bananas, this.onBananaHit, undefined, this);
     this.physics.add.overlap(this.paddle, this.bananas, this.onPaddleBananaOverlap, undefined, this);
+    this.physics.add.overlap(this.paddle, this.powerUps, this.onPaddlePowerUpOverlap, undefined, this);
 
     this.updateHud();
     if (this.gameStarted) {
@@ -438,6 +473,7 @@ export class BreakoutScene extends Phaser.Scene {
 
   private clearLevel(): void {
     this.clearLevelIntro();
+    this.clearPaddleEffects();
     for (const object of this.levelObjects) {
       object.destroy();
     }
@@ -450,10 +486,13 @@ export class BreakoutScene extends Phaser.Scene {
     this.enemies?.destroy(true);
     this.stopAllEnemyAppearanceAudio();
     this.bananas?.destroy(true);
+    this.powerUps?.destroy(true);
     this.firstEnemySpawnTimer?.remove(false);
     this.firstEnemySpawnTimer = undefined;
     this.enemySpawnTimer?.remove(false);
     this.enemySpawnTimer = undefined;
+    this.powerUpSpawnTimer?.remove(false);
+    this.powerUpSpawnTimer = undefined;
   }
 
   private showLevelIntro(level: SceneDefinition): void {
@@ -534,6 +573,10 @@ export class BreakoutScene extends Phaser.Scene {
     this.setBallLaunchVelocity(190, -265);
     this.firstEnemySpawnTimer = this.time.delayedCall(firstEnemySpawnDelayMs, () => {
       this.scheduleEnemySpawn(level, this.spawnEnemy(level));
+    });
+    this.powerUpSpawnTimer = this.time.delayedCall(firstPowerUpSpawnDelayMs, () => {
+      this.spawnPowerUp(level);
+      this.schedulePowerUpSpawn(level);
     });
   }
 
@@ -923,6 +966,136 @@ export class BreakoutScene extends Phaser.Scene {
     this.damagePaddle();
   }
 
+  private onPaddlePowerUpOverlap(
+    _paddleObject: unknown,
+    powerUpObject: unknown
+  ): void {
+    const powerUp = powerUpObject as ArcadeSprite;
+    if (!powerUp.active || powerUp.getData("destroying")) return;
+
+    powerUp.setData("destroying", true);
+    powerUp.setVelocity(0, 0);
+    powerUp.body.enable = false;
+    this.applyPowerUp(powerUp.getData("powerUpType") as PowerUpType);
+    this.playSfx(powerUpSfxAssetId);
+    const baseAssetId = String(powerUp.getData("baseAssetId"));
+    const duration = this.playLinkedAnimation(powerUp, baseAssetId, "destroyed");
+    this.time.delayedCall(Math.max(duration, 180) + 40, () => powerUp.destroy());
+  }
+
+  private applyPowerUp(type: PowerUpType): void {
+    switch (type) {
+      case "life":
+        this.lives = Math.min(initialLives, this.lives + 1);
+        this.updateHud();
+        break;
+      case "shield":
+        this.activateShield();
+        break;
+      case "long-paddle":
+        this.applyPaddleSizeEffect(1.45);
+        break;
+      case "short-paddle":
+        this.applyPaddleSizeEffect(0.72);
+        break;
+    }
+  }
+
+  private activateShield(): void {
+    this.removeShield();
+    this.paddle.setData("shielded", true);
+    this.shieldHalo = this.add.ellipse(
+      this.paddle.x,
+      this.paddle.y,
+      this.paddle.displayWidth + 30,
+      this.paddle.displayHeight + 24,
+      0x8fffd2,
+      0.12
+    ).setStrokeStyle(4, 0xc9fff0, 0.95).setDepth(this.paddle.depth + 1);
+    this.shieldTween = this.tweens.add({
+      targets: this.shieldHalo,
+      alpha: { from: 0.55, to: 1 },
+      scaleX: { from: 0.96, to: 1.04 },
+      scaleY: { from: 0.9, to: 1.1 },
+      duration: 620,
+      yoyo: true,
+      repeat: -1,
+      ease: "Sine.InOut"
+    });
+  }
+
+  private removeShield(animate = false): void {
+    this.paddle?.setData("shielded", false);
+    this.shieldTween?.stop();
+    this.shieldTween = undefined;
+    const halo = this.shieldHalo;
+    this.shieldHalo = undefined;
+    if (!halo) return;
+    if (!animate) {
+      halo.destroy();
+      return;
+    }
+    this.tweens.add({
+      targets: halo,
+      alpha: 0,
+      scaleX: 1.45,
+      scaleY: 1.6,
+      duration: 220,
+      ease: "Quad.Out",
+      onComplete: () => halo.destroy()
+    });
+  }
+
+  private applyPaddleSizeEffect(multiplier: number): void {
+    this.paddleSizeTimer?.remove(false);
+    this.paddleSizeTween?.stop();
+    this.paddleSizeTween = this.tweens.add({
+      targets: this,
+      paddleSizeMultiplier: multiplier,
+      duration: 420,
+      ease: "Back.Out",
+      onUpdate: () => this.applyPaddleSizeMultiplier(),
+      onComplete: () => {
+        this.paddleSizeTween = undefined;
+        this.applyPaddleSizeMultiplier();
+      }
+    });
+    this.paddleSizeTimer = this.time.delayedCall(paddleSizeEffectDurationMs, () => {
+      this.paddleSizeTimer = undefined;
+      this.paddleSizeTween = this.tweens.add({
+        targets: this,
+        paddleSizeMultiplier: 1,
+        duration: 420,
+        ease: "Back.Out",
+        onUpdate: () => this.applyPaddleSizeMultiplier(),
+        onComplete: () => {
+          this.paddleSizeTween = undefined;
+          this.applyPaddleSizeMultiplier();
+        }
+      });
+    });
+  }
+
+  private applyPaddleSizeMultiplier(): void {
+    if (!this.paddle?.active) return;
+    this.applyAiAnimationFrameTransformToObject(this.paddle);
+    this.syncPaddleBodyToDisplay();
+  }
+
+  private syncPaddleBodyToDisplay(): void {
+    if (!this.paddle?.active) return;
+    this.paddle.body.setSize(this.paddle.width, this.paddle.height, true);
+  }
+
+  private clearPaddleEffects(): void {
+    this.paddleSizeTimer?.remove(false);
+    this.paddleSizeTimer = undefined;
+    this.paddleSizeTween?.stop();
+    this.paddleSizeTween = undefined;
+    this.paddleSizeMultiplier = 1;
+    this.removeShield();
+  }
+
   private loseBall(): void {
     if (this.damagePaddle({ force: true })) {
       return;
@@ -1028,6 +1201,41 @@ export class BreakoutScene extends Phaser.Scene {
       }
     });
     return interval;
+  }
+
+  private spawnPowerUp(level: SceneDefinition): void {
+    if (this.gameplayPaused || this.levelIntroActive) return;
+    const areas = sceneAreas(this.sceneManifest, level).filter((area) => (
+      area.tag === spawnTag || area.tag.startsWith(`${spawnTag}.`)
+    ) && area.closed);
+    const area = Phaser.Utils.Array.GetRandom(areas);
+    if (!area) return;
+
+    const type = Phaser.Utils.Array.GetRandom(Object.keys(powerUpAssetIds)) as PowerUpType;
+    const baseAssetId = powerUpAssetIds[type];
+    const idleAssetId = this.linkedAnimationAssetId(baseAssetId, "idle");
+    const point = randomPointInArea(area);
+    const powerUp = this.physics.add.sprite(point.x, point.y, this.textureForAsset(idleAssetId));
+    powerUp.setData("powerUpType", type);
+    powerUp.setData("baseAssetId", baseAssetId);
+    powerUp.setData("assetId", idleAssetId);
+    powerUp.setDepth(1050);
+    powerUp.setVelocity(0, powerUpFallSpeed);
+    powerUp.body.allowGravity = false;
+    this.bindAiAssetTexture(powerUp, idleAssetId);
+    this.playLinkedAnimation(powerUp, baseAssetId, "idle", { randomFrame: true });
+    this.powerUps.add(powerUp);
+  }
+
+  private schedulePowerUpSpawn(level: SceneDefinition): void {
+    this.powerUpSpawnTimer?.remove(false);
+    this.powerUpSpawnTimer = this.time.delayedCall(
+      Phaser.Math.Between(minimumPowerUpSpawnIntervalMs, maximumPowerUpSpawnIntervalMs),
+      () => {
+        this.spawnPowerUp(level);
+        this.schedulePowerUpSpawn(level);
+      }
+    );
   }
 
   private scheduleEnemySpawn(level: SceneDefinition, intervalSeconds: number): void {
@@ -1512,6 +1720,12 @@ export class BreakoutScene extends Phaser.Scene {
     if (!this.paddle?.active) return false;
     if (this.paddle.getData("destroying")) return true;
 
+    if (!options.force && this.paddle.getData("shielded")) {
+      this.paddle.setData("invulnerableUntil", this.time.now + paddleInvulnerabilityMs);
+      this.removeShield(true);
+      return false;
+    }
+
     const invulnerableUntil = Number(this.paddle.getData("invulnerableUntil") ?? 0);
     if (!options.force && this.time.now < invulnerableUntil) {
       return false;
@@ -1629,6 +1843,7 @@ export class BreakoutScene extends Phaser.Scene {
     add(snakeAssetId);
     add(monkeyAssetId);
     add(bananaAssetId);
+    Object.values(powerUpAssetIds).forEach(add);
 
     return [...ids];
   }
@@ -1650,6 +1865,10 @@ export class BreakoutScene extends Phaser.Scene {
     }
 
     for (const object of this.bananas?.children ?? []) {
+      this.applyTextureToGameObject(object, assetId, textureKey, asset);
+    }
+
+    for (const object of this.powerUps?.children ?? []) {
       this.applyTextureToGameObject(object, assetId, textureKey, asset);
     }
   }
@@ -1893,6 +2112,10 @@ export class BreakoutScene extends Phaser.Scene {
     for (const object of this.enemies?.children ?? []) {
       this.applyAiAnimationFrameTransformToObject(object);
     }
+
+    for (const object of this.powerUps?.children ?? []) {
+      this.applyAiAnimationFrameTransformToObject(object);
+    }
   }
 
   private applyAiAnimationFrameTransformToObject(object: Phaser.GameObjects.GameObject): void {
@@ -1925,15 +2148,20 @@ export class BreakoutScene extends Phaser.Scene {
 
     if (!timing) {
       this.resetAiAnimationFrameTransform(sprite);
+      if (sprite === this.paddle) {
+        sprite.setScale(this.paddleBaseScaleX * this.paddleSizeMultiplier, sprite.scaleY);
+      }
       return;
     }
 
     const state = getAiAnimationFrameTransformState(sprite);
+    if (sprite === this.paddle) sprite.scaleX /= this.paddleSizeMultiplier;
     const base = aiAnimationBaseTransform(sprite, state.timing);
     const offset = aiAnimationFrameOffset(timing, base);
 
     sprite.setPosition(base.x + offset.x, base.y + offset.y);
     sprite.setScale(base.scaleX * (timing.scaleX ?? 1), base.scaleY * (timing.scaleY ?? 1));
+    if (sprite === this.paddle) sprite.scaleX *= this.paddleSizeMultiplier;
     sprite.setAngle(base.angle + (timing.rotation ?? 0));
     state.timing = timing;
     sprite.setData(aiAnimationFrameTransformKey, state);
@@ -1943,9 +2171,11 @@ export class BreakoutScene extends Phaser.Scene {
     const state = sprite.getData(aiAnimationFrameTransformKey) as AiAnimationFrameTransformState | undefined;
     if (!state?.timing) return;
 
+    if (sprite === this.paddle) sprite.scaleX /= this.paddleSizeMultiplier;
     const base = aiAnimationBaseTransform(sprite, state.timing);
     sprite.setPosition(base.x, base.y);
     sprite.setScale(base.scaleX, base.scaleY);
+    if (sprite === this.paddle) sprite.scaleX *= this.paddleSizeMultiplier;
     sprite.setAngle(base.angle);
     state.timing = undefined;
     sprite.setData(aiAnimationFrameTransformKey, state);

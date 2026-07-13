@@ -1,0 +1,11 @@
+{
+  "id": "power-up.short-paddle.destroyed", "kind": "animation",
+  "prompt": "A 4-frame collected animation spritesheet for a jungle shorter-paddle power-up, amber arrows collapse inward into thorn sparkles, transparent background.",
+  "dimensions": { "width": 96, "height": 96 },
+  "frameGrid": { "frameCount": 4, "frameWidth": 48, "frameHeight": 48, "columns": 2, "rows": 2 },
+  "animations": [{ "key": "power-up.short-paddle.destroyed", "frameRate": 12, "repeat": 0, "frames": [0, 1, 2, 3] }],
+  "settings": { "format": "png", "background": "transparent", "model": "gpt-image-2", "referenceAssetIds": ["power-up.short-paddle"], "frameAlignment": "center" },
+  "activeVersion": "default",
+  "versions": { "default": { "name": "default", "file": "/assets/power-up.short-paddle.destroyed.default.svg", "prompt": "Four-frame contract pickup burst.", "createdAt": "2026-07-13T00:00:00.000Z", "model": "manual-svg", "parentVersion": "default" } },
+  "tags": ["power-up", "paddle", "short", "animation", "destroyed"]
+}

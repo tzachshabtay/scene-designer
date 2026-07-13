@@ -2299,359 +2299,6 @@ export const assets = defineAiAssets(
     "audioPlayback": {},
     "voiceSettings": {}
   },
-  "hero.paddle.long.destroyed": {
-    "id": "hero.paddle.long.destroyed",
-    "kind": "animation",
-    "prompt": "A 6-frame destroyed animation spritesheet for the long jungle breakout hero paddle, based on the source image, cartoon break/poof, transparent background.",
-    "dimensions": {
-      "width": 936,
-      "height": 18
-    },
-    "frameGrid": {
-      "frameCount": 6,
-      "frameWidth": 156,
-      "frameHeight": 18,
-      "columns": 6,
-      "rows": 1
-    },
-    "animations": [
-      {
-        "key": "hero.paddle.long.destroyed",
-        "frames": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5
-        ],
-        "frameRate": 12,
-        "repeat": 0,
-        "prompt": "A 6-frame destroyed animation spritesheet for the long jungle breakout hero paddle, based on the source image, cartoon break/poof, transparent background.",
-        "frameTimings": [
-          {
-            "offsetX": -1.6,
-            "offsetY": 0,
-            "scaleX": 1,
-            "scaleY": 1,
-            "rotation": 0,
-            "tag": "destroyed-1"
-          },
-          {
-            "offsetX": -0.8,
-            "offsetY": -2.939,
-            "scaleX": 1.08,
-            "scaleY": 1.08,
-            "rotation": -5,
-            "tag": "destroyed-2"
-          },
-          {
-            "offsetX": 0,
-            "offsetY": -4.755,
-            "scaleX": 0.95,
-            "scaleY": 0.95,
-            "rotation": 7,
-            "tag": "destroyed-3"
-          },
-          {
-            "offsetX": 0.8,
-            "offsetY": -4.755,
-            "scaleX": 0.68,
-            "scaleY": 0.68,
-            "rotation": -9,
-            "tag": "destroyed-4"
-          },
-          {
-            "offsetX": 1.6,
-            "offsetY": -2.939,
-            "scaleX": 0.38,
-            "scaleY": 0.38,
-            "rotation": 12,
-            "tag": "destroyed-5"
-          },
-          {
-            "offsetX": 2.4,
-            "offsetY": 0,
-            "scaleX": 0.08,
-            "scaleY": 0.08,
-            "rotation": 0,
-            "tag": "destroyed-6"
-          }
-        ]
-      }
-    ],
-    "settings": {
-      "format": "png",
-      "background": "auto",
-      "model": "gpt-image-2",
-      "referenceAssetIds": [
-        "hero.paddle.long"
-      ]
-    },
-    "activeVersion": "default",
-    "versions": {
-      "default": {
-        "name": "default",
-        "file": "/assets/hero.paddle.long.destroyed.default.svg",
-        "prompt": "A 6-frame destroyed animation spritesheet for the long jungle breakout hero paddle, based on the source image, cartoon break/poof, transparent background.",
-        "createdAt": "2026-07-05T00:00:00.000Z",
-        "model": "base-image-spritesheet",
-        "settings": {
-          "format": "png",
-          "background": "auto",
-          "model": "gpt-image-2",
-          "referenceAssetIds": [
-            "hero.paddle.long"
-          ]
-        },
-        "parentVersion": "default",
-        "notes": "Default animation spritesheet derived from the current base image."
-      }
-    },
-    "tags": [
-      "hero",
-      "paddle",
-      "animation",
-      "destroyed"
-    ]
-  },
-  "hero.paddle.long.hit": {
-    "id": "hero.paddle.long.hit",
-    "kind": "animation",
-    "prompt": "A 4-frame getting-hit animation spritesheet for the long jungle breakout hero paddle, based on the source image, quick recoil, transparent background.",
-    "dimensions": {
-      "width": 624,
-      "height": 18
-    },
-    "frameGrid": {
-      "frameCount": 4,
-      "frameWidth": 156,
-      "frameHeight": 18,
-      "columns": 4,
-      "rows": 1
-    },
-    "animations": [
-      {
-        "key": "hero.paddle.long.hit",
-        "frames": [
-          0,
-          1,
-          2,
-          3
-        ],
-        "frameRate": 12,
-        "repeat": 0,
-        "prompt": "A 4-frame getting-hit animation spritesheet for the long jungle breakout hero paddle, based on the source image, quick recoil, transparent background.",
-        "frameTimings": [
-          {
-            "offsetX": 0,
-            "offsetY": 0,
-            "scaleX": 1,
-            "scaleY": 1,
-            "rotation": 0,
-            "tag": "hit-1"
-          },
-          {
-            "offsetX": -4,
-            "offsetY": 1,
-            "scaleX": 1.08,
-            "scaleY": 0.9,
-            "rotation": -2,
-            "tag": "hit-2"
-          },
-          {
-            "offsetX": 4,
-            "offsetY": -1,
-            "scaleX": 0.96,
-            "scaleY": 1.12,
-            "rotation": 2,
-            "tag": "hit-3"
-          },
-          {
-            "offsetX": 0,
-            "offsetY": 0,
-            "scaleX": 1,
-            "scaleY": 1,
-            "rotation": 0,
-            "tag": "hit-4"
-          }
-        ]
-      }
-    ],
-    "settings": {
-      "format": "png",
-      "background": "auto",
-      "model": "gpt-image-2",
-      "referenceAssetIds": [
-        "hero.paddle.long"
-      ]
-    },
-    "activeVersion": "default",
-    "versions": {
-      "default": {
-        "name": "default",
-        "file": "/assets/hero.paddle.long.hit.default.svg",
-        "prompt": "A 4-frame getting-hit animation spritesheet for the long jungle breakout hero paddle, based on the source image, quick recoil, transparent background.",
-        "createdAt": "2026-07-05T00:00:00.000Z",
-        "model": "base-image-spritesheet",
-        "settings": {
-          "format": "png",
-          "background": "auto",
-          "model": "gpt-image-2",
-          "referenceAssetIds": [
-            "hero.paddle.long"
-          ]
-        },
-        "parentVersion": "default",
-        "notes": "Default animation spritesheet derived from the current base image."
-      }
-    },
-    "tags": [
-      "hero",
-      "paddle",
-      "animation",
-      "hit"
-    ]
-  },
-  "hero.paddle.long.idle": {
-    "id": "hero.paddle.long.idle",
-    "kind": "animation",
-    "prompt": "A 4-frame idle animation spritesheet for the long jungle breakout hero paddle, based on the source image, subtle ready movement, transparent background.",
-    "dimensions": {
-      "width": 624,
-      "height": 18
-    },
-    "frameGrid": {
-      "frameCount": 4,
-      "frameWidth": 156,
-      "frameHeight": 18,
-      "columns": 4,
-      "rows": 1
-    },
-    "animations": [
-      {
-        "key": "hero.paddle.long.idle",
-        "frames": [
-          0,
-          1,
-          2,
-          3
-        ],
-        "frameRate": 6,
-        "repeat": -1,
-        "prompt": "A 4-frame idle animation spritesheet for the long jungle breakout hero paddle, based on the source image, subtle ready movement, transparent background.",
-        "frameTimings": [
-          {
-            "offsetX": 0,
-            "offsetY": 0,
-            "scaleX": 1,
-            "scaleY": 1,
-            "rotation": 0,
-            "tag": "idle-1"
-          },
-          {
-            "offsetX": 0,
-            "offsetY": -1,
-            "scaleX": 1.015,
-            "scaleY": 1,
-            "rotation": 0,
-            "tag": "idle-2"
-          },
-          {
-            "offsetX": 0,
-            "offsetY": 0,
-            "scaleX": 1,
-            "scaleY": 1,
-            "rotation": 0,
-            "tag": "idle-3"
-          },
-          {
-            "offsetX": 0,
-            "offsetY": 1,
-            "scaleX": 0.985,
-            "scaleY": 1,
-            "rotation": 0,
-            "tag": "idle-4"
-          }
-        ]
-      }
-    ],
-    "settings": {
-      "format": "png",
-      "background": "auto",
-      "model": "gpt-image-2",
-      "referenceAssetIds": [
-        "hero.paddle.long"
-      ]
-    },
-    "activeVersion": "default",
-    "versions": {
-      "default": {
-        "name": "default",
-        "file": "/assets/hero.paddle.long.idle.default.svg",
-        "prompt": "A 4-frame idle animation spritesheet for the long jungle breakout hero paddle, based on the source image, subtle ready movement, transparent background.",
-        "createdAt": "2026-07-05T00:00:00.000Z",
-        "model": "base-image-spritesheet",
-        "settings": {
-          "format": "png",
-          "background": "auto",
-          "model": "gpt-image-2",
-          "referenceAssetIds": [
-            "hero.paddle.long"
-          ]
-        },
-        "parentVersion": "default",
-        "notes": "Default animation spritesheet derived from the current base image."
-      }
-    },
-    "tags": [
-      "hero",
-      "paddle",
-      "animation",
-      "idle"
-    ]
-  },
-  "hero.paddle.long": {
-    "id": "hero.paddle.long",
-    "kind": "image",
-    "prompt": "A long neon breakout paddle, broad and stable, cyan edge lights, transparent background.",
-    "dimensions": {
-      "width": 156,
-      "height": 18
-    },
-    "settings": {
-      "format": "svg",
-      "background": "transparent"
-    },
-    "activeVersion": "default",
-    "versions": {
-      "default": {
-        "name": "default",
-        "file": "/assets/hero.paddle.long.default.svg",
-        "prompt": "A long neon breakout paddle, broad and stable, cyan edge lights, transparent background.",
-        "createdAt": "2026-07-03T00:00:00.000Z",
-        "model": "manual-svg"
-      }
-    },
-    "tags": [
-      "hero",
-      "paddle"
-    ],
-    "linkedAnimationAssets": {
-      "idle": {
-        "label": "Idle",
-        "assetId": "hero.paddle.long.idle"
-      },
-      "hit": {
-        "label": "Getting Hit",
-        "assetId": "hero.paddle.long.hit"
-      },
-      "destroyed": {
-        "label": "Destroyed",
-        "assetId": "hero.paddle.long.destroyed"
-      }
-    }
-  },
   "hero.paddle.normal.destroyed": {
     "id": "hero.paddle.normal.destroyed",
     "kind": "animation",
@@ -3026,356 +2673,601 @@ export const assets = defineAiAssets(
       }
     }
   },
-  "hero.paddle.short.destroyed": {
-    "id": "hero.paddle.short.destroyed",
+  "power-up.life.destroyed": {
+    "id": "power-up.life.destroyed",
     "kind": "animation",
-    "prompt": "A 6-frame destroyed animation spritesheet for the short jungle breakout hero paddle, based on the source image, cartoon break/poof, transparent background.",
+    "prompt": "A 4-frame collected animation spritesheet for the glowing coconut extra-life power-up, bursts into a golden heart and leaf sparkles, transparent background.",
     "dimensions": {
-      "width": 432,
-      "height": 18
+      "width": 96,
+      "height": 96
     },
     "frameGrid": {
-      "frameCount": 6,
-      "frameWidth": 72,
-      "frameHeight": 18,
-      "columns": 6,
-      "rows": 1
+      "frameCount": 4,
+      "frameWidth": 48,
+      "frameHeight": 48,
+      "columns": 2,
+      "rows": 2
     },
     "animations": [
       {
-        "key": "hero.paddle.short.destroyed",
+        "key": "power-up.life.destroyed",
+        "frameRate": 12,
+        "repeat": 0,
         "frames": [
           0,
           1,
           2,
-          3,
-          4,
-          5
-        ],
-        "frameRate": 12,
-        "repeat": 0,
-        "prompt": "A 6-frame destroyed animation spritesheet for the short jungle breakout hero paddle, based on the source image, cartoon break/poof, transparent background.",
-        "frameTimings": [
-          {
-            "offsetX": -1.6,
-            "offsetY": 0,
-            "scaleX": 1,
-            "scaleY": 1,
-            "rotation": 0,
-            "tag": "destroyed-1"
-          },
-          {
-            "offsetX": -0.8,
-            "offsetY": -2.939,
-            "scaleX": 1.08,
-            "scaleY": 1.08,
-            "rotation": -5,
-            "tag": "destroyed-2"
-          },
-          {
-            "offsetX": 0,
-            "offsetY": -4.755,
-            "scaleX": 0.95,
-            "scaleY": 0.95,
-            "rotation": 7,
-            "tag": "destroyed-3"
-          },
-          {
-            "offsetX": 0.8,
-            "offsetY": -4.755,
-            "scaleX": 0.68,
-            "scaleY": 0.68,
-            "rotation": -9,
-            "tag": "destroyed-4"
-          },
-          {
-            "offsetX": 1.6,
-            "offsetY": -2.939,
-            "scaleX": 0.38,
-            "scaleY": 0.38,
-            "rotation": 12,
-            "tag": "destroyed-5"
-          },
-          {
-            "offsetX": 2.4,
-            "offsetY": 0,
-            "scaleX": 0.08,
-            "scaleY": 0.08,
-            "rotation": 0,
-            "tag": "destroyed-6"
-          }
+          3
         ]
       }
     ],
     "settings": {
       "format": "png",
-      "background": "auto",
+      "background": "transparent",
       "model": "gpt-image-2",
       "referenceAssetIds": [
-        "hero.paddle.short"
-      ]
+        "power-up.life"
+      ],
+      "frameAlignment": "center"
     },
     "activeVersion": "default",
     "versions": {
       "default": {
         "name": "default",
-        "file": "/assets/hero.paddle.short.destroyed.default.svg",
-        "prompt": "A 6-frame destroyed animation spritesheet for the short jungle breakout hero paddle, based on the source image, cartoon break/poof, transparent background.",
-        "createdAt": "2026-07-05T00:00:00.000Z",
-        "model": "base-image-spritesheet",
-        "settings": {
-          "format": "png",
-          "background": "auto",
-          "model": "gpt-image-2",
-          "referenceAssetIds": [
-            "hero.paddle.short"
-          ]
-        },
-        "parentVersion": "default",
-        "notes": "Default animation spritesheet derived from the current base image."
+        "file": "/assets/power-up.life.destroyed.default.svg",
+        "prompt": "Four-frame collected life burst.",
+        "createdAt": "2026-07-13T00:00:00.000Z",
+        "model": "manual-svg",
+        "parentVersion": "default"
       }
     },
     "tags": [
-      "hero",
-      "paddle",
+      "power-up",
+      "life",
       "animation",
       "destroyed"
     ]
   },
-  "hero.paddle.short.hit": {
-    "id": "hero.paddle.short.hit",
+  "power-up.life.idle": {
+    "id": "power-up.life.idle",
     "kind": "animation",
-    "prompt": "A 4-frame getting-hit animation spritesheet for the short jungle breakout hero paddle, based on the source image, quick recoil, transparent background.",
+    "prompt": "A 4-frame idle animation spritesheet for the glowing coconut extra-life power-up, gentle magical pulse and tiny heart sparkle, object centered, transparent background.",
     "dimensions": {
-      "width": 288,
-      "height": 18
+      "width": 96,
+      "height": 96
     },
     "frameGrid": {
       "frameCount": 4,
-      "frameWidth": 72,
-      "frameHeight": 18,
-      "columns": 4,
-      "rows": 1
+      "frameWidth": 48,
+      "frameHeight": 48,
+      "columns": 2,
+      "rows": 2
     },
     "animations": [
       {
-        "key": "hero.paddle.short.hit",
-        "frames": [
-          0,
-          1,
-          2,
-          3
-        ],
-        "frameRate": 12,
-        "repeat": 0,
-        "prompt": "A 4-frame getting-hit animation spritesheet for the short jungle breakout hero paddle, based on the source image, quick recoil, transparent background.",
-        "frameTimings": [
-          {
-            "offsetX": 0,
-            "offsetY": 0,
-            "scaleX": 1,
-            "scaleY": 1,
-            "rotation": 0,
-            "tag": "hit-1"
-          },
-          {
-            "offsetX": -4,
-            "offsetY": 1,
-            "scaleX": 1.08,
-            "scaleY": 0.9,
-            "rotation": -2,
-            "tag": "hit-2"
-          },
-          {
-            "offsetX": 4,
-            "offsetY": -1,
-            "scaleX": 0.96,
-            "scaleY": 1.12,
-            "rotation": 2,
-            "tag": "hit-3"
-          },
-          {
-            "offsetX": 0,
-            "offsetY": 0,
-            "scaleX": 1,
-            "scaleY": 1,
-            "rotation": 0,
-            "tag": "hit-4"
-          }
-        ]
-      }
-    ],
-    "settings": {
-      "format": "png",
-      "background": "auto",
-      "model": "gpt-image-2",
-      "referenceAssetIds": [
-        "hero.paddle.short"
-      ]
-    },
-    "activeVersion": "default",
-    "versions": {
-      "default": {
-        "name": "default",
-        "file": "/assets/hero.paddle.short.hit.default.svg",
-        "prompt": "A 4-frame getting-hit animation spritesheet for the short jungle breakout hero paddle, based on the source image, quick recoil, transparent background.",
-        "createdAt": "2026-07-05T00:00:00.000Z",
-        "model": "base-image-spritesheet",
-        "settings": {
-          "format": "png",
-          "background": "auto",
-          "model": "gpt-image-2",
-          "referenceAssetIds": [
-            "hero.paddle.short"
-          ]
-        },
-        "parentVersion": "default",
-        "notes": "Default animation spritesheet derived from the current base image."
-      }
-    },
-    "tags": [
-      "hero",
-      "paddle",
-      "animation",
-      "hit"
-    ]
-  },
-  "hero.paddle.short.idle": {
-    "id": "hero.paddle.short.idle",
-    "kind": "animation",
-    "prompt": "A 4-frame idle animation spritesheet for the short jungle breakout hero paddle, based on the source image, subtle ready movement, transparent background.",
-    "dimensions": {
-      "width": 288,
-      "height": 18
-    },
-    "frameGrid": {
-      "frameCount": 4,
-      "frameWidth": 72,
-      "frameHeight": 18,
-      "columns": 4,
-      "rows": 1
-    },
-    "animations": [
-      {
-        "key": "hero.paddle.short.idle",
-        "frames": [
-          0,
-          1,
-          2,
-          3
-        ],
-        "frameRate": 6,
+        "key": "power-up.life.idle",
+        "frameRate": 7,
         "repeat": -1,
-        "prompt": "A 4-frame idle animation spritesheet for the short jungle breakout hero paddle, based on the source image, subtle ready movement, transparent background.",
-        "frameTimings": [
-          {
-            "offsetX": 0,
-            "offsetY": 0,
-            "scaleX": 1,
-            "scaleY": 1,
-            "rotation": 0,
-            "tag": "idle-1"
-          },
-          {
-            "offsetX": 0,
-            "offsetY": -1,
-            "scaleX": 1.015,
-            "scaleY": 1,
-            "rotation": 0,
-            "tag": "idle-2"
-          },
-          {
-            "offsetX": 0,
-            "offsetY": 0,
-            "scaleX": 1,
-            "scaleY": 1,
-            "rotation": 0,
-            "tag": "idle-3"
-          },
-          {
-            "offsetX": 0,
-            "offsetY": 1,
-            "scaleX": 0.985,
-            "scaleY": 1,
-            "rotation": 0,
-            "tag": "idle-4"
-          }
+        "frames": [
+          0,
+          1,
+          2,
+          3
         ]
       }
     ],
     "settings": {
       "format": "png",
-      "background": "auto",
+      "background": "transparent",
       "model": "gpt-image-2",
       "referenceAssetIds": [
-        "hero.paddle.short"
-      ]
+        "power-up.life"
+      ],
+      "frameAlignment": "center"
     },
     "activeVersion": "default",
     "versions": {
       "default": {
         "name": "default",
-        "file": "/assets/hero.paddle.short.idle.default.svg",
-        "prompt": "A 4-frame idle animation spritesheet for the short jungle breakout hero paddle, based on the source image, subtle ready movement, transparent background.",
-        "createdAt": "2026-07-05T00:00:00.000Z",
-        "model": "base-image-spritesheet",
-        "settings": {
-          "format": "png",
-          "background": "auto",
-          "model": "gpt-image-2",
-          "referenceAssetIds": [
-            "hero.paddle.short"
-          ]
-        },
-        "parentVersion": "default",
-        "notes": "Default animation spritesheet derived from the current base image."
+        "file": "/assets/power-up.life.idle.default.svg",
+        "prompt": "Four-frame glowing life power-up pulse.",
+        "createdAt": "2026-07-13T00:00:00.000Z",
+        "model": "manual-svg",
+        "parentVersion": "default"
       }
     },
     "tags": [
-      "hero",
-      "paddle",
+      "power-up",
+      "life",
       "animation",
       "idle"
     ]
   },
-  "hero.paddle.short": {
-    "id": "hero.paddle.short",
+  "power-up.life": {
+    "id": "power-up.life",
     "kind": "image",
-    "prompt": "A short neon breakout paddle, compact and fast, cyan edge lights, transparent background.",
+    "prompt": "A magical jungle extra-life power-up for a cute breakout game, glowing coconut with a small golden heart, readable icon, transparent background.",
     "dimensions": {
-      "width": 72,
-      "height": 18
+      "width": 48,
+      "height": 48
     },
     "settings": {
-      "format": "svg",
-      "background": "transparent"
+      "format": "png",
+      "background": "transparent",
+      "model": "gpt-image-2"
     },
     "activeVersion": "default",
     "versions": {
       "default": {
         "name": "default",
-        "file": "/assets/hero.paddle.short.default.svg",
-        "prompt": "A short neon breakout paddle, compact and fast, cyan edge lights, transparent background.",
-        "createdAt": "2026-07-03T00:00:00.000Z",
+        "file": "/assets/power-up.life.default.svg",
+        "prompt": "Glowing coconut extra-life icon.",
+        "createdAt": "2026-07-13T00:00:00.000Z",
         "model": "manual-svg"
       }
     },
     "tags": [
-      "hero",
-      "paddle"
+      "power-up",
+      "life"
     ],
     "linkedAnimationAssets": {
       "idle": {
         "label": "Idle",
-        "assetId": "hero.paddle.short.idle"
-      },
-      "hit": {
-        "label": "Getting Hit",
-        "assetId": "hero.paddle.short.hit"
+        "assetId": "power-up.life.idle"
       },
       "destroyed": {
         "label": "Destroyed",
-        "assetId": "hero.paddle.short.destroyed"
+        "assetId": "power-up.life.destroyed"
+      }
+    }
+  },
+  "power-up.long-paddle.destroyed": {
+    "id": "power-up.long-paddle.destroyed",
+    "kind": "animation",
+    "prompt": "A 4-frame collected animation spritesheet for a jungle longer-paddle power-up, green arrows shoot outward into leaf sparkles, transparent background.",
+    "dimensions": {
+      "width": 96,
+      "height": 96
+    },
+    "frameGrid": {
+      "frameCount": 4,
+      "frameWidth": 48,
+      "frameHeight": 48,
+      "columns": 2,
+      "rows": 2
+    },
+    "animations": [
+      {
+        "key": "power-up.long-paddle.destroyed",
+        "frameRate": 12,
+        "repeat": 0,
+        "frames": [
+          0,
+          1,
+          2,
+          3
+        ]
+      }
+    ],
+    "settings": {
+      "format": "png",
+      "background": "transparent",
+      "model": "gpt-image-2",
+      "referenceAssetIds": [
+        "power-up.long-paddle"
+      ],
+      "frameAlignment": "center"
+    },
+    "activeVersion": "default",
+    "versions": {
+      "default": {
+        "name": "default",
+        "file": "/assets/power-up.long-paddle.destroyed.default.svg",
+        "prompt": "Four-frame expand pickup burst.",
+        "createdAt": "2026-07-13T00:00:00.000Z",
+        "model": "manual-svg",
+        "parentVersion": "default"
+      }
+    },
+    "tags": [
+      "power-up",
+      "paddle",
+      "long",
+      "animation",
+      "destroyed"
+    ]
+  },
+  "power-up.long-paddle.idle": {
+    "id": "power-up.long-paddle.idle",
+    "kind": "animation",
+    "prompt": "A 4-frame idle animation spritesheet for a jungle longer-paddle power-up, green outward arrows stretch rhythmically through vines, object centered, transparent background.",
+    "dimensions": {
+      "width": 96,
+      "height": 96
+    },
+    "frameGrid": {
+      "frameCount": 4,
+      "frameWidth": 48,
+      "frameHeight": 48,
+      "columns": 2,
+      "rows": 2
+    },
+    "animations": [
+      {
+        "key": "power-up.long-paddle.idle",
+        "frameRate": 7,
+        "repeat": -1,
+        "frames": [
+          0,
+          1,
+          2,
+          3
+        ]
+      }
+    ],
+    "settings": {
+      "format": "png",
+      "background": "transparent",
+      "model": "gpt-image-2",
+      "referenceAssetIds": [
+        "power-up.long-paddle"
+      ],
+      "frameAlignment": "center"
+    },
+    "activeVersion": "default",
+    "versions": {
+      "default": {
+        "name": "default",
+        "file": "/assets/power-up.long-paddle.idle.default.svg",
+        "prompt": "Four-frame expand arrows pulse.",
+        "createdAt": "2026-07-13T00:00:00.000Z",
+        "model": "manual-svg",
+        "parentVersion": "default"
+      }
+    },
+    "tags": [
+      "power-up",
+      "paddle",
+      "long",
+      "animation",
+      "idle"
+    ]
+  },
+  "power-up.long-paddle": {
+    "id": "power-up.long-paddle",
+    "kind": "image",
+    "prompt": "A magical jungle longer-paddle power-up for a cute breakout game, bright green horizontal double arrows wrapped in vines, readable icon, transparent background.",
+    "dimensions": {
+      "width": 48,
+      "height": 48
+    },
+    "settings": {
+      "format": "png",
+      "background": "transparent",
+      "model": "gpt-image-2"
+    },
+    "activeVersion": "default",
+    "versions": {
+      "default": {
+        "name": "default",
+        "file": "/assets/power-up.long-paddle.default.svg",
+        "prompt": "Green expand-paddle jungle icon.",
+        "createdAt": "2026-07-13T00:00:00.000Z",
+        "model": "manual-svg"
+      }
+    },
+    "tags": [
+      "power-up",
+      "paddle",
+      "long"
+    ],
+    "linkedAnimationAssets": {
+      "idle": {
+        "label": "Idle",
+        "assetId": "power-up.long-paddle.idle"
+      },
+      "destroyed": {
+        "label": "Destroyed",
+        "assetId": "power-up.long-paddle.destroyed"
+      }
+    }
+  },
+  "power-up.shield.destroyed": {
+    "id": "power-up.shield.destroyed",
+    "kind": "animation",
+    "prompt": "A 4-frame collected animation spritesheet for a turquoise jungle shield power-up, halo expands into protective sparkles, transparent background.",
+    "dimensions": {
+      "width": 96,
+      "height": 96
+    },
+    "frameGrid": {
+      "frameCount": 4,
+      "frameWidth": 48,
+      "frameHeight": 48,
+      "columns": 2,
+      "rows": 2
+    },
+    "animations": [
+      {
+        "key": "power-up.shield.destroyed",
+        "frameRate": 12,
+        "repeat": 0,
+        "frames": [
+          0,
+          1,
+          2,
+          3
+        ]
+      }
+    ],
+    "settings": {
+      "format": "png",
+      "background": "transparent",
+      "model": "gpt-image-2",
+      "referenceAssetIds": [
+        "power-up.shield"
+      ],
+      "frameAlignment": "center"
+    },
+    "activeVersion": "default",
+    "versions": {
+      "default": {
+        "name": "default",
+        "file": "/assets/power-up.shield.destroyed.default.svg",
+        "prompt": "Four-frame collected shield burst.",
+        "createdAt": "2026-07-13T00:00:00.000Z",
+        "model": "manual-svg",
+        "parentVersion": "default"
+      }
+    },
+    "tags": [
+      "power-up",
+      "shield",
+      "animation",
+      "destroyed"
+    ]
+  },
+  "power-up.shield.idle": {
+    "id": "power-up.shield.idle",
+    "kind": "animation",
+    "prompt": "A 4-frame idle animation spritesheet for a turquoise jungle shield power-up, halo ripples and leaf shield gleams, object centered, transparent background.",
+    "dimensions": {
+      "width": 96,
+      "height": 96
+    },
+    "frameGrid": {
+      "frameCount": 4,
+      "frameWidth": 48,
+      "frameHeight": 48,
+      "columns": 2,
+      "rows": 2
+    },
+    "animations": [
+      {
+        "key": "power-up.shield.idle",
+        "frameRate": 7,
+        "repeat": -1,
+        "frames": [
+          0,
+          1,
+          2,
+          3
+        ]
+      }
+    ],
+    "settings": {
+      "format": "png",
+      "background": "transparent",
+      "model": "gpt-image-2",
+      "referenceAssetIds": [
+        "power-up.shield"
+      ],
+      "frameAlignment": "center"
+    },
+    "activeVersion": "default",
+    "versions": {
+      "default": {
+        "name": "default",
+        "file": "/assets/power-up.shield.idle.default.svg",
+        "prompt": "Four-frame shield halo pulse.",
+        "createdAt": "2026-07-13T00:00:00.000Z",
+        "model": "manual-svg",
+        "parentVersion": "default"
+      }
+    },
+    "tags": [
+      "power-up",
+      "shield",
+      "animation",
+      "idle"
+    ]
+  },
+  "power-up.shield": {
+    "id": "power-up.shield",
+    "kind": "image",
+    "prompt": "A magical jungle shield power-up for a cute breakout game, turquoise halo around a carved leaf shield, readable icon, transparent background.",
+    "dimensions": {
+      "width": 48,
+      "height": 48
+    },
+    "settings": {
+      "format": "png",
+      "background": "transparent",
+      "model": "gpt-image-2"
+    },
+    "activeVersion": "default",
+    "versions": {
+      "default": {
+        "name": "default",
+        "file": "/assets/power-up.shield.default.svg",
+        "prompt": "Turquoise jungle shield icon.",
+        "createdAt": "2026-07-13T00:00:00.000Z",
+        "model": "manual-svg"
+      }
+    },
+    "tags": [
+      "power-up",
+      "shield"
+    ],
+    "linkedAnimationAssets": {
+      "idle": {
+        "label": "Idle",
+        "assetId": "power-up.shield.idle"
+      },
+      "destroyed": {
+        "label": "Destroyed",
+        "assetId": "power-up.shield.destroyed"
+      }
+    }
+  },
+  "power-up.short-paddle.destroyed": {
+    "id": "power-up.short-paddle.destroyed",
+    "kind": "animation",
+    "prompt": "A 4-frame collected animation spritesheet for a jungle shorter-paddle power-up, amber arrows collapse inward into thorn sparkles, transparent background.",
+    "dimensions": {
+      "width": 96,
+      "height": 96
+    },
+    "frameGrid": {
+      "frameCount": 4,
+      "frameWidth": 48,
+      "frameHeight": 48,
+      "columns": 2,
+      "rows": 2
+    },
+    "animations": [
+      {
+        "key": "power-up.short-paddle.destroyed",
+        "frameRate": 12,
+        "repeat": 0,
+        "frames": [
+          0,
+          1,
+          2,
+          3
+        ]
+      }
+    ],
+    "settings": {
+      "format": "png",
+      "background": "transparent",
+      "model": "gpt-image-2",
+      "referenceAssetIds": [
+        "power-up.short-paddle"
+      ],
+      "frameAlignment": "center"
+    },
+    "activeVersion": "default",
+    "versions": {
+      "default": {
+        "name": "default",
+        "file": "/assets/power-up.short-paddle.destroyed.default.svg",
+        "prompt": "Four-frame contract pickup burst.",
+        "createdAt": "2026-07-13T00:00:00.000Z",
+        "model": "manual-svg",
+        "parentVersion": "default"
+      }
+    },
+    "tags": [
+      "power-up",
+      "paddle",
+      "short",
+      "animation",
+      "destroyed"
+    ]
+  },
+  "power-up.short-paddle.idle": {
+    "id": "power-up.short-paddle.idle",
+    "kind": "animation",
+    "prompt": "A 4-frame idle animation spritesheet for a jungle shorter-paddle power-up, amber inward arrows contract rhythmically through thorny vines, object centered, transparent background.",
+    "dimensions": {
+      "width": 96,
+      "height": 96
+    },
+    "frameGrid": {
+      "frameCount": 4,
+      "frameWidth": 48,
+      "frameHeight": 48,
+      "columns": 2,
+      "rows": 2
+    },
+    "animations": [
+      {
+        "key": "power-up.short-paddle.idle",
+        "frameRate": 7,
+        "repeat": -1,
+        "frames": [
+          0,
+          1,
+          2,
+          3
+        ]
+      }
+    ],
+    "settings": {
+      "format": "png",
+      "background": "transparent",
+      "model": "gpt-image-2",
+      "referenceAssetIds": [
+        "power-up.short-paddle"
+      ],
+      "frameAlignment": "center"
+    },
+    "activeVersion": "default",
+    "versions": {
+      "default": {
+        "name": "default",
+        "file": "/assets/power-up.short-paddle.idle.default.svg",
+        "prompt": "Four-frame contract arrows pulse.",
+        "createdAt": "2026-07-13T00:00:00.000Z",
+        "model": "manual-svg",
+        "parentVersion": "default"
+      }
+    },
+    "tags": [
+      "power-up",
+      "paddle",
+      "short",
+      "animation",
+      "idle"
+    ]
+  },
+  "power-up.short-paddle": {
+    "id": "power-up.short-paddle",
+    "kind": "image",
+    "prompt": "A tricky jungle shorter-paddle power-up for a cute breakout game, amber horizontal inward arrows wrapped in thorny vines, readable icon, transparent background.",
+    "dimensions": {
+      "width": 48,
+      "height": 48
+    },
+    "settings": {
+      "format": "png",
+      "background": "transparent",
+      "model": "gpt-image-2"
+    },
+    "activeVersion": "default",
+    "versions": {
+      "default": {
+        "name": "default",
+        "file": "/assets/power-up.short-paddle.default.svg",
+        "prompt": "Amber shrink-paddle jungle icon.",
+        "createdAt": "2026-07-13T00:00:00.000Z",
+        "model": "manual-svg"
+      }
+    },
+    "tags": [
+      "power-up",
+      "paddle",
+      "short"
+    ],
+    "linkedAnimationAssets": {
+      "idle": {
+        "label": "Idle",
+        "assetId": "power-up.short-paddle.idle"
+      },
+      "destroyed": {
+        "label": "Destroyed",
+        "assetId": "power-up.short-paddle.destroyed"
       }
     }
   },
@@ -4102,6 +3994,46 @@ export const assets = defineAiAssets(
       "trimStartSeconds": 0.6316964876853814,
       "trimEndSeconds": 1.0407811672404663,
       "playbackRate": 1
+    },
+    "voiceSettings": {}
+  },
+  "audio.sfx.power-up": {
+    "id": "audio.sfx.power-up",
+    "kind": "sound",
+    "prompt": "Short magical jungle arcade power-up pickup chime with wooden percussion and sparkling leaves.",
+    "audioSettings": {
+      "provider": "elevenlabs",
+      "format": "mp3",
+      "durationSeconds": 1.2,
+      "loop": false
+    },
+    "activeVersion": "default",
+    "versions": {
+      "default": {
+        "name": "default",
+        "file": "/assets/audio.sfx.level.promoted-1783891716410.mp3",
+        "prompt": "Short magical jungle arcade power-up pickup chime.",
+        "createdAt": "2026-07-13T00:00:00.000Z",
+        "model": "placeholder-audio",
+        "audioSettings": {
+          "provider": "elevenlabs",
+          "format": "mp3",
+          "durationSeconds": 1.2,
+          "loop": false
+        },
+        "audioPlayback": {
+          "volume": 0.55
+        }
+      }
+    },
+    "tags": [
+      "sfx",
+      "power-up",
+      "pickup"
+    ],
+    "settings": {},
+    "audioPlayback": {
+      "volume": 0.55
     },
     "voiceSettings": {}
   },
