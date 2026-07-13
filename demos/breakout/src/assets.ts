@@ -3642,20 +3642,42 @@ export const assets = defineAiAssets(
   "audio.sfx.life-lost": {
     "id": "audio.sfx.life-lost",
     "kind": "sound",
-    "prompt": "Short jungle arcade life lost sound, startled wooden percussion drop with a soft disappointed flourish, no voice.",
+    "prompt": "Short jungle arcade life lost sound",
     "audioSettings": {
       "provider": "elevenlabs",
       "format": "mp3",
       "durationSeconds": 1.5,
       "loop": false
     },
-    "activeVersion": "",
-    "versions": {},
+    "activeVersion": "promoted-1783907864076",
+    "versions": {
+      "promoted-1783907864076": {
+        "name": "promoted-1783907864076",
+        "file": "/assets/audio.sfx.life-lost.promoted-1783907864076.mp3",
+        "prompt": "Short jungle arcade life lost sound",
+        "createdAt": "2026-07-13T01:57:44.132Z",
+        "model": "eleven_text_to_sound_v2",
+        "settings": {},
+        "audioSettings": {
+          "provider": "elevenlabs",
+          "format": "mp3",
+          "durationSeconds": 1.5,
+          "loop": false
+        },
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "durationSeconds": 1.5,
+        "notes": "Promoted from the AI asset designer."
+      }
+    },
     "tags": [
       "sfx",
       "player",
       "life"
-    ]
+    ],
+    "settings": {},
+    "audioPlayback": {},
+    "voiceSettings": {}
   },
   "audio.sfx.monkey-appear": {
     "id": "audio.sfx.monkey-appear",
@@ -3717,17 +3739,49 @@ export const assets = defineAiAssets(
     "audioSettings": {
       "provider": "elevenlabs",
       "format": "mp3",
-      "durationSeconds": 1,
-      "loop": false
+      "durationSeconds": 0.5,
+      "loop": true
     },
-    "activeVersion": "",
-    "versions": {},
+    "activeVersion": "promoted-1783907917175",
+    "versions": {
+      "promoted-1783907917175": {
+        "name": "promoted-1783907917175",
+        "file": "/assets/audio.sfx.monkey-throw.promoted-1783907917175.mp3",
+        "prompt": "Quick mischievous monkey banana throw sound, playful whoop with a fast cartoony jungle projectile swoosh, no words.",
+        "createdAt": "2026-07-13T01:58:37.215Z",
+        "model": "eleven_text_to_sound_v2",
+        "settings": {},
+        "audioSettings": {
+          "provider": "elevenlabs",
+          "format": "mp3",
+          "durationSeconds": 0.5,
+          "loop": true
+        },
+        "audioPlayback": {
+          "volume": 1,
+          "trimStartSeconds": 0.29093956898834744,
+          "trimEndSeconds": 0.8428897146451273,
+          "playbackRate": 1
+        },
+        "voiceSettings": {},
+        "durationSeconds": 0.5,
+        "notes": "Promoted from the AI asset designer."
+      }
+    },
     "tags": [
       "sfx",
       "enemy",
       "monkey",
       "projectile"
-    ]
+    ],
+    "settings": {},
+    "audioPlayback": {
+      "volume": 1,
+      "trimStartSeconds": 0.29093956898834744,
+      "trimEndSeconds": 0.8428897146451273,
+      "playbackRate": 1
+    },
+    "voiceSettings": {}
   },
   "audio.sfx.paddle": {
     "id": "audio.sfx.paddle",

@@ -1,18 +1,40 @@
 {
   "id": "audio.sfx.life-lost",
   "kind": "sound",
-  "prompt": "Short jungle arcade life lost sound, startled wooden percussion drop with a soft disappointed flourish, no voice.",
+  "prompt": "Short jungle arcade life lost sound",
   "audioSettings": {
     "provider": "elevenlabs",
     "format": "mp3",
     "durationSeconds": 1.5,
     "loop": false
   },
-  "activeVersion": "",
-  "versions": {},
+  "activeVersion": "promoted-1783907864076",
+  "versions": {
+    "promoted-1783907864076": {
+      "name": "promoted-1783907864076",
+      "file": "/assets/audio.sfx.life-lost.promoted-1783907864076.mp3",
+      "prompt": "Short jungle arcade life lost sound",
+      "createdAt": "2026-07-13T01:57:44.132Z",
+      "model": "eleven_text_to_sound_v2",
+      "settings": {},
+      "audioSettings": {
+        "provider": "elevenlabs",
+        "format": "mp3",
+        "durationSeconds": 1.5,
+        "loop": false
+      },
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "durationSeconds": 1.5,
+      "notes": "Promoted from the AI asset designer."
+    }
+  },
   "tags": [
     "sfx",
     "player",
     "life"
-  ]
+  ],
+  "settings": {},
+  "audioPlayback": {},
+  "voiceSettings": {}
 }
