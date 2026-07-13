@@ -3473,17 +3473,50 @@ export const assets = defineAiAssets(
   "audio.sfx.enemy": {
     "id": "audio.sfx.enemy",
     "kind": "sound",
-    "prompt": "Small enemy burst zap.",
+    "prompt": "Small enemy satisfying pop sound.",
     "audioSettings": {
       "provider": "elevenlabs",
       "format": "mp3",
-      "durationSeconds": 1
+      "durationSeconds": 0.5,
+      "loop": true
     },
-    "activeVersion": "",
-    "versions": {},
+    "activeVersion": "promoted-1783891888433",
+    "versions": {
+      "promoted-1783891888433": {
+        "name": "promoted-1783891888433",
+        "file": "/assets/audio.sfx.enemy.promoted-1783891888433.mp3",
+        "prompt": "Small enemy satisfying pop sound.",
+        "createdAt": "2026-07-12T21:31:28.483Z",
+        "model": "eleven_text_to_sound_v2",
+        "settings": {},
+        "audioSettings": {
+          "provider": "elevenlabs",
+          "format": "mp3",
+          "durationSeconds": 0.5,
+          "loop": true
+        },
+        "audioPlayback": {
+          "volume": 1,
+          "trimStartSeconds": 0.2886429919226695,
+          "trimEndSeconds": 0.7127932170286018,
+          "playbackRate": 1
+        },
+        "voiceSettings": {},
+        "durationSeconds": 0.5,
+        "notes": "Promoted from the AI asset designer."
+      }
+    },
     "tags": [
       "sfx"
-    ]
+    ],
+    "settings": {},
+    "audioPlayback": {
+      "volume": 1,
+      "trimStartSeconds": 0.2886429919226695,
+      "trimEndSeconds": 0.7127932170286018,
+      "playbackRate": 1
+    },
+    "voiceSettings": {}
   },
   "audio.sfx.level": {
     "id": "audio.sfx.level",
@@ -3492,12 +3525,64 @@ export const assets = defineAiAssets(
     "audioSettings": {
       "provider": "elevenlabs",
       "format": "mp3",
-      "durationSeconds": 2
+      "durationSeconds": 1.2,
+      "loop": true
+    },
+    "activeVersion": "promoted-1783891716410",
+    "versions": {
+      "promoted-1783891716410": {
+        "name": "promoted-1783891716410",
+        "file": "/assets/audio.sfx.level.promoted-1783891716410.mp3",
+        "prompt": "Upbeat level clear arpeggio.",
+        "createdAt": "2026-07-12T21:28:36.451Z",
+        "model": "eleven_text_to_sound_v2",
+        "settings": {},
+        "audioSettings": {
+          "provider": "elevenlabs",
+          "format": "mp3",
+          "durationSeconds": 1.2,
+          "loop": true
+        },
+        "audioPlayback": {
+          "volume": 1,
+          "trimStartSeconds": 0.37177982653601693,
+          "trimEndSeconds": 1.65,
+          "playbackRate": 1
+        },
+        "voiceSettings": {},
+        "durationSeconds": 1.2,
+        "notes": "Promoted from the AI asset designer."
+      }
+    },
+    "tags": [
+      "sfx"
+    ],
+    "settings": {},
+    "audioPlayback": {
+      "volume": 1,
+      "trimStartSeconds": 0.37177982653601693,
+      "trimEndSeconds": 1.65,
+      "playbackRate": 1
+    },
+    "voiceSettings": {}
+  },
+  "audio.sfx.monkey-appear": {
+    "id": "audio.sfx.monkey-appear",
+    "kind": "sound",
+    "prompt": "Long mischievous jungle monkey entrance, excited distant monkey calls with rustling branches, playful arcade game sound.",
+    "audioSettings": {
+      "provider": "elevenlabs",
+      "format": "mp3",
+      "durationSeconds": 4,
+      "loop": false
     },
     "activeVersion": "",
     "versions": {},
     "tags": [
-      "sfx"
+      "sfx",
+      "enemy",
+      "monkey",
+      "appearance"
     ]
   },
   "audio.sfx.paddle": {
@@ -3547,6 +3632,43 @@ export const assets = defineAiAssets(
       "playbackRate": 1
     },
     "voiceSettings": {}
+  },
+  "audio.sfx.snake-appear": {
+    "id": "audio.sfx.snake-appear",
+    "kind": "sound",
+    "prompt": "Long ominous jungle snake entrance, sustained slithering through leaves with a rising hiss, playful arcade game sound.",
+    "audioSettings": {
+      "provider": "elevenlabs",
+      "format": "mp3",
+      "durationSeconds": 4,
+      "loop": false
+    },
+    "activeVersion": "",
+    "versions": {},
+    "tags": [
+      "sfx",
+      "enemy",
+      "snake",
+      "appearance"
+    ]
+  },
+  "audio.sfx.snake-bite": {
+    "id": "audio.sfx.snake-bite",
+    "kind": "sound",
+    "prompt": "Quick jungle snake bite strike, sharp hiss and small venomous snap, single arcade game hit sound.",
+    "audioSettings": {
+      "provider": "elevenlabs",
+      "format": "mp3",
+      "durationSeconds": 0.8,
+      "loop": false
+    },
+    "activeVersion": "",
+    "versions": {},
+    "tags": [
+      "sfx",
+      "enemy",
+      "snake"
+    ]
   },
   "audio.sfx.wall": {
     "id": "audio.sfx.wall",

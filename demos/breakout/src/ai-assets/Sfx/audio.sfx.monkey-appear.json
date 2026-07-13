@@ -1,0 +1,19 @@
+{
+  "id": "audio.sfx.monkey-appear",
+  "kind": "sound",
+  "prompt": "Long mischievous jungle monkey entrance, excited distant monkey calls with rustling branches, playful arcade game sound.",
+  "audioSettings": {
+    "provider": "elevenlabs",
+    "format": "mp3",
+    "durationSeconds": 4,
+    "loop": false
+  },
+  "activeVersion": "",
+  "versions": {},
+  "tags": [
+    "sfx",
+    "enemy",
+    "monkey",
+    "appearance"
+  ]
+}

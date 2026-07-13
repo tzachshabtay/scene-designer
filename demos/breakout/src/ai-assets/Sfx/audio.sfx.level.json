@@ -5,11 +5,44 @@
   "audioSettings": {
     "provider": "elevenlabs",
     "format": "mp3",
-    "durationSeconds": 2
+    "durationSeconds": 1.2,
+    "loop": true
   },
-  "activeVersion": "",
-  "versions": {},
+  "activeVersion": "promoted-1783891716410",
+  "versions": {
+    "promoted-1783891716410": {
+      "name": "promoted-1783891716410",
+      "file": "/assets/audio.sfx.level.promoted-1783891716410.mp3",
+      "prompt": "Upbeat level clear arpeggio.",
+      "createdAt": "2026-07-12T21:28:36.451Z",
+      "model": "eleven_text_to_sound_v2",
+      "settings": {},
+      "audioSettings": {
+        "provider": "elevenlabs",
+        "format": "mp3",
+        "durationSeconds": 1.2,
+        "loop": true
+      },
+      "audioPlayback": {
+        "volume": 1,
+        "trimStartSeconds": 0.37177982653601693,
+        "trimEndSeconds": 1.65,
+        "playbackRate": 1
+      },
+      "voiceSettings": {},
+      "durationSeconds": 1.2,
+      "notes": "Promoted from the AI asset designer."
+    }
+  },
   "tags": [
     "sfx"
-  ]
+  ],
+  "settings": {},
+  "audioPlayback": {
+    "volume": 1,
+    "trimStartSeconds": 0.37177982653601693,
+    "trimEndSeconds": 1.65,
+    "playbackRate": 1
+  },
+  "voiceSettings": {}
 }

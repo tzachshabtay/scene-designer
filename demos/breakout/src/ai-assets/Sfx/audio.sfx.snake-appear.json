@@ -1,0 +1,19 @@
+{
+  "id": "audio.sfx.snake-appear",
+  "kind": "sound",
+  "prompt": "Long ominous jungle snake entrance, sustained slithering through leaves with a rising hiss, playful arcade game sound.",
+  "audioSettings": {
+    "provider": "elevenlabs",
+    "format": "mp3",
+    "durationSeconds": 4,
+    "loop": false
+  },
+  "activeVersion": "",
+  "versions": {},
+  "tags": [
+    "sfx",
+    "enemy",
+    "snake",
+    "appearance"
+  ]
+}

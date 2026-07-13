@@ -62,6 +62,10 @@ type PreviewAudioSource = {
   playback?: AiAudioPlaybackSettings;
 };
 
+type SfxPlaybackOptions = {
+  randomPitchSemitones?: number;
+};
+
 const initialLevelOrder = ["level.one", "level.two", "level.three"];
 const brickTag = "brick";
 const backgroundTag = "background";
@@ -78,6 +82,10 @@ const brickSfxAssetId = "audio.sfx.brick";
 const wallSfxAssetId = "audio.sfx.wall";
 const enemySfxAssetId = "audio.sfx.enemy";
 const levelSfxAssetId = "audio.sfx.level";
+const snakeBiteSfxAssetId = "audio.sfx.snake-bite";
+const snakeAppearSfxAssetId = "audio.sfx.snake-appear";
+const monkeyAppearSfxAssetId = "audio.sfx.monkey-appear";
+const hitPitchVariationSemitones = 1.5;
 const defaultEnemySpawnIntervalSeconds = 18;
 const firstEnemySpawnDelayMs = 5000;
 const maxActiveEnemies = 2;
@@ -152,6 +160,8 @@ export class BreakoutScene extends Phaser.Scene {
   private readonly previewTextures = new Map<string, string>();
   private readonly previewAudioSources = new Map<string, PreviewAudioSource>();
   private readonly activeAudioElements = new Set<HTMLAudioElement>();
+  private readonly enemyAppearanceAudioStops = new Map<ArcadeSprite, () => void>();
+  private lastWorldBoundsHitAt = -Infinity;
 
   constructor(options: BreakoutSceneOptions) {
     super("breakout");
@@ -181,6 +191,11 @@ export class BreakoutScene extends Phaser.Scene {
       keyPrefix: "breakout-wall-platform"
     });
     this.physics.world.setBounds(0, 0, 800, 600, true, true, true, false);
+    this.physics.world.on(
+      Phaser.Physics.Arcade.Events.WORLD_BOUNDS,
+      this.onWorldBoundsHit,
+      this
+    );
     this.cursors = this.input.keyboard?.createCursorKeys();
     this.registerAiAnimations();
 
@@ -238,6 +253,11 @@ export class BreakoutScene extends Phaser.Scene {
       this.sceneDesigner?.destroy();
       this.debugPauseButton?.remove();
       this.platformRenderer?.destroy();
+      this.physics.world.off(
+        Phaser.Physics.Arcade.Events.WORLD_BOUNDS,
+        this.onWorldBoundsHit,
+        this
+      );
       this.stopActiveAudio();
     });
   }
@@ -259,6 +279,7 @@ export class BreakoutScene extends Phaser.Scene {
     for (const child of this.enemies.children) {
       const enemy = child as ArcadeSprite;
       if (enemy.getBounds().top > 600) {
+        this.stopEnemyAppearanceAudio(enemy);
         enemy.destroy();
       } else if (enemy.getData("baseAssetId") === monkeyAssetId) {
         this.updateMonkey(enemy);
@@ -385,6 +406,7 @@ export class BreakoutScene extends Phaser.Scene {
     this.levelAdvanceScheduled = false;
     this.platformRenderer?.clear();
     this.enemies?.destroy(true);
+    this.stopAllEnemyAppearanceAudio();
     this.bananas?.destroy(true);
     this.firstEnemySpawnTimer?.remove(false);
     this.firstEnemySpawnTimer = undefined;
@@ -500,7 +522,7 @@ export class BreakoutScene extends Phaser.Scene {
 
       this.wallLastHitAt.set(platform.id, this.time.now);
       this.reflectBallFromNormal(this.ball, hit.normal, hit.point);
-      this.playSfx(wallSfxAssetId);
+      this.playHitSfx(wallSfxAssetId);
       break;
     }
   }
@@ -530,7 +552,7 @@ export class BreakoutScene extends Phaser.Scene {
     const offset = Phaser.Math.Clamp((ball.x - this.paddle.x) / 64, -1, 1);
     ball.setVelocityX(offset * 310);
     ball.setVelocityY(-Math.abs(ball.body.velocity.y) - 8);
-    this.playSfx(paddleSfxAssetId);
+    this.playHitSfx(paddleSfxAssetId);
   }
 
   private onBrickHit(
@@ -541,7 +563,7 @@ export class BreakoutScene extends Phaser.Scene {
     const ball = ballObject as ArcadeImage;
     const brick = brickObject as BrickSprite;
     this.reflectBallFromObject(ball, brick, collisionPoint);
-    this.playSfx(brickSfxAssetId);
+    this.playHitSfx(brickSfxAssetId);
 
     const hp = Math.max(0, Number(brick.getData("hp") ?? 1) - 1);
 
@@ -610,6 +632,7 @@ export class BreakoutScene extends Phaser.Scene {
     if (enemy.getData("destroying")) return;
 
     this.reflectBallFromObject(ball, enemy, collisionPoint);
+    this.playHitSfx(enemySfxAssetId);
     this.destroyEnemy(enemy);
   }
 
@@ -621,6 +644,7 @@ export class BreakoutScene extends Phaser.Scene {
     if (enemy.getData("destroying")) return;
 
     if (enemy.getData("baseAssetId") === snakeAssetId) {
+      this.playSfx(snakeBiteSfxAssetId);
       this.destroyEnemy(enemy, "biting", false);
     } else {
       this.destroyEnemy(enemy, "destroyed", false);
@@ -728,6 +752,14 @@ export class BreakoutScene extends Phaser.Scene {
     enemy.setCollideWorldBounds(assetId === monkeyAssetId);
     enemy.body.enable = false;
     this.enemies.add(enemy);
+    const appearanceSfxAssetId = assetId === monkeyAssetId
+      ? monkeyAppearSfxAssetId
+      : snakeAppearSfxAssetId;
+    const stopAppearanceAudio = this.playSfx(appearanceSfxAssetId);
+    this.enemyAppearanceAudioStops.set(enemy, stopAppearanceAudio);
+    enemy.once(Phaser.GameObjects.Events.DESTROY, () => {
+      this.stopEnemyAppearanceAudio(enemy);
+    });
 
     const entranceDuration = this.playLinkedAnimation(enemy, assetId, "destroyed", { reverse: true });
     this.time.delayedCall(Math.max(entranceDuration, 180) + 20, () => {
@@ -1088,7 +1120,7 @@ export class BreakoutScene extends Phaser.Scene {
     enemy.setData("destroying", true);
     enemy.setVelocity(0, 0);
     enemy.body.enable = false;
-    this.playSfx(enemySfxAssetId);
+    this.stopEnemyAppearanceAudio(enemy);
     const baseAssetId = String(enemy.getData("baseAssetId") ?? enemy.getData("assetId"));
     const duration = this.playLinkedAnimation(enemy, baseAssetId, state);
     if (awardScore) {
@@ -1190,14 +1222,26 @@ export class BreakoutScene extends Phaser.Scene {
     });
   }
 
-  private playSfx(assetId: string): void {
+  private playHitSfx(assetId: string): void {
+    this.playSfx(assetId, { randomPitchSemitones: hitPitchVariationSemitones });
+  }
+
+  private onWorldBoundsHit(body: Phaser.Physics.Arcade.Body): void {
+    if (body.gameObject !== this.ball) return;
+    if (this.time.now - this.lastWorldBoundsHitAt < 80) return;
+
+    this.lastWorldBoundsHitAt = this.time.now;
+    this.playHitSfx(wallSfxAssetId);
+  }
+
+  private playSfx(assetId: string, options: SfxPlaybackOptions = {}): () => void {
     const asset = this.aiAssets.assets[assetId];
-    if (!asset || !isAudioAsset(asset)) return;
+    if (!asset || !isAudioAsset(asset)) return () => undefined;
 
     const activeVersion = asset.versions[asset.activeVersion];
     const preview = this.previewAudioSources.get(assetId);
     const src = preview?.src ?? (activeVersion?.file ? this.aiRuntime.url(assetId) : undefined);
-    if (!src) return;
+    if (!src) return () => undefined;
 
     const playback = preview?.playback ?? asset.audioPlayback ?? activeVersion?.audioPlayback;
     const audio = new Audio(src);
@@ -1227,7 +1271,11 @@ export class BreakoutScene extends Phaser.Scene {
     const start = () => {
       if (disposed) return;
       audio.volume = Phaser.Math.Clamp(playback?.volume ?? 1, 0, 1);
-      const pitchRate = 2 ** ((playback?.pitchSemitones ?? 0) / 12);
+      const pitchVariation = options.randomPitchSemitones
+        ? Phaser.Math.FloatBetween(-options.randomPitchSemitones, options.randomPitchSemitones)
+        : 0;
+      const pitchRate = 2 ** (((playback?.pitchSemitones ?? 0) + pitchVariation) / 12);
+      audio.preservesPitch = false;
       audio.playbackRate = Phaser.Math.Clamp((playback?.playbackRate ?? 1) * pitchRate, 0.25, 4);
       audio.loop = shouldLoop && trimEnd <= trimStart;
       if (trimStart > 0) audio.currentTime = trimStart;
@@ -1244,6 +1292,23 @@ export class BreakoutScene extends Phaser.Scene {
       audio.addEventListener("loadedmetadata", start, { once: true });
       audio.load();
     }
+
+    return cleanup;
+  }
+
+  private stopEnemyAppearanceAudio(enemy: ArcadeSprite): void {
+    const stop = this.enemyAppearanceAudioStops.get(enemy);
+    if (!stop) return;
+
+    this.enemyAppearanceAudioStops.delete(enemy);
+    stop();
+  }
+
+  private stopAllEnemyAppearanceAudio(): void {
+    for (const stop of this.enemyAppearanceAudioStops.values()) {
+      stop();
+    }
+    this.enemyAppearanceAudioStops.clear();
   }
 
   private stopActiveAudio(): void {

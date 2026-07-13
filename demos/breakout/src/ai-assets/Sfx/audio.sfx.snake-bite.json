@@ -1,0 +1,18 @@
+{
+  "id": "audio.sfx.snake-bite",
+  "kind": "sound",
+  "prompt": "Quick jungle snake bite strike, sharp hiss and small venomous snap, single arcade game hit sound.",
+  "audioSettings": {
+    "provider": "elevenlabs",
+    "format": "mp3",
+    "durationSeconds": 0.8,
+    "loop": false
+  },
+  "activeVersion": "",
+  "versions": {},
+  "tags": [
+    "sfx",
+    "enemy",
+    "snake"
+  ]
+}

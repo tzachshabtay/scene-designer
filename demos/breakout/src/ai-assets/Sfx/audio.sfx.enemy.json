@@ -1,15 +1,48 @@
 {
   "id": "audio.sfx.enemy",
   "kind": "sound",
-  "prompt": "Small enemy burst zap.",
+  "prompt": "Small enemy satisfying pop sound.",
   "audioSettings": {
     "provider": "elevenlabs",
     "format": "mp3",
-    "durationSeconds": 1
+    "durationSeconds": 0.5,
+    "loop": true
   },
-  "activeVersion": "",
-  "versions": {},
+  "activeVersion": "promoted-1783891888433",
+  "versions": {
+    "promoted-1783891888433": {
+      "name": "promoted-1783891888433",
+      "file": "/assets/audio.sfx.enemy.promoted-1783891888433.mp3",
+      "prompt": "Small enemy satisfying pop sound.",
+      "createdAt": "2026-07-12T21:31:28.483Z",
+      "model": "eleven_text_to_sound_v2",
+      "settings": {},
+      "audioSettings": {
+        "provider": "elevenlabs",
+        "format": "mp3",
+        "durationSeconds": 0.5,
+        "loop": true
+      },
+      "audioPlayback": {
+        "volume": 1,
+        "trimStartSeconds": 0.2886429919226695,
+        "trimEndSeconds": 0.7127932170286018,
+        "playbackRate": 1
+      },
+      "voiceSettings": {},
+      "durationSeconds": 0.5,
+      "notes": "Promoted from the AI asset designer."
+    }
+  },
   "tags": [
     "sfx"
-  ]
+  ],
+  "settings": {},
+  "audioPlayback": {
+    "volume": 1,
+    "trimStartSeconds": 0.2886429919226695,
+    "trimEndSeconds": 0.7127932170286018,
+    "playbackRate": 1
+  },
+  "voiceSettings": {}
 }
