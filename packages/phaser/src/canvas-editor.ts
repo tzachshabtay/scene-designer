@@ -255,6 +255,9 @@ export class PhaserSceneDesignerCanvas {
     this.areaGraphics.setVisible(isOpen);
     this.overlay.setVisible(isOpen);
     if (!isOpen) {
+      this.releaseDesignerToolbarFocus();
+      setSceneKeyboardEnabled(this.options.scene, true);
+      this.options.designer.root.dataset.keyboardCaptured = "false";
       this.hoverObjectId = undefined;
       this.endDrag();
       this.overlay.clear();
@@ -1676,16 +1679,7 @@ function bindDesignerKeyboardCapture(
     }
   };
   const setKeyboardEnabled = (enabled: boolean) => {
-    if (scene.input.keyboard) {
-      scene.input.keyboard.enabled = enabled;
-      if (enabled) {
-        if (scene.input.keyboard.getCaptures().length > 0) {
-          scene.input.keyboard.enableGlobalCapture();
-        }
-      } else {
-        scene.input.keyboard.disableGlobalCapture();
-      }
-    }
+    setSceneKeyboardEnabled(scene, enabled);
     root.dataset.keyboardCaptured = String(!enabled);
   };
   const onFocusIn = (event: FocusEvent) => {
@@ -1714,6 +1708,18 @@ function bindDesignerKeyboardCapture(
     root.removeEventListener("focusout", onFocusOut, true);
     setKeyboardEnabled(true);
   };
+}
+
+function setSceneKeyboardEnabled(scene: Phaser.Scene, enabled: boolean): void {
+  const keyboard = scene.input.keyboard;
+  if (!keyboard) return;
+
+  keyboard.enabled = enabled;
+  if (!enabled) {
+    keyboard.disableGlobalCapture();
+  } else if (keyboard.getCaptures().length > 0) {
+    keyboard.enableGlobalCapture();
+  }
 }
 
 function restoreTextCaretMovement(event: KeyboardEvent): void {
