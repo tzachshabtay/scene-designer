@@ -128,6 +128,7 @@ const defaultBallMaximumSpeed = 520;
 const defaultPaddleKeyboardSpeed = 430;
 const paddleInvulnerabilityMs = 650;
 const aiAnimationFrameTransformKey = "aiAnimationFrameTransform";
+const paddleAppliedSizeMultiplierKey = "paddleAppliedSizeMultiplier";
 const initialLives = 5;
 const firstPowerUpSpawnDelayMs = 14000;
 const defaultPowerUpSpawnIntervalSeconds = 40;
@@ -424,6 +425,7 @@ export class BreakoutScene extends Phaser.Scene {
       applyObjectTransform(this.paddle, paddleDefinition);
     }
     this.paddleBaseScaleX = this.paddle.scaleX;
+    this.paddle.setData(paddleAppliedSizeMultiplierKey, 1);
     this.playLinkedAnimation(this.paddle, paddleAssetId, "idle");
     this.paddle.setImmovable(true);
     this.paddle.setCollideWorldBounds(true);
@@ -2156,18 +2158,22 @@ export class BreakoutScene extends Phaser.Scene {
       this.resetAiAnimationFrameTransform(sprite);
       if (sprite === this.paddle) {
         sprite.setScale(this.paddleBaseScaleX * this.paddleSizeMultiplier, sprite.scaleY);
+        sprite.setData(paddleAppliedSizeMultiplierKey, this.paddleSizeMultiplier);
       }
       return;
     }
 
     const state = getAiAnimationFrameTransformState(sprite);
-    if (sprite === this.paddle) sprite.scaleX /= this.paddleSizeMultiplier;
+    if (sprite === this.paddle) sprite.scaleX /= this.paddleAppliedSizeMultiplier();
     const base = aiAnimationBaseTransform(sprite, state.timing);
     const offset = aiAnimationFrameOffset(timing, base);
 
     sprite.setPosition(base.x + offset.x, base.y + offset.y);
     sprite.setScale(base.scaleX * (timing.scaleX ?? 1), base.scaleY * (timing.scaleY ?? 1));
-    if (sprite === this.paddle) sprite.scaleX *= this.paddleSizeMultiplier;
+    if (sprite === this.paddle) {
+      sprite.scaleX *= this.paddleSizeMultiplier;
+      sprite.setData(paddleAppliedSizeMultiplierKey, this.paddleSizeMultiplier);
+    }
     sprite.setAngle(base.angle + (timing.rotation ?? 0));
     state.timing = timing;
     sprite.setData(aiAnimationFrameTransformKey, state);
@@ -2177,14 +2183,22 @@ export class BreakoutScene extends Phaser.Scene {
     const state = sprite.getData(aiAnimationFrameTransformKey) as AiAnimationFrameTransformState | undefined;
     if (!state?.timing) return;
 
-    if (sprite === this.paddle) sprite.scaleX /= this.paddleSizeMultiplier;
+    if (sprite === this.paddle) sprite.scaleX /= this.paddleAppliedSizeMultiplier();
     const base = aiAnimationBaseTransform(sprite, state.timing);
     sprite.setPosition(base.x, base.y);
     sprite.setScale(base.scaleX, base.scaleY);
-    if (sprite === this.paddle) sprite.scaleX *= this.paddleSizeMultiplier;
+    if (sprite === this.paddle) {
+      sprite.scaleX *= this.paddleSizeMultiplier;
+      sprite.setData(paddleAppliedSizeMultiplierKey, this.paddleSizeMultiplier);
+    }
     sprite.setAngle(base.angle);
     state.timing = undefined;
     sprite.setData(aiAnimationFrameTransformKey, state);
+  }
+
+  private paddleAppliedSizeMultiplier(): number {
+    const applied = Number(this.paddle.getData(paddleAppliedSizeMultiplierKey) ?? 1);
+    return Number.isFinite(applied) && Math.abs(applied) > 0.001 ? applied : 1;
   }
 }
 
