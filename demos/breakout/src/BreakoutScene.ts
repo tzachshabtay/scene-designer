@@ -184,7 +184,7 @@ export class BreakoutScene extends Phaser.Scene {
     outline: Phaser.GameObjects.Image;
     coconut: Phaser.GameObjects.Image;
   }> = [];
-  private reloadTimer?: Phaser.Time.TimerEvent;
+  private reloadTimer?: number;
   private enemySpawnTimer?: Phaser.Time.TimerEvent;
   private firstEnemySpawnTimer?: Phaser.Time.TimerEvent;
   private powerUpSpawnTimer?: Phaser.Time.TimerEvent;
@@ -316,6 +316,10 @@ export class BreakoutScene extends Phaser.Scene {
       this.clearOutcomeSequence();
       this.input.keyboard?.off("keydown-ESC", this.handleEscape, this);
       this.platformRenderer?.destroy();
+      if (this.reloadTimer !== undefined) {
+        window.clearTimeout(this.reloadTimer);
+        this.reloadTimer = undefined;
+      }
       this.physics.world.off(
         Phaser.Physics.Arcade.Events.WORLD_BOUNDS,
         this.onWorldBoundsHit,
@@ -1386,10 +1390,11 @@ export class BreakoutScene extends Phaser.Scene {
   }
 
   private queueLevelReload(): void {
-    this.reloadTimer?.remove(false);
-    this.reloadTimer = this.time.delayedCall(250, () => {
+    if (this.reloadTimer !== undefined) window.clearTimeout(this.reloadTimer);
+    this.reloadTimer = window.setTimeout(() => {
+      this.reloadTimer = undefined;
       this.loadSceneById(this.currentSceneId);
-    });
+    }, 250);
   }
 
   private monkeyThrowDelay(monkey: ArcadeSprite): number {
