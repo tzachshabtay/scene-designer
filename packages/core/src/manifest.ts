@@ -268,6 +268,9 @@ function assertPlatformPaint(paint: ScenePlatformPaint, label: string): void {
     if (paint.mirrorY !== undefined) {
       assertBoolean(paint.mirrorY, `${label}.mirrorY`);
     }
+    if (paint.rotation !== undefined) {
+      assertFiniteNumber(paint.rotation, `${label}.rotation`);
+    }
     return;
   }
 

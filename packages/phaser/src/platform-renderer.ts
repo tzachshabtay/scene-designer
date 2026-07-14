@@ -127,7 +127,8 @@ export class ScenePlatformRenderer {
           width,
           height,
           Boolean(platform.paint.mirrorX),
-          Boolean(platform.paint.mirrorY)
+          Boolean(platform.paint.mirrorY),
+          platform.paint.rotation ?? 0
         );
       } else {
         drawTextureFrame(context, source, 0, 0, width, height);
@@ -236,7 +237,8 @@ function paintPlatformTiles(
   width: number,
   height: number,
   mirrorX: boolean,
-  mirrorY: boolean
+  mirrorY: boolean,
+  rotation: number
 ): void {
   const patternCanvas = createPlatformPatternCanvas(source, mirrorX, mirrorY);
   const pattern = context.createPattern(patternCanvas, "repeat");
@@ -246,6 +248,17 @@ function paintPlatformTiles(
   }
 
   context.fillStyle = pattern;
+  if (rotation !== 0 && typeof pattern.setTransform === "function") {
+    const radians = rotation * Math.PI / 180;
+    pattern.setTransform({
+      a: Math.cos(radians),
+      b: Math.sin(radians),
+      c: -Math.sin(radians),
+      d: Math.cos(radians),
+      e: 0,
+      f: 0
+    });
+  }
   context.fillRect(0, 0, width, height);
 }
 

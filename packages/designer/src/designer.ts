@@ -1467,7 +1467,8 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
           : {
               mode: "tile",
               mirrorX: platform.paint.mode === "tile" ? Boolean(platform.paint.mirrorX) : false,
-              mirrorY: platform.paint.mode === "tile" ? Boolean(platform.paint.mirrorY) : false
+              mirrorY: platform.paint.mode === "tile" ? Boolean(platform.paint.mirrorY) : false,
+              rotation: platform.paint.mode === "tile" ? Number(platform.paint.rotation ?? 0) : 0
             }
       });
     });
@@ -1475,6 +1476,19 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     container.append(paintMode);
 
     if (platform.paint.mode !== "tile") return;
+
+    container.append(labelWithInput(
+      "Tile rotation (deg)",
+      String(platform.paint.rotation ?? 0),
+      (value) => {
+        const rotation = Number(value);
+        if (Number.isFinite(rotation)) {
+          onPatch({ paint: { ...platform.paint, mode: "tile", rotation } });
+        }
+      },
+      "number",
+      "1"
+    ));
 
     const mirrorRow = document.createElement("div");
     mirrorRow.className = "scene-designer__row";

@@ -109,7 +109,8 @@ export function createPlatform(input: CreatePlatformInput = {}): ScenePlatform {
     paint: input.paint ? structuredClone(input.paint) : {
       mode: "tile",
       mirrorX: false,
-      mirrorY: false
+      mirrorY: false,
+      rotation: 0
     }
   };
 }

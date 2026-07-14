@@ -178,6 +178,7 @@ export type ScenePlatformTilePaint = {
   mode: "tile";
   mirrorX?: boolean;
   mirrorY?: boolean;
+  rotation?: number;
 };
 
 export type SceneAreaVertex = {

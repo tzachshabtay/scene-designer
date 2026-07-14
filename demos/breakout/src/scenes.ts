@@ -1947,7 +1947,8 @@ export const scenes = defineSceneManifest(
             "paint": {
               "mode": "tile",
               "mirrorX": true,
-              "mirrorY": false
+              "mirrorY": false,
+              "rotation": 0
             }
           }
         }
