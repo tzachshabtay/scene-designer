@@ -2,13 +2,38 @@
   "id": "power-up.short-paddle",
   "kind": "image",
   "prompt": "A tricky jungle shorter-paddle power-up for a cute breakout game, amber horizontal inward arrows wrapped in thorny vines, readable icon, transparent background.",
-  "dimensions": { "width": 48, "height": 48 },
-  "settings": { "format": "png", "background": "transparent", "model": "gpt-image-2" },
+  "dimensions": {
+    "width": 48,
+    "height": 48
+  },
+  "settings": {
+    "format": "png",
+    "background": "transparent",
+    "model": "gpt-image-2"
+  },
   "activeVersion": "default",
-  "versions": { "default": { "name": "default", "file": "/assets/power-up.short-paddle.default.svg", "prompt": "Amber shrink-paddle jungle icon.", "createdAt": "2026-07-13T00:00:00.000Z", "model": "manual-svg" } },
-  "tags": ["power-up", "paddle", "short"],
+  "versions": {
+    "default": {
+      "name": "default",
+      "file": "/assets/power-up.short-paddle.default.svg",
+      "prompt": "Amber shrink-paddle jungle icon.",
+      "createdAt": "2026-07-13T00:00:00.000Z",
+      "model": "manual-svg"
+    }
+  },
+  "tags": [
+    "power-up",
+    "paddle",
+    "short"
+  ],
   "linkedAnimationAssets": {
-    "idle": { "label": "Idle", "assetId": "power-up.short-paddle.idle" },
-    "destroyed": { "label": "Destroyed", "assetId": "power-up.short-paddle.destroyed" }
+    "idle": {
+      "label": "Idle",
+      "assetId": "power-up.short-paddle.idle"
+    },
+    "destroyed": {
+      "label": "Destroyed",
+      "assetId": "power-up.short-paddle.destroyed"
+    }
   }
 }

@@ -2,13 +2,37 @@
   "id": "power-up.shield",
   "kind": "image",
   "prompt": "A magical jungle shield power-up for a cute breakout game, turquoise halo around a carved leaf shield, readable icon, transparent background.",
-  "dimensions": { "width": 48, "height": 48 },
-  "settings": { "format": "png", "background": "transparent", "model": "gpt-image-2" },
+  "dimensions": {
+    "width": 48,
+    "height": 48
+  },
+  "settings": {
+    "format": "png",
+    "background": "transparent",
+    "model": "gpt-image-2"
+  },
   "activeVersion": "default",
-  "versions": { "default": { "name": "default", "file": "/assets/power-up.shield.default.svg", "prompt": "Turquoise jungle shield icon.", "createdAt": "2026-07-13T00:00:00.000Z", "model": "manual-svg" } },
-  "tags": ["power-up", "shield"],
+  "versions": {
+    "default": {
+      "name": "default",
+      "file": "/assets/power-up.shield.default.svg",
+      "prompt": "Turquoise jungle shield icon.",
+      "createdAt": "2026-07-13T00:00:00.000Z",
+      "model": "manual-svg"
+    }
+  },
+  "tags": [
+    "power-up",
+    "shield"
+  ],
   "linkedAnimationAssets": {
-    "idle": { "label": "Idle", "assetId": "power-up.shield.idle" },
-    "destroyed": { "label": "Destroyed", "assetId": "power-up.shield.destroyed" }
+    "idle": {
+      "label": "Idle",
+      "assetId": "power-up.shield.idle"
+    },
+    "destroyed": {
+      "label": "Destroyed",
+      "assetId": "power-up.shield.destroyed"
+    }
   }
 }

@@ -1,11 +1,55 @@
 {
-  "id": "power-up.shield.destroyed", "kind": "animation",
+  "id": "power-up.shield.destroyed",
+  "kind": "animation",
   "prompt": "A 4-frame collected animation spritesheet for a turquoise jungle shield power-up, halo expands into protective sparkles, transparent background.",
-  "dimensions": { "width": 96, "height": 96 },
-  "frameGrid": { "frameCount": 4, "frameWidth": 48, "frameHeight": 48, "columns": 2, "rows": 2 },
-  "animations": [{ "key": "power-up.shield.destroyed", "frameRate": 12, "repeat": 0, "frames": [0, 1, 2, 3] }],
-  "settings": { "format": "png", "background": "transparent", "model": "gpt-image-2", "referenceAssetIds": ["power-up.shield"], "frameAlignment": "center" },
+  "dimensions": {
+    "width": 96,
+    "height": 96
+  },
+  "frameGrid": {
+    "frameCount": 4,
+    "frameWidth": 48,
+    "frameHeight": 48,
+    "columns": 2,
+    "rows": 2
+  },
+  "animations": [
+    {
+      "key": "power-up.shield.destroyed",
+      "frameRate": 12,
+      "repeat": 0,
+      "frames": [
+        0,
+        1,
+        2,
+        3
+      ]
+    }
+  ],
+  "settings": {
+    "format": "png",
+    "background": "transparent",
+    "model": "gpt-image-2",
+    "referenceAssetIds": [
+      "power-up.shield"
+    ],
+    "frameAlignment": "center"
+  },
   "activeVersion": "default",
-  "versions": { "default": { "name": "default", "file": "/assets/power-up.shield.destroyed.default.svg", "prompt": "Four-frame collected shield burst.", "createdAt": "2026-07-13T00:00:00.000Z", "model": "manual-svg", "parentVersion": "default" } },
-  "tags": ["power-up", "shield", "animation", "destroyed"]
+  "versions": {
+    "default": {
+      "name": "default",
+      "file": "/assets/power-up.shield.destroyed.default.svg",
+      "prompt": "Four-frame collected shield burst.",
+      "createdAt": "2026-07-13T00:00:00.000Z",
+      "model": "manual-svg",
+      "parentVersion": "default"
+    }
+  },
+  "tags": [
+    "power-up",
+    "shield",
+    "animation",
+    "destroyed"
+  ]
 }

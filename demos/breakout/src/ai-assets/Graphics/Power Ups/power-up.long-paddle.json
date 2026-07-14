@@ -2,13 +2,38 @@
   "id": "power-up.long-paddle",
   "kind": "image",
   "prompt": "A magical jungle longer-paddle power-up for a cute breakout game, bright green horizontal double arrows wrapped in vines, readable icon, transparent background.",
-  "dimensions": { "width": 48, "height": 48 },
-  "settings": { "format": "png", "background": "transparent", "model": "gpt-image-2" },
+  "dimensions": {
+    "width": 48,
+    "height": 48
+  },
+  "settings": {
+    "format": "png",
+    "background": "transparent",
+    "model": "gpt-image-2"
+  },
   "activeVersion": "default",
-  "versions": { "default": { "name": "default", "file": "/assets/power-up.long-paddle.default.svg", "prompt": "Green expand-paddle jungle icon.", "createdAt": "2026-07-13T00:00:00.000Z", "model": "manual-svg" } },
-  "tags": ["power-up", "paddle", "long"],
+  "versions": {
+    "default": {
+      "name": "default",
+      "file": "/assets/power-up.long-paddle.default.svg",
+      "prompt": "Green expand-paddle jungle icon.",
+      "createdAt": "2026-07-13T00:00:00.000Z",
+      "model": "manual-svg"
+    }
+  },
+  "tags": [
+    "power-up",
+    "paddle",
+    "long"
+  ],
   "linkedAnimationAssets": {
-    "idle": { "label": "Idle", "assetId": "power-up.long-paddle.idle" },
-    "destroyed": { "label": "Destroyed", "assetId": "power-up.long-paddle.destroyed" }
+    "idle": {
+      "label": "Idle",
+      "assetId": "power-up.long-paddle.idle"
+    },
+    "destroyed": {
+      "label": "Destroyed",
+      "assetId": "power-up.long-paddle.destroyed"
+    }
   }
 }

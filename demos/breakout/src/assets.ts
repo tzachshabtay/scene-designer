@@ -3301,7 +3301,7 @@ export const assets = defineAiAssets(
   "wall.stone": {
     "id": "wall.stone",
     "kind": "image",
-    "prompt": "A seamless jungle ruin wall texture tile for a breakout obstacle, mossy carved stone blocks with vines, readable pixel-art details, tileable edges.",
+    "prompt": "A seamless jungle ruin wall texture tile for a breakout obstacle, mossy carved gray old stone blocks, readable pixel-art details, tileable edges.",
     "dimensions": {
       "width": 64,
       "height": 64
@@ -3311,7 +3311,7 @@ export const assets = defineAiAssets(
       "background": "opaque",
       "model": "gpt-image-2"
     },
-    "activeVersion": "promoted-1783779885113",
+    "activeVersion": "promoted-1783994712767",
     "versions": {
       "default": {
         "name": "default",
@@ -3335,6 +3335,23 @@ export const assets = defineAiAssets(
         "audioPlayback": {},
         "voiceSettings": {},
         "parentVersion": "default",
+        "notes": "Promoted from the AI asset designer."
+      },
+      "promoted-1783994712767": {
+        "name": "promoted-1783994712767",
+        "file": "/assets/wall.stone.promoted-1783994712767.png",
+        "prompt": "A seamless jungle ruin wall texture tile for a breakout obstacle, mossy carved gray old stone blocks, readable pixel-art details, tileable edges.",
+        "createdAt": "2026-07-14T02:05:12.812Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "format": "png",
+          "background": "opaque",
+          "model": "gpt-image-2"
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1783779885113",
         "notes": "Promoted from the AI asset designer."
       }
     },
@@ -4000,14 +4017,14 @@ export const assets = defineAiAssets(
   "audio.sfx.power-up": {
     "id": "audio.sfx.power-up",
     "kind": "sound",
-    "prompt": "Short magical jungle arcade power-up pickup chime with wooden percussion and sparkling leaves.",
+    "prompt": "Short magical jungle arcade power-up pickup chime.",
     "audioSettings": {
       "provider": "elevenlabs",
       "format": "mp3",
       "durationSeconds": 1.2,
       "loop": false
     },
-    "activeVersion": "default",
+    "activeVersion": "promoted-1783985696470",
     "versions": {
       "default": {
         "name": "default",
@@ -4024,6 +4041,30 @@ export const assets = defineAiAssets(
         "audioPlayback": {
           "volume": 0.55
         }
+      },
+      "promoted-1783985696470": {
+        "name": "promoted-1783985696470",
+        "file": "/assets/audio.sfx.power-up.promoted-1783985696470.mp3",
+        "prompt": "Short magical jungle arcade power-up pickup chime.",
+        "createdAt": "2026-07-13T23:34:56.566Z",
+        "model": "placeholder-audio",
+        "settings": {},
+        "audioSettings": {
+          "provider": "elevenlabs",
+          "format": "mp3",
+          "durationSeconds": 1.2,
+          "loop": false
+        },
+        "audioPlayback": {
+          "volume": 0.55,
+          "trimStartSeconds": 0.36822944253177964,
+          "trimEndSeconds": 1.65,
+          "playbackRate": 1
+        },
+        "voiceSettings": {},
+        "durationSeconds": 1.2,
+        "parentVersion": "default",
+        "notes": "Promoted from the AI asset designer."
       }
     },
     "tags": [
@@ -4033,7 +4074,10 @@ export const assets = defineAiAssets(
     ],
     "settings": {},
     "audioPlayback": {
-      "volume": 0.55
+      "volume": 0.55,
+      "trimStartSeconds": 0.36822944253177964,
+      "trimEndSeconds": 1.65,
+      "playbackRate": 1
     },
     "voiceSettings": {}
   },

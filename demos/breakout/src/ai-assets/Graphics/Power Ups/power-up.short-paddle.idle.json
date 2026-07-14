@@ -1,11 +1,56 @@
 {
-  "id": "power-up.short-paddle.idle", "kind": "animation",
+  "id": "power-up.short-paddle.idle",
+  "kind": "animation",
   "prompt": "A 4-frame idle animation spritesheet for a jungle shorter-paddle power-up, amber inward arrows contract rhythmically through thorny vines, object centered, transparent background.",
-  "dimensions": { "width": 96, "height": 96 },
-  "frameGrid": { "frameCount": 4, "frameWidth": 48, "frameHeight": 48, "columns": 2, "rows": 2 },
-  "animations": [{ "key": "power-up.short-paddle.idle", "frameRate": 7, "repeat": -1, "frames": [0, 1, 2, 3] }],
-  "settings": { "format": "png", "background": "transparent", "model": "gpt-image-2", "referenceAssetIds": ["power-up.short-paddle"], "frameAlignment": "center" },
+  "dimensions": {
+    "width": 96,
+    "height": 96
+  },
+  "frameGrid": {
+    "frameCount": 4,
+    "frameWidth": 48,
+    "frameHeight": 48,
+    "columns": 2,
+    "rows": 2
+  },
+  "animations": [
+    {
+      "key": "power-up.short-paddle.idle",
+      "frameRate": 7,
+      "repeat": -1,
+      "frames": [
+        0,
+        1,
+        2,
+        3
+      ]
+    }
+  ],
+  "settings": {
+    "format": "png",
+    "background": "transparent",
+    "model": "gpt-image-2",
+    "referenceAssetIds": [
+      "power-up.short-paddle"
+    ],
+    "frameAlignment": "center"
+  },
   "activeVersion": "default",
-  "versions": { "default": { "name": "default", "file": "/assets/power-up.short-paddle.idle.default.svg", "prompt": "Four-frame contract arrows pulse.", "createdAt": "2026-07-13T00:00:00.000Z", "model": "manual-svg", "parentVersion": "default" } },
-  "tags": ["power-up", "paddle", "short", "animation", "idle"]
+  "versions": {
+    "default": {
+      "name": "default",
+      "file": "/assets/power-up.short-paddle.idle.default.svg",
+      "prompt": "Four-frame contract arrows pulse.",
+      "createdAt": "2026-07-13T00:00:00.000Z",
+      "model": "manual-svg",
+      "parentVersion": "default"
+    }
+  },
+  "tags": [
+    "power-up",
+    "paddle",
+    "short",
+    "animation",
+    "idle"
+  ]
 }

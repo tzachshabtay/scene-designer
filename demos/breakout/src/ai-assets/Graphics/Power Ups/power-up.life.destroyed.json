@@ -1,11 +1,55 @@
 {
-  "id": "power-up.life.destroyed", "kind": "animation",
+  "id": "power-up.life.destroyed",
+  "kind": "animation",
   "prompt": "A 4-frame collected animation spritesheet for the glowing coconut extra-life power-up, bursts into a golden heart and leaf sparkles, transparent background.",
-  "dimensions": { "width": 96, "height": 96 },
-  "frameGrid": { "frameCount": 4, "frameWidth": 48, "frameHeight": 48, "columns": 2, "rows": 2 },
-  "animations": [{ "key": "power-up.life.destroyed", "frameRate": 12, "repeat": 0, "frames": [0, 1, 2, 3] }],
-  "settings": { "format": "png", "background": "transparent", "model": "gpt-image-2", "referenceAssetIds": ["power-up.life"], "frameAlignment": "center" },
+  "dimensions": {
+    "width": 96,
+    "height": 96
+  },
+  "frameGrid": {
+    "frameCount": 4,
+    "frameWidth": 48,
+    "frameHeight": 48,
+    "columns": 2,
+    "rows": 2
+  },
+  "animations": [
+    {
+      "key": "power-up.life.destroyed",
+      "frameRate": 12,
+      "repeat": 0,
+      "frames": [
+        0,
+        1,
+        2,
+        3
+      ]
+    }
+  ],
+  "settings": {
+    "format": "png",
+    "background": "transparent",
+    "model": "gpt-image-2",
+    "referenceAssetIds": [
+      "power-up.life"
+    ],
+    "frameAlignment": "center"
+  },
   "activeVersion": "default",
-  "versions": { "default": { "name": "default", "file": "/assets/power-up.life.destroyed.default.svg", "prompt": "Four-frame collected life burst.", "createdAt": "2026-07-13T00:00:00.000Z", "model": "manual-svg", "parentVersion": "default" } },
-  "tags": ["power-up", "life", "animation", "destroyed"]
+  "versions": {
+    "default": {
+      "name": "default",
+      "file": "/assets/power-up.life.destroyed.default.svg",
+      "prompt": "Four-frame collected life burst.",
+      "createdAt": "2026-07-13T00:00:00.000Z",
+      "model": "manual-svg",
+      "parentVersion": "default"
+    }
+  },
+  "tags": [
+    "power-up",
+    "life",
+    "animation",
+    "destroyed"
+  ]
 }

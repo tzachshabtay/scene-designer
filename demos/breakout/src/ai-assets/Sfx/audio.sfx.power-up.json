@@ -1,9 +1,14 @@
 {
   "id": "audio.sfx.power-up",
   "kind": "sound",
-  "prompt": "Short magical jungle arcade power-up pickup chime with wooden percussion and sparkling leaves.",
-  "audioSettings": { "provider": "elevenlabs", "format": "mp3", "durationSeconds": 1.2, "loop": false },
-  "activeVersion": "default",
+  "prompt": "Short magical jungle arcade power-up pickup chime.",
+  "audioSettings": {
+    "provider": "elevenlabs",
+    "format": "mp3",
+    "durationSeconds": 1.2,
+    "loop": false
+  },
+  "activeVersion": "promoted-1783985696470",
   "versions": {
     "default": {
       "name": "default",
@@ -11,12 +16,52 @@
       "prompt": "Short magical jungle arcade power-up pickup chime.",
       "createdAt": "2026-07-13T00:00:00.000Z",
       "model": "placeholder-audio",
-      "audioSettings": { "provider": "elevenlabs", "format": "mp3", "durationSeconds": 1.2, "loop": false },
-      "audioPlayback": { "volume": 0.55 }
+      "audioSettings": {
+        "provider": "elevenlabs",
+        "format": "mp3",
+        "durationSeconds": 1.2,
+        "loop": false
+      },
+      "audioPlayback": {
+        "volume": 0.55
+      }
+    },
+    "promoted-1783985696470": {
+      "name": "promoted-1783985696470",
+      "file": "/assets/audio.sfx.power-up.promoted-1783985696470.mp3",
+      "prompt": "Short magical jungle arcade power-up pickup chime.",
+      "createdAt": "2026-07-13T23:34:56.566Z",
+      "model": "placeholder-audio",
+      "settings": {},
+      "audioSettings": {
+        "provider": "elevenlabs",
+        "format": "mp3",
+        "durationSeconds": 1.2,
+        "loop": false
+      },
+      "audioPlayback": {
+        "volume": 0.55,
+        "trimStartSeconds": 0.36822944253177964,
+        "trimEndSeconds": 1.65,
+        "playbackRate": 1
+      },
+      "voiceSettings": {},
+      "durationSeconds": 1.2,
+      "parentVersion": "default",
+      "notes": "Promoted from the AI asset designer."
     }
   },
-  "tags": ["sfx", "power-up", "pickup"],
+  "tags": [
+    "sfx",
+    "power-up",
+    "pickup"
+  ],
   "settings": {},
-  "audioPlayback": { "volume": 0.55 },
+  "audioPlayback": {
+    "volume": 0.55,
+    "trimStartSeconds": 0.36822944253177964,
+    "trimEndSeconds": 1.65,
+    "playbackRate": 1
+  },
   "voiceSettings": {}
 }
