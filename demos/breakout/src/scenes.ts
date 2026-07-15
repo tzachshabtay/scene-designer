@@ -1101,7 +1101,13 @@ export const scenes = defineSceneManifest(
                       "x": 178,
                       "y": 310
                     }
-                  ]
+                  ],
+                  "paint": {
+                    "mode": "tile",
+                    "mirrorX": true,
+                    "mirrorY": false,
+                    "rotation": 78
+                  }
                 }
               }
             },
@@ -1134,7 +1140,13 @@ export const scenes = defineSceneManifest(
                       "x": 488,
                       "y": 282
                     }
-                  ]
+                  ],
+                  "paint": {
+                    "mode": "tile",
+                    "mirrorX": true,
+                    "mirrorY": false,
+                    "rotation": -78
+                  }
                 }
               }
             }

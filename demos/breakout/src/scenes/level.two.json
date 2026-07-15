@@ -278,7 +278,13 @@
                   "x": 178,
                   "y": 310
                 }
-              ]
+              ],
+              "paint": {
+                "mode": "tile",
+                "mirrorX": true,
+                "mirrorY": false,
+                "rotation": 78
+              }
             }
           }
         },
@@ -311,7 +317,13 @@
                   "x": 488,
                   "y": 282
                 }
-              ]
+              ],
+              "paint": {
+                "mode": "tile",
+                "mirrorX": true,
+                "mirrorY": false,
+                "rotation": -78
+              }
             }
           }
         }
