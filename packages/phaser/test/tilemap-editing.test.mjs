@@ -4,6 +4,7 @@ import {
   moveTileCellsWithinArea,
   nearestTileSelectionHandle,
   rotateTileCellsWithinArea,
+  tileRotationHandlePoints,
   topmostTileCellAtPoint,
   tileResizeCellFromPoint
 } from "../dist/tilemap-editing.js";
@@ -184,4 +185,30 @@ test("tile selection falls through an unpainted upper tilemap", () => {
 
   assert.equal(hit?.target, "terrain");
   assert.equal(hit?.cell.id, "floor");
+});
+
+test("the tile rotation handle moves below selections at the top of the viewport", () => {
+  const points = tileRotationHandlePoints(
+    { left: 32, top: 0, right: 64, bottom: 32 },
+    { left: 0, top: 0, right: 320, bottom: 240 },
+    1
+  );
+
+  assert.deepEqual(points, {
+    anchor: { x: 48, y: 32 },
+    handle: { x: 48, y: 60 }
+  });
+});
+
+test("the tile rotation handle stays above a selection when there is room", () => {
+  const points = tileRotationHandlePoints(
+    { left: 32, top: 64, right: 64, bottom: 96 },
+    { left: 0, top: 0, right: 320, bottom: 240 },
+    1
+  );
+
+  assert.deepEqual(points, {
+    anchor: { x: 48, y: 64 },
+    handle: { x: 48, y: 36 }
+  });
 });

@@ -41,6 +41,7 @@ import {
   moveTileCellsWithinArea,
   nearestTileSelectionHandle,
   rotateTileCellsWithinArea,
+  tileRotationHandlePoints,
   topmostTileCellAtPoint,
   tileResizeCellFromPoint
 } from "./tilemap-editing.js";
@@ -751,12 +752,16 @@ export class PhaserSceneDesignerCanvas {
         handleHalfSize * 2
       );
     }
-    const top = midpoint(corners[0], corners[1]);
-    const rotate = new Phaser.Math.Vector2(top.x, top.y - 28 / zoom);
+    const rotationHandle = this.tileRotationHandle(world);
     this.overlay.lineStyle(1 / zoom, 0x46d39a, 0.85);
-    this.overlay.lineBetween(top.x, top.y, rotate.x, rotate.y);
+    this.overlay.lineBetween(
+      rotationHandle.anchor.x,
+      rotationHandle.anchor.y,
+      rotationHandle.handle.x,
+      rotationHandle.handle.y
+    );
     this.overlay.fillStyle(0x46d39a, 1);
-    this.overlay.fillCircle(rotate.x, rotate.y, 6 / zoom);
+    this.overlay.fillCircle(rotationHandle.handle.x, rotationHandle.handle.y, 6 / zoom);
   }
 
   private drawAreaHandles(area: SceneArea): void {
@@ -1633,15 +1638,25 @@ export class PhaserSceneDesignerCanvas {
   ): "nw" | "ne" | "se" | "sw" | "rotate" | undefined {
     const world = this.cellWorldBounds(target, bounds);
     const corners = boundsCorners(world);
-    const top = midpoint(corners[0], corners[1]);
     const zoom = this.options.scene.cameras.main.zoom;
+    const rotate = this.tileRotationHandle(world).handle;
     return nearestTileSelectionHandle(point, [
       { handle: "nw", x: corners[0].x, y: corners[0].y },
       { handle: "ne", x: corners[1].x, y: corners[1].y },
       { handle: "se", x: corners[2].x, y: corners[2].y },
       { handle: "sw", x: corners[3].x, y: corners[3].y },
-      { handle: "rotate", x: top.x, y: top.y - 28 / zoom }
+      { handle: "rotate", x: rotate.x, y: rotate.y }
     ], 12 / zoom);
+  }
+
+  private tileRotationHandle(world: Bounds): ReturnType<typeof tileRotationHandlePoints> {
+    const viewport = this.options.scene.cameras.main.worldView;
+    return tileRotationHandlePoints(world, {
+      left: viewport.left,
+      top: viewport.top,
+      right: viewport.right,
+      bottom: viewport.bottom
+    }, this.options.scene.cameras.main.zoom);
   }
 
   private tileResizeHandlePoint(

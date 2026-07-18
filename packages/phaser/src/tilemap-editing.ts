@@ -22,6 +22,11 @@ export type TileSelectionHandleCandidate = {
   y: number;
 };
 
+export type TileRotationHandle = {
+  anchor: { x: number; y: number };
+  handle: { x: number; y: number };
+};
+
 export type TileGridGeometry = {
   originX: number;
   originY: number;
@@ -121,6 +126,30 @@ export function nearestTileSelectionHandle(
   }
 
   return nearest;
+}
+
+export function tileRotationHandlePoints(
+  selection: TileCellBounds,
+  viewport: TileCellBounds,
+  zoom: number
+): TileRotationHandle {
+  const safeZoom = Math.max(zoom, Number.EPSILON);
+  const offset = 28 / safeZoom;
+  const radius = 6 / safeZoom;
+  const topSpace = selection.top - viewport.top;
+  const bottomSpace = viewport.bottom - selection.bottom;
+  const placeBelow = topSpace < offset + radius && bottomSpace > topSpace;
+  const anchor = {
+    x: (selection.left + selection.right) / 2,
+    y: placeBelow ? selection.bottom : selection.top
+  };
+  return {
+    anchor,
+    handle: {
+      x: anchor.x,
+      y: anchor.y + (placeBelow ? offset : -offset)
+    }
+  };
 }
 
 function normalizeTileRotation(rotation: number): SceneTileRotation {
