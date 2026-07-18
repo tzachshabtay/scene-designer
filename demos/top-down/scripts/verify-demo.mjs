@@ -70,9 +70,9 @@ assertTileOrder(assets["tiles.props"], tileSets.props, [
 ]);
 assert(tileSets.house.tiles["wall-corner"]?.tags?.includes("wall"), "The house corner tile must be tagged as a wall.");
 const sceneFiles = [
-  "scenes/world/forest.json",
-  "scenes/interiors/house.one.json",
-  "scenes/interiors/house.two.json"
+  "scenes/world/world.forest.json",
+  "scenes/interiors/interior.house-one.json",
+  "scenes/interiors/interior.house-two.json"
 ];
 const scenes = Object.fromEntries(await Promise.all(sceneFiles.map(async (relativePath) => {
   const scene = await json(path.join(sourceRoot, relativePath));
@@ -83,6 +83,26 @@ const forest = scenes["world.forest"];
 assert(forest.width > 960 && forest.height > 640, "The forest must be larger than the viewport.");
 assert(Object.values(scenes).filter((scene) => scene.tags?.includes("house")).length >= 2, "At least two house scenes are required.");
 for (const scene of Object.values(scenes).filter((candidate) => candidate.tags?.includes("house"))) {
+  const terrainLayerIndex = scene.layers.findIndex((layer) => layer.name === "Terrain");
+  const interiorLayerIndex = scene.layers.findIndex((layer) => layer.name === "Interior");
+  const terrain = scene.layers[terrainLayerIndex]?.areas[0];
+  const interior = scene.layers[interiorLayerIndex]?.areas[0];
+  assert(terrain?.paint?.mode === "tilemap", `${scene.id} requires a terrain tilemap layer.`);
+  assert(interior?.paint?.mode === "tilemap", `${scene.id} requires an interior tilemap layer.`);
+  assert(terrainLayerIndex < interiorLayerIndex, `${scene.id} terrain must render behind the interior.`);
+  assert(
+    terrain.paint.cells.length === (scene.width / 32) * (scene.height / 32),
+    `${scene.id} terrain must cover the entire house.`
+  );
+  assert(
+    terrain.paint.cells.every((cell) => cell.tileId === "rug" || cell.tileId.endsWith("-floor")),
+    `${scene.id} terrain may contain only floor and rug tiles.`
+  );
+  assert(
+    interior.paint.cells.every((cell) => cell.tileId !== "rug" && !cell.tileId.endsWith("-floor")),
+    `${scene.id} interior must not duplicate terrain tiles.`
+  );
+  const terrainByPosition = new Map(terrain.paint.cells.map((cell) => [`${cell.column},${cell.row}`, cell]));
   const corners = scene.layers.flatMap((layer) => layer.areas)
     .flatMap((area) => area.paint.cells)
     .filter((cell) => cell.tileId === "wall-corner");
@@ -90,6 +110,11 @@ for (const scene of Object.values(scenes).filter((candidate) => candidate.tags?.
   assert(
     [0, 90, 180, 270].every((rotation) => corners.some((cell) => cell.rotation === rotation)),
     `${scene.id} wall corners must use all four quarter-turn orientations.`
+  );
+  const walls = interior.paint.cells.filter((cell) => cell.tileId === "wall-corner" || cell.tileId.includes("wall"));
+  assert(
+    walls.every((cell) => terrainByPosition.get(`${cell.column},${cell.row}`)?.tileId.endsWith("-floor")),
+    `${scene.id} walls and corners must have floor beneath them.`
   );
 }
 const cottageCorners = forest.layers.flatMap((layer) => layer.areas)

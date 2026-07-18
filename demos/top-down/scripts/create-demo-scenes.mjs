@@ -6,8 +6,8 @@ const tileSize = 32;
 const demoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const scenesRoot = path.join(demoRoot, "src/scenes");
 
-await writeScene("world/forest.json", createForestScene());
-await writeScene("interiors/house.one.json", createHouseScene({
+await writeScene("world/world.forest.json", createForestScene());
+await writeScene("interiors/interior.house-one.json", createHouseScene({
   id: "interior.house-one",
   name: "Moss Cottage",
   floorTile: "wood-floor",
@@ -21,7 +21,7 @@ await writeScene("interiors/house.one.json", createHouseScene({
     { tileId: "hearth", column: 3, row: 3 }
   ]
 }));
-await writeScene("interiors/house.two.json", createHouseScene({
+await writeScene("interiors/interior.house-two.json", createHouseScene({
   id: "interior.house-two",
   name: "River Lodge",
   floorTile: "stone-floor",
@@ -132,6 +132,7 @@ function createHouseScene(options) {
   const columns = 25;
   const rows = 18;
   const terrain = [];
+  const interior = [];
   const furniture = new Map(options.furniture.map((entry) => [`${entry.column},${entry.row}`, entry.tileId]));
 
   for (let row = 0; row < rows; row += 1) {
@@ -139,14 +140,17 @@ function createHouseScene(options) {
       const edge = column === 0 || row === 0 || column === columns - 1 || row === rows - 1;
       const key = `${column},${row}`;
       const rotation = wallCornerRotation(column, row, 0, 0, columns - 1, rows - 1);
-      let tileId = rotation !== undefined
+      const floorTile = inRect(column, row, 9, 6, 15, 11) ? "rug" : options.floorTile;
+      terrain.push(cell(`${options.id}-terrain`, floorTile, column, row));
+
+      const interiorTile = rotation !== undefined
         ? "wall-corner"
         : edge
           ? (column % 2 === 0 ? "wall" : "timber-wall")
-          : options.floorTile;
-      if (!edge && inRect(column, row, 9, 6, 15, 11)) tileId = "rug";
-      if (furniture.has(key)) tileId = furniture.get(key);
-      terrain.push(cell(`${options.id}-terrain`, tileId, column, row, undefined, rotation));
+          : furniture.get(key);
+      if (interiorTile) {
+        interior.push(cell(`${options.id}-interior`, interiorTile, column, row, undefined, rotation));
+      }
     }
   }
 
@@ -169,7 +173,7 @@ function createHouseScene(options) {
     rows,
     tags: ["interior", "house"],
     layers: [
-      tileLayer(`${options.id}-layer-terrain`, "Interior", platform({
+      tileLayer(`${options.id}-layer-terrain`, "Terrain", platform({
         id: `${options.id}-terrain`,
         tag: "terrain",
         assetId: "tiles.house",
@@ -177,6 +181,15 @@ function createHouseScene(options) {
         columns,
         rows,
         cells: terrain
+      })),
+      tileLayer(`${options.id}-layer-interior`, "Interior", platform({
+        id: `${options.id}-interior`,
+        tag: "interior",
+        assetId: "tiles.house",
+        tileSetId: "house",
+        columns,
+        rows,
+        cells: interior
       })),
       tileLayer(`${options.id}-layer-interactions`, "Pickup & Exit", platform({
         id: `${options.id}-props`,
