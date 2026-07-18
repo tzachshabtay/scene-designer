@@ -55,6 +55,7 @@ export class ScenePlatformRenderer {
     textureKey: string,
     options: CreateScenePlatformImageOptions = {}
   ): CreatedScenePlatformImage | undefined {
+    if (platform.paint.mode === "tilemap") return undefined;
     const bounds = boundsFromPoints(platformBoundaryPoints(platform));
     if (!platform.closed || platform.vertices.length < 3 || !bounds) return undefined;
 

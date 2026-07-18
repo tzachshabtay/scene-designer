@@ -2,6 +2,7 @@ import type {
   ResolvedSceneArea,
   ResolvedSceneObject,
   ResolvedScenePlatform,
+  ResolvedSceneTile,
   SceneArea,
   SceneAreaDefaults,
   SceneBehaviorAreaLikeAttribute,
@@ -21,10 +22,28 @@ import type {
   SceneObjectDefaults,
   ScenePlatform,
   ScenePlatformDefaults,
-  ScenePlatformPaint
+  ScenePlatformPaint,
+  ScenePlatformTileMapPaint,
+  SceneTileDefinition,
+  SceneTileMapCell,
+  SceneTileProperty,
+  SceneTileSetDefinition
 } from "./types.js";
 
 const behaviorAttributeSeparator = "::";
+interface TileMapCellIndexCache {
+  index: Map<string, SceneTileMapCell>;
+  snapshot: Array<{
+    cell: SceneTileMapCell;
+    column: number;
+    row: number;
+  }>;
+}
+
+const tileMapCellIndexes = new WeakMap<
+  SceneTileMapCell[],
+  TileMapCellIndexCache
+>();
 
 export function defineScene(scene: SceneDefinition): SceneDefinition {
   assertScene(scene);
@@ -54,6 +73,13 @@ export function assertSceneManifest(manifest: SceneDesignerManifest): void {
     assertDesignerConfig(manifest.designer, "manifest.designer");
   }
 
+  for (const [tileSetId, tileSet] of Object.entries(manifest.tileSets ?? {})) {
+    if (tileSetId !== tileSet.id) {
+      throw new Error(`Tile set key "${tileSetId}" does not match tile set id "${tileSet.id}".`);
+    }
+    assertTileSet(tileSet, `manifest.tileSets.${tileSetId}`);
+  }
+
   for (const [behaviorId, behavior] of Object.entries(manifest.behaviors ?? {})) {
     if (behaviorId !== behavior.id) {
       throw new Error(`Behavior key "${behaviorId}" does not match behavior id "${behavior.id}".`);
@@ -68,6 +94,75 @@ export function assertSceneManifest(manifest: SceneDesignerManifest): void {
     }
 
     assertScene(scene);
+  }
+
+  assertBehaviorInstanceReferences(manifest);
+  assertTileMapReferences(manifest);
+}
+
+export function assertTileSet(tileSet: SceneTileSetDefinition, label = tileSet.id): void {
+  assertNonEmpty(tileSet.id, `${label}.id`);
+  assertNonEmpty(tileSet.name, `${label}.name`);
+  assertNonEmpty(tileSet.assetId, `${label}.assetId`);
+  assertPositiveFinite(tileSet.tileWidth, `${label}.tileWidth`);
+  assertPositiveFinite(tileSet.tileHeight, `${label}.tileHeight`);
+  assertPositiveInteger(tileSet.columns, `${label}.columns`);
+  assertPositiveInteger(tileSet.rows, `${label}.rows`);
+
+  for (const [tileId, tile] of Object.entries(tileSet.tiles)) {
+    if (tileId !== tile.id) {
+      throw new Error(`${label}.tiles key "${tileId}" does not match tile id "${tile.id}".`);
+    }
+    assertTileDefinition(tile, `${label}.tiles.${tileId}`, tileSet.columns * tileSet.rows);
+  }
+}
+
+function assertTileDefinition(tile: SceneTileDefinition, label: string, frameCount: number): void {
+  assertNonEmpty(tile.id, `${label}.id`);
+  assertNonEmpty(tile.name, `${label}.name`);
+  assertNonNegativeInteger(tile.frame, `${label}.frame`);
+  if (tile.frame >= frameCount) {
+    throw new Error(`${label}.frame must be less than ${frameCount}.`);
+  }
+  if (tile.animation !== undefined) assertNonEmpty(tile.animation, `${label}.animation`);
+  assertStringList(tile.tags, `${label}.tags`);
+  assertTileProperties(tile.properties, `${label}.properties`);
+}
+
+function assertTileMapReferences(manifest: SceneDesignerManifest): void {
+  const assertPlatformReference = (platform: ScenePlatform, label: string): void => {
+    // Behavior instances may replace an entire paint/vertex value. Validate the
+    // resolved platform as a whole, not only its tile-set references.
+    assertPlatformDefaults(platform, label);
+    if (platform.paint.mode !== "tilemap") return;
+    const tileSet = manifest.tileSets?.[platform.paint.tileSetId];
+    if (!tileSet) {
+      throw new Error(`${label}.paint.tileSetId references unknown tile set "${platform.paint.tileSetId}".`);
+    }
+    if (platform.assetId !== tileSet.assetId) {
+      throw new Error(`${label}.assetId must match tile set asset "${tileSet.assetId}".`);
+    }
+    for (const [index, cell] of platform.paint.cells.entries()) {
+      if (!tileSet.tiles[cell.tileId]) {
+        throw new Error(`${label}.paint.cells.${index}.tileId references unknown tile "${cell.tileId}".`);
+      }
+    }
+  };
+
+  for (const [behaviorId, behavior] of Object.entries(manifest.behaviors ?? {})) {
+    for (const attribute of behavior.attributes) {
+      if (attribute.kind === "platform") {
+        assertPlatformReference(attribute.platform as ScenePlatform, `manifest.behaviors.${behaviorId}.${attribute.id}.platform`);
+      }
+    }
+  }
+
+  for (const scene of Object.values(manifest.scenes)) {
+    for (const layer of scene.layers) {
+      for (const platform of sceneLayerPlatforms(manifest, layer)) {
+        assertPlatformReference(platform, `${scene.id}.${layer.id}.${platform.id}`);
+      }
+    }
   }
 }
 
@@ -148,7 +243,12 @@ export function assertLayer(layer: SceneLayer, label: string): void {
   }
 
   for (const [index, area] of layer.areas.entries()) {
-    assertArea(area, `${label}.areas.${index}`);
+    if (isScenePlatform(area)) {
+      assertNonEmpty(area.id, `${label}.areas.${index}.id`);
+      assertPlatformDefaults(area, `${label}.areas.${index}`);
+    } else {
+      assertArea(area, `${label}.areas.${index}`);
+    }
     assertUnique(areaIds, area.id, `${label}.areas.${index}.id`);
   }
 }
@@ -206,6 +306,72 @@ export function assertBehaviorInstance(instance: SceneBehaviorInstance, label = 
   assertNonEmpty(instance.behaviorId, `${label}.behaviorId`);
   assertBoolean(instance.visible, `${label}.visible`);
   assertBoolean(instance.locked, `${label}.locked`);
+  if (
+    instance.overrides !== undefined
+    && (!instance.overrides || typeof instance.overrides !== "object" || Array.isArray(instance.overrides))
+  ) {
+    throw new Error(`${label}.overrides must be an object.`);
+  }
+}
+
+function assertBehaviorInstanceReferences(manifest: SceneDesignerManifest): void {
+  for (const [sceneId, scene] of Object.entries(manifest.scenes)) {
+    for (const [layerIndex, layer] of scene.layers.entries()) {
+      for (const [instanceIndex, instance] of (layer.behaviors ?? []).entries()) {
+        const instanceLabel = `manifest.scenes.${sceneId}.layers.${layerIndex}.behaviors.${instanceIndex}`;
+        const behavior = manifest.behaviors?.[instance.behaviorId];
+        if (!behavior) {
+          throw new Error(
+            `${instanceLabel}.behaviorId references unknown behavior "${instance.behaviorId}".`
+          );
+        }
+
+        for (const [attributeId, override] of Object.entries(instance.overrides ?? {})) {
+          const attribute = behavior.attributes.find((candidate) => candidate.id === attributeId);
+          const overrideLabel = `${instanceLabel}.overrides.${attributeId}`;
+          if (!attribute) {
+            throw new Error(
+              `${overrideLabel} references unknown attribute "${attributeId}" on behavior "${behavior.id}".`
+            );
+          }
+          if (!override || typeof override !== "object" || Array.isArray(override)) {
+            throw new Error(`${overrideLabel} must be an object.`);
+          }
+
+          if (attribute.kind === "object") {
+            assertObjectDefaults({
+              ...structuredClone(attribute.object),
+              ...structuredClone(override as Partial<SceneObjectDefaults>)
+            }, overrideLabel);
+          } else if (attribute.kind === "area") {
+            const areaOverride = override as Partial<SceneAreaDefaults>;
+            assertAreaDefaults({
+              ...structuredClone(attribute.area),
+              ...structuredClone(areaOverride),
+              vertices: structuredClone(areaOverride.vertices ?? attribute.area.vertices)
+            }, overrideLabel);
+          } else if (attribute.kind === "platform") {
+            const platformOverride = override as Partial<ScenePlatformDefaults>;
+            assertPlatformDefaults({
+              ...structuredClone(attribute.platform),
+              ...structuredClone(platformOverride),
+              vertices: structuredClone(platformOverride.vertices ?? attribute.platform.vertices),
+              paint: structuredClone(platformOverride.paint ?? attribute.platform.paint)
+            }, overrideLabel);
+          } else {
+            const numberOverride = override as { value?: number };
+            assertBehaviorAttribute({
+              ...attribute,
+              number: {
+                ...attribute.number,
+                ...(numberOverride.value === undefined ? {} : { value: numberOverride.value })
+              }
+            }, overrideLabel);
+          }
+        }
+      }
+    }
+  }
 }
 
 export function assertObject(object: SceneObject, label = object.id): void {
@@ -229,6 +395,10 @@ function assertObjectDefaults(object: SceneObjectDefaults, label: string): void 
 export function assertArea(area: SceneArea, label = area.id): void {
   assertNonEmpty(area.id, `${label}.id`);
   assertAreaDefaults(area, label);
+}
+
+export function isScenePlatform(area: SceneArea): area is ScenePlatform {
+  return "assetId" in area && "paint" in area;
 }
 
 function assertAreaDefaults(area: SceneAreaDefaults, label: string): void {
@@ -274,7 +444,34 @@ function assertPlatformPaint(paint: ScenePlatformPaint, label: string): void {
     return;
   }
 
-  throw new Error(`${label}.mode must be "fit" or "tile".`);
+  if (paint.mode === "tilemap") {
+    assertNonEmpty(paint.tileSetId, `${label}.tileSetId`);
+    assertFiniteNumber(paint.originX, `${label}.originX`);
+    assertFiniteNumber(paint.originY, `${label}.originY`);
+    const ids = new Set<string>();
+    const positions = new Set<string>();
+    for (const [index, cell] of paint.cells.entries()) {
+      assertTileMapCell(cell, `${label}.cells.${index}`);
+      assertUnique(ids, cell.id, `${label}.cells.${index}.id`);
+      assertUnique(positions, `${cell.column},${cell.row}`, `${label}.cells.${index}.position`);
+    }
+    return;
+  }
+
+  throw new Error(`${label}.mode must be "fit", "tile", or "tilemap".`);
+}
+
+function assertTileMapCell(cell: SceneTileMapCell, label: string): void {
+  assertNonEmpty(cell.id, `${label}.id`);
+  assertNonEmpty(cell.tileId, `${label}.tileId`);
+  assertInteger(cell.column, `${label}.column`);
+  assertInteger(cell.row, `${label}.row`);
+  if (cell.rotation !== undefined && ![0, 90, 180, 270].includes(cell.rotation)) {
+    throw new Error(`${label}.rotation must be 0, 90, 180, or 270.`);
+  }
+  if (cell.flipX !== undefined) assertBoolean(cell.flipX, `${label}.flipX`);
+  if (cell.flipY !== undefined) assertBoolean(cell.flipY, `${label}.flipY`);
+  assertTileProperties(cell.properties, `${label}.properties`);
 }
 
 export function getScene(
@@ -288,6 +485,17 @@ export function getScene(
   }
 
   return scene;
+}
+
+export function getTileSet(
+  manifest: SceneDesignerManifest,
+  tileSetId: string
+): SceneTileSetDefinition {
+  const tileSet = manifest.tileSets?.[tileSetId];
+  if (!tileSet) {
+    throw new Error(`Unknown tile set "${tileSetId}".`);
+  }
+  return tileSet;
 }
 
 export function resolveSceneObject(
@@ -348,6 +556,13 @@ export function resolveScenePlatform(
   const scene = getScene(manifest, sceneId);
 
   for (const layer of scene.layers) {
+    const platform = layer.areas.find((candidate): candidate is ScenePlatform => (
+      candidate.id === platformId && isScenePlatform(candidate)
+    ));
+    if (platform) {
+      return { scene, layer, platform };
+    }
+
     const behaviorPlatform = resolveLayerBehaviorPlatforms(manifest, layer)
       .find((candidate) => candidate.platform.id === platformId);
 
@@ -396,6 +611,159 @@ export function scenePlatforms(
   return scene.layers.flatMap((layer) => sceneLayerPlatforms(manifest, layer));
 }
 
+export function sceneTileMaps(
+  manifest: SceneDesignerManifest,
+  sceneOrId: SceneDefinition | string,
+  platformTag?: string
+): ScenePlatform[] {
+  return scenePlatforms(manifest, sceneOrId)
+    .filter((platform) => platform.paint.mode === "tilemap")
+    .filter((platform) => platformTag === undefined || platform.tag === platformTag);
+}
+
+export function sceneTiles(
+  manifest: SceneDesignerManifest,
+  sceneOrId: SceneDefinition | string,
+  options: { platformTag?: string; tileTag?: string } = {}
+): ResolvedSceneTile[] {
+  const scene = typeof sceneOrId === "string" ? getScene(manifest, sceneOrId) : sceneOrId;
+  const resolved: ResolvedSceneTile[] = [];
+
+  for (const layer of scene.layers) {
+    for (const platform of sceneLayerPlatforms(manifest, layer)) {
+      if (platform.paint.mode !== "tilemap") continue;
+      if (options.platformTag !== undefined && platform.tag !== options.platformTag) continue;
+      const tileSet = manifest.tileSets?.[platform.paint.tileSetId];
+      if (!tileSet) continue;
+
+      for (const cell of platform.paint.cells) {
+        const tile = tileSet.tiles[cell.tileId];
+        if (!tile) continue;
+        const tags = [...new Set(tile.tags ?? [])];
+        if (options.tileTag !== undefined && !tags.includes(options.tileTag)) continue;
+        resolved.push(resolveSceneTileValue(
+          scene,
+          layer,
+          platform,
+          platform.paint,
+          tileSet,
+          tile,
+          cell,
+          tags
+        ));
+      }
+    }
+  }
+
+  return resolved;
+}
+
+export function sceneTilesAt(
+  manifest: SceneDesignerManifest,
+  sceneOrId: SceneDefinition | string,
+  x: number,
+  y: number,
+  options: { platformTag?: string; tileTag?: string } = {}
+): ResolvedSceneTile[] {
+  const scene = typeof sceneOrId === "string" ? getScene(manifest, sceneOrId) : sceneOrId;
+  const resolved: ResolvedSceneTile[] = [];
+
+  for (const layer of scene.layers) {
+    for (const platform of sceneLayerPlatforms(manifest, layer)) {
+      if (platform.paint.mode !== "tilemap") continue;
+      if (options.platformTag !== undefined && platform.tag !== options.platformTag) continue;
+      if (!pointInArea(x, y, platform)) continue;
+      const tileSet = manifest.tileSets?.[platform.paint.tileSetId];
+      if (!tileSet) continue;
+
+      const column = Math.floor((x - platform.paint.originX) / tileSet.tileWidth);
+      const row = Math.floor((y - platform.paint.originY) / tileSet.tileHeight);
+      const cell = tileMapCellIndex(platform.paint.cells).get(`${column},${row}`);
+      if (!cell) continue;
+      const tile = tileSet.tiles[cell.tileId];
+      if (!tile) continue;
+      const tags = [...new Set(tile.tags ?? [])];
+      if (options.tileTag !== undefined && !tags.includes(options.tileTag)) continue;
+      resolved.push(resolveSceneTileValue(
+        scene,
+        layer,
+        platform,
+        platform.paint,
+        tileSet,
+        tile,
+        cell,
+        tags
+      ));
+    }
+  }
+
+  return resolved;
+}
+
+function tileMapCellIndex(cells: SceneTileMapCell[]): Map<string, SceneTileMapCell> {
+  const cached = tileMapCellIndexes.get(cells);
+  if (cached && tileMapCellIndexCacheMatches(cells, cached)) return cached.index;
+
+  const index = new Map<string, SceneTileMapCell>();
+  for (const cell of cells) {
+    index.set(`${cell.column},${cell.row}`, cell);
+  }
+  tileMapCellIndexes.set(cells, {
+    index,
+    snapshot: cells.map((cell) => ({
+      cell,
+      column: cell.column,
+      row: cell.row
+    }))
+  });
+  return index;
+}
+
+function tileMapCellIndexCacheMatches(
+  cells: SceneTileMapCell[],
+  cached: TileMapCellIndexCache
+): boolean {
+  if (cells.length !== cached.snapshot.length) return false;
+  for (const [index, cell] of cells.entries()) {
+    const previous = cached.snapshot[index];
+    if (
+      previous.cell !== cell
+      || previous.column !== cell.column
+      || previous.row !== cell.row
+    ) return false;
+  }
+  return true;
+}
+
+function resolveSceneTileValue(
+  scene: SceneDefinition,
+  layer: SceneLayer,
+  platform: ScenePlatform,
+  paint: ScenePlatformTileMapPaint,
+  tileSet: SceneTileSetDefinition,
+  tile: SceneTileDefinition,
+  cell: SceneTileMapCell,
+  tags: string[]
+): ResolvedSceneTile {
+  return {
+    scene,
+    layer,
+    platform,
+    tileSet,
+    tile,
+    cell,
+    x: paint.originX + cell.column * tileSet.tileWidth,
+    y: paint.originY + cell.row * tileSet.tileHeight,
+    width: tileSet.tileWidth,
+    height: tileSet.tileHeight,
+    tags,
+    properties: {
+      ...(tile.properties ?? {}),
+      ...(cell.properties ?? {})
+    }
+  };
+}
+
 export function sceneLayerObjects(
   manifest: SceneDesignerManifest,
   layer: SceneLayer
@@ -420,7 +788,10 @@ export function sceneLayerPlatforms(
   manifest: SceneDesignerManifest,
   layer: SceneLayer
 ): ScenePlatform[] {
-  return resolveLayerBehaviorPlatforms(manifest, layer).map((resolved) => resolved.platform);
+  return [
+    ...layer.areas.filter(isScenePlatform),
+    ...resolveLayerBehaviorPlatforms(manifest, layer).map((resolved) => resolved.platform)
+  ];
 }
 
 export function resolveLayerBehaviorObjects(
@@ -592,6 +963,24 @@ function assertPositiveFinite(value: number, label: string): void {
   }
 }
 
+function assertPositiveInteger(value: number, label: string): void {
+  if (!Number.isInteger(value) || value <= 0) {
+    throw new Error(`${label} must be a positive integer.`);
+  }
+}
+
+function assertNonNegativeInteger(value: number, label: string): void {
+  if (!Number.isInteger(value) || value < 0) {
+    throw new Error(`${label} must be a non-negative integer.`);
+  }
+}
+
+function assertInteger(value: number, label: string): void {
+  if (!Number.isInteger(value)) {
+    throw new Error(`${label} must be an integer.`);
+  }
+}
+
 function assertFiniteNumber(value: number, label: string): void {
   if (!Number.isFinite(value)) {
     throw new Error(`${label} must be a finite number.`);
@@ -616,4 +1005,68 @@ function assertUnique(seen: Set<string>, value: string, label: string): void {
   }
 
   seen.add(value);
+}
+
+function assertStringList(values: string[] | undefined, label: string): void {
+  if (!values) return;
+  const seen = new Set<string>();
+  for (const [index, value] of values.entries()) {
+    assertNonEmpty(value, `${label}.${index}`);
+    assertUnique(seen, value, `${label}.${index}`);
+  }
+}
+
+function assertTileProperties(
+  properties: Record<string, SceneTileProperty> | undefined,
+  label: string
+): void {
+  if (!properties) return;
+  for (const [key, value] of Object.entries(properties)) {
+    assertNonEmpty(key, `${label} key`);
+    if (typeof value !== "string" && typeof value !== "number" && typeof value !== "boolean") {
+      throw new Error(`${label}.${key} must be a string, number, or boolean.`);
+    }
+    if (typeof value === "number") assertFiniteNumber(value, `${label}.${key}`);
+  }
+}
+
+function pointInArea(x: number, y: number, area: SceneArea): boolean {
+  if (!area.closed || area.vertices.length < 3) return false;
+  const points = areaBoundaryPoints(area);
+  let inside = false;
+  for (let index = 0, previous = points.length - 1; index < points.length; previous = index, index += 1) {
+    const currentVertex = points[index];
+    const previousVertex = points[previous];
+    const intersects = (currentVertex.y > y) !== (previousVertex.y > y)
+      && x < (previousVertex.x - currentVertex.x) * (y - currentVertex.y)
+        / (previousVertex.y - currentVertex.y) + currentVertex.x;
+    if (intersects) inside = !inside;
+  }
+  return inside;
+}
+
+function areaBoundaryPoints(area: SceneArea): Array<{ x: number; y: number }> {
+  const points: Array<{ x: number; y: number }> = [];
+  const first = area.vertices[0];
+  if (!first) return points;
+  points.push({ x: first.x, y: first.y });
+
+  for (let index = 0; index < area.vertices.length; index += 1) {
+    const from = area.vertices[index];
+    const to = area.vertices[(index + 1) % area.vertices.length];
+    if (!from.curve) {
+      points.push({ x: to.x, y: to.y });
+      continue;
+    }
+    for (let step = 1; step <= 12; step += 1) {
+      const t = step / 12;
+      const inverse = 1 - t;
+      points.push({
+        x: inverse * inverse * from.x + 2 * inverse * t * from.curve.cx + t * t * to.x,
+        y: inverse * inverse * from.y + 2 * inverse * t * from.curve.cy + t * t * to.y
+      });
+    }
+  }
+
+  return points;
 }

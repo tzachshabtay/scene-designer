@@ -1,0 +1,119 @@
+{
+  "id": "tiles.house",
+  "kind": "tileset",
+  "prompt": "Top-down cottage interior tiles in a consistent hand-authored pixel-art style.",
+  "dimensions": {
+    "width": 128,
+    "height": 96
+  },
+  "tileset": {
+    "tileWidth": 32,
+    "tileHeight": 32,
+    "columns": 4,
+    "rows": 3,
+    "tileCount": 9,
+    "tiles": [
+      {
+        "prompt": "Stone floor: seamless top-down gray square flagstones with subtle grout and wear; walkable."
+      },
+      {
+        "prompt": "Wood floor: seamless top-down warm-brown horizontal floorboards with restrained grain; walkable."
+      },
+      {
+        "prompt": "Plaster wall: a straight horizontal top-down pale-plaster cottage wall segment with dark timber trim, connecting cleanly at the left and right cell edges; blocked."
+      },
+      {
+        "prompt": "Timber wall: a straight horizontal top-down cottage wall segment with exposed dark beams and pale infill, connecting cleanly at the left and right cell edges; blocked."
+      },
+      {
+        "prompt": "Rug: a centered top-down red cottage rug with gold bands over a floor base; walkable decoration."
+      },
+      {
+        "prompt": "Hearth: a centered top-down stone-and-timber fireplace with a warm flame over a floor base; blocked furniture."
+      },
+      {
+        "prompt": "Table: a centered round wooden cottage table viewed from above over a wood-floor base; blocked furniture."
+      },
+      {
+        "prompt": "Bed: a centered top-down single wooden bed with pale bedding and a blue pillow over a wood-floor base; blocked furniture."
+      },
+      {
+        "prompt": "Wall corner: one 90-degree L-shaped top-down plaster-and-timber cottage wall corner whose arms exit through the top and right cell edges, matching the thickness, palette, and connectors of the straight wall tiles; blocked and designed to rotate in quarter turns."
+      }
+    ]
+  },
+  "activeVersion": "promoted-1784345513618",
+  "versions": {
+    "default": {
+      "name": "default",
+      "file": "/assets/tiles.house.default.svg",
+      "prompt": "Create a deterministic hand-authored 32×32 pixel top-down cottage tileset. Output one 128×96 image arranged as a 4-column × 3-row grid with no margin or spacing. Read frames left-to-right, then top-to-bottom. Draw exactly these nine tiles in this exact order:\nFrame 0 — Stone floor: seamless gray square flagstones with subtle grout and wear; walkable.\nFrame 1 — Wood floor: seamless warm-brown horizontal floorboards with restrained grain; walkable.\nFrame 2 — Plaster wall: a straight horizontal pale-plaster wall segment with dark timber trim, connecting cleanly at the left and right cell edges; blocked.\nFrame 3 — Timber wall: a straight horizontal cottage wall segment with exposed dark beams and pale infill, connecting cleanly at the left and right cell edges; blocked.\nFrame 4 — Rug: a centered red cottage rug with gold bands over a floor base; walkable decoration.\nFrame 5 — Hearth: a centered stone-and-timber fireplace with a warm flame over a floor base; blocked furniture.\nFrame 6 — Table: a centered round wooden table viewed from above over a wood-floor base; blocked furniture.\nFrame 7 — Bed: a centered single wooden bed with pale bedding and a blue pillow over a wood-floor base; blocked furniture.\nFrame 8 — Wall corner: one 90-degree L-shaped plaster-and-timber wall corner whose arms exit through the top and right cell edges, matching the thickness, palette, and connectors of frames 2 and 3; blocked and designed to be rotated in quarter turns.\nLeave row 3 columns 2–4 fully transparent because they are outside the nine-tile count. Use one consistent palette, orthographic top-down perspective, and crisp pixel edges. Keep every tile isolated within its 32×32 cell. Do not add text, labels, borders, padding, extra tiles, or reorder any frame.",
+      "createdAt": "2026-07-15T00:00:00.000Z",
+      "model": "manual-svg"
+    },
+    "promoted-1784259403957": {
+      "name": "promoted-1784259403957",
+      "file": "/assets/tiles.house.promoted-1784259403957.png",
+      "prompt": "Create a deterministic hand-authored 32×32 pixel top-down cottage tileset. Output one 128×96 image arranged as a 4-column × 3-row grid with no margin or spacing. Read frames left-to-right, then top-to-bottom. Draw exactly these nine tiles in this exact order:\nFrame 0 — Stone floor: seamless gray square flagstones with subtle grout and wear; walkable.\nFrame 1 — Wood floor: seamless warm-brown horizontal floorboards with restrained grain; walkable.\nFrame 2 — Plaster wall: a straight horizontal pale-plaster wall segment with dark timber trim, connecting cleanly at the left and right cell edges; blocked.\nFrame 3 — Timber wall: a straight horizontal cottage wall segment with exposed dark beams and pale infill, connecting cleanly at the left and right cell edges; blocked.\nFrame 4 — Rug: a centered red cottage rug with gold bands over a floor base; walkable decoration.\nFrame 5 — Hearth: a centered stone-and-timber fireplace with a warm flame over a floor base; blocked furniture.\nFrame 6 — Table: a centered round wooden table viewed from above over a wood-floor base; blocked furniture.\nFrame 7 — Bed: a centered single wooden bed with pale bedding and a blue pillow over a wood-floor base; blocked furniture.\nFrame 8 — Wall corner: one 90-degree L-shaped plaster-and-timber wall corner whose arms exit through the top and right cell edges, matching the thickness, palette, and connectors of frames 2 and 3; blocked and designed to be rotated in quarter turns.\nLeave row 3 columns 2–4 fully transparent because they are outside the nine-tile count. Use one consistent palette, orthographic top-down perspective, and crisp pixel edges. Keep every tile isolated within its 32×32 cell. Do not add text, labels, borders, padding, extra tiles, or reorder any frame.",
+      "createdAt": "2026-07-17T03:36:44.026Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "format": "png",
+        "model": "gpt-image-2",
+        "background": "auto"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "default",
+      "notes": "Promoted from the AI asset designer."
+    },
+    "promoted-1784330411507": {
+      "name": "promoted-1784330411507",
+      "file": "/assets/tiles.house.promoted-1784330411507.png",
+      "prompt": "Top-down cottage interior tiles in a consistent hand-authored pixel-art style.",
+      "createdAt": "2026-07-17T23:20:11.565Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "format": "png",
+        "model": "gpt-image-2",
+        "background": "auto"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "promoted-1784259403957",
+      "notes": "Promoted from the AI asset designer."
+    },
+    "promoted-1784345513618": {
+      "name": "promoted-1784345513618",
+      "file": "/assets/tiles.house.promoted-1784345513618.png",
+      "prompt": "Top-down cottage interior tiles in a consistent hand-authored pixel-art style.",
+      "createdAt": "2026-07-18T03:31:53.655Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "format": "png",
+        "model": "gpt-image-2",
+        "background": "auto"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "promoted-1784330411507",
+      "notes": "Promoted from the AI asset designer."
+    }
+  },
+  "tags": [
+    "tiles",
+    "house",
+    "top-down"
+  ],
+  "settings": {
+    "format": "png",
+    "model": "gpt-image-2",
+    "background": "auto"
+  },
+  "audioSettings": {},
+  "audioPlayback": {},
+  "voiceSettings": {}
+}

@@ -11,7 +11,10 @@ import type {
   SceneLayer,
   SceneObject,
   ScenePlatform,
-  ScenePlatformPaint
+  ScenePlatformPaint,
+  SceneTileMapCell,
+  SceneTileProperty,
+  SceneTileRotation
 } from "./types.js";
 
 export type CreateSceneInput = {
@@ -39,6 +42,17 @@ export type CreatePlatformInput = Partial<Omit<ScenePlatform, "id" | "vertices" 
   id?: string;
   vertices?: SceneAreaVertex[];
   paint?: ScenePlatformPaint;
+};
+
+export type CreateTileMapCellInput = {
+  id?: string;
+  tileId: string;
+  column: number;
+  row: number;
+  rotation?: SceneTileRotation;
+  flipX?: boolean;
+  flipY?: boolean;
+  properties?: Record<string, SceneTileProperty>;
 };
 
 export type CreateBehaviorInput = {
@@ -120,6 +134,19 @@ export function createAreaVertex(x: number, y: number): SceneAreaVertex {
     id: uniqueId("vertex"),
     x,
     y
+  };
+}
+
+export function createTileMapCell(input: CreateTileMapCellInput): SceneTileMapCell {
+  return {
+    id: input.id ?? uniqueId("tile"),
+    tileId: input.tileId,
+    column: input.column,
+    row: input.row,
+    rotation: input.rotation ?? 0,
+    flipX: input.flipX ?? false,
+    flipY: input.flipY ?? false,
+    properties: input.properties ? structuredClone(input.properties) : undefined
   };
 }
 

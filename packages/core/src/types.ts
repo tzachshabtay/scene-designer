@@ -3,6 +3,7 @@ export type SceneDesignerManifest = {
   designer?: SceneDesignerConfig;
   scenes: Record<string, SceneDefinition>;
   behaviors?: Record<string, SceneBehaviorDefinition>;
+  tileSets?: Record<string, SceneTileSetDefinition>;
   scenePaths?: Record<string, string[]>;
 };
 
@@ -125,11 +126,15 @@ export type SceneBehaviorInstance = {
   overrides?: Record<string, SceneBehaviorAttributeOverride>;
 };
 
-export type SceneBehaviorAttributeOverride =
+export type SceneBehaviorAttributeOverride = (
   | Partial<SceneObjectDefaults>
   | Partial<SceneAreaDefaults>
   | Partial<ScenePlatformDefaults>
-  | { value?: number };
+  | { value?: number }
+) & {
+  /** @deprecated Persisted legacy value; derived behavior-instance ids win. */
+  id?: string;
+};
 
 export type SceneObject = {
   id: string;
@@ -168,7 +173,8 @@ export type ScenePlatformDefaults = Omit<ScenePlatform, "id">;
 
 export type ScenePlatformPaint =
   | ScenePlatformFitPaint
-  | ScenePlatformTilePaint;
+  | ScenePlatformTilePaint
+  | ScenePlatformTileMapPaint;
 
 export type ScenePlatformFitPaint = {
   mode: "fit";
@@ -179,6 +185,49 @@ export type ScenePlatformTilePaint = {
   mirrorX?: boolean;
   mirrorY?: boolean;
   rotation?: number;
+};
+
+export type ScenePlatformTileMapPaint = {
+  mode: "tilemap";
+  tileSetId: string;
+  originX: number;
+  originY: number;
+  cells: SceneTileMapCell[];
+};
+
+export type SceneTileMapCell = {
+  id: string;
+  tileId: string;
+  column: number;
+  row: number;
+  rotation?: SceneTileRotation;
+  flipX?: boolean;
+  flipY?: boolean;
+  properties?: Record<string, SceneTileProperty>;
+};
+
+export type SceneTileRotation = 0 | 90 | 180 | 270;
+
+export type SceneTileProperty = string | number | boolean;
+
+export type SceneTileSetDefinition = {
+  id: string;
+  name: string;
+  assetId: string;
+  tileWidth: number;
+  tileHeight: number;
+  columns: number;
+  rows: number;
+  tiles: Record<string, SceneTileDefinition>;
+};
+
+export type SceneTileDefinition = {
+  id: string;
+  name: string;
+  frame: number;
+  animation?: string;
+  tags?: string[];
+  properties?: Record<string, SceneTileProperty>;
 };
 
 export type SceneAreaVertex = {
@@ -203,7 +252,8 @@ export type SceneSelection =
   | { type: "object"; sceneId: string; layerId: string; objectId: string }
   | { type: "objects"; sceneId: string; objectIds: string[] }
   | { type: "area"; sceneId: string; layerId: string; areaId: string }
-  | { type: "vertex"; sceneId: string; layerId: string; areaId: string; vertexId: string };
+  | { type: "vertex"; sceneId: string; layerId: string; areaId: string; vertexId: string }
+  | { type: "tiles"; sceneId: string; layerId: string; areaId: string; cellIds: string[] };
 
 export type ResolvedSceneObject = {
   scene: SceneDefinition;
@@ -227,7 +277,22 @@ export type ResolvedScenePlatform = {
   scene: SceneDefinition;
   layer: SceneLayer;
   platform: ScenePlatform;
-  behavior: SceneBehaviorDefinition;
-  behaviorInstance: SceneBehaviorInstance;
-  behaviorAttribute: SceneBehaviorPlatformAttribute;
+  behavior?: SceneBehaviorDefinition;
+  behaviorInstance?: SceneBehaviorInstance;
+  behaviorAttribute?: SceneBehaviorPlatformAttribute;
+};
+
+export type ResolvedSceneTile = {
+  scene: SceneDefinition;
+  layer: SceneLayer;
+  platform: ScenePlatform;
+  tileSet: SceneTileSetDefinition;
+  tile: SceneTileDefinition;
+  cell: SceneTileMapCell;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  tags: string[];
+  properties: Record<string, SceneTileProperty>;
 };

@@ -1,0 +1,28 @@
+{
+  "name": "scene-designer-top-down-demo",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "seed:scenes": "node scripts/create-demo-scenes.mjs",
+    "generate": "node scripts/write-assets-module.mjs && node scripts/write-scenes-module.mjs",
+    "test": "node scripts/verify-demo.mjs",
+    "dev": "npm run generate && vite --host 127.0.0.1",
+    "dev:server": "npm run generate && node dev-server.mjs",
+    "build": "npm run generate && vite build",
+    "typecheck": "npm run generate && tsc --noEmit"
+  },
+  "dependencies": {
+    "@ai-game-assets/core": "^0.6.0",
+    "@ai-game-assets/dev": "^0.6.0",
+    "@ai-game-assets/phaser": "^0.6.0",
+    "@scene-designer/core": "0.1.0",
+    "@scene-designer/dev": "0.1.0",
+    "@scene-designer/phaser": "0.1.0",
+    "phaser": "^4.2.0"
+  },
+  "devDependencies": {
+    "vite": "^7.0.0",
+    "typescript": "^5.8.0"
+  }
+}

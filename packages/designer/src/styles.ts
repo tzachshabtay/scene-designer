@@ -254,6 +254,86 @@ export function ensureSceneDesignerStyles(): void {
   border-color: var(--sd-accent);
   color: var(--sd-accent);
 }
+.scene-designer__tile-toolbar {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+}
+.scene-designer__tile-tool {
+  min-width: 0;
+  padding-inline: 6px;
+}
+.scene-designer__tile-tool[aria-pressed="true"] {
+  border-color: var(--sd-accent);
+  background: #253b5d;
+  color: #dbeafe;
+  box-shadow: inset 0 0 0 1px rgba(139, 184, 255, 0.28);
+}
+.scene-designer__tile-palette-section {
+  overflow: hidden;
+  border: 1px solid var(--sd-border);
+  border-radius: 7px;
+  background: #111722;
+}
+.scene-designer__tile-palette-section > .scene-designer__subhead {
+  margin: 0;
+  padding: 8px;
+  border-bottom: 1px solid var(--sd-border);
+  background: var(--sd-bg-soft);
+}
+.scene-designer__tile-palette {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+  gap: 6px;
+  max-height: 260px;
+  overflow-y: auto;
+  padding: 8px;
+}
+.scene-designer__tile-option {
+  display: grid;
+  min-width: 0;
+  gap: 5px;
+  align-content: start;
+  padding: 6px;
+  border: 1px solid var(--sd-border);
+  border-radius: 6px;
+  background: #0d0f13;
+  color: var(--sd-text);
+  cursor: pointer;
+}
+.scene-designer__tile-option:hover,
+.scene-designer__tile-option:focus-visible {
+  border-color: var(--sd-accent);
+  background: #182235;
+}
+.scene-designer__tile-option[aria-selected="true"] {
+  border-color: var(--sd-accent);
+  background: #202f48;
+  box-shadow: inset 0 0 0 1px rgba(139, 184, 255, 0.28);
+}
+.scene-designer__tile-swatch {
+  display: block;
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid rgba(185, 193, 207, 0.26);
+  border-radius: 4px;
+  background-color: #151b27;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+}
+.scene-designer__tile-name {
+  overflow: hidden;
+  color: var(--sd-muted);
+  font-size: 11px;
+  line-height: 1.2;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.scene-designer__tile-summary {
+  color: var(--sd-muted);
+  font-size: 11px;
+}
 .scene-designer__status {
   min-height: 20px;
   padding: 10px 12px;

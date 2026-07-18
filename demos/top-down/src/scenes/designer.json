@@ -1,0 +1,14 @@
+{
+  "canvas": {
+    "grid": {
+      "width": 32,
+      "height": 32
+    },
+    "keyboard": {
+      "nudge": {
+        "normalStep": 32,
+        "fineStep": 1
+      }
+    }
+  }
+}

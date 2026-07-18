@@ -35,9 +35,19 @@ import {
   type SceneObject,
   type ScenePlatform,
   type ScenePlatformDefaults,
+  type ScenePlatformTileMapPaint,
+  type SceneTileDefinition,
+  type SceneTileSetDefinition,
   type SceneSelection
 } from "@scene-designer/core";
-import { assetFolderPath, graphicAssetIds, graphicAssetPreviewUrl, readableName } from "./assets.js";
+import {
+  assertSceneTileSetAssets,
+  assetFolderPath,
+  graphicAssetIds,
+  graphicAssetForTarget,
+  graphicAssetPreviewUrl,
+  readableName
+} from "./assets.js";
 import { SceneDesignerDebugClient } from "./debug-client.js";
 import { ensureSceneDesignerStyles } from "./styles.js";
 
@@ -57,7 +67,13 @@ export type SceneDesignerOptions = {
   onModeChange?(mode: SceneDesignerMode): void;
 };
 
-export type SceneDesignerMode = "select" | "area-draw";
+export type SceneDesignerMode =
+  | "select"
+  | "area-draw"
+  | "tile-brush"
+  | "tile-erase"
+  | "tile-pick"
+  | "tile-select";
 export type SceneDesignerOpenView = "scenes" | "behaviors" | false;
 
 export type SceneDesigner = {
@@ -72,8 +88,11 @@ export type SceneDesigner = {
   getOpenView(): SceneDesignerOpenView;
   getSelection(): SceneSelection | undefined;
   getMode(): SceneDesignerMode;
+  getActiveTileId(): string | undefined;
   setManifest(manifest: SceneDesignerManifest): void;
   select(selection: SceneSelection | undefined): void;
+  setActiveTileId(tileId: string): void;
+  setMode(mode: SceneDesignerMode): void;
   updateObject(objectId: string, patch: Partial<SceneObject>, options?: SceneDesignerEditOptions): void;
   updateObjects(updates: SceneDesignerObjectUpdate[], options?: SceneDesignerEditOptions): void;
   updateArea(areaId: string, patch: SceneDesignerAreaUpdate, options?: SceneDesignerEditOptions): void;
@@ -90,6 +109,7 @@ export type SceneDesigner = {
 };
 
 type StatusTone = "info" | "success" | "error";
+const MAX_HISTORY_ENTRIES = 100;
 
 export type SceneDesignerEditOptions = {
   history?: boolean;
@@ -121,6 +141,9 @@ type Elements = {
 export function installSceneDesigner(options: SceneDesignerOptions): SceneDesigner {
   ensureSceneDesignerStyles();
   assertSceneManifest(options.manifest);
+  assertSceneTileSetAssets(options.manifest, options.aiAssets, {
+    targetId: options.assetTargetId
+  });
 
   const client = options.client ?? new SceneDesignerDebugClient();
   let manifest = cloneSceneManifest(options.manifest);
@@ -132,6 +155,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     ? { type: "scene", sceneId: selectedSceneId }
     : undefined;
   let mode: SceneDesignerMode = "select";
+  let activeTileId: string | undefined = firstManifestTileId(manifest);
   const past: SceneDesignerManifest[] = [];
   const future: SceneDesignerManifest[] = [];
   const assetPathByObject = new Map<string, string[]>();
@@ -206,14 +230,21 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     getMode() {
       return mode;
     },
+    getActiveTileId() {
+      return activeTileId;
+    },
     setManifest(nextManifest) {
       assertSceneManifest(nextManifest);
+      assertSceneTileSetAssets(nextManifest, options.aiAssets, {
+        targetId: options.assetTargetId
+      });
       manifest = cloneSceneManifest(nextManifest);
       if (!manifest.scenes[selectedSceneId]) {
         selectedSceneId = Object.keys(manifest.scenes)[0] ?? "";
       }
       selectedBehaviorId = Object.keys(manifest.behaviors ?? {})[0] ?? "";
       selection = selectedSceneId ? { type: "scene", sceneId: selectedSceneId } : undefined;
+      normalizeActiveTileId();
       render();
       renderBehaviors();
       emitChange();
@@ -225,9 +256,27 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
       if (sceneId) selectedSceneId = sceneId;
       const behaviorId = behaviorIdFromSelection(nextSelection);
       if (behaviorId) selectedBehaviorId = behaviorId;
-      mode = nextSelection?.type === "area" || nextSelection?.type === "behavior-area" ? mode : "select";
+      mode = nextSelection?.type === "area"
+        || nextSelection?.type === "tiles"
+        || nextSelection?.type === "behavior-area"
+        ? mode
+        : "select";
+      normalizeActiveTileId();
       render();
       emitSelection();
+      options.onModeChange?.(mode);
+    },
+    setActiveTileId(tileId) {
+      if (!manifestHasTile(tileId) || activeTileId === tileId) return;
+      activeTileId = tileId;
+      renderEditor();
+      renderBehaviors();
+    },
+    setMode(nextMode) {
+      if (mode === nextMode) return;
+      mode = nextMode;
+      renderEditor();
+      renderBehaviors();
       options.onModeChange?.(mode);
     },
     updateObject(objectId, patch, editOptions) {
@@ -340,6 +389,27 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     deleteSelected() {
       const currentSelection = selection;
       if (!currentSelection || !selectedSceneId) return;
+
+      if (currentSelection.type === "tiles") {
+        const selectedCellIds = new Set(currentSelection.cellIds);
+        commit(() => {
+          const area = mutableAreaForEdit(currentSelection.areaId);
+          if (!area || !isScenePlatform(area) || area.paint.mode !== "tilemap") return;
+          area.paint = {
+            ...area.paint,
+            cells: area.paint.cells.filter((cell) => !selectedCellIds.has(cell.id))
+          };
+          selection = {
+            type: "area",
+            sceneId: currentSelection.sceneId,
+            layerId: currentSelection.layerId,
+            areaId: currentSelection.areaId
+          };
+        });
+        emitSelection();
+        return;
+      }
+
       if (
         currentSelection.type !== "object"
         && currentSelection.type !== "objects"
@@ -385,6 +455,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
       const previous = past.pop();
       if (!previous) return;
       future.push(cloneSceneManifest(manifest));
+      if (future.length > MAX_HISTORY_ENTRIES) future.shift();
       manifest = previous;
       normalizeSelection();
       render();
@@ -396,6 +467,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
       const next = future.pop();
       if (!next) return;
       past.push(cloneSceneManifest(manifest));
+      if (past.length > MAX_HISTORY_ENTRIES) past.shift();
       manifest = next;
       normalizeSelection();
       render();
@@ -651,7 +723,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
           commit(() => {
             Object.assign(attribute.platform, withoutId(patch));
           });
-        });
+        }, false);
       } else {
         section.append(numberControl(attribute.name, attribute.number, attribute.number.value, (value) => {
           commit(() => {
@@ -1087,7 +1159,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     item.append(title, visibility, lock, remove);
     item.addEventListener("click", () => {
       selection = { type: "area", sceneId: scene.id, layerId: layer.id, areaId: area.id };
-      mode = area.vertices.length === 0 || !area.closed ? "area-draw" : "select";
+      mode = modeForAreaSelection(area);
       render();
       emitSelection();
       options.onModeChange?.(mode);
@@ -1143,6 +1215,11 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
 
     if (selection.type === "area") {
       renderAreaEditor(findArea(selection.areaId));
+      return;
+    }
+
+    if (selection.type === "tiles") {
+      renderAreaEditor(findArea(selection.areaId), selection.cellIds.length);
       return;
     }
 
@@ -1223,7 +1300,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
             layerId: layer.id,
             areaId: attributeId
           };
-          mode = area.vertices.length === 0 || !area.closed ? "area-draw" : "select";
+          mode = modeForAreaSelection(area);
           render();
           emitSelection();
           options.onModeChange?.(mode);
@@ -1290,7 +1367,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     elements.editor.append(stack);
   }
 
-  function renderAreaEditor(resolved: ResolvedSceneArea): void {
+  function renderAreaEditor(resolved: ResolvedSceneArea, selectedTileCount?: number): void {
     const area = resolved.area;
     const stack = document.createElement("div");
     stack.className = "scene-designer__stack";
@@ -1303,6 +1380,13 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     stack.append(labelWithInput("Tag", area.tag, (value) => {
       api.updateArea(area.id, { tag: value });
     }));
+
+    if (selectedTileCount !== undefined) {
+      const tileSelection = document.createElement("div");
+      tileSelection.className = "scene-designer__empty";
+      tileSelection.textContent = `${selectedTileCount} tile${selectedTileCount === 1 ? "" : "s"} selected`;
+      stack.append(tileSelection);
+    }
 
     const info = document.createElement("div");
     info.className = "scene-designer__empty";
@@ -1427,25 +1511,20 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
   function appendPlatformControls(
     container: HTMLElement,
     platform: ScenePlatform,
-    onPatch: (patch: Partial<ScenePlatform>) => void
+    onPatch: (patch: Partial<ScenePlatform>) => void,
+    tileEditingEnabled = true
   ): void {
     appendAreaControls(container, platform, onPatch);
-    appendPlatformPaintControls(container, platform, onPatch);
+    appendPlatformPaintControls(container, platform, onPatch, tileEditingEnabled);
   }
 
   function appendPlatformPaintControls(
     container: HTMLElement,
     platform: ScenePlatform,
-    onPatch: (patch: Partial<ScenePlatform>) => void
+    onPatch: (patch: Partial<ScenePlatform>) => void,
+    tileEditingEnabled = true
   ): void {
     appendAssetPreview(container, platform);
-
-    const browser = document.createElement("div");
-    browser.className = "scene-designer__asset-browser";
-    renderAssetBrowser(browser, platform, (assetId) => {
-      onPatch({ assetId });
-    });
-    container.append(browser);
 
     const paintMode = document.createElement("label");
     paintMode.className = "scene-designer__label";
@@ -1453,27 +1532,77 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     paintModeText.textContent = "Paint";
     const paintModeSelect = document.createElement("select");
     paintModeSelect.className = "scene-designer__select";
-    for (const [value, label] of [["tile", "Tile"], ["fit", "Fit"]] as const) {
+    const tileSets = tileSetDefinitions();
+    for (const [value, label] of [["tile", "Tile"], ["fit", "Fit"], ["tilemap", "Tile map"]] as const) {
       const option = document.createElement("option");
       option.value = value;
       option.textContent = label;
+      option.disabled = value === "tilemap" && tileSets.length === 0;
       paintModeSelect.append(option);
     }
     paintModeSelect.value = platform.paint.mode;
     paintModeSelect.addEventListener("change", () => {
+      if (paintModeSelect.value === "fit") {
+        onPatch({ paint: { mode: "fit" } });
+        return;
+      }
+
+      if (paintModeSelect.value === "tile") {
+        onPatch({
+          paint: {
+            mode: "tile",
+            mirrorX: platform.paint.mode === "tile" ? Boolean(platform.paint.mirrorX) : false,
+            mirrorY: platform.paint.mode === "tile" ? Boolean(platform.paint.mirrorY) : false,
+            rotation: platform.paint.mode === "tile" ? Number(platform.paint.rotation ?? 0) : 0
+          }
+        });
+        return;
+      }
+
+      const tileSet = tileSetForAsset(platform.assetId) ?? tileSets[0];
+      if (!tileSet) {
+        paintModeSelect.value = platform.paint.mode;
+        return;
+      }
+
+      const origin = areaMinimumPoint(platform);
+      activeTileId = tileIdForSet(tileSet, activeTileId);
+      if (!isTileEditorMode(mode)) {
+        mode = "tile-brush";
+        options.onModeChange?.(mode);
+      }
       onPatch({
-        paint: paintModeSelect.value === "fit"
-          ? { mode: "fit" }
-          : {
-              mode: "tile",
-              mirrorX: platform.paint.mode === "tile" ? Boolean(platform.paint.mirrorX) : false,
-              mirrorY: platform.paint.mode === "tile" ? Boolean(platform.paint.mirrorY) : false,
-              rotation: platform.paint.mode === "tile" ? Number(platform.paint.rotation ?? 0) : 0
-            }
+        assetId: tileSet.assetId,
+        paint: {
+          mode: "tilemap",
+          tileSetId: tileSet.id,
+          originX: origin.x,
+          originY: origin.y,
+          cells: []
+        }
       });
     });
     paintMode.append(paintModeText, paintModeSelect);
     container.append(paintMode);
+
+    if (platform.paint.mode === "tilemap") {
+      appendTileMapControls(
+        container,
+        platform,
+        platform.paint,
+        tileSets,
+        onPatch,
+        tileEditingEnabled
+      );
+      return;
+    }
+
+    const browser = document.createElement("div");
+    browser.className = "scene-designer__asset-browser";
+    renderAssetBrowser(browser, platform, (assetId) => {
+      onPatch({ assetId });
+    });
+    container.append(browser);
 
     if (platform.paint.mode !== "tile") return;
 
@@ -1501,6 +1630,179 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
       })
     );
     container.append(mirrorRow);
+  }
+
+  function appendTileMapControls(
+    container: HTMLElement,
+    platform: ScenePlatform,
+    paint: ScenePlatformTileMapPaint,
+    tileSets: SceneTileSetDefinition[],
+    onPatch: (patch: Partial<ScenePlatform>) => void,
+    tileEditingEnabled: boolean
+  ): void {
+    const tileSetLabel = document.createElement("label");
+    tileSetLabel.className = "scene-designer__label";
+    const tileSetText = document.createElement("span");
+    tileSetText.textContent = "Tile set";
+    const tileSetSelect = document.createElement("select");
+    tileSetSelect.className = "scene-designer__select";
+
+    for (const tileSet of tileSets) {
+      const option = document.createElement("option");
+      option.value = tileSet.id;
+      option.textContent = `${tileSet.name} (${tileSet.tileWidth}×${tileSet.tileHeight})`;
+      tileSetSelect.append(option);
+    }
+
+    tileSetSelect.value = paint.tileSetId;
+    tileSetSelect.addEventListener("change", () => {
+      const tileSet = manifest.tileSets?.[tileSetSelect.value];
+      if (!tileSet) return;
+      activeTileId = tileIdForSet(tileSet, activeTileId);
+      onPatch({
+        assetId: tileSet.assetId,
+        paint: {
+          mode: "tilemap",
+          tileSetId: tileSet.id,
+          originX: paint.originX,
+          originY: paint.originY,
+          cells: tileSet.id === paint.tileSetId ? structuredClone(paint.cells) : []
+        }
+      });
+    });
+    tileSetLabel.append(tileSetText, tileSetSelect);
+    container.append(tileSetLabel);
+
+    const tileSet = manifest.tileSets?.[paint.tileSetId];
+    if (!tileSet) {
+      const empty = document.createElement("div");
+      empty.className = "scene-designer__empty";
+      empty.textContent = "This tile map references a missing tile set.";
+      container.append(empty);
+      return;
+    }
+
+    activeTileId = tileIdForSet(tileSet, activeTileId);
+    if (tileEditingEnabled) {
+      appendTileToolbar(container);
+      appendTilePalette(container, tileSet);
+    } else {
+      const notice = document.createElement("div");
+      notice.className = "scene-designer__empty";
+      notice.textContent = "Tile painting is available on behavior instances in a scene.";
+      container.append(notice);
+    }
+
+    const summary = document.createElement("div");
+    summary.className = "scene-designer__tile-summary";
+    summary.textContent = `${paint.cells.length} painted tile${paint.cells.length === 1 ? "" : "s"} · origin ${paint.originX}, ${paint.originY}`;
+    container.append(summary);
+
+    if (platform.assetId !== tileSet.assetId) {
+      const warning = document.createElement("div");
+      warning.className = "scene-designer__empty";
+      warning.textContent = "The tile map asset is out of sync with its tile set. Re-select the tile set to repair it.";
+      container.append(warning);
+    }
+  }
+
+  function appendTileToolbar(container: HTMLElement): void {
+    const toolbar = document.createElement("div");
+    toolbar.className = "scene-designer__tile-toolbar";
+    toolbar.setAttribute("role", "toolbar");
+    toolbar.setAttribute("aria-label", "Tile map tools");
+
+    const tools: Array<[SceneDesignerMode, string]> = [
+      ["select", "Area"],
+      ["tile-select", "Select"],
+      ["tile-brush", "Brush"],
+      ["tile-erase", "Eraser"],
+      ["tile-pick", "Picker"]
+    ];
+    for (const [toolMode, label] of tools) {
+      const tool = button(label, "scene-designer__button scene-designer__tile-tool");
+      tool.setAttribute("aria-pressed", String(mode === toolMode));
+      tool.addEventListener("click", () => api.setMode(toolMode));
+      toolbar.append(tool);
+    }
+
+    container.append(toolbar);
+  }
+
+  function appendTilePalette(container: HTMLElement, tileSet: SceneTileSetDefinition): void {
+    const section = document.createElement("div");
+    section.className = "scene-designer__tile-palette-section";
+    const heading = document.createElement("div");
+    heading.className = "scene-designer__subhead";
+    heading.textContent = "Tiles";
+    const palette = document.createElement("div");
+    palette.className = "scene-designer__tile-palette";
+    palette.setAttribute("role", "listbox");
+    palette.setAttribute("aria-label", `${tileSet.name} tiles`);
+
+    const previewUrl = graphicAssetPreviewUrl(options.aiAssets, tileSet.assetId, {
+      baseUrl: options.assetBaseUrl,
+      targetId: options.assetTargetId
+    });
+    const tiles = sortedTiles(tileSet);
+    for (const tile of tiles) {
+      const tileButton = button("", "scene-designer__tile-option");
+      tileButton.setAttribute("role", "option");
+      tileButton.setAttribute("aria-label", tile.name);
+      tileButton.setAttribute("aria-selected", String(tile.id === activeTileId));
+      tileButton.title = tile.animation ? `${tile.name} · animated` : tile.name;
+
+      const swatch = document.createElement("span");
+      swatch.className = "scene-designer__tile-swatch";
+      swatch.style.aspectRatio = `${tileSet.tileWidth} / ${tileSet.tileHeight}`;
+      if (previewUrl) applyTileSwatch(swatch, previewUrl, tileSet, tile);
+
+      const label = document.createElement("span");
+      label.className = "scene-designer__tile-name";
+      label.textContent = tile.animation ? `${tile.name} ▶` : tile.name;
+      tileButton.append(swatch, label);
+      tileButton.addEventListener("click", () => api.setActiveTileId(tile.id));
+      palette.append(tileButton);
+    }
+
+    if (!tiles.length) {
+      const empty = document.createElement("div");
+      empty.className = "scene-designer__empty";
+      empty.textContent = "No tiles are defined in this tile set.";
+      palette.append(empty);
+    }
+
+    section.append(heading, palette);
+    container.append(section);
+  }
+
+  function applyTileSwatch(
+    swatch: HTMLElement,
+    previewUrl: string,
+    tileSet: SceneTileSetDefinition,
+    tile: SceneTileDefinition
+  ): void {
+    const column = tile.frame % tileSet.columns;
+    const row = Math.floor(tile.frame / tileSet.columns);
+    const asset = graphicAssetForTarget(
+      options.aiAssets,
+      tileSet.assetId,
+      options.assetTargetId
+    );
+    const tileset = asset?.kind === "tileset" ? asset.tileset : undefined;
+    const margin = tileset?.margin ?? 0;
+    const spacing = tileset?.spacing ?? 0;
+    const sheetWidth = asset?.dimensions?.width
+      ?? margin * 2 + tileSet.columns * tileSet.tileWidth
+        + Math.max(0, tileSet.columns - 1) * spacing;
+    const sheetHeight = asset?.dimensions?.height
+      ?? margin * 2 + tileSet.rows * tileSet.tileHeight
+        + Math.max(0, tileSet.rows - 1) * spacing;
+    const sourceX = margin + column * (tileSet.tileWidth + spacing);
+    const sourceY = margin + row * (tileSet.tileHeight + spacing);
+    swatch.style.backgroundImage = `url(${JSON.stringify(previewUrl)})`;
+    swatch.style.backgroundSize = `${sheetWidth / tileSet.tileWidth * 100}% ${sheetHeight / tileSet.tileHeight * 100}%`;
+    swatch.style.backgroundPosition = `${cropBackgroundPosition(sourceX, sheetWidth, tileSet.tileWidth)}% ${cropBackgroundPosition(sourceY, sheetHeight, tileSet.tileHeight)}%`;
   }
 
   function renderAssetBrowser(
@@ -1607,11 +1909,14 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
   }
 
   function commit(mutator: () => void, history = true): void {
-    const before = cloneSceneManifest(manifest);
+    const before = history ? cloneSceneManifest(manifest) : undefined;
     mutator();
     assertSceneManifest(manifest);
-    if (history) {
+    if (before) {
       past.push(before);
+      if (past.length > MAX_HISTORY_ENTRIES) {
+        past.splice(0, past.length - MAX_HISTORY_ENTRIES);
+      }
       future.length = 0;
     }
     normalizeSelection();
@@ -1715,6 +2020,35 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
           selection = { type: "scene", sceneId: scene.id };
         }
         break;
+      case "tiles": {
+        if (!canResolveArea(currentSelection.areaId)) {
+          selection = { type: "scene", sceneId: scene.id };
+          break;
+        }
+        const area = findArea(currentSelection.areaId).area;
+        if (!isScenePlatform(area) || area.paint.mode !== "tilemap") {
+          selection = {
+            type: "area",
+            sceneId: scene.id,
+            layerId: currentSelection.layerId,
+            areaId: currentSelection.areaId
+          };
+          break;
+        }
+        const availableCellIds = new Set(area.paint.cells.map((cell) => cell.id));
+        const cellIds = currentSelection.cellIds.filter((cellId, index, ids) => (
+          ids.indexOf(cellId) === index && availableCellIds.has(cellId)
+        ));
+        selection = cellIds.length > 0
+          ? { ...currentSelection, cellIds }
+          : {
+              type: "area",
+              sceneId: scene.id,
+              layerId: currentSelection.layerId,
+              areaId: currentSelection.areaId
+            };
+        break;
+      }
     }
   }
 
@@ -1909,6 +2243,27 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     return Object.values(manifest.behaviors ?? {}).sort((a, b) => a.name.localeCompare(b.name));
   }
 
+  function tileSetDefinitions(): SceneTileSetDefinition[] {
+    return Object.values(manifest.tileSets ?? {}).sort((a, b) => (
+      a.name.localeCompare(b.name) || a.id.localeCompare(b.id)
+    ));
+  }
+
+  function tileSetForAsset(assetId: string): SceneTileSetDefinition | undefined {
+    return tileSetDefinitions().find((tileSet) => tileSet.assetId === assetId);
+  }
+
+  function manifestHasTile(tileId: string): boolean {
+    return tileSetDefinitions().some((tileSet) => (
+      Object.values(tileSet.tiles).some((tile) => tile.id === tileId)
+    ));
+  }
+
+  function normalizeActiveTileId(): void {
+    if (activeTileId && manifestHasTile(activeTileId)) return;
+    activeTileId = firstManifestTileId(manifest);
+  }
+
   function isAreaLikeAttribute(
     attribute: SceneBehaviorDefinition["attributes"][number]
   ): attribute is SceneBehaviorAreaLikeAttribute {
@@ -1980,8 +2335,21 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     return clear;
   }
 
-  function isScenePlatform(area: SceneArea): area is ScenePlatform {
+  function isScenePlatform(area: SceneArea): area is ScenePlatform;
+  function isScenePlatform(area: SceneAreaDefaults | ScenePlatformDefaults): area is ScenePlatformDefaults;
+  function isScenePlatform(
+    area: SceneArea | SceneAreaDefaults | ScenePlatformDefaults
+  ): area is ScenePlatform | ScenePlatformDefaults;
+  function isScenePlatform(area: SceneArea | SceneAreaDefaults | ScenePlatformDefaults): boolean {
     return "assetId" in area && "paint" in area;
+  }
+
+  function modeForAreaSelection(
+    area: SceneArea | SceneAreaDefaults | ScenePlatformDefaults
+  ): SceneDesignerMode {
+    if (area.vertices.length === 0 || !area.closed) return "area-draw";
+    if (!isScenePlatform(area) || area.paint.mode !== "tilemap") return "select";
+    return isTileEditorMode(mode) ? mode : "tile-select";
   }
 
   function selectBehaviorDefinition(behaviorId: string): void {
@@ -1997,7 +2365,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
         behaviorId: behavior.id,
         attributeId: firstArea.id
       };
-      mode = defaults.vertices.length === 0 || !defaults.closed ? "area-draw" : "select";
+      mode = modeForAreaSelection(defaults);
     } else {
       selection = {
         type: "behavior-definition",
@@ -2025,7 +2393,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
       behaviorId,
       attributeId
     };
-    mode = defaults.vertices.length === 0 || !defaults.closed ? "area-draw" : "select";
+    mode = modeForAreaSelection(defaults);
     render();
     emitSelection();
     options.onModeChange?.(mode);
@@ -2041,6 +2409,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
       case "objects":
       case "area":
       case "vertex":
+      case "tiles":
         return nextSelection.sceneId;
       case "behavior-definition":
       case "behavior-area":
@@ -2057,6 +2426,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
       case "object":
       case "area":
       case "vertex":
+      case "tiles":
         return nextSelection.layerId;
       case "objects": {
         const layerIds = new Set<string>();
@@ -2091,6 +2461,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
       case "objects":
       case "area":
       case "vertex":
+      case "tiles":
         return undefined;
     }
   }
@@ -2148,7 +2519,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     if (selection.type === "objects") {
       return selection.objectIds.some((objectId) => behaviorInstanceIdFromAttributeId(objectId) === instanceId);
     }
-    if (selection.type === "area" || selection.type === "vertex") {
+    if (selection.type === "area" || selection.type === "vertex" || selection.type === "tiles") {
       return behaviorInstanceIdFromAttributeId(selection.areaId) === instanceId;
     }
     return false;
@@ -2208,4 +2579,51 @@ function sanitizeObjectPatch(patch: Partial<SceneObject>): Partial<SceneObject> 
 
 function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
+}
+
+function sortedTiles(tileSet: SceneTileSetDefinition): SceneTileDefinition[] {
+  return Object.values(tileSet.tiles).sort((a, b) => (
+    a.frame - b.frame || a.name.localeCompare(b.name) || a.id.localeCompare(b.id)
+  ));
+}
+
+function tileIdForSet(tileSet: SceneTileSetDefinition, preferredId: string | undefined): string | undefined {
+  const tiles = sortedTiles(tileSet);
+  return preferredId && tiles.some((tile) => tile.id === preferredId)
+    ? preferredId
+    : tiles[0]?.id;
+}
+
+function firstManifestTileId(manifest: SceneDesignerManifest): string | undefined {
+  const tileSets = Object.values(manifest.tileSets ?? {}).sort((a, b) => (
+    a.name.localeCompare(b.name) || a.id.localeCompare(b.id)
+  ));
+  for (const tileSet of tileSets) {
+    const tileId = sortedTiles(tileSet)[0]?.id;
+    if (tileId) return tileId;
+  }
+  return undefined;
+}
+
+function areaMinimumPoint(area: SceneArea): { x: number; y: number } {
+  if (!area.vertices.length) return { x: 0, y: 0 };
+  return area.vertices.reduce((minimum, vertex) => ({
+    x: Math.min(minimum.x, vertex.x),
+    y: Math.min(minimum.y, vertex.y)
+  }), {
+    x: area.vertices[0].x,
+    y: area.vertices[0].y
+  });
+}
+
+function cropBackgroundPosition(source: number, sheetSize: number, cropSize: number): number {
+  if (sheetSize <= cropSize) return 0;
+  return Math.max(0, Math.min(sheetSize - cropSize, source)) / (sheetSize - cropSize) * 100;
+}
+
+function isTileEditorMode(mode: SceneDesignerMode): boolean {
+  return mode === "tile-brush"
+    || mode === "tile-erase"
+    || mode === "tile-pick"
+    || mode === "tile-select";
 }

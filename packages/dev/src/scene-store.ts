@@ -3,7 +3,8 @@ import {
   type SceneBehaviorDefinition,
   type SceneDefinition,
   type SceneDesignerConfig,
-  type SceneDesignerManifest
+  type SceneDesignerManifest,
+  type SceneTileSetDefinition
 } from "@scene-designer/core";
 import { mkdir, readFile, readdir, rename, rm, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
@@ -76,6 +77,7 @@ export async function readSceneManifestDirectory(rootDir: string): Promise<Scene
   const scenes: Record<string, SceneDefinition> = {};
   let designer: SceneDesignerConfig | undefined;
   let behaviors: Record<string, SceneBehaviorDefinition> | undefined;
+  let tileSets: Record<string, SceneTileSetDefinition> | undefined;
   const scenePaths: Record<string, string[]> = {};
 
   for (const filePath of await jsonFiles(rootDir)) {
@@ -87,6 +89,11 @@ export async function readSceneManifestDirectory(rootDir: string): Promise<Scene
 
     if (relativePath === "behaviors.json") {
       behaviors = JSON.parse(await readFile(filePath, "utf8")) as Record<string, SceneBehaviorDefinition>;
+      continue;
+    }
+
+    if (relativePath === "tilesets.json") {
+      tileSets = JSON.parse(await readFile(filePath, "utf8")) as Record<string, SceneTileSetDefinition>;
       continue;
     }
 
@@ -102,6 +109,7 @@ export async function readSceneManifestDirectory(rootDir: string): Promise<Scene
     designer,
     scenes,
     behaviors,
+    tileSets,
     scenePaths
   };
   assertSceneManifest(manifest);
@@ -127,6 +135,11 @@ export async function writeSceneManifestDirectory(
 
   if (manifest.behaviors && Object.keys(manifest.behaviors).length > 0) {
     await writeFile(path.join(rootDir, "behaviors.json"), `${JSON.stringify(manifest.behaviors, null, 2)}\n`);
+  }
+
+
+  if (manifest.tileSets && Object.keys(manifest.tileSets).length > 0) {
+    await writeFile(path.join(rootDir, "tilesets.json"), `${JSON.stringify(manifest.tileSets, null, 2)}\n`);
   }
 
   if (manifest.designer) {

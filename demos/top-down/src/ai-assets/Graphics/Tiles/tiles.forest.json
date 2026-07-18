@@ -1,0 +1,82 @@
+{
+  "id": "tiles.forest",
+  "kind": "tileset",
+  "prompt": "Top-down woodland terrain tiles in a consistent hand-authored pixel-art style.",
+  "dimensions": {
+    "width": 128,
+    "height": 64
+  },
+  "tileset": {
+    "tileWidth": 32,
+    "tileHeight": 32,
+    "columns": 4,
+    "rows": 2,
+    "tileCount": 8,
+    "tiles": [
+      {
+        "prompt": "Grass: seamless top-down green meadow ground with sparse light and dark grass blades; walkable."
+      },
+      {
+        "prompt": "Dirt path: seamless top-down warm-brown packed-earth ground with subtle ruts and pebbles; walkable."
+      },
+      {
+        "prompt": "Water: seamless top-down blue river surface with horizontal ripple highlights, fully filling the cell; blocked and designed for subtle shimmer animation."
+      },
+      {
+        "prompt": "River reeds: the same top-down water base with clustered green reeds rising through it; blocked wetland decoration."
+      },
+      {
+        "prompt": "Tree: dense rounded green canopy and short brown trunk centered over the top-down grass base; blocked."
+      },
+      {
+        "prompt": "Wildflowers: the top-down grass base with small yellow, pink, and pale flowers; walkable decoration."
+      },
+      {
+        "prompt": "Rock: one centered top-down gray boulder on the grass base; blocked."
+      },
+      {
+        "prompt": "Wood bridge: a horizontal top-down wooden plank bridge spanning edge-to-edge over the water base; walkable."
+      }
+    ],
+    "animations": [
+      {
+        "key": "tiles.forest.water",
+        "prompt": "Create two full-sheet animation frames from the provided base tileset. Preserve the exact 4-column × 2-row layout and this exact row-major order: Frame 0 — Grass: unchanged; Frame 1 — Dirt path: unchanged; Frame 2 — Water: animate only its horizontal ripple highlights with a subtle looping shimmer; Frame 3 — River reeds: unchanged; Frame 4 — Tree: unchanged; Frame 5 — Wildflowers: unchanged; Frame 6 — Rock: unchanged; Frame 7 — Wood bridge: unchanged. Keep frames 0, 1, and 3–7 pixel-aligned and visually identical to the base sheet. Do not resize, redraw, add, remove, or reorder tiles.",
+        "frameCount": 2,
+        "frameRate": 2,
+        "repeat": -1,
+        "frameTimings": [
+          {
+            "delayMs": 500
+          },
+          {
+            "delayMs": 500
+          }
+        ]
+      }
+    ]
+  },
+  "activeVersion": "default",
+  "versions": {
+    "default": {
+      "name": "default",
+      "file": "/assets/tiles.forest.default.svg",
+      "prompt": "Top-down woodland terrain tiles in a consistent hand-authored pixel-art style.",
+      "createdAt": "2026-07-15T00:00:00.000Z",
+      "model": "manual-svg",
+      "tilesetAnimations": {
+        "tiles.forest.water": {
+          "files": [
+            "/assets/tiles.forest.water.0.default.svg",
+            "/assets/tiles.forest.water.1.default.svg"
+          ]
+        }
+      }
+    }
+  },
+  "tags": [
+    "tiles",
+    "forest",
+    "top-down"
+  ]
+}

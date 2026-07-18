@@ -2,17 +2,31 @@ import type { AiAssetManifest } from "@ai-game-assets/core";
 import { AiAssetRuntime } from "@ai-game-assets/phaser";
 import type Phaser from "phaser";
 import {
+  assertSceneManifest,
   getScene,
   sceneAreas,
   sceneLayerObjects,
+  sceneLayerPlatforms,
   sceneObjects,
   scenePlatforms,
+  sceneTileMaps,
+  sceneTiles,
+  sceneTilesAt,
+  type ResolvedSceneTile,
   type SceneArea,
   type SceneDefinition,
   type SceneDesignerManifest,
   type SceneObject,
   type ScenePlatform
 } from "@scene-designer/core";
+import { assertSceneTileSetAssets } from "@scene-designer/designer";
+import type { SceneDesignerAiRuntime } from "./ai-runtime.js";
+import {
+  isSceneTileMapPlatform,
+  SceneTileMapRenderer,
+  type CreatedSceneTileMap,
+  type SceneTileMapPlatform
+} from "./tilemap-renderer.js";
 
 export type SceneDesignerRuntimeOptions = {
   targetId?: string;
@@ -22,6 +36,11 @@ export type SceneDesignerRuntimeOptions = {
 export type CreatedSceneObject = Phaser.GameObjects.Sprite & {
   sceneDesignerObjectId: string;
   sceneDesignerLayerId: string;
+};
+
+export type SceneTileFilters = {
+  tileTag?: string;
+  platformTag?: string;
 };
 
 export class SceneDesignerRuntime {
@@ -36,6 +55,8 @@ export class SceneDesignerRuntime {
     aiAssets: AiAssetManifest,
     options: SceneDesignerRuntimeOptions = {}
   ) {
+    assertSceneManifest(scenes);
+    assertSceneTileSetAssets(scenes, aiAssets, { targetId: options.targetId });
     this.scene = scene;
     this.scenes = scenes;
     this.aiAssets = aiAssets;
@@ -64,11 +85,39 @@ export class SceneDesignerRuntime {
       .filter((platform) => tag === undefined || platform.tag === tag);
   }
 
+  tileMaps(sceneId: string, tag?: string): SceneTileMapPlatform[] {
+    return sceneTileMaps(this.scenes, sceneId, tag)
+      .filter(isSceneTileMapPlatform);
+  }
+
+  tiles(sceneId: string, tileTag?: string, platformTag?: string): ResolvedSceneTile[] {
+    return sceneTiles(this.scenes, sceneId, { tileTag, platformTag });
+  }
+
+  tilesAt(
+    sceneId: string,
+    x: number,
+    y: number,
+    filters: SceneTileFilters = {}
+  ): ResolvedSceneTile[] {
+    return sceneTilesAt(this.scenes, sceneId, x, y, filters);
+  }
+
   createObjects(sceneId: string, options: CreateSceneObjectsOptions = {}): CreatedSceneObject[] {
     return createSceneObjects(this.scene, getScene(this.scenes, sceneId), this.aiRuntime, {
       ...options,
       manifest: this.scenes
     });
+  }
+
+  createTileMaps(sceneId: string, options: CreateSceneTileMapsOptions = {}): CreatedSceneTileMap[] {
+    return createSceneTileMaps(
+      this.scene,
+      getScene(this.scenes, sceneId),
+      this.scenes,
+      this.aiRuntime,
+      options
+    );
   }
 }
 
@@ -79,10 +128,18 @@ export type CreateSceneObjectsOptions = {
   objectFilter?(object: SceneObject): boolean;
 };
 
+export type CreateSceneTileMapsOptions = {
+  renderer?: SceneTileMapRenderer;
+  depth?: number;
+  layerDepthStep?: number;
+  tileMapDepthStep?: number;
+  tileMapFilter?(platform: SceneTileMapPlatform): boolean;
+};
+
 export function createSceneObjects(
   phaserScene: Phaser.Scene,
   scene: SceneDefinition,
-  aiRuntime: AiAssetRuntime,
+  aiRuntime: SceneDesignerAiRuntime,
   options: CreateSceneObjectsOptions = {}
 ): CreatedSceneObject[] {
   const created: CreatedSceneObject[] = [];
@@ -104,6 +161,49 @@ export function createSceneObjects(
       created.push(sprite);
     });
   });
+
+  return created;
+}
+
+export function createSceneTileMaps(
+  phaserScene: Phaser.Scene,
+  scene: SceneDefinition,
+  manifest: SceneDesignerManifest,
+  aiRuntime: SceneDesignerAiRuntime,
+  options: CreateSceneTileMapsOptions = {}
+): CreatedSceneTileMap[] {
+  const created: CreatedSceneTileMap[] = [];
+  const renderer = options.renderer ?? new SceneTileMapRenderer(phaserScene, manifest, aiRuntime);
+  const baseDepth = options.depth ?? 0;
+  const layerDepthStep = options.layerDepthStep ?? 100;
+  const tileMapDepthStep = options.tileMapDepthStep ?? 1;
+
+  try {
+    scene.layers.forEach((layer, layerIndex) => {
+      if (!layer.visible) return;
+
+      sceneLayerPlatforms(manifest, layer).forEach((platform, platformIndex) => {
+        if (
+          !platform.visible
+          || !isSceneTileMapPlatform(platform)
+          || options.tileMapFilter?.(platform) === false
+        ) {
+          return;
+        }
+
+        const tileMap = renderer.create(platform, {
+          depth: baseDepth + layerIndex * layerDepthStep + platformIndex * tileMapDepthStep,
+          index: created.length
+        });
+        if (tileMap) created.push(tileMap);
+      });
+    });
+  } catch (error) {
+    for (const tileMap of created) {
+      tileMap.destroy();
+    }
+    throw error;
+  }
 
   return created;
 }

@@ -16,6 +16,7 @@ export type {
 } from "./debug-client.js";
 
 export {
+  assertSceneTileSetAssets,
   assetFolderPath,
   graphicAssetIds,
   isGraphicAsset,

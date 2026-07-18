@@ -1,0 +1,46 @@
+{
+  "id": "tiles.props",
+  "kind": "tileset",
+  "prompt": "Top-down quest objects in a consistent hand-authored pixel-art style.",
+  "dimensions": {
+    "width": 128,
+    "height": 32
+  },
+  "tileset": {
+    "tileWidth": 32,
+    "tileHeight": 32,
+    "columns": 4,
+    "rows": 1,
+    "tileCount": 4,
+    "tiles": [
+      {
+        "prompt": "Sunberry: a centered cluster of ripe red berries with a few green leaves, viewed from above on a transparent background; collectible."
+      },
+      {
+        "prompt": "Brass key: one centered old-fashioned golden-brass key viewed from above on a transparent background; collectible."
+      },
+      {
+        "prompt": "Forest tonic: one centered corked violet potion bottle with a pale label, viewed from above on a transparent background; collectible."
+      },
+      {
+        "prompt": "Doorway: one centered rustic wooden cottage doorway and arch viewed from above, open and dark in the middle, on a transparent background; scene-transition portal."
+      }
+    ]
+  },
+  "activeVersion": "default",
+  "versions": {
+    "default": {
+      "name": "default",
+      "file": "/assets/tiles.props.default.svg",
+      "prompt": "Top-down quest objects in a consistent hand-authored pixel-art style.",
+      "createdAt": "2026-07-15T00:00:00.000Z",
+      "model": "manual-svg"
+    }
+  },
+  "tags": [
+    "tiles",
+    "props",
+    "pickups",
+    "top-down"
+  ]
+}

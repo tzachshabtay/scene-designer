@@ -2,6 +2,7 @@ export type {
   ResolvedSceneArea,
   ResolvedSceneObject,
   ResolvedScenePlatform,
+  ResolvedSceneTile,
   SceneArea,
   SceneAreaCurve,
   SceneAreaDefaults,
@@ -34,6 +35,12 @@ export type {
   ScenePlatformFitPaint,
   ScenePlatformPaint,
   ScenePlatformTilePaint,
+  ScenePlatformTileMapPaint,
+  SceneTileDefinition,
+  SceneTileMapCell,
+  SceneTileProperty,
+  SceneTileRotation,
+  SceneTileSetDefinition,
   SceneSelection
 } from "./types.js";
 
@@ -46,6 +53,7 @@ export {
   assertObject,
   assertScene,
   assertSceneManifest,
+  assertTileSet,
   behaviorAttributeId,
   behaviorInstanceIdFromAttributeId,
   cloneSceneManifest,
@@ -54,6 +62,8 @@ export {
   defineScenes,
   ensureBehaviorOverride,
   getScene,
+  getTileSet,
+  isScenePlatform,
   resolveSceneArea,
   resolveSceneObject,
   resolveBehaviorNumber,
@@ -63,7 +73,10 @@ export {
   sceneLayerObjects,
   sceneLayerPlatforms,
   sceneObjects,
-  scenePlatforms
+  scenePlatforms,
+  sceneTileMaps,
+  sceneTiles,
+  sceneTilesAt
 } from "./manifest.js";
 
 export {
@@ -79,6 +92,7 @@ export {
   createObject,
   createPlatform,
   createScene,
+  createTileMapCell,
   duplicateObject,
   uniqueId
 } from "./factories.js";
@@ -90,5 +104,6 @@ export type {
   CreateLayerInput,
   CreateObjectInput,
   CreatePlatformInput,
-  CreateSceneInput
+  CreateSceneInput,
+  CreateTileMapCellInput
 } from "./factories.js";

@@ -1,5 +1,4 @@
 import type { AiAssetManifest } from "@ai-game-assets/core";
-import { AiAssetRuntime } from "@ai-game-assets/phaser";
 import type {
   SceneDesigner,
   SceneDesignerMode,
@@ -8,11 +7,15 @@ import type {
 import {
   behaviorAttributeId,
   behaviorInstanceIdFromAttributeId,
+  createTileMapCell,
   getScene,
+  getTileSet,
+  isScenePlatform,
   resolveSceneArea,
   resolveSceneObject,
   sceneLayerAreas,
   sceneLayerObjects,
+  sceneLayerPlatforms,
   type SceneArea,
   type SceneAreaDefaults,
   type SceneAreaVertex,
@@ -25,19 +28,36 @@ import {
   type SceneDesignerShortcutModifier,
   type SceneLayer,
   type SceneObject,
-  type SceneSelection
+  type ScenePlatform,
+  type ScenePlatformTileMapPaint,
+  type SceneSelection,
+  type SceneTileMapCell,
+  type SceneTileSetDefinition
 } from "@scene-designer/core";
 import Phaser from "phaser";
+import type { SceneDesignerAiRuntime } from "./ai-runtime.js";
 import { applyObjectTransform } from "./runtime.js";
+import {
+  moveTileCellsWithinArea,
+  nearestTileSelectionHandle,
+  rotateTileCellsWithinArea,
+  tileResizeCellFromPoint
+} from "./tilemap-editing.js";
+import {
+  SceneTileMapRenderer,
+  type CreatedSceneTileMap
+} from "./tilemap-renderer.js";
 
 export type PhaserSceneDesignerCanvasOptions = {
   scene: Phaser.Scene;
   designer: SceneDesigner;
   manifest: SceneDesignerManifest;
   aiAssets: AiAssetManifest;
-  aiRuntime: AiAssetRuntime;
+  aiRuntime: SceneDesignerAiRuntime;
   renderSceneObjects?: boolean;
+  renderSceneTileMaps?: boolean;
   objectDepth?: number;
+  tileMapDepth?: number;
   areaDepth?: number;
 };
 
@@ -49,6 +69,38 @@ type Bounds = {
   right: number;
   bottom: number;
 };
+type CellPoint = { column: number; row: number };
+type CellBounds = { left: number; top: number; right: number; bottom: number };
+type SelectedTileMap = {
+  layer: SceneLayer;
+  platform: ScenePlatform;
+  paint: ScenePlatformTileMapPaint;
+  tileSet: SceneTileSetDefinition;
+};
+type TileInteraction =
+  | {
+      type: "stroke";
+      target: SelectedTileMap;
+      tool: "tile-brush" | "tile-erase";
+      cells: Map<string, SceneTileMapCell>;
+      last: CellPoint;
+      changed: boolean;
+    }
+  | {
+      type: "marquee";
+      target: SelectedTileMap;
+      start: CellPoint;
+      current: CellPoint;
+    }
+  | {
+      type: "resize";
+      target: SelectedTileMap;
+      handle: "nw" | "ne" | "se" | "sw";
+      sourceBounds: CellBounds;
+      sourceCells: SceneTileMapCell[];
+      current: CellPoint;
+      grabOffset: { x: number; y: number };
+    };
 type ResolvedCanvasConfig = {
   grid: {
     width: number;
@@ -109,6 +161,7 @@ type DragState =
       areaId: string;
       startPointer: Phaser.Math.Vector2;
       startVertices: SceneAreaVertex[];
+      startTileMapPaint?: ScenePlatformTileMapPaint;
       historyWritten: boolean;
     };
 
@@ -171,8 +224,11 @@ export class PhaserSceneDesignerCanvas {
   private readonly objects = new Map<string, Phaser.GameObjects.Sprite>();
   private readonly objectTextureBindings = new Map<string, {
     assetId: string;
-    binding: ReturnType<AiAssetRuntime["bindTexture"]>;
+    binding: ReturnType<SceneDesignerAiRuntime["bindTexture"]>;
   }>();
+  private tileMapRenderer: SceneTileMapRenderer | undefined;
+  private renderedTileMaps: CreatedSceneTileMap[] = [];
+  private tileMapRenderSignature = "";
   private readonly areaGraphics: Phaser.GameObjects.Graphics;
   private readonly overlay: Phaser.GameObjects.Graphics;
   private readonly releaseKeyboardCapture: () => void;
@@ -180,21 +236,13 @@ export class PhaserSceneDesignerCanvas {
   private hoverObjectId: string | undefined;
   private selectedVertexId: string | undefined;
   private drag: DragState | undefined;
+  private tileInteraction: TileInteraction | undefined;
+  private tileHover: CellPoint | undefined;
   private snapGridVisible = false;
   private windowDragActive = false;
   private designerPointerEventsBeforeDrag = "";
   private readonly onWindowPointerMove = (event: PointerEvent): void => {
-    if (!this.drag) {
-      this.releaseWindowDrag();
-      return;
-    }
-
-    event.preventDefault();
-    event.stopPropagation();
-    this.applyDrag(this.pointerEventPosition(event), event);
-  };
-  private readonly onWindowPointerUp = (event: PointerEvent): void => {
-    if (!this.drag) {
+    if (!this.drag && !this.tileInteraction) {
       this.releaseWindowDrag();
       return;
     }
@@ -202,7 +250,28 @@ export class PhaserSceneDesignerCanvas {
     event.preventDefault();
     event.stopPropagation();
     const point = this.pointerEventPosition(event);
-    if (this.drag.type === "marquee") {
+    if (this.tileInteraction) {
+      this.updateTileInteraction(point);
+    } else {
+      this.applyDrag(point, event);
+    }
+  };
+  private readonly onWindowPointerUp = (event: PointerEvent): void => {
+    if (!this.drag && !this.tileInteraction) {
+      this.releaseWindowDrag();
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    const point = this.pointerEventPosition(event);
+    if (this.tileInteraction) {
+      this.finishTileInteraction(point);
+      return;
+    }
+    const drag = this.drag;
+    if (!drag) return;
+    if (drag.type === "marquee") {
       this.finishMarquee(point);
     } else {
       this.insertVertexFromEdgeClick(point, event.detail);
@@ -233,6 +302,7 @@ export class PhaserSceneDesignerCanvas {
     this.selection = this.options.designer.getSelection();
     this.mode = this.options.designer.getMode();
     this.syncObjects();
+    this.syncTileMaps();
     this.drawAreas();
     this.drawOverlay();
   }
@@ -259,6 +329,8 @@ export class PhaserSceneDesignerCanvas {
       setSceneKeyboardEnabled(this.options.scene, true);
       this.options.designer.root.dataset.keyboardCaptured = "false";
       this.hoverObjectId = undefined;
+      this.tileInteraction = undefined;
+      this.tileHover = undefined;
       this.endDrag();
       this.overlay.clear();
     } else {
@@ -276,11 +348,13 @@ export class PhaserSceneDesignerCanvas {
     this.options.scene.input.keyboard?.off("keydown-DELETE", this.onBackspace, this);
     window.removeEventListener("keydown", this.onWindowKeyDown, true);
     this.releaseKeyboardCapture();
+    this.tileInteraction = undefined;
     this.endDrag();
     for (const sprite of this.objects.values()) {
       sprite.destroy();
     }
     this.destroyObjectTextureBindings();
+    this.destroyRenderedTileMaps();
     this.areaGraphics.destroy();
     this.overlay.destroy();
   }
@@ -335,6 +409,58 @@ export class PhaserSceneDesignerCanvas {
         this.objects.delete(objectId);
       }
     }
+  }
+
+  private syncTileMaps(): void {
+    const signature = this.currentTileMapRenderSignature();
+    if (signature === this.tileMapRenderSignature) return;
+
+    this.destroyRenderedTileMaps();
+    if (this.options.renderSceneTileMaps === false) {
+      this.tileMapRenderSignature = signature;
+      return;
+    }
+
+    try {
+      this.tileMapRenderer = new SceneTileMapRenderer(this.options.scene, this.manifest, this.options.aiRuntime);
+      const baseDepth = this.options.tileMapDepth ?? 0;
+      this.currentScene().layers.forEach((layer, layerIndex) => {
+        if (!layer.visible) return;
+        sceneLayerPlatforms(this.manifest, layer).forEach((platform, platformIndex) => {
+          if (!platform.visible || platform.paint.mode !== "tilemap") return;
+          const created = this.tileMapRenderer?.create(platform, {
+            depth: baseDepth + layerIndex * 100 + platformIndex,
+            index: this.renderedTileMaps.length
+          });
+          if (created) this.renderedTileMaps.push(created);
+        });
+      });
+      this.tileMapRenderSignature = signature;
+    } catch (error) {
+      this.destroyRenderedTileMaps();
+      this.tileMapRenderSignature = "";
+      throw error;
+    }
+  }
+
+  private currentTileMapRenderSignature(): string {
+    if (this.options.renderSceneTileMaps === false) return "disabled";
+    const scene = this.currentScene();
+    return JSON.stringify({
+      sceneId: scene.id,
+      tileSets: this.manifest.tileSets,
+      layers: scene.layers.map((layer) => ({
+        visible: layer.visible,
+        platforms: sceneLayerPlatforms(this.manifest, layer)
+          .filter((platform) => platform.paint.mode === "tilemap")
+      }))
+    });
+  }
+
+  private destroyRenderedTileMaps(): void {
+    this.tileMapRenderer?.destroy();
+    this.tileMapRenderer = undefined;
+    this.renderedTileMaps = [];
   }
 
   private syncObjectTextureBinding(object: SceneObject, sprite: Phaser.GameObjects.Sprite): void {
@@ -410,9 +536,15 @@ export class PhaserSceneDesignerCanvas {
     const selectedObjectIds = new Set(selectedObjects.map((object) => object.id));
     const hoverObject = this.hoverObjectId ? this.findObject(this.hoverObjectId)?.object : undefined;
     const selectedAreas = this.selectedAreasForOverlay();
+    const selectedTileMap = this.selectedTileMap();
 
     if (this.snapGridVisible) {
       this.drawSnapGrid();
+    }
+
+    if (selectedTileMap && (isTileMode(this.mode) || this.selection?.type === "tiles")) {
+      this.drawTileGrid(selectedTileMap);
+      this.drawTileEditingOverlay(selectedTileMap);
     }
 
     if (hoverObject && !selectedObjectIds.has(hoverObject.id)) {
@@ -516,6 +648,116 @@ export class PhaserSceneDesignerCanvas {
     }
   }
 
+  private drawTileGrid(target: SelectedTileMap): void {
+    const boundary = areaBoundaryPoints(target.platform);
+    const areaBounds = boundsFromPoints(boundary);
+    if (!areaBounds) return;
+    const cameraBounds = this.options.scene.cameras.main.worldView;
+    const start = this.cellFromPoint({
+      x: Math.max(areaBounds.left, cameraBounds.left) - target.tileSet.tileWidth,
+      y: Math.max(areaBounds.top, cameraBounds.top) - target.tileSet.tileHeight
+    }, target);
+    const end = this.cellFromPoint({
+      x: Math.min(areaBounds.right, cameraBounds.right) + target.tileSet.tileWidth,
+      y: Math.min(areaBounds.bottom, cameraBounds.bottom) + target.tileSet.tileHeight
+    }, target);
+    const zoom = this.options.scene.cameras.main.zoom;
+    const columnStride = Math.max(1, Math.ceil(4 / (target.tileSet.tileWidth * zoom)));
+    const rowStride = Math.max(1, Math.ceil(4 / (target.tileSet.tileHeight * zoom)));
+    const firstColumn = Math.floor(start.column / columnStride) * columnStride;
+    const firstRow = Math.floor(start.row / rowStride) * rowStride;
+    this.overlay.lineStyle(1 / zoom, 0x8bb8ff, 0.24);
+    for (let row = firstRow; row <= end.row; row += rowStride) {
+      for (let column = firstColumn; column <= end.column; column += columnStride) {
+        const bounds = this.cellWorldBounds(target, {
+          left: column,
+          right: Math.min(end.column, column + columnStride - 1),
+          top: row,
+          bottom: Math.min(end.row, row + rowStride - 1)
+        });
+        if (!pointInBoundary(boundsCenter(bounds), boundary)) continue;
+        this.overlay.strokeRect(
+          bounds.left,
+          bounds.top,
+          bounds.right - bounds.left,
+          bounds.bottom - bounds.top
+        );
+      }
+    }
+  }
+
+  private drawTileEditingOverlay(target: SelectedTileMap): void {
+    const interaction = this.tileInteraction?.target.platform.id === target.platform.id
+      ? this.tileInteraction
+      : undefined;
+
+    if (interaction?.type === "marquee") {
+      this.drawTileCellBounds(target, cellBoundsFromPoints(interaction.start, interaction.current), 0x8bb8ff, 0.14);
+    } else if (interaction?.type === "resize") {
+      this.drawTileCellBounds(target, this.resizeInteractionBounds(interaction), 0xffd166, 0.14);
+    }
+
+    const selectedCells = this.selectedTileCells(target);
+    const selectedBounds = tileCellBounds(selectedCells);
+    if (selectedBounds) {
+      this.drawTileCellBounds(target, selectedBounds, 0x46d39a, 0.1);
+      this.drawTileSelectionHandles(target, selectedBounds);
+    }
+
+    if (this.tileHover && isTileMode(this.mode) && this.mode !== "tile-select") {
+      const hoverBounds = this.cellWorldBounds(target, {
+        left: this.tileHover.column,
+        right: this.tileHover.column,
+        top: this.tileHover.row,
+        bottom: this.tileHover.row
+      });
+      this.overlay.fillStyle(this.mode === "tile-erase" ? 0xf06f6f : 0x8bb8ff, 0.22);
+      this.overlay.fillRect(
+        hoverBounds.left,
+        hoverBounds.top,
+        target.tileSet.tileWidth,
+        target.tileSet.tileHeight
+      );
+    }
+  }
+
+  private drawTileCellBounds(target: SelectedTileMap, bounds: CellBounds, color: number, alpha: number): void {
+    const world = this.cellWorldBounds(target, bounds);
+    this.overlay.fillStyle(color, alpha);
+    this.overlay.fillRect(world.left, world.top, world.right - world.left, world.bottom - world.top);
+    this.overlay.lineStyle(2, color, 0.95);
+    this.overlay.strokeRect(world.left, world.top, world.right - world.left, world.bottom - world.top);
+  }
+
+  private drawTileSelectionHandles(target: SelectedTileMap, bounds: CellBounds): void {
+    const world = this.cellWorldBounds(target, bounds);
+    const corners = boundsCorners(world);
+    const zoom = this.options.scene.cameras.main.zoom;
+    const handleHalfSize = 5 / zoom;
+    for (const corner of corners) {
+      this.overlay.fillStyle(0x101216, 1);
+      this.overlay.fillRect(
+        corner.x - handleHalfSize,
+        corner.y - handleHalfSize,
+        handleHalfSize * 2,
+        handleHalfSize * 2
+      );
+      this.overlay.lineStyle(1 / zoom, 0x46d39a, 1);
+      this.overlay.strokeRect(
+        corner.x - handleHalfSize,
+        corner.y - handleHalfSize,
+        handleHalfSize * 2,
+        handleHalfSize * 2
+      );
+    }
+    const top = midpoint(corners[0], corners[1]);
+    const rotate = new Phaser.Math.Vector2(top.x, top.y - 28 / zoom);
+    this.overlay.lineStyle(1 / zoom, 0x46d39a, 0.85);
+    this.overlay.lineBetween(top.x, top.y, rotate.x, rotate.y);
+    this.overlay.fillStyle(0x46d39a, 1);
+    this.overlay.fillCircle(rotate.x, rotate.y, 6 / zoom);
+  }
+
   private drawAreaHandles(area: SceneArea): void {
     this.overlay.lineStyle(2, 0xffe08a, 0.92);
     drawAreaPath(this.overlay, area, area.closed);
@@ -548,6 +790,8 @@ export class PhaserSceneDesignerCanvas {
     }
 
     const scene = this.currentScene();
+
+    if (this.onTilePointerDown(point)) return;
 
     if (this.selection?.type === "area") {
       const resolvedArea = this.findArea(this.selection.areaId);
@@ -591,6 +835,7 @@ export class PhaserSceneDesignerCanvas {
             areaId: area.id,
             startPointer: point,
             startVertices: structuredClone(area.vertices),
+            startTileMapPaint: tileMapPaint(area),
             historyWritten: false
           });
           return;
@@ -655,6 +900,7 @@ export class PhaserSceneDesignerCanvas {
             areaId: areaHit.area.id,
             startPointer: point,
             startVertices: structuredClone(areaHit.area.vertices),
+            startTileMapPaint: tileMapPaint(areaHit.area),
             historyWritten: false
           });
         }
@@ -675,6 +921,11 @@ export class PhaserSceneDesignerCanvas {
 
     const point = pointerPosition(pointer);
 
+    if (this.tileInteraction) {
+      this.updateTileInteraction(point);
+      return;
+    }
+
     if (this.drag) {
       this.applyDrag(point, modifierEvent(pointer.event));
       return;
@@ -686,6 +937,11 @@ export class PhaserSceneDesignerCanvas {
       return;
     }
 
+    const tileMap = this.selectedTileMap();
+    this.tileHover = tileMap && isTileMode(this.mode)
+      ? this.cellFromPoint(point, tileMap)
+      : undefined;
+
     const hit = this.hitTopObject(point);
     this.hoverObjectId = hit?.object.id;
     this.drawOverlay();
@@ -695,6 +951,10 @@ export class PhaserSceneDesignerCanvas {
     if (!this.isOpen) return;
 
     const point = pointerPosition(pointer);
+    if (this.tileInteraction) {
+      this.finishTileInteraction(point);
+      return;
+    }
     if (this.drag) {
       if (this.drag.type === "marquee") {
         this.finishMarquee(point);
@@ -725,6 +985,13 @@ export class PhaserSceneDesignerCanvas {
         behaviorAttributeId(this.selection.behaviorId, this.selection.attributeId),
         this.selection.vertexId
       );
+      return;
+    }
+
+    if (this.selection?.type === "tiles") {
+      event.preventDefault();
+      event.stopPropagation();
+      this.deleteSelectedTiles();
       return;
     }
 
@@ -767,6 +1034,13 @@ export class PhaserSceneDesignerCanvas {
     };
     const delta = deltas[event.key];
     if (!delta) return;
+
+    if (this.selection?.type === "tiles") {
+      event.preventDefault();
+      event.stopPropagation();
+      this.moveSelectedTiles(delta.dx, delta.dy);
+      return;
+    }
 
     const objects = this.editableSelectedObjects();
     if (!objects.length) return;
@@ -876,7 +1150,14 @@ export class PhaserSceneDesignerCanvas {
       const dx = point.x - drag.startPointer.x;
       const dy = point.y - drag.startPointer.y;
       this.options.designer.updateArea(drag.areaId, {
-        vertices: translateAreaVertices(drag.startVertices, dx, dy)
+        vertices: translateAreaVertices(drag.startVertices, dx, dy),
+        ...(drag.startTileMapPaint ? {
+          paint: {
+            ...drag.startTileMapPaint,
+            originX: drag.startTileMapPaint.originX + dx,
+            originY: drag.startTileMapPaint.originY + dy
+          }
+        } : {})
       }, { history });
       return;
     }
@@ -966,6 +1247,388 @@ export class PhaserSceneDesignerCanvas {
     this.options.designer.addAreaVertex(area.id, point.x, point.y);
   }
 
+  private onTilePointerDown(point: Phaser.Math.Vector2): boolean {
+    if (!isTileMode(this.mode)) return false;
+    const target = this.selectedTileMap();
+    if (!target || target.layer.locked || target.platform.locked) return false;
+
+    const selectedBounds = tileCellBounds(this.selectedTileCells(target));
+    if (this.mode === "tile-select" && selectedBounds) {
+      const handle = this.tileSelectionHandleAt(point, target, selectedBounds);
+      if (handle === "rotate") {
+        this.rotateSelectedTiles(target);
+        return true;
+      }
+      if (handle) {
+        const handlePoint = this.tileResizeHandlePoint(target, selectedBounds, handle);
+        const grabOffset = {
+          x: point.x - handlePoint.x,
+          y: point.y - handlePoint.y
+        };
+        this.tileInteraction = {
+          type: "resize",
+          target,
+          handle,
+          sourceBounds: selectedBounds,
+          sourceCells: this.selectedTileCells(target).map((cell) => structuredClone(cell)),
+          current: this.resizeCellFromPoint(point, target, handle, grabOffset),
+          grabOffset
+        };
+        this.captureWindowDrag();
+        return true;
+      }
+    }
+
+    const cell = this.cellFromPoint(point, target);
+    const center = this.cellCenter(target, cell);
+    if (!pointInArea(center, target.platform)) return false;
+
+    if (this.mode === "tile-pick") {
+      const picked = target.paint.cells.find((candidate) => sameCell(candidate, cell));
+      if (picked) {
+        this.options.designer.setActiveTileId(picked.tileId);
+        this.options.designer.setMode("tile-brush");
+      }
+      return true;
+    }
+
+    if (this.mode === "tile-brush" || this.mode === "tile-erase") {
+      const interaction: Extract<TileInteraction, { type: "stroke" }> = {
+        type: "stroke",
+        target,
+        tool: this.mode,
+        cells: new Map(target.paint.cells.map((candidate) => [cellKey(candidate), structuredClone(candidate)])),
+        last: cell,
+        changed: false
+      };
+      this.tileInteraction = interaction;
+      this.applyTileStroke(interaction, cell, cell);
+      this.captureWindowDrag();
+      this.drawOverlay();
+      return true;
+    }
+
+    this.tileInteraction = {
+      type: "marquee",
+      target,
+      start: cell,
+      current: cell
+    };
+    this.captureWindowDrag();
+    this.drawOverlay();
+    return true;
+  }
+
+  private updateTileInteraction(point: Phaser.Math.Vector2): void {
+    const interaction = this.tileInteraction;
+    if (!interaction) return;
+    const cell = interaction.type === "resize"
+      ? this.resizeCellFromPoint(point, interaction.target, interaction.handle, interaction.grabOffset)
+      : this.cellFromPoint(point, interaction.target);
+    this.tileHover = cell;
+    if (interaction.type === "stroke") {
+      this.applyTileStroke(interaction, interaction.last, cell);
+      interaction.last = cell;
+    } else {
+      interaction.current = cell;
+    }
+    this.drawOverlay();
+  }
+
+  private finishTileInteraction(point: Phaser.Math.Vector2): void {
+    const interaction = this.tileInteraction;
+    if (!interaction) return;
+    this.updateTileInteraction(point);
+
+    if (interaction.type === "stroke") {
+      if (interaction.changed) {
+        this.commitTileCells(interaction.target, [...interaction.cells.values()]);
+      }
+    } else if (interaction.type === "marquee") {
+      const bounds = cellBoundsFromPoints(interaction.start, interaction.current);
+      const cellIds = interaction.target.paint.cells
+        .filter((cell) => cellInsideBounds(cell, bounds))
+        .map((cell) => cell.id);
+      this.options.designer.select(cellIds.length > 0 ? {
+        type: "tiles",
+        sceneId: this.currentScene().id,
+        layerId: interaction.target.layer.id,
+        areaId: interaction.target.platform.id,
+        cellIds
+      } : {
+        type: "area",
+        sceneId: this.currentScene().id,
+        layerId: interaction.target.layer.id,
+        areaId: interaction.target.platform.id
+      });
+    } else {
+      this.commitResizedTiles(interaction);
+    }
+
+    this.tileInteraction = undefined;
+    this.releaseWindowDrag();
+    this.drawOverlay();
+  }
+
+  private applyTileStroke(
+    interaction: Extract<TileInteraction, { type: "stroke" }>,
+    from: CellPoint,
+    to: CellPoint
+  ): void {
+    for (const cell of cellsOnLine(from, to)) {
+      if (!pointInArea(this.cellCenter(interaction.target, cell), interaction.target.platform)) continue;
+      const key = cellKey(cell);
+      if (interaction.tool === "tile-erase") {
+        interaction.changed = interaction.cells.delete(key) || interaction.changed;
+        continue;
+      }
+      const tileId = this.options.designer.getActiveTileId();
+      if (!tileId || !interaction.target.tileSet.tiles[tileId]) continue;
+      const existing = interaction.cells.get(key);
+      if (existing?.tileId === tileId && !existing.rotation && !existing.flipX && !existing.flipY) continue;
+      interaction.cells.set(key, createTileMapCell({
+        id: existing?.id,
+        tileId,
+        column: cell.column,
+        row: cell.row
+      }));
+      interaction.changed = true;
+    }
+  }
+
+  private deleteSelectedTiles(): void {
+    const target = this.selectedTileMap();
+    if (
+      !target
+      || target.layer.locked
+      || target.platform.locked
+      || this.selection?.type !== "tiles"
+    ) return;
+    const selected = new Set(this.selection.cellIds);
+    this.commitTileCells(target, target.paint.cells.filter((cell) => !selected.has(cell.id)));
+    this.options.designer.select({
+      type: "area",
+      sceneId: this.currentScene().id,
+      layerId: target.layer.id,
+      areaId: target.platform.id
+    });
+  }
+
+  private moveSelectedTiles(dx: number, dy: number): void {
+    const target = this.selectedTileMap();
+    if (
+      !target
+      || target.layer.locked
+      || target.platform.locked
+      || this.selection?.type !== "tiles"
+    ) return;
+    const selectedIds = new Set(this.selection.cellIds);
+    const selected = target.paint.cells.filter((cell) => selectedIds.has(cell.id));
+    if (!selected.length) return;
+    const moved = moveTileCellsWithinArea(
+      selected,
+      dx,
+      dy,
+      (cell) => pointInArea(this.cellCenter(target, cell), target.platform)
+    );
+    if (!moved) return;
+    const destinationKeys = new Set(moved.map(cellKey));
+    const untouched = target.paint.cells.filter((cell) => (
+      !selectedIds.has(cell.id) && !destinationKeys.has(cellKey(cell))
+    ));
+    this.commitTileCells(target, [...untouched, ...moved]);
+    this.options.designer.select({
+      ...this.selection,
+      cellIds: moved.map((cell) => cell.id)
+    });
+  }
+
+  private rotateSelectedTiles(target: SelectedTileMap): void {
+    if (
+      target.layer.locked
+      || target.platform.locked
+      || this.selection?.type !== "tiles"
+    ) return;
+    const selectedIds = new Set(this.selection.cellIds);
+    const selected = target.paint.cells.filter((cell) => selectedIds.has(cell.id));
+    const bounds = tileCellBounds(selected);
+    if (!bounds) return;
+    const rotated = rotateTileCellsWithinArea(
+      selected,
+      bounds,
+      (cell) => pointInArea(this.cellCenter(target, cell), target.platform)
+    );
+    if (!rotated) return;
+    const destinationKeys = new Set(rotated.map(cellKey));
+    const untouched = target.paint.cells.filter((cell) => (
+      !selectedIds.has(cell.id) && !destinationKeys.has(cellKey(cell))
+    ));
+    this.commitTileCells(target, [...untouched, ...rotated]);
+    this.options.designer.select({ ...this.selection, cellIds: rotated.map((cell) => cell.id) });
+  }
+
+  private commitResizedTiles(interaction: Extract<TileInteraction, { type: "resize" }>): void {
+    const bounds = this.resizeInteractionBounds(interaction);
+    const sourceWidth = interaction.sourceBounds.right - interaction.sourceBounds.left + 1;
+    const sourceHeight = interaction.sourceBounds.bottom - interaction.sourceBounds.top + 1;
+    const sourceByOffset = new Map(interaction.sourceCells.map((cell) => [
+      `${cell.column - interaction.sourceBounds.left},${cell.row - interaction.sourceBounds.top}`,
+      cell
+    ]));
+    const sourceByPosition = new Map(interaction.sourceCells.map((cell) => [
+      cellKey(cell),
+      cell
+    ]));
+    const selectedIds = new Set(interaction.sourceCells.map((cell) => cell.id));
+    const untouched = interaction.target.paint.cells.filter((cell) => (
+      !selectedIds.has(cell.id) && !cellInsideBounds(cell, bounds)
+    ));
+    const filled: SceneTileMapCell[] = [];
+    for (let row = bounds.top; row <= bounds.bottom; row += 1) {
+      for (let column = bounds.left; column <= bounds.right; column += 1) {
+        if (!pointInArea(this.cellCenter(interaction.target, { column, row }), interaction.target.platform)) continue;
+        const source = sourceByOffset.get(
+          `${positiveModulo(column - interaction.sourceBounds.left, sourceWidth)},${positiveModulo(row - interaction.sourceBounds.top, sourceHeight)}`
+        );
+        if (!source) continue;
+        const existing = sourceByPosition.get(`${column},${row}`);
+        filled.push(createTileMapCell({
+          id: existing?.id,
+          tileId: source.tileId,
+          column,
+          row,
+          rotation: source.rotation,
+          flipX: source.flipX,
+          flipY: source.flipY,
+          properties: source.properties
+        }));
+      }
+    }
+    this.commitTileCells(interaction.target, [...untouched, ...filled]);
+    this.options.designer.select({
+      type: "tiles",
+      sceneId: this.currentScene().id,
+      layerId: interaction.target.layer.id,
+      areaId: interaction.target.platform.id,
+      cellIds: filled.map((cell) => cell.id)
+    });
+  }
+
+  private commitTileCells(target: SelectedTileMap, cells: SceneTileMapCell[]): void {
+    this.options.designer.updateArea(target.platform.id, {
+      paint: {
+        ...target.paint,
+        cells: sortTileCells(cells)
+      }
+    });
+  }
+
+  private selectedTileMap(): SelectedTileMap | undefined {
+    const areaId = this.selection?.type === "area"
+      || this.selection?.type === "vertex"
+      || this.selection?.type === "tiles"
+      ? this.selection.areaId
+      : undefined;
+    if (!areaId) return undefined;
+    const resolved = this.findArea(areaId);
+    if (!resolved || !isScenePlatform(resolved.area) || resolved.area.paint.mode !== "tilemap") return undefined;
+    try {
+      return {
+        layer: resolved.layer,
+        platform: resolved.area,
+        paint: resolved.area.paint,
+        tileSet: getTileSet(this.manifest, resolved.area.paint.tileSetId)
+      };
+    } catch {
+      return undefined;
+    }
+  }
+
+  private selectedTileCells(target: SelectedTileMap): SceneTileMapCell[] {
+    if (this.selection?.type !== "tiles" || this.selection.areaId !== target.platform.id) return [];
+    const ids = new Set(this.selection.cellIds);
+    return target.paint.cells.filter((cell) => ids.has(cell.id));
+  }
+
+  private cellFromPoint(point: { x: number; y: number }, target: SelectedTileMap): CellPoint {
+    return {
+      column: Math.floor((point.x - target.paint.originX) / target.tileSet.tileWidth),
+      row: Math.floor((point.y - target.paint.originY) / target.tileSet.tileHeight)
+    };
+  }
+
+  private resizeCellFromPoint(
+    point: { x: number; y: number },
+    target: SelectedTileMap,
+    handle: Extract<TileInteraction, { type: "resize" }>["handle"],
+    grabOffset?: { x: number; y: number }
+  ): CellPoint {
+    return tileResizeCellFromPoint(point, {
+      originX: target.paint.originX,
+      originY: target.paint.originY,
+      tileWidth: target.tileSet.tileWidth,
+      tileHeight: target.tileSet.tileHeight
+    }, handle, grabOffset);
+  }
+
+  private cellCenter(target: SelectedTileMap, cell: CellPoint): Phaser.Math.Vector2 {
+    return new Phaser.Math.Vector2(
+      target.paint.originX + (cell.column + 0.5) * target.tileSet.tileWidth,
+      target.paint.originY + (cell.row + 0.5) * target.tileSet.tileHeight
+    );
+  }
+
+  private cellWorldBounds(target: SelectedTileMap, bounds: CellBounds): Bounds {
+    return {
+      left: target.paint.originX + bounds.left * target.tileSet.tileWidth,
+      top: target.paint.originY + bounds.top * target.tileSet.tileHeight,
+      right: target.paint.originX + (bounds.right + 1) * target.tileSet.tileWidth,
+      bottom: target.paint.originY + (bounds.bottom + 1) * target.tileSet.tileHeight
+    };
+  }
+
+  private tileSelectionHandleAt(
+    point: Phaser.Math.Vector2,
+    target: SelectedTileMap,
+    bounds: CellBounds
+  ): "nw" | "ne" | "se" | "sw" | "rotate" | undefined {
+    const world = this.cellWorldBounds(target, bounds);
+    const corners = boundsCorners(world);
+    const top = midpoint(corners[0], corners[1]);
+    const zoom = this.options.scene.cameras.main.zoom;
+    return nearestTileSelectionHandle(point, [
+      { handle: "nw", x: corners[0].x, y: corners[0].y },
+      { handle: "ne", x: corners[1].x, y: corners[1].y },
+      { handle: "se", x: corners[2].x, y: corners[2].y },
+      { handle: "sw", x: corners[3].x, y: corners[3].y },
+      { handle: "rotate", x: top.x, y: top.y - 28 / zoom }
+    ], 12 / zoom);
+  }
+
+  private tileResizeHandlePoint(
+    target: SelectedTileMap,
+    bounds: CellBounds,
+    handle: Extract<TileInteraction, { type: "resize" }>["handle"]
+  ): { x: number; y: number } {
+    const world = this.cellWorldBounds(target, bounds);
+    return {
+      x: handle === "ne" || handle === "se" ? world.right : world.left,
+      y: handle === "se" || handle === "sw" ? world.bottom : world.top
+    };
+  }
+
+  private resizeInteractionBounds(interaction: Extract<TileInteraction, { type: "resize" }>): CellBounds {
+    const { sourceBounds: source, current, handle } = interaction;
+    const opposite: CellPoint = handle === "nw"
+      ? { column: source.right, row: source.bottom }
+      : handle === "ne"
+        ? { column: source.left, row: source.bottom }
+        : handle === "se"
+          ? { column: source.left, row: source.top }
+          : { column: source.right, row: source.top };
+    return cellBoundsFromPoints(current, opposite);
+  }
+
   private onBehaviorPointerDown(point: Phaser.Math.Vector2): void {
     const selected = this.selectedBehaviorArea();
     if (selected && !selected.area.locked) {
@@ -1006,6 +1669,7 @@ export class PhaserSceneDesignerCanvas {
           areaId: selected.area.id,
           startPointer: point,
           startVertices: structuredClone(selected.area.vertices),
+          startTileMapPaint: tileMapPaint(selected.area),
           historyWritten: false
         });
         return;
@@ -1559,6 +2223,82 @@ function translateAreaVertices(vertices: SceneAreaVertex[], dx: number, dy: numb
   }));
 }
 
+function isTileMode(mode: SceneDesignerMode): mode is "tile-brush" | "tile-erase" | "tile-pick" | "tile-select" {
+  return mode === "tile-brush" || mode === "tile-erase" || mode === "tile-pick" || mode === "tile-select";
+}
+
+function sameCell(a: CellPoint, b: CellPoint): boolean {
+  return a.column === b.column && a.row === b.row;
+}
+
+function cellKey(cell: CellPoint): string {
+  return `${cell.column},${cell.row}`;
+}
+
+function cellBoundsFromPoints(a: CellPoint, b: CellPoint): CellBounds {
+  return {
+    left: Math.min(a.column, b.column),
+    top: Math.min(a.row, b.row),
+    right: Math.max(a.column, b.column),
+    bottom: Math.max(a.row, b.row)
+  };
+}
+
+function cellInsideBounds(cell: CellPoint, bounds: CellBounds): boolean {
+  return cell.column >= bounds.left
+    && cell.column <= bounds.right
+    && cell.row >= bounds.top
+    && cell.row <= bounds.bottom;
+}
+
+function tileCellBounds(cells: SceneTileMapCell[]): CellBounds | undefined {
+  if (!cells.length) return undefined;
+  return cells.reduce<CellBounds>((bounds, cell) => ({
+    left: Math.min(bounds.left, cell.column),
+    top: Math.min(bounds.top, cell.row),
+    right: Math.max(bounds.right, cell.column),
+    bottom: Math.max(bounds.bottom, cell.row)
+  }), {
+    left: cells[0].column,
+    top: cells[0].row,
+    right: cells[0].column,
+    bottom: cells[0].row
+  });
+}
+
+function cellsOnLine(from: CellPoint, to: CellPoint): CellPoint[] {
+  const cells: CellPoint[] = [];
+  let column = from.column;
+  let row = from.row;
+  const dx = Math.abs(to.column - from.column);
+  const dy = Math.abs(to.row - from.row);
+  const sx = from.column < to.column ? 1 : -1;
+  const sy = from.row < to.row ? 1 : -1;
+  let error = dx - dy;
+  while (true) {
+    cells.push({ column, row });
+    if (column === to.column && row === to.row) break;
+    const doubled = error * 2;
+    if (doubled > -dy) {
+      error -= dy;
+      column += sx;
+    }
+    if (doubled < dx) {
+      error += dx;
+      row += sy;
+    }
+  }
+  return cells;
+}
+
+function sortTileCells(cells: SceneTileMapCell[]): SceneTileMapCell[] {
+  return [...cells].sort((a, b) => a.row - b.row || a.column - b.column || a.id.localeCompare(b.id));
+}
+
+function positiveModulo(value: number, divisor: number): number {
+  return ((value % divisor) + divisor) % divisor;
+}
+
 function resolveCanvasConfig(config: SceneDesignerCanvasConfig | undefined): ResolvedCanvasConfig {
   return {
     grid: {
@@ -1751,8 +2491,13 @@ function restoreTextCaretMovement(event: KeyboardEvent): void {
 
 function pointInArea(point: { x: number; y: number }, area: SceneArea): boolean {
   if (!area.closed || area.vertices.length < 3) return false;
+  return pointInBoundary(point, areaBoundaryPoints(area));
+}
 
-  const points = areaBoundaryPoints(area);
+function pointInBoundary(
+  point: { x: number; y: number },
+  points: Array<{ x: number; y: number }>
+): boolean {
   let inside = false;
   for (let index = 0, previousIndex = points.length - 1; index < points.length; previousIndex = index, index += 1) {
     const current = points[index];
@@ -1763,6 +2508,12 @@ function pointInArea(point: { x: number; y: number }, area: SceneArea): boolean 
   }
 
   return inside;
+}
+
+function tileMapPaint(area: SceneArea): ScenePlatformTileMapPaint | undefined {
+  return isScenePlatform(area) && area.paint.mode === "tilemap"
+    ? structuredClone(area.paint)
+    : undefined;
 }
 
 function isAreaLikeAttribute(attribute: SceneBehaviorAttribute): attribute is SceneBehaviorAreaLikeAttribute {
