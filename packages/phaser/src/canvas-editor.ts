@@ -41,6 +41,7 @@ import {
   moveTileCellsWithinArea,
   nearestTileSelectionHandle,
   rotateTileCellsWithinArea,
+  topmostTileCellAtPoint,
   tileResizeCellFromPoint
 } from "./tilemap-editing.js";
 import {
@@ -1249,35 +1250,41 @@ export class PhaserSceneDesignerCanvas {
 
   private onTilePointerDown(point: Phaser.Math.Vector2): boolean {
     if (!isTileMode(this.mode)) return false;
-    const target = this.selectedTileMap();
-    if (!target || target.layer.locked || target.platform.locked) return false;
+    const selectedTarget = this.selectedTileMap();
 
-    const selectedBounds = tileCellBounds(this.selectedTileCells(target));
-    if (this.mode === "tile-select" && selectedBounds) {
-      const handle = this.tileSelectionHandleAt(point, target, selectedBounds);
+    const selectedBounds = selectedTarget
+      ? tileCellBounds(this.selectedTileCells(selectedTarget))
+      : undefined;
+    if (this.mode === "tile-select" && selectedTarget && selectedBounds) {
+      const handle = this.tileSelectionHandleAt(point, selectedTarget, selectedBounds);
       if (handle === "rotate") {
-        this.rotateSelectedTiles(target);
+        this.rotateSelectedTiles(selectedTarget);
         return true;
       }
       if (handle) {
-        const handlePoint = this.tileResizeHandlePoint(target, selectedBounds, handle);
+        const handlePoint = this.tileResizeHandlePoint(selectedTarget, selectedBounds, handle);
         const grabOffset = {
           x: point.x - handlePoint.x,
           y: point.y - handlePoint.y
         };
         this.tileInteraction = {
           type: "resize",
-          target,
+          target: selectedTarget,
           handle,
           sourceBounds: selectedBounds,
-          sourceCells: this.selectedTileCells(target).map((cell) => structuredClone(cell)),
-          current: this.resizeCellFromPoint(point, target, handle, grabOffset),
+          sourceCells: this.selectedTileCells(selectedTarget).map((cell) => structuredClone(cell)),
+          current: this.resizeCellFromPoint(point, selectedTarget, handle, grabOffset),
           grabOffset
         };
         this.captureWindowDrag();
         return true;
       }
     }
+
+    const target = this.mode === "tile-select"
+      ? this.topmostPaintedTileAt(point)?.target ?? selectedTarget
+      : selectedTarget;
+    if (!target || target.layer.locked || target.platform.locked) return false;
 
     const cell = this.cellFromPoint(point, target);
     const center = this.cellCenter(target, cell);
@@ -1542,6 +1549,38 @@ export class PhaserSceneDesignerCanvas {
     } catch {
       return undefined;
     }
+  }
+
+  private topmostPaintedTileAt(point: { x: number; y: number }): { target: SelectedTileMap; cell: SceneTileMapCell } | undefined {
+    const targets: SelectedTileMap[] = [];
+    this.currentScene().layers.forEach((layer) => {
+      if (!layer.visible || layer.locked) return;
+      sceneLayerPlatforms(this.manifest, layer).forEach((platform) => {
+        if (!platform.visible || platform.locked || platform.paint.mode !== "tilemap") return;
+        try {
+          targets.push({
+            layer,
+            platform,
+            paint: platform.paint,
+            tileSet: getTileSet(this.manifest, platform.paint.tileSetId)
+          });
+        } catch {
+          // Invalid tile-set references are ignored just as they are by selectedTileMap().
+        }
+      });
+    });
+
+    return topmostTileCellAtPoint(point, targets.map((target) => ({
+      value: target,
+      grid: {
+        originX: target.paint.originX,
+        originY: target.paint.originY,
+        tileWidth: target.tileSet.tileWidth,
+        tileHeight: target.tileSet.tileHeight
+      },
+      cells: target.paint.cells,
+      isAllowed: (cell: CellPoint) => pointInArea(this.cellCenter(target, cell), target.platform)
+    })));
   }
 
   private selectedTileCells(target: SelectedTileMap): SceneTileMapCell[] {

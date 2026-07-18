@@ -4,6 +4,7 @@ import {
   moveTileCellsWithinArea,
   nearestTileSelectionHandle,
   rotateTileCellsWithinArea,
+  topmostTileCellAtPoint,
   tileResizeCellFromPoint
 } from "../dist/tilemap-editing.js";
 
@@ -145,4 +146,42 @@ test("overlapping low-zoom selection handles choose the nearest visible handle",
   assert.ok(Math.hypot(32, 0) < threshold, "the NW and NE hit regions should overlap");
   assert.equal(nearestTileSelectionHandle({ x: 32, y: 0 }, candidates, threshold), "ne");
   assert.equal(nearestTileSelectionHandle({ x: 16, y: -28 / zoom }, candidates, threshold), "rotate");
+});
+
+test("tile selection chooses the topmost painted tile under the pointer", () => {
+  const grid = { originX: 0, originY: 0, tileWidth: 16, tileHeight: 16 };
+  const hit = topmostTileCellAtPoint({ x: 20, y: 20 }, [
+    {
+      value: "terrain",
+      grid,
+      cells: [{ id: "floor", tileId: "floor", column: 1, row: 1 }]
+    },
+    {
+      value: "props",
+      grid,
+      cells: [{ id: "table", tileId: "table", column: 1, row: 1 }]
+    }
+  ]);
+
+  assert.equal(hit?.target, "props");
+  assert.equal(hit?.cell.id, "table");
+});
+
+test("tile selection falls through an unpainted upper tilemap", () => {
+  const grid = { originX: 0, originY: 0, tileWidth: 16, tileHeight: 16 };
+  const hit = topmostTileCellAtPoint({ x: 20, y: 20 }, [
+    {
+      value: "terrain",
+      grid,
+      cells: [{ id: "floor", tileId: "floor", column: 1, row: 1 }]
+    },
+    {
+      value: "props",
+      grid,
+      cells: [{ id: "table", tileId: "table", column: 3, row: 3 }]
+    }
+  ]);
+
+  assert.equal(hit?.target, "terrain");
+  assert.equal(hit?.cell.id, "floor");
 });

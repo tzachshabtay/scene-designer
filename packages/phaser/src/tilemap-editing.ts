@@ -29,6 +29,32 @@ export type TileGridGeometry = {
   tileHeight: number;
 };
 
+export type TileCellHitTarget<T> = {
+  value: T;
+  grid: TileGridGeometry;
+  cells: readonly SceneTileMapCell[];
+  isAllowed?: (cell: TileCellPoint) => boolean;
+};
+
+export function topmostTileCellAtPoint<T>(
+  point: { x: number; y: number },
+  targets: readonly TileCellHitTarget<T>[]
+): { target: T; cell: SceneTileMapCell } | undefined {
+  for (let index = targets.length - 1; index >= 0; index -= 1) {
+    const candidate = targets[index];
+    const cellPoint = {
+      column: Math.floor((point.x - candidate.grid.originX) / candidate.grid.tileWidth),
+      row: Math.floor((point.y - candidate.grid.originY) / candidate.grid.tileHeight)
+    };
+    if (candidate.isAllowed && !candidate.isAllowed(cellPoint)) continue;
+    const cell = candidate.cells.find((entry) => (
+      entry.column === cellPoint.column && entry.row === cellPoint.row
+    ));
+    if (cell) return { target: candidate.value, cell };
+  }
+  return undefined;
+}
+
 export function moveTileCellsWithinArea(
   cells: readonly SceneTileMapCell[],
   dx: number,
