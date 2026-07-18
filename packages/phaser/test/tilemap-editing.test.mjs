@@ -22,7 +22,7 @@ test("moving a selection is rejected when any transformed cell leaves the platfo
   ]);
 });
 
-test("rotating a selection is rejected when any transformed cell leaves the platform", () => {
+test("rotating multiple tiles keeps every tile in its own grid cell", () => {
   const vertical = [
     { id: "top", tileId: "grass", column: 0, row: 0 },
     { id: "bottom", tileId: "grass", column: 0, row: 1 }
@@ -30,10 +30,13 @@ test("rotating a selection is rejected when any transformed cell leaves the plat
   const rotated = rotateTileCellsWithinArea(
     vertical,
     { left: 0, top: 0, right: 0, bottom: 1 },
-    (cell) => cell.column < 1
+    () => true
   );
 
-  assert.equal(rotated, undefined);
+  assert.deepEqual(rotated?.map(({ column, row, rotation }) => ({ column, row, rotation })), [
+    { column: 0, row: 0, rotation: 90 },
+    { column: 0, row: 1, rotation: 90 }
+  ]);
   assert.deepEqual(vertical.map(({ column, row, rotation }) => ({ column, row, rotation })), [
     { column: 0, row: 0, rotation: undefined },
     { column: 0, row: 1, rotation: undefined }
@@ -54,7 +57,23 @@ test("valid move and rotate transforms retain every selected tile", () => {
   );
   assert.deepEqual(rotated?.map(({ id, column, row, rotation }) => ({ id, column, row, rotation })), [
     { id: "left", column: 0, row: 0, rotation: 90 },
-    { id: "right", column: 0, row: 1, rotation: 90 }
+    { id: "right", column: 1, row: 0, rotation: 90 }
+  ]);
+});
+
+test("rotating multiple tiles advances each tile's own rotation", () => {
+  const rotated = rotateTileCellsWithinArea(
+    [
+      { id: "left", tileId: "wall", column: 2, row: 3, rotation: 90 },
+      { id: "right", tileId: "wall", column: 3, row: 3, rotation: 270 }
+    ],
+    { left: 2, top: 3, right: 3, bottom: 3 },
+    () => true
+  );
+
+  assert.deepEqual(rotated?.map(({ column, row, rotation }) => ({ column, row, rotation })), [
+    { column: 2, row: 3, rotation: 180 },
+    { column: 3, row: 3, rotation: 0 }
   ]);
 });
 

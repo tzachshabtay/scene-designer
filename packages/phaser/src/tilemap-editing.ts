@@ -45,14 +45,11 @@ export function moveTileCellsWithinArea(
 
 export function rotateTileCellsWithinArea(
   cells: readonly SceneTileMapCell[],
-  bounds: TileCellBounds,
+  _bounds: TileCellBounds,
   isAllowed: (cell: SceneTileMapCell) => boolean
 ): SceneTileMapCell[] | undefined {
-  const height = bounds.bottom - bounds.top + 1;
   const rotated = cells.map((cell) => ({
     ...structuredClone(cell),
-    column: bounds.left + height - 1 - (cell.row - bounds.top),
-    row: bounds.top + (cell.column - bounds.left),
     rotation: normalizeTileRotation((cell.rotation ?? 0) + 90)
   }));
   return rotated.every(isAllowed) ? rotated : undefined;
