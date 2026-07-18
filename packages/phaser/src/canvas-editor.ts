@@ -514,10 +514,11 @@ export class PhaserSceneDesignerCanvas {
 
   private drawArea(area: SceneArea, index: number, locked: boolean): void {
     const alpha = locked ? 0.18 : 0.28;
+    const fillArea = !isScenePlatform(area) || area.paint.mode !== "tilemap";
     this.areaGraphics.lineStyle(2, 0x46d39a, 0.8);
     this.areaGraphics.fillStyle(index % 2 === 0 ? 0x46d39a : 0x80b7ff, area.closed ? alpha : 0.08);
     drawAreaPath(this.areaGraphics, area, area.closed);
-    if (area.closed) {
+    if (area.closed && fillArea) {
       this.areaGraphics.fillPath();
     }
     this.areaGraphics.strokePath();
