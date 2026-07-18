@@ -26,7 +26,7 @@
         "prompt": "Timber wall: a straight horizontal top-down cottage wall segment with exposed dark beams and pale infill, connecting cleanly at the left and right cell edges; blocked."
       },
       {
-        "prompt": "Rug: a centered top-down red cottage rug with gold bands over a floor base; walkable decoration."
+        "prompt": "Rug: a centered top-down red cottage rug with gold bands, should be a looping tile texture; walkable decoration."
       },
       {
         "prompt": "Hearth: a centered top-down stone-and-timber fireplace with a warm flame over a floor base; blocked furniture."
@@ -42,7 +42,7 @@
       }
     ]
   },
-  "activeVersion": "promoted-1784345513618",
+  "activeVersion": "promoted-1784348132920",
   "versions": {
     "default": {
       "name": "default",
@@ -100,6 +100,23 @@
       "audioPlayback": {},
       "voiceSettings": {},
       "parentVersion": "promoted-1784330411507",
+      "notes": "Promoted from the AI asset designer."
+    },
+    "promoted-1784348132920": {
+      "name": "promoted-1784348132920",
+      "file": "/assets/tiles.house.promoted-1784348132920.png",
+      "prompt": "Top-down cottage interior tiles in a consistent hand-authored pixel-art style.",
+      "createdAt": "2026-07-18T04:15:32.945Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "format": "png",
+        "model": "gpt-image-2",
+        "background": "auto"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "promoted-1784345513618",
       "notes": "Promoted from the AI asset designer."
     }
   },
