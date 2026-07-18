@@ -9,6 +9,11 @@ import {
 } from "@scene-designer/core";
 import type { SceneDesigner } from "@scene-designer/designer";
 import Phaser from "phaser";
+import {
+  clampMinimapPanelPosition,
+  parseZoomPercentage,
+  type MinimapPanelPosition
+} from "./minimap-controls.js";
 
 export type PhaserSceneDesignerMinimapOptions = {
   scene: Phaser.Scene;
@@ -25,11 +30,22 @@ const DEFAULT_HEIGHT = 150;
 export class PhaserSceneDesignerMinimap {
   private manifest: SceneDesignerManifest;
   private readonly root: HTMLDivElement;
+  private readonly heading: HTMLDivElement;
   private readonly canvas: HTMLCanvasElement;
   private readonly worldCanvas: HTMLCanvasElement;
-  private readonly zoomLabel: HTMLSpanElement;
+  private readonly zoomLabel: HTMLButtonElement;
+  private readonly zoomInput: HTMLInputElement;
   private isOpen = false;
   private dragging = false;
+  private panelDrag: {
+    pointerId: number;
+    startClientX: number;
+    startClientY: number;
+    startLeft: number;
+    startTop: number;
+  } | undefined;
+  private customPosition: MinimapPanelPosition | undefined;
+  private zoomEditing = false;
   private worldDirty = true;
   private positionDirty = true;
   private worldKey = "";
@@ -56,14 +72,18 @@ export class PhaserSceneDesignerMinimap {
       pointerEvents: "auto"
     });
 
-    const heading = document.createElement("div");
-    heading.textContent = "World map";
-    Object.assign(heading.style, {
+    this.heading = document.createElement("div");
+    this.heading.textContent = "World map";
+    this.heading.setAttribute("aria-label", "Drag to move the world map");
+    this.heading.title = "Drag to move the minimap";
+    Object.assign(this.heading.style, {
       margin: "0 0 6px",
       color: "#b9c8dc",
       fontWeight: "700",
       letterSpacing: "0.04em",
-      textTransform: "uppercase"
+      textTransform: "uppercase",
+      cursor: "grab",
+      touchAction: "none"
     });
 
     this.canvas = document.createElement("canvas");
@@ -91,21 +111,64 @@ export class PhaserSceneDesignerMinimap {
     const zoomOut = this.controlButton("−", "Zoom out");
     const zoomIn = this.controlButton("+", "Zoom in");
     const fit = this.controlButton("Fit", "Fit the whole world");
-    this.zoomLabel = document.createElement("span");
-    this.zoomLabel.style.textAlign = "center";
-    this.zoomLabel.style.color = "#d8e4f4";
-    controls.append(zoomOut, this.zoomLabel, zoomIn, fit);
-    this.root.append(heading, this.canvas, controls);
+    const zoomControl = document.createElement("div");
+    Object.assign(zoomControl.style, {
+      minWidth: "0",
+      height: "28px"
+    });
+    this.zoomLabel = document.createElement("button");
+    this.zoomLabel.type = "button";
+    this.zoomLabel.setAttribute("aria-label", "Edit zoom percentage");
+    Object.assign(this.zoomLabel.style, {
+      width: "100%",
+      height: "28px",
+      padding: "0 3px",
+      border: "0",
+      background: "transparent",
+      color: "#d8e4f4",
+      cursor: "text",
+      font: "inherit",
+      textAlign: "center"
+    });
+    this.zoomInput = document.createElement("input");
+    this.zoomInput.type = "text";
+    this.zoomInput.inputMode = "decimal";
+    this.zoomInput.setAttribute("aria-label", "Zoom percentage");
+    Object.assign(this.zoomInput.style, {
+      display: "none",
+      width: "100%",
+      minWidth: "0",
+      height: "28px",
+      boxSizing: "border-box",
+      padding: "0 3px",
+      border: "1px solid rgba(139, 184, 255, 0.68)",
+      borderRadius: "5px",
+      outline: "none",
+      background: "#111923",
+      color: "#e8eef8",
+      font: "inherit",
+      textAlign: "center"
+    });
+    zoomControl.append(this.zoomLabel, this.zoomInput);
+    controls.append(zoomOut, zoomControl, zoomIn, fit);
+    this.root.append(this.heading, this.canvas, controls);
     document.body.append(this.root);
 
+    this.heading.addEventListener("pointerdown", this.onPanelPointerDown);
     this.canvas.addEventListener("pointerdown", this.onPointerDown);
     this.canvas.addEventListener("pointermove", this.onPointerMove);
     this.canvas.addEventListener("pointerup", this.onPointerUp);
     this.canvas.addEventListener("pointercancel", this.onPointerUp);
     this.canvas.addEventListener("wheel", this.onWheel, { passive: false });
+    this.zoomLabel.addEventListener("click", this.onZoomLabelClick);
+    this.zoomInput.addEventListener("keydown", this.onZoomInputKeyDown);
+    this.zoomInput.addEventListener("blur", this.onZoomInputBlur);
     zoomOut.addEventListener("click", () => this.changeZoom(1 / 1.25));
     zoomIn.addEventListener("click", () => this.changeZoom(1.25));
     fit.addEventListener("click", () => this.fitWorld());
+    window.addEventListener("pointermove", this.onPanelPointerMove, true);
+    window.addEventListener("pointerup", this.onPanelPointerUp, true);
+    window.addEventListener("pointercancel", this.onPanelPointerUp, true);
     window.addEventListener("resize", this.onWindowResize);
     options.scene.events.on(Phaser.Scenes.Events.POST_UPDATE, this.render, this);
     this.render();
@@ -120,7 +183,12 @@ export class PhaserSceneDesignerMinimap {
 
   setOpen(isOpen: boolean): void {
     this.isOpen = isOpen;
-    if (!isOpen) this.dragging = false;
+    if (!isOpen) {
+      this.dragging = false;
+      this.panelDrag = undefined;
+      this.heading.style.cursor = "grab";
+      this.cancelZoomEdit();
+    }
     this.positionDirty = true;
     this.lastViewportKey = "";
     this.render();
@@ -128,11 +196,18 @@ export class PhaserSceneDesignerMinimap {
 
   destroy(): void {
     this.options.scene.events.off(Phaser.Scenes.Events.POST_UPDATE, this.render, this);
+    this.heading.removeEventListener("pointerdown", this.onPanelPointerDown);
     this.canvas.removeEventListener("pointerdown", this.onPointerDown);
     this.canvas.removeEventListener("pointermove", this.onPointerMove);
     this.canvas.removeEventListener("pointerup", this.onPointerUp);
     this.canvas.removeEventListener("pointercancel", this.onPointerUp);
     this.canvas.removeEventListener("wheel", this.onWheel);
+    this.zoomLabel.removeEventListener("click", this.onZoomLabelClick);
+    this.zoomInput.removeEventListener("keydown", this.onZoomInputKeyDown);
+    this.zoomInput.removeEventListener("blur", this.onZoomInputBlur);
+    window.removeEventListener("pointermove", this.onPanelPointerMove, true);
+    window.removeEventListener("pointerup", this.onPanelPointerUp, true);
+    window.removeEventListener("pointercancel", this.onPanelPointerUp, true);
     window.removeEventListener("resize", this.onWindowResize);
     this.root.remove();
   }
@@ -213,7 +288,9 @@ export class PhaserSceneDesignerMinimap {
     context.drawImage(this.worldCanvas, 0, 0);
     context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
     this.drawViewport(context, scene, scaleX, scaleY);
-    this.zoomLabel.textContent = `${Math.round(camera.zoom * 100)}%`;
+    if (!this.zoomEditing) {
+      this.zoomLabel.textContent = `${Math.round(camera.zoom * 100)}%`;
+    }
   };
 
   private drawWorld(
@@ -338,12 +415,116 @@ export class PhaserSceneDesignerMinimap {
 
   private positionRoot(): void {
     const gameRect = this.options.scene.game.canvas.getBoundingClientRect();
-    const rootWidth = (this.options.width ?? DEFAULT_WIDTH) + 18;
-    const rootHeight = (this.options.height ?? DEFAULT_HEIGHT) + 67;
-    const left = Math.max(8, Math.min(window.innerWidth - rootWidth - 8, gameRect.left + 12));
-    const top = Math.max(8, Math.min(window.innerHeight - rootHeight - 8, gameRect.bottom - rootHeight - 12));
-    this.root.style.left = `${Math.round(left)}px`;
-    this.root.style.top = `${Math.round(top)}px`;
+    const panel = {
+      width: this.root.offsetWidth || (this.options.width ?? DEFAULT_WIDTH) + 18,
+      height: this.root.offsetHeight || (this.options.height ?? DEFAULT_HEIGHT) + 67
+    };
+    const desired = this.customPosition ?? {
+      left: gameRect.left + 12,
+      top: gameRect.bottom - panel.height - 12
+    };
+    const position = clampMinimapPanelPosition(desired, panel, {
+      width: window.innerWidth,
+      height: window.innerHeight
+    });
+    if (this.customPosition) this.customPosition = position;
+    this.root.style.left = `${Math.round(position.left)}px`;
+    this.root.style.top = `${Math.round(position.top)}px`;
+  }
+
+  private readonly onPanelPointerDown = (event: PointerEvent): void => {
+    event.preventDefault();
+    event.stopPropagation();
+    const rect = this.root.getBoundingClientRect();
+    this.panelDrag = {
+      pointerId: event.pointerId,
+      startClientX: event.clientX,
+      startClientY: event.clientY,
+      startLeft: rect.left,
+      startTop: rect.top
+    };
+    this.heading.style.cursor = "grabbing";
+  };
+
+  private readonly onPanelPointerMove = (event: PointerEvent): void => {
+    const drag = this.panelDrag;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const position = clampMinimapPanelPosition({
+      left: drag.startLeft + event.clientX - drag.startClientX,
+      top: drag.startTop + event.clientY - drag.startClientY
+    }, {
+      width: this.root.offsetWidth,
+      height: this.root.offsetHeight
+    }, {
+      width: window.innerWidth,
+      height: window.innerHeight
+    });
+    this.customPosition = position;
+    this.root.style.left = `${Math.round(position.left)}px`;
+    this.root.style.top = `${Math.round(position.top)}px`;
+  };
+
+  private readonly onPanelPointerUp = (event: PointerEvent): void => {
+    const drag = this.panelDrag;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    event.preventDefault();
+    event.stopPropagation();
+    this.panelDrag = undefined;
+    this.heading.style.cursor = "grab";
+  };
+
+  private readonly onZoomLabelClick = (event: MouseEvent): void => {
+    event.preventDefault();
+    event.stopPropagation();
+    this.zoomEditing = true;
+    this.zoomInput.value = `${Math.round(this.options.scene.cameras.main.zoom * 100)}`;
+    this.zoomInput.removeAttribute("aria-invalid");
+    this.zoomLabel.style.display = "none";
+    this.zoomInput.style.display = "block";
+    this.zoomInput.focus();
+    this.zoomInput.select();
+  };
+
+  private readonly onZoomInputKeyDown = (event: KeyboardEvent): void => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      event.stopPropagation();
+      this.applyZoomEdit();
+    } else if (event.key === "Escape") {
+      event.preventDefault();
+      event.stopPropagation();
+      this.cancelZoomEdit();
+      this.zoomLabel.focus();
+    }
+  };
+
+  private readonly onZoomInputBlur = (): void => {
+    this.cancelZoomEdit();
+  };
+
+  private applyZoomEdit(): void {
+    const percentage = parseZoomPercentage(this.zoomInput.value);
+    if (percentage === undefined) {
+      this.zoomInput.setAttribute("aria-invalid", "true");
+      this.zoomInput.focus();
+      this.zoomInput.select();
+      return;
+    }
+    this.zoomEditing = false;
+    this.zoomInput.style.display = "none";
+    this.zoomLabel.style.display = "block";
+    this.setZoom(percentage / 100);
+    this.zoomLabel.focus();
+  }
+
+  private cancelZoomEdit(): void {
+    if (!this.zoomEditing) return;
+    this.zoomEditing = false;
+    this.zoomInput.removeAttribute("aria-invalid");
+    this.zoomInput.style.display = "none";
+    this.zoomLabel.style.display = "block";
   }
 
   private readonly onPointerDown = (event: PointerEvent): void => {
@@ -390,13 +571,18 @@ export class PhaserSceneDesignerMinimap {
   }
 
   private changeZoom(factor: number): void {
+    this.setZoom(this.options.scene.cameras.main.zoom * factor);
+  }
+
+  private setZoom(zoom: number): void {
     const camera = this.options.scene.cameras.main;
     const scene = this.currentScene();
     camera.stopFollow();
     const minimum = Math.min(camera.width / scene.width, camera.height / scene.height);
     const maximum = Math.max(minimum, this.options.maxZoom ?? 4);
-    camera.setZoom(Phaser.Math.Clamp(camera.zoom * factor, minimum, maximum));
+    camera.setZoom(Phaser.Math.Clamp(zoom, minimum, maximum));
     this.centerCamera(camera.midPoint.x, camera.midPoint.y);
+    this.lastViewportKey = "";
     this.render();
   }
 
