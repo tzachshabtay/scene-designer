@@ -7,6 +7,10 @@ import {
   type SceneDefinition,
   type SceneDesignerManifest
 } from "@scene-designer/core";
+import {
+  registerInGameDesignerToggle,
+  type InGameDesignerToggleRegistration
+} from "@ai-game-assets/core";
 import type { SceneDesigner } from "@scene-designer/designer";
 import Phaser from "phaser";
 import {
@@ -35,6 +39,7 @@ export class PhaserSceneDesignerMinimap {
   private readonly worldCanvas: HTMLCanvasElement;
   private readonly zoomLabel: HTMLButtonElement;
   private readonly zoomInput: HTMLInputElement;
+  private readonly toolbarToggle: InGameDesignerToggleRegistration;
   private isOpen = false;
   private dragging = false;
   private panelDrag: {
@@ -153,6 +158,24 @@ export class PhaserSceneDesignerMinimap {
     controls.append(zoomOut, zoomControl, zoomIn, fit);
     this.root.append(this.heading, this.canvas, controls);
     document.body.append(this.root);
+    this.toolbarToggle = registerInGameDesignerToggle({
+      id: "scene-designer.minimap",
+      label: "Minimap",
+      order: 40,
+      ariaLabel: "Toggle scene minimap",
+      onPressedChange: (isPressed) => {
+        this.isOpen = isPressed;
+        if (!isPressed) {
+          this.dragging = false;
+          this.panelDrag = undefined;
+          this.heading.style.cursor = "grab";
+          this.cancelZoomEdit();
+        }
+        this.positionDirty = true;
+        this.lastViewportKey = "";
+        this.render();
+      }
+    });
 
     this.heading.addEventListener("pointerdown", this.onPanelPointerDown);
     this.canvas.addEventListener("pointerdown", this.onPointerDown);
@@ -182,19 +205,11 @@ export class PhaserSceneDesignerMinimap {
   }
 
   setOpen(isOpen: boolean): void {
-    this.isOpen = isOpen;
-    if (!isOpen) {
-      this.dragging = false;
-      this.panelDrag = undefined;
-      this.heading.style.cursor = "grab";
-      this.cancelZoomEdit();
-    }
-    this.positionDirty = true;
-    this.lastViewportKey = "";
-    this.render();
+    this.toolbarToggle.setPressed(isOpen);
   }
 
   destroy(): void {
+    this.toolbarToggle.destroy();
     this.options.scene.events.off(Phaser.Scenes.Events.POST_UPDATE, this.render, this);
     this.heading.removeEventListener("pointerdown", this.onPanelPointerDown);
     this.canvas.removeEventListener("pointerdown", this.onPointerDown);
@@ -222,11 +237,7 @@ export class PhaserSceneDesignerMinimap {
   private readonly render = (): void => {
     const scene = this.currentScene();
     const camera = this.options.scene.cameras.main;
-    const visible = this.isOpen
-      && this.options.designer.getOpenView() === "scenes"
-      && (
-      scene.width > camera.width + 0.5 || scene.height > camera.height + 0.5
-      );
+    const visible = this.isOpen;
     this.root.style.display = visible ? "block" : "none";
     if (!visible) return;
 

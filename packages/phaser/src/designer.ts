@@ -67,7 +67,6 @@ export function installPhaserSceneDesigner(
     onOpenChange(isOpen) {
       options.onOpenChange?.(isOpen);
       canvas?.setOpen(isOpen);
-      minimap?.setOpen(isOpen);
     },
     onSceneChange(sceneId, sceneDefinition) {
       options.onSceneChange?.(sceneId, sceneDefinition);
@@ -104,7 +103,6 @@ export function installPhaserSceneDesigner(
     });
   }
   canvas.setOpen(designer.isOpen());
-  minimap?.setOpen(designer.isOpen());
 
   return {
     designer,
