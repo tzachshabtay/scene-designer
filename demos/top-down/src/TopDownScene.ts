@@ -70,6 +70,7 @@ export class TopDownScene extends Phaser.Scene {
   private hero!: Phaser.Physics.Arcade.Sprite;
   private movementKeys!: MovementKeys;
   private facing: Facing = "down";
+  private lastValidHeroPosition = { x: 0, y: 0 };
   private renderedTileMaps: CreatedSceneTileMap[] = [];
   private readonly tileSprites = new Map<string, Phaser.GameObjects.Sprite>();
   private readonly collectedCells = new Set<string>();
@@ -290,6 +291,7 @@ export class TopDownScene extends Phaser.Scene {
       (destination.row + 0.5) * tileSize
     );
     this.hero.setVelocity(0, 0);
+    this.lastValidHeroPosition = { x: this.hero.x, y: this.hero.y };
     this.hero.setVisible(true);
     this.setHeroIdle();
 
@@ -319,20 +321,45 @@ export class TopDownScene extends Phaser.Scene {
     if (this.movementKeys.up.isDown || this.movementKeys.w.isDown) y -= 1;
     if (this.movementKeys.down.isDown || this.movementKeys.s.isDown) y += 1;
 
+    let currentX = this.hero.x;
+    let currentY = this.hero.y;
+    if (!this.canOccupy(currentX, currentY) && this.canOccupy(
+      this.lastValidHeroPosition.x,
+      this.lastValidHeroPosition.y
+    )) {
+      currentX = this.lastValidHeroPosition.x;
+      currentY = this.lastValidHeroPosition.y;
+      this.hero.setPosition(currentX, currentY);
+      this.hero.body?.updateFromGameObject();
+    }
+
     if (x === 0 && y === 0) {
       this.hero.setVelocity(0, 0);
+      if (this.canOccupy(currentX, currentY)) {
+        this.lastValidHeroPosition = { x: currentX, y: currentY };
+      }
       this.setHeroIdle();
       return;
     }
 
     const direction = new Phaser.Math.Vector2(x, y).normalize();
-    let velocityX = direction.x * playerSpeed;
-    let velocityY = direction.y * playerSpeed;
     const seconds = Math.min(this.game.loop.delta / 1000, 1 / 30);
+    const stepX = direction.x * playerSpeed * seconds;
+    const stepY = direction.y * playerSpeed * seconds;
+    let nextX = currentX;
+    let nextY = currentY;
 
-    if (!this.canOccupy(this.hero.x + velocityX * seconds, this.hero.y)) velocityX = 0;
-    if (!this.canOccupy(this.hero.x, this.hero.y + velocityY * seconds)) velocityY = 0;
-    this.hero.setVelocity(velocityX, velocityY);
+    if (this.canOccupy(currentX + stepX, currentY)) nextX += stepX;
+    if (this.canOccupy(nextX, currentY + stepY)) nextY += stepY;
+
+    const velocityX = (nextX - currentX) / Math.max(seconds, Number.EPSILON);
+    const velocityY = (nextY - currentY) / Math.max(seconds, Number.EPSILON);
+    this.hero.setVelocity(0, 0);
+    this.hero.setPosition(nextX, nextY);
+    this.hero.body?.updateFromGameObject();
+    if (this.canOccupy(nextX, nextY)) {
+      this.lastValidHeroPosition = { x: nextX, y: nextY };
+    }
 
     if (Math.abs(velocityX) > Math.abs(velocityY)) {
       this.facing = velocityX < 0 ? "left" : "right";
