@@ -41,7 +41,32 @@
     "animations": [
       {
         "key": "tiles.forest.water",
-        "prompt": "Create two full-sheet animation frames from the provided base tileset. Preserve the exact 4-column × 2-row layout and this exact row-major order: Frame 0 — Grass: unchanged; Frame 1 — Dirt path: unchanged; Frame 2 — Water: animate only its horizontal ripple highlights with a subtle looping shimmer; Frame 3 — River reeds: unchanged; Frame 4 — Tree: unchanged; Frame 5 — Wildflowers: unchanged; Frame 6 — Rock: unchanged; Frame 7 — Wood bridge: unchanged. Keep frames 0, 1, and 3–7 pixel-aligned and visually identical to the base sheet. Do not resize, redraw, add, remove, or reorder tiles.",
+        "tiles": [
+          {
+            "prompt": "Grass: keep every pixel unchanged from the base tileset in every animation frame."
+          },
+          {
+            "prompt": "Dirt path: keep every pixel unchanged from the base tileset in every animation frame."
+          },
+          {
+            "prompt": "Water: animate only the horizontal ripple highlights with a subtle seamless looping shimmer while preserving the water palette and edge continuity."
+          },
+          {
+            "prompt": "River reeds: keep every pixel unchanged from the base tileset in every animation frame."
+          },
+          {
+            "prompt": "Tree: keep every pixel unchanged from the base tileset in every animation frame."
+          },
+          {
+            "prompt": "Wildflowers: keep every pixel unchanged from the base tileset in every animation frame."
+          },
+          {
+            "prompt": "Rock: keep every pixel unchanged from the base tileset in every animation frame."
+          },
+          {
+            "prompt": "Wood bridge: keep every pixel unchanged from the base tileset in every animation frame."
+          }
+        ],
         "frameCount": 2,
         "frameRate": 2,
         "repeat": -1,
