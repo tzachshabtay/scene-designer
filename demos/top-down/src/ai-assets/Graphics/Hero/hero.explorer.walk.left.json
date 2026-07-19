@@ -1,0 +1,42 @@
+{
+  "id": "hero.explorer.walk.left",
+  "kind": "spritesheet",
+  "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving left. Keep the character centered, facing left, and visually consistent with the base image. Transparent background.",
+  "dimensions": {
+    "width": 128,
+    "height": 32
+  },
+  "frameGrid": {
+    "frameCount": 4,
+    "frameWidth": 32,
+    "frameHeight": 32,
+    "columns": 4,
+    "rows": 1
+  },
+  "animations": [
+    {
+      "key": "hero.explorer.walk.left",
+      "frames": [0, 1, 2, 3],
+      "frameRate": 8,
+      "repeat": -1
+    }
+  ],
+  "settings": {
+    "model": "gpt-image-2",
+    "background": "auto",
+    "format": "png",
+    "frameAlignment": "center",
+    "referenceAssetIds": ["hero.explorer"]
+  },
+  "activeVersion": "default",
+  "versions": {
+    "default": {
+      "name": "default",
+      "file": "/assets/hero.explorer.walk.left.default.svg",
+      "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving left. Keep the character centered, facing left, and visually consistent with the base image. Transparent background.",
+      "createdAt": "2026-07-15T00:00:00.000Z",
+      "model": "manual-svg"
+    }
+  },
+  "tags": ["hero", "animation", "top-down", "walk", "left"]
+}

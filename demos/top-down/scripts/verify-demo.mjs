@@ -11,7 +11,11 @@ const assetFiles = [
   "ai-assets/Graphics/Tiles/tiles.forest.json",
   "ai-assets/Graphics/Tiles/tiles.house.json",
   "ai-assets/Graphics/Tiles/tiles.props.json",
-  "ai-assets/Graphics/Hero/hero.explorer.json"
+  "ai-assets/Graphics/Hero/hero.explorer.json",
+  "ai-assets/Graphics/Hero/hero.explorer.walk.down.json",
+  "ai-assets/Graphics/Hero/hero.explorer.walk.left.json",
+  "ai-assets/Graphics/Hero/hero.explorer.walk.right.json",
+  "ai-assets/Graphics/Hero/hero.explorer.walk.up.json"
 ];
 const assets = Object.fromEntries(await Promise.all(assetFiles.map(async (relativePath) => {
   const asset = await json(path.join(sourceRoot, relativePath));
@@ -29,9 +33,23 @@ for (const assetId of ["tiles.forest", "tiles.house", "tiles.props"]) {
   await assertVersionFiles(asset);
 }
 
-assert(assets["hero.explorer"]?.kind === "spritesheet", "The hero must remain an ordinary spritesheet.");
-assert((assets["hero.explorer"].animations ?? []).length === 4, "The hero requires four directional animations.");
-await assertVersionFiles(assets["hero.explorer"]);
+const hero = assets["hero.explorer"];
+assert(hero?.kind === "image", "The hero must use a normal base image.");
+assert(hero.dimensions?.width === 32 && hero.dimensions?.height === 32, "The hero base image must be one 32px pose.");
+await assertVersionFiles(hero);
+for (const direction of ["down", "left", "right", "up"]) {
+  const animationId = `hero.explorer.walk.${direction}`;
+  const animation = assets[animationId];
+  assert(
+    hero.linkedAnimationAssets?.[`walk-${direction}`]?.assetId === animationId,
+    `The hero must link its walk-${direction} animation.`
+  );
+  assert(animation?.kind === "spritesheet", `${animationId} must be a spritesheet animation asset.`);
+  assert(animation.frameGrid?.frameCount === 4, `${animationId} must contain four frames.`);
+  assert(animation.animations?.[0]?.key === animationId, `${animationId} requires its matching animation key.`);
+  assert(animation.settings?.referenceAssetIds?.includes(hero.id), `${animationId} must reference the base hero.`);
+  await assertVersionFiles(animation);
+}
 
 const forestAsset = assets["tiles.forest"];
 const waterAnimation = forestAsset.tileset.animations?.find((animation) => animation.key === "tiles.forest.water");

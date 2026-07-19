@@ -1,77 +1,46 @@
 {
   "id": "hero.explorer",
-  "kind": "spritesheet",
-  "prompt": "Deterministic hand-authored 32 pixel explorer walking in four directions.",
+  "kind": "image",
+  "prompt": "Top-down 32 pixel woodland explorer standing still and facing down, readable silhouette, transparent background.",
   "dimensions": {
-    "width": 128,
-    "height": 128
+    "width": 32,
+    "height": 32
   },
-  "frameGrid": {
-    "frameCount": 16,
-    "frameWidth": 32,
-    "frameHeight": 32,
-    "columns": 4,
-    "rows": 4
+  "settings": {
+    "model": "gpt-image-2",
+    "background": "auto",
+    "format": "png"
   },
-  "animations": [
-    {
-      "key": "hero.explorer.walk.down",
-      "frames": [
-        0,
-        1,
-        2,
-        3
-      ],
-      "frameRate": 8,
-      "repeat": -1
-    },
-    {
-      "key": "hero.explorer.walk.left",
-      "frames": [
-        4,
-        5,
-        6,
-        7
-      ],
-      "frameRate": 8,
-      "repeat": -1
-    },
-    {
-      "key": "hero.explorer.walk.right",
-      "frames": [
-        8,
-        9,
-        10,
-        11
-      ],
-      "frameRate": 8,
-      "repeat": -1
-    },
-    {
-      "key": "hero.explorer.walk.up",
-      "frames": [
-        12,
-        13,
-        14,
-        15
-      ],
-      "frameRate": 8,
-      "repeat": -1
-    }
-  ],
   "activeVersion": "default",
   "versions": {
     "default": {
       "name": "default",
       "file": "/assets/hero.explorer.default.svg",
-      "prompt": "Deterministic hand-authored 32 pixel explorer walking in four directions.",
+      "prompt": "Top-down 32 pixel woodland explorer standing still and facing down, readable silhouette, transparent background.",
       "createdAt": "2026-07-15T00:00:00.000Z",
       "model": "manual-svg"
     }
   },
+  "linkedAnimationAssets": {
+    "walk-down": {
+      "label": "Walk down",
+      "assetId": "hero.explorer.walk.down"
+    },
+    "walk-left": {
+      "label": "Walk left",
+      "assetId": "hero.explorer.walk.left"
+    },
+    "walk-right": {
+      "label": "Walk right",
+      "assetId": "hero.explorer.walk.right"
+    },
+    "walk-up": {
+      "label": "Walk up",
+      "assetId": "hero.explorer.walk.up"
+    }
+  },
   "tags": [
     "hero",
-    "animation",
     "top-down"
   ]
 }

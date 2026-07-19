@@ -1,11 +1,13 @@
 import type { AiAssetManifest } from "@ai-game-assets/core";
 import {
   AiAssetDebugClient,
-  createAiAnimations,
   installAiAssetDesigner,
   loadAiAssetSet
 } from "@ai-game-assets/phaser";
-import type { AiAssetDesigner } from "@ai-game-assets/phaser";
+import type {
+  AiAssetAnimationPlayback,
+  AiAssetDesigner
+} from "@ai-game-assets/phaser";
 import {
   getScene,
   type SceneDesignerManifest,
@@ -47,6 +49,20 @@ type MovementKeys = {
 
 type Facing = "down" | "left" | "right" | "up";
 
+const heroWalkStates: Record<Facing, string> = {
+  down: "walk-down",
+  left: "walk-left",
+  right: "walk-right",
+  up: "walk-up"
+};
+
+const heroWalkAssetIds = new Set([
+  "hero.explorer.walk.down",
+  "hero.explorer.walk.left",
+  "hero.explorer.walk.right",
+  "hero.explorer.walk.up"
+]);
+
 type SpawnPoint = {
   column: number;
   row: number;
@@ -68,6 +84,7 @@ export class TopDownScene extends Phaser.Scene {
   private designer?: InstalledPhaserSceneDesigner;
   private currentSceneId = initialSceneId;
   private hero!: Phaser.Physics.Arcade.Sprite;
+  private heroAnimationPlayback?: AiAssetAnimationPlayback;
   private movementKeys!: MovementKeys;
   private facing: Facing = "down";
   private lastValidHeroPosition = { x: 0, y: 0 };
@@ -106,9 +123,6 @@ export class TopDownScene extends Phaser.Scene {
   }
 
   create(): void {
-    createAiAnimations(this, this.aiAssets, heroAssetId, {
-      onFrameTransforms: "ignore"
-    });
     this.createRuntime();
     this.createHero();
     this.createHud();
@@ -122,9 +136,15 @@ export class TopDownScene extends Phaser.Scene {
         assetIds: Object.keys(this.aiAssets.assets),
         title: "Assets",
         restartOnPromote: false,
-        onPreview: aiDesignerCallbacks.onPreview,
+        onPreview: (assetId, textureKey, asset) => {
+          aiDesignerCallbacks.onPreview(assetId, textureKey, asset);
+          this.stopHeroAnimationForRefresh(assetId);
+        },
         onTilesetAnimationPreview: aiDesignerCallbacks.onTilesetAnimationPreview,
-        onAssetReady: aiDesignerCallbacks.onAssetReady,
+        onAssetReady: (assetId, textureKey, asset) => {
+          aiDesignerCallbacks.onAssetReady(assetId, textureKey, asset);
+          this.stopHeroAnimationForRefresh(assetId);
+        },
         onManifestUpdated: (manifest) => {
           aiDesignerCallbacks.onManifestUpdated(manifest);
           this.queueSceneReload();
@@ -155,6 +175,7 @@ export class TopDownScene extends Phaser.Scene {
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.assetDesigner?.destroy();
       this.designer?.destroy();
+      this.heroAnimationPlayback?.destroy();
       this.destroyRenderedTileMaps();
       this.toastTimer?.destroy();
       if (this.reloadTimer !== undefined) {
@@ -373,7 +394,7 @@ export class TopDownScene extends Phaser.Scene {
     }
 
     if (velocityX !== 0 || velocityY !== 0) {
-      this.hero.play(`${heroAssetId}.walk.${this.facing}`, true);
+      this.playHeroWalk();
     } else {
       this.setHeroIdle();
     }
@@ -447,14 +468,31 @@ export class TopDownScene extends Phaser.Scene {
   }
 
   private setHeroIdle(): void {
-    const idleFrames: Record<Facing, number> = {
-      down: 0,
-      left: 4,
-      right: 8,
-      up: 12
-    };
+    this.heroAnimationPlayback?.destroy();
+    this.heroAnimationPlayback = undefined;
     this.hero.stop();
-    this.runtime.aiRuntime.setTexture(this.hero, heroAssetId, idleFrames[this.facing]);
+    this.runtime.aiRuntime.setTexture(this.hero, heroAssetId);
+  }
+
+  private playHeroWalk(): void {
+    const state = heroWalkStates[this.facing];
+    const animationKey = `${heroAssetId}.walk.${this.facing}`;
+    if (this.hero.anims.isPlaying && this.hero.anims.currentAnim?.key === animationKey) return;
+
+    this.heroAnimationPlayback?.destroy();
+    this.heroAnimationPlayback = this.runtime.aiRuntime.playAnimation(
+      this.hero,
+      heroAssetId,
+      state,
+      { applyFrameTransforms: false }
+    );
+  }
+
+  private stopHeroAnimationForRefresh(assetId: string): void {
+    if (!heroWalkAssetIds.has(assetId) || !this.hero?.active) return;
+    this.heroAnimationPlayback?.destroy();
+    this.heroAnimationPlayback = undefined;
+    this.hero.stop();
   }
 
   private setDesignerOpen(isOpen: boolean): void {
