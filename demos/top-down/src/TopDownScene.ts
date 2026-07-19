@@ -471,6 +471,9 @@ export class TopDownScene extends Phaser.Scene {
     this.heroAnimationPlayback?.destroy();
     this.heroAnimationPlayback = undefined;
     this.hero.stop();
+    this.hero.setDisplaySize(tileSize, tileSize);
+    this.hero.setOrigin(0.5, 0.5);
+    this.hero.setRotation(0);
     this.runtime.aiRuntime.setTexture(this.hero, heroAssetId);
   }
 
@@ -484,7 +487,7 @@ export class TopDownScene extends Phaser.Scene {
       this.hero,
       heroAssetId,
       state,
-      { applyFrameTransforms: false }
+      { frameTransformSize: { width: tileSize, height: tileSize } }
     );
   }
 
