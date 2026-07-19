@@ -2,6 +2,94 @@ import { defineAiAssets } from "@ai-game-assets/core";
 
 export const assets = defineAiAssets(
 {
+  "hero.explorer.idle": {
+    "id": "hero.explorer.idle",
+    "kind": "spritesheet",
+    "prompt": "Four-frame seamless idle animation for the referenced woodland explorer facing down. Use subtle breathing, a gentle weight shift, and an occasional blink while keeping the character centered and visually consistent with the base image. Transparent background.",
+    "dimensions": {
+      "width": 64,
+      "height": 64
+    },
+    "frameGrid": {
+      "frameCount": 4,
+      "frameWidth": 32,
+      "frameHeight": 32,
+      "columns": 2,
+      "rows": 2
+    },
+    "animations": [
+      {
+        "key": "hero.explorer.idle",
+        "frames": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "frameRate": 4,
+        "repeat": -1,
+        "frameTimings": [
+          {
+            "delayMs": 300,
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "rotation": 0
+          },
+          {
+            "delayMs": 300,
+            "offsetX": 0,
+            "offsetY": -1,
+            "scaleX": 1,
+            "scaleY": 1,
+            "rotation": 0
+          },
+          {
+            "delayMs": 300,
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "rotation": 0
+          },
+          {
+            "delayMs": 300,
+            "offsetX": 0,
+            "offsetY": 1,
+            "scaleX": 1,
+            "scaleY": 1,
+            "rotation": 0
+          }
+        ]
+      }
+    ],
+    "settings": {
+      "model": "gpt-image-2",
+      "background": "auto",
+      "format": "png",
+      "frameAlignment": "center",
+      "referenceAssetIds": [
+        "hero.explorer"
+      ]
+    },
+    "activeVersion": "default",
+    "versions": {
+      "default": {
+        "name": "default",
+        "file": "/assets/hero.explorer.idle.default.svg",
+        "prompt": "Four-frame seamless idle animation for the referenced woodland explorer facing down. Use subtle breathing, a gentle weight shift, and an occasional blink while keeping the character centered and visually consistent with the base image. Transparent background.",
+        "createdAt": "2026-07-19T00:00:00.000Z",
+        "model": "manual-svg"
+      }
+    },
+    "tags": [
+      "hero",
+      "animation",
+      "top-down",
+      "idle"
+    ]
+  },
   "hero.explorer": {
     "id": "hero.explorer",
     "kind": "image",
@@ -26,6 +114,10 @@ export const assets = defineAiAssets(
       }
     },
     "linkedAnimationAssets": {
+      "idle": {
+        "label": "Idle",
+        "assetId": "hero.explorer.idle"
+      },
       "walk-down": {
         "label": "Walk down",
         "assetId": "hero.explorer.walk.down"
@@ -536,6 +628,10 @@ export const assets = defineAiAssets(
 {}
 );
 assets.assetPaths = {
+  "hero.explorer.idle": [
+    "Graphics",
+    "Hero"
+  ],
   "hero.explorer": [
     "Graphics",
     "Hero"
