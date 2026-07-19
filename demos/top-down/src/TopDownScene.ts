@@ -123,6 +123,7 @@ export class TopDownScene extends Phaser.Scene {
         title: "Assets",
         restartOnPromote: false,
         onPreview: aiDesignerCallbacks.onPreview,
+        onTilesetAnimationPreview: aiDesignerCallbacks.onTilesetAnimationPreview,
         onAssetReady: aiDesignerCallbacks.onAssetReady,
         onManifestUpdated: (manifest) => {
           aiDesignerCallbacks.onManifestUpdated(manifest);
@@ -187,7 +188,11 @@ export class TopDownScene extends Phaser.Scene {
   }
 
   private createHero(): void {
-    this.hero = this.physics.add.sprite(0, 0, heroAssetId, 0);
+    this.hero = this.physics.add.sprite(0, 0, this.runtime.aiRuntime.key(heroAssetId), 0);
+    this.runtime.aiRuntime.bindTexture(this.hero, heroAssetId, {
+      frame: 0,
+      setInitialTexture: false
+    });
     this.hero.setDepth(500);
     this.hero.setSize(16, 20);
     this.hero.setOffset(8, 10);
@@ -449,7 +454,7 @@ export class TopDownScene extends Phaser.Scene {
       up: 12
     };
     this.hero.stop();
-    this.hero.setTexture(heroAssetId, idleFrames[this.facing]);
+    this.runtime.aiRuntime.setTexture(this.hero, heroAssetId, idleFrames[this.facing]);
   }
 
   private setDesignerOpen(isOpen: boolean): void {
