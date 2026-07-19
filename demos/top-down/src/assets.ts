@@ -4,18 +4,64 @@ export const assets = defineAiAssets(
 {
   "hero.explorer": {
     "id": "hero.explorer",
+    "kind": "image",
+    "prompt": "Top-down 32 pixel woodland explorer standing still and facing down, readable silhouette, transparent background.",
+    "dimensions": {
+      "width": 32,
+      "height": 32
+    },
+    "settings": {
+      "model": "gpt-image-2",
+      "background": "auto",
+      "format": "png"
+    },
+    "activeVersion": "default",
+    "versions": {
+      "default": {
+        "name": "default",
+        "file": "/assets/hero.explorer.default.svg",
+        "prompt": "Top-down 32 pixel woodland explorer standing still and facing down, readable silhouette, transparent background.",
+        "createdAt": "2026-07-15T00:00:00.000Z",
+        "model": "manual-svg"
+      }
+    },
+    "linkedAnimationAssets": {
+      "walk-down": {
+        "label": "Walk down",
+        "assetId": "hero.explorer.walk.down"
+      },
+      "walk-left": {
+        "label": "Walk left",
+        "assetId": "hero.explorer.walk.left"
+      },
+      "walk-right": {
+        "label": "Walk right",
+        "assetId": "hero.explorer.walk.right"
+      },
+      "walk-up": {
+        "label": "Walk up",
+        "assetId": "hero.explorer.walk.up"
+      }
+    },
+    "tags": [
+      "hero",
+      "top-down"
+    ]
+  },
+  "hero.explorer.walk.down": {
+    "id": "hero.explorer.walk.down",
     "kind": "spritesheet",
-    "prompt": "Deterministic hand-authored 32 pixel explorer walking in four directions.",
+    "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving down toward the camera. Keep the character centered, facing down, and visually consistent with the base image. Transparent background.",
     "dimensions": {
       "width": 128,
-      "height": 128
+      "height": 32
     },
     "frameGrid": {
-      "frameCount": 16,
+      "frameCount": 4,
       "frameWidth": 32,
       "frameHeight": 32,
       "columns": 4,
-      "rows": 4
+      "rows": 1
     },
     "animations": [
       {
@@ -28,47 +74,23 @@ export const assets = defineAiAssets(
         ],
         "frameRate": 8,
         "repeat": -1
-      },
-      {
-        "key": "hero.explorer.walk.left",
-        "frames": [
-          4,
-          5,
-          6,
-          7
-        ],
-        "frameRate": 8,
-        "repeat": -1
-      },
-      {
-        "key": "hero.explorer.walk.right",
-        "frames": [
-          8,
-          9,
-          10,
-          11
-        ],
-        "frameRate": 8,
-        "repeat": -1
-      },
-      {
-        "key": "hero.explorer.walk.up",
-        "frames": [
-          12,
-          13,
-          14,
-          15
-        ],
-        "frameRate": 8,
-        "repeat": -1
       }
     ],
+    "settings": {
+      "model": "gpt-image-2",
+      "background": "auto",
+      "format": "png",
+      "frameAlignment": "center",
+      "referenceAssetIds": [
+        "hero.explorer"
+      ]
+    },
     "activeVersion": "default",
     "versions": {
       "default": {
         "name": "default",
-        "file": "/assets/hero.explorer.default.svg",
-        "prompt": "Deterministic hand-authored 32 pixel explorer walking in four directions.",
+        "file": "/assets/hero.explorer.walk.down.default.svg",
+        "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving down toward the camera. Keep the character centered, facing down, and visually consistent with the base image. Transparent background.",
         "createdAt": "2026-07-15T00:00:00.000Z",
         "model": "manual-svg"
       }
@@ -76,7 +98,174 @@ export const assets = defineAiAssets(
     "tags": [
       "hero",
       "animation",
-      "top-down"
+      "top-down",
+      "walk",
+      "down"
+    ]
+  },
+  "hero.explorer.walk.left": {
+    "id": "hero.explorer.walk.left",
+    "kind": "spritesheet",
+    "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving left. Keep the character centered, facing left, and visually consistent with the base image. Transparent background.",
+    "dimensions": {
+      "width": 128,
+      "height": 32
+    },
+    "frameGrid": {
+      "frameCount": 4,
+      "frameWidth": 32,
+      "frameHeight": 32,
+      "columns": 4,
+      "rows": 1
+    },
+    "animations": [
+      {
+        "key": "hero.explorer.walk.left",
+        "frames": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "frameRate": 8,
+        "repeat": -1
+      }
+    ],
+    "settings": {
+      "model": "gpt-image-2",
+      "background": "auto",
+      "format": "png",
+      "frameAlignment": "center",
+      "referenceAssetIds": [
+        "hero.explorer"
+      ]
+    },
+    "activeVersion": "default",
+    "versions": {
+      "default": {
+        "name": "default",
+        "file": "/assets/hero.explorer.walk.left.default.svg",
+        "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving left. Keep the character centered, facing left, and visually consistent with the base image. Transparent background.",
+        "createdAt": "2026-07-15T00:00:00.000Z",
+        "model": "manual-svg"
+      }
+    },
+    "tags": [
+      "hero",
+      "animation",
+      "top-down",
+      "walk",
+      "left"
+    ]
+  },
+  "hero.explorer.walk.right": {
+    "id": "hero.explorer.walk.right",
+    "kind": "spritesheet",
+    "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving right. Keep the character centered, facing right, and visually consistent with the base image. Transparent background.",
+    "dimensions": {
+      "width": 128,
+      "height": 32
+    },
+    "frameGrid": {
+      "frameCount": 4,
+      "frameWidth": 32,
+      "frameHeight": 32,
+      "columns": 4,
+      "rows": 1
+    },
+    "animations": [
+      {
+        "key": "hero.explorer.walk.right",
+        "frames": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "frameRate": 8,
+        "repeat": -1
+      }
+    ],
+    "settings": {
+      "model": "gpt-image-2",
+      "background": "auto",
+      "format": "png",
+      "frameAlignment": "center",
+      "referenceAssetIds": [
+        "hero.explorer"
+      ]
+    },
+    "activeVersion": "default",
+    "versions": {
+      "default": {
+        "name": "default",
+        "file": "/assets/hero.explorer.walk.right.default.svg",
+        "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving right. Keep the character centered, facing right, and visually consistent with the base image. Transparent background.",
+        "createdAt": "2026-07-15T00:00:00.000Z",
+        "model": "manual-svg"
+      }
+    },
+    "tags": [
+      "hero",
+      "animation",
+      "top-down",
+      "walk",
+      "right"
+    ]
+  },
+  "hero.explorer.walk.up": {
+    "id": "hero.explorer.walk.up",
+    "kind": "spritesheet",
+    "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving up away from the camera. Keep the character centered, facing up, and visually consistent with the base image. Transparent background.",
+    "dimensions": {
+      "width": 128,
+      "height": 32
+    },
+    "frameGrid": {
+      "frameCount": 4,
+      "frameWidth": 32,
+      "frameHeight": 32,
+      "columns": 4,
+      "rows": 1
+    },
+    "animations": [
+      {
+        "key": "hero.explorer.walk.up",
+        "frames": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "frameRate": 8,
+        "repeat": -1
+      }
+    ],
+    "settings": {
+      "model": "gpt-image-2",
+      "background": "auto",
+      "format": "png",
+      "frameAlignment": "center",
+      "referenceAssetIds": [
+        "hero.explorer"
+      ]
+    },
+    "activeVersion": "default",
+    "versions": {
+      "default": {
+        "name": "default",
+        "file": "/assets/hero.explorer.walk.up.default.svg",
+        "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving up away from the camera. Keep the character centered, facing up, and visually consistent with the base image. Transparent background.",
+        "createdAt": "2026-07-15T00:00:00.000Z",
+        "model": "manual-svg"
+      }
+    },
+    "tags": [
+      "hero",
+      "animation",
+      "top-down",
+      "walk",
+      "up"
     ]
   },
   "tiles.forest": {
@@ -348,6 +537,22 @@ export const assets = defineAiAssets(
 );
 assets.assetPaths = {
   "hero.explorer": [
+    "Graphics",
+    "Hero"
+  ],
+  "hero.explorer.walk.down": [
+    "Graphics",
+    "Hero"
+  ],
+  "hero.explorer.walk.left": [
+    "Graphics",
+    "Hero"
+  ],
+  "hero.explorer.walk.right": [
+    "Graphics",
+    "Hero"
+  ],
+  "hero.explorer.walk.up": [
     "Graphics",
     "Hero"
   ],
