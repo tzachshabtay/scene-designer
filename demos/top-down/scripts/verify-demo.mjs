@@ -12,6 +12,7 @@ const assetFiles = [
   "ai-assets/Graphics/Tiles/tiles.house.json",
   "ai-assets/Graphics/Tiles/tiles.props.json",
   "ai-assets/Graphics/Hero/hero.explorer.json",
+  "ai-assets/Graphics/Hero/hero.explorer.idle.json",
   "ai-assets/Graphics/Hero/hero.explorer.walk.down.json",
   "ai-assets/Graphics/Hero/hero.explorer.walk.left.json",
   "ai-assets/Graphics/Hero/hero.explorer.walk.right.json",
@@ -37,6 +38,13 @@ const hero = assets["hero.explorer"];
 assert(hero?.kind === "image", "The hero must use a normal base image.");
 assert(hero.dimensions?.width === 32 && hero.dimensions?.height === 32, "The hero base image must be one 32px pose.");
 await assertVersionFiles(hero);
+const idleAnimation = assets["hero.explorer.idle"];
+assert(hero.linkedAnimationAssets?.idle?.assetId === idleAnimation?.id, "The hero must link its idle animation.");
+assert(idleAnimation?.kind === "spritesheet", "The hero idle animation must be a spritesheet asset.");
+assert(idleAnimation.frameGrid?.frameCount === 4, "The hero idle animation must contain four frames.");
+assert(idleAnimation.animations?.[0]?.key === idleAnimation.id, "The hero idle animation requires its matching key.");
+assert(idleAnimation.settings?.referenceAssetIds?.includes(hero.id), "The hero idle animation must reference the base hero.");
+await assertVersionFiles(idleAnimation);
 for (const direction of ["down", "left", "right", "up"]) {
   const animationId = `hero.explorer.walk.${direction}`;
   const animation = assets[animationId];

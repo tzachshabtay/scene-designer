@@ -26,6 +26,7 @@ import { tileCellKey } from "./tile-cell-key.js";
 const tileSize = 32;
 const playerSpeed = 190;
 const heroAssetId = "hero.explorer";
+const heroIdleAssetId = "hero.explorer.idle";
 const initialSceneId = "world.forest";
 
 type TopDownSceneOptions = {
@@ -56,7 +57,8 @@ const heroWalkStates: Record<Facing, string> = {
   up: "walk-up"
 };
 
-const heroWalkAssetIds = new Set([
+const heroAnimationAssetIds = new Set([
+  heroIdleAssetId,
   "hero.explorer.walk.down",
   "hero.explorer.walk.left",
   "hero.explorer.walk.right",
@@ -468,13 +470,20 @@ export class TopDownScene extends Phaser.Scene {
   }
 
   private setHeroIdle(): void {
+    if (this.hero.anims.isPlaying && this.hero.anims.currentAnim?.key === heroIdleAssetId) return;
+
     this.heroAnimationPlayback?.destroy();
     this.heroAnimationPlayback = undefined;
     this.hero.stop();
     this.hero.setDisplaySize(tileSize, tileSize);
     this.hero.setOrigin(0.5, 0.5);
     this.hero.setRotation(0);
-    this.runtime.aiRuntime.setTexture(this.hero, heroAssetId);
+    this.heroAnimationPlayback = this.runtime.aiRuntime.playAnimation(
+      this.hero,
+      heroAssetId,
+      "idle",
+      { frameTransformSize: { width: tileSize, height: tileSize } }
+    );
   }
 
   private playHeroWalk(): void {
@@ -492,7 +501,7 @@ export class TopDownScene extends Phaser.Scene {
   }
 
   private stopHeroAnimationForRefresh(assetId: string): void {
-    if (!heroWalkAssetIds.has(assetId) || !this.hero?.active) return;
+    if (!heroAnimationAssetIds.has(assetId) || !this.hero?.active) return;
     this.heroAnimationPlayback?.destroy();
     this.heroAnimationPlayback = undefined;
     this.hero.stop();

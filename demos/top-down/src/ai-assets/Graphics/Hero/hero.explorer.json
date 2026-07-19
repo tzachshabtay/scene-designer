@@ -22,6 +22,10 @@
     }
   },
   "linkedAnimationAssets": {
+    "idle": {
+      "label": "Idle",
+      "assetId": "hero.explorer.idle"
+    },
     "walk-down": {
       "label": "Walk down",
       "assetId": "hero.explorer.walk.down"
