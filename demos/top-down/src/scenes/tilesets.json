@@ -12,6 +12,7 @@
         "id": "grass",
         "name": "Grass",
         "frame": 0,
+        "animation": "tiles.forest.water",
         "tags": ["walkable"],
         "properties": { "terrain": "grass" }
       },
@@ -19,6 +20,7 @@
         "id": "path",
         "name": "Dirt Path",
         "frame": 1,
+        "animation": "tiles.forest.water",
         "tags": ["walkable"],
         "properties": { "terrain": "path" }
       },
@@ -34,6 +36,7 @@
         "id": "reeds",
         "name": "River Reeds",
         "frame": 3,
+        "animation": "tiles.forest.water",
         "tags": ["blocked", "water", "decoration"],
         "properties": { "terrain": "wetland" }
       },
@@ -41,6 +44,7 @@
         "id": "tree",
         "name": "Tree",
         "frame": 4,
+        "animation": "tiles.forest.water",
         "tags": ["blocked", "tree"],
         "properties": { "terrain": "forest" }
       },
@@ -48,6 +52,7 @@
         "id": "flowers",
         "name": "Wildflowers",
         "frame": 5,
+        "animation": "tiles.forest.water",
         "tags": ["walkable", "decoration"],
         "properties": { "terrain": "grass" }
       },
@@ -55,6 +60,7 @@
         "id": "rock",
         "name": "Rock",
         "frame": 6,
+        "animation": "tiles.forest.water",
         "tags": ["blocked", "rock"],
         "properties": { "terrain": "stone" }
       },
@@ -62,6 +68,7 @@
         "id": "bridge",
         "name": "Wood Bridge",
         "frame": 7,
+        "animation": "tiles.forest.water",
         "tags": ["walkable", "bridge"],
         "properties": { "terrain": "bridge" }
       }

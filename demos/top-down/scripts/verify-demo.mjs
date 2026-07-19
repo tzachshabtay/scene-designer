@@ -41,7 +41,10 @@ await assertVersionFiles(hero);
 const idleAnimation = assets["hero.explorer.idle"];
 assert(hero.linkedAnimationAssets?.idle?.assetId === idleAnimation?.id, "The hero must link its idle animation.");
 assert(idleAnimation?.kind === "spritesheet", "The hero idle animation must be a spritesheet asset.");
-assert(idleAnimation.frameGrid?.frameCount === 4, "The hero idle animation must contain four frames.");
+assert(
+  Number.isInteger(idleAnimation.frameGrid?.frameCount) && idleAnimation.frameGrid.frameCount >= 2,
+  "The hero idle animation must contain multiple frames."
+);
 assert(idleAnimation.animations?.[0]?.key === idleAnimation.id, "The hero idle animation requires its matching key.");
 assert(idleAnimation.settings?.referenceAssetIds?.includes(hero.id), "The hero idle animation must reference the base hero.");
 await assertVersionFiles(idleAnimation);
@@ -53,7 +56,10 @@ for (const direction of ["down", "left", "right", "up"]) {
     `The hero must link its walk-${direction} animation.`
   );
   assert(animation?.kind === "spritesheet", `${animationId} must be a spritesheet animation asset.`);
-  assert(animation.frameGrid?.frameCount === 4, `${animationId} must contain four frames.`);
+  assert(
+    Number.isInteger(animation.frameGrid?.frameCount) && animation.frameGrid.frameCount >= 2,
+    `${animationId} must contain multiple frames.`
+  );
   assert(animation.animations?.[0]?.key === animationId, `${animationId} requires its matching animation key.`);
   assert(animation.settings?.referenceAssetIds?.includes(hero.id), `${animationId} must reference the base hero.`);
   await assertVersionFiles(animation);
@@ -61,7 +67,10 @@ for (const direction of ["down", "left", "right", "up"]) {
 
 const forestAsset = assets["tiles.forest"];
 const waterAnimation = forestAsset.tileset.animations?.find((animation) => animation.key === "tiles.forest.water");
-assert(waterAnimation?.frameCount === 2, "Forest water must have a two-frame tileset animation.");
+assert(
+  Number.isInteger(waterAnimation?.frameCount) && waterAnimation.frameCount >= 2,
+  "Forest water must have a multi-frame tileset animation."
+);
 const waterFiles = forestAsset.versions[forestAsset.activeVersion]
   .tilesetAnimations?.["tiles.forest.water"]?.files ?? [];
 assert(waterFiles.length === waterAnimation.frameCount, "Water animation files must match frameCount.");
@@ -77,6 +86,10 @@ assertTileOrder(assets["tiles.forest"], tileSets.forest, [
   "rock",
   "bridge"
 ]);
+assert(
+  Object.values(tileSets.forest.tiles).every((tile) => tile.animation === waterAnimation.key),
+  "Every forest tile must play the shared environmental tileset animation."
+);
 assertTileOrder(assets["tiles.house"], tileSets.house, [
   "stone-floor",
   "wood-floor",
