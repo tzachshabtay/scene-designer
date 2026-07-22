@@ -719,7 +719,9 @@ export class PhaserSceneDesignerCanvas {
     const selectedBounds = tileCellBounds(selectedCells);
     if (selectedBounds) {
       this.drawTileCellBounds(target, selectedBounds, 0x46d39a, 0.1);
-      this.drawTileSelectionHandles(target, selectedBounds);
+      if (this.canManipulateTileSelection(target)) {
+        this.drawTileSelectionHandles(target, selectedBounds);
+      }
     }
 
     if (this.tileHover && isTileMode(this.mode) && this.mode !== "tile-select") {
@@ -1284,7 +1286,7 @@ export class PhaserSceneDesignerCanvas {
     const selectedBounds = selectedTarget
       ? tileCellBounds(this.selectedTileCells(selectedTarget))
       : undefined;
-    if (this.mode === "tile-select" && selectedTarget && selectedBounds) {
+    if (selectedTarget && selectedBounds && this.canManipulateTileSelection(selectedTarget)) {
       const handle = this.tileSelectionHandleAt(point, selectedTarget, selectedBounds);
       if (handle === "rotate") {
         this.rotateSelectedTiles(selectedTarget);
@@ -1313,9 +1315,19 @@ export class PhaserSceneDesignerCanvas {
       }
     }
 
-    const target = this.mode === "tile-select"
-      ? this.topmostPaintedTileAt(point)?.target ?? selectedTarget
-      : selectedTarget;
+    const paintedHit = this.mode === "tile-select"
+      ? this.topmostPaintedTileAt(point)
+      : undefined;
+    if (paintedHit && (paintedHit.target.layer.locked || paintedHit.target.platform.locked)) {
+      this.options.designer.select({
+        type: "area",
+        sceneId: this.currentScene().id,
+        layerId: paintedHit.target.layer.id,
+        areaId: paintedHit.target.platform.id
+      });
+      return true;
+    }
+    const target = paintedHit?.target ?? selectedTarget;
     if (!target || target.layer.locked || target.platform.locked) return false;
 
     const cell = this.cellFromPoint(point, target);
@@ -1642,12 +1654,16 @@ export class PhaserSceneDesignerCanvas {
     }
   }
 
+  private canManipulateTileSelection(target: SelectedTileMap): boolean {
+    return this.mode === "tile-select" && !target.layer.locked && !target.platform.locked;
+  }
+
   private topmostPaintedTileAt(point: { x: number; y: number }): { target: SelectedTileMap; cell: SceneTileMapCell } | undefined {
     const targets: SelectedTileMap[] = [];
     this.currentScene().layers.forEach((layer) => {
-      if (!layer.visible || layer.locked) return;
+      if (!layer.visible) return;
       sceneLayerPlatforms(this.manifest, layer).forEach((platform) => {
-        if (!platform.visible || platform.locked || platform.paint.mode !== "tilemap") return;
+        if (!platform.visible || platform.paint.mode !== "tilemap") return;
         try {
           targets.push({
             layer,
