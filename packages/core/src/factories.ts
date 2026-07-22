@@ -46,6 +46,7 @@ export type CreatePlatformInput = Partial<Omit<ScenePlatform, "id" | "vertices" 
 
 export type CreateTileMapCellInput = {
   id?: string;
+  tileSetId?: string;
   tileId: string;
   column: number;
   row: number;
@@ -140,6 +141,7 @@ export function createAreaVertex(x: number, y: number): SceneAreaVertex {
 export function createTileMapCell(input: CreateTileMapCellInput): SceneTileMapCell {
   return {
     id: input.id ?? uniqueId("tile"),
+    tileSetId: input.tileSetId,
     tileId: input.tileId,
     column: input.column,
     row: input.row,

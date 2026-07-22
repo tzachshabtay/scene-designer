@@ -61,6 +61,8 @@ tileSets: {
 
 The designer validates this cached geometry and every frame/animation reference against the AI asset. Select a tile-map platform to use Select, Brush, Eraser, and Picker tools. Selection supports marquee selection, one-cell arrow-key movement, Delete, repeat-fill resize handles, and a 90-degree rotate handle. Phaser renders static and animated cells through `SceneTileMapRenderer` and exposes semantic data with `SceneDesignerRuntime.tileMaps()`, `tiles()`, and `tilesAt()`.
 
+`paint.tileSetId` defines the tile map's default tile set and grid dimensions. A cell can optionally set its own `tileSetId` to paint from another tile set; cells without one inherit the map default. Alternate sets must use the same tile width and height so columns and rows stay on one grid. The designer's **Brush tile set** control only changes the active palette—it does not replace the map, clear cells, or create an undo entry—and the Picker restores both the source tile set and tile id.
+
 When a scene's world is larger than the game viewport, the Phaser designer shows a minimap. Drag it to pan the camera, use the zoom controls or wheel to zoom, and use Fit to frame the full world.
 
 ## Demo

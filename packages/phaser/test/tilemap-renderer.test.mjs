@@ -166,6 +166,83 @@ test("sync diffs cells in place and refreshes transforms, metadata, and resource
   assert.deepEqual(tracked.playbacks.map(({ destroyed }) => destroyed), [1, 1]);
 });
 
+test("mixed tilemaps bind each cell through its own tile set and refresh referenced set changes", () => {
+  const scene = fakeScene();
+  const tracked = trackedRuntime();
+  const mixedManifest = manifest();
+  mixedManifest.tileSets.props = {
+    id: "props",
+    name: "Props",
+    assetId: "tiles.props",
+    tileWidth: 16,
+    tileHeight: 16,
+    columns: 1,
+    rows: 1,
+    tiles: {
+      table: {
+        id: "table",
+        name: "Table",
+        frame: 0,
+        animation: "tiles.props.table"
+      }
+    }
+  };
+  const mixedPlatform = platform();
+  mixedPlatform.paint.cells[1] = {
+    id: "prop-cell",
+    tileSetId: "props",
+    tileId: "table",
+    column: 1,
+    row: 0
+  };
+
+  const renderer = new SceneTileMapRenderer(scene, mixedManifest, tracked.runtime);
+  const created = renderer.create(mixedPlatform);
+
+  assert.ok(created);
+  assert.deepEqual(tracked.bindings.map(({ assetId, options }) => ({ assetId, options })), [
+    { assetId: "tiles.forest", options: { frame: 0, setInitialTexture: false } },
+    { assetId: "tiles.props", options: { frame: 0, setInitialTexture: false } }
+  ]);
+  assert.deepEqual(created.sprites.map((sprite) => ({
+    x: sprite.x,
+    y: sprite.y,
+    texture: sprite.texture,
+    tileSetId: sprite.sceneDesignerTileSetId,
+    tileId: sprite.sceneDesignerTileId
+  })), [
+    { x: 8, y: 8, texture: "tiles.forest", tileSetId: "forest", tileId: "grass" },
+    { x: 24, y: 8, texture: "tiles.props", tileSetId: "props", tileId: "table" }
+  ]);
+  assert.deepEqual(tracked.playbacks.map(({ assetId, animation }) => ({ assetId, animation })), [
+    { assetId: "tiles.props", animation: "tiles.props.table" }
+  ]);
+
+  const propSprite = created.sprites[1];
+  const replacement = structuredClone(mixedManifest);
+  replacement.tileSets.props.assetId = "tiles.props.preview";
+  replacement.tileSets.props.tiles.table.frame = 4;
+  renderer.setManifest(replacement);
+  created.sync(structuredClone(mixedPlatform));
+
+  assert.strictEqual(created.sprites[1], propSprite, "stable mixed-set cells should retain their sprite");
+  assert.deepEqual({
+    texture: propSprite.texture,
+    frame: propSprite.frame,
+    tileSetId: propSprite.sceneDesignerTileSetId,
+    assetId: propSprite.getData("assetId")
+  }, {
+    texture: "tiles.props.preview",
+    frame: 4,
+    tileSetId: "props",
+    assetId: "tiles.props.preview"
+  });
+  assert.equal(tracked.bindings[1].destroyed, 1);
+  assert.equal(tracked.playbacks[0].destroyed, 1);
+
+  created.destroy();
+});
+
 test("sync uses a replacement manifest and redraws its mask only for geometry changes", () => {
   const scene = fakeScene();
   const tracked = trackedRuntime();

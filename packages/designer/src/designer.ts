@@ -88,9 +88,11 @@ export type SceneDesigner = {
   getOpenView(): SceneDesignerOpenView;
   getSelection(): SceneSelection | undefined;
   getMode(): SceneDesignerMode;
+  getActiveTileSetId(): string | undefined;
   getActiveTileId(): string | undefined;
   setManifest(manifest: SceneDesignerManifest): void;
   select(selection: SceneSelection | undefined): void;
+  setActiveTile(tileSetId: string, tileId: string): void;
   setActiveTileId(tileId: string): void;
   setMode(mode: SceneDesignerMode): void;
   updateObject(objectId: string, patch: Partial<SceneObject>, options?: SceneDesignerEditOptions): void;
@@ -155,7 +157,10 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     ? { type: "scene", sceneId: selectedSceneId }
     : undefined;
   let mode: SceneDesignerMode = "select";
-  let activeTileId: string | undefined = firstManifestTileId(manifest);
+  let activeTileSetId: string | undefined = firstManifestTileSet(manifest)?.id;
+  let activeTileId: string | undefined = activeTileSetId
+    ? firstTileId(manifest.tileSets?.[activeTileSetId])
+    : undefined;
   const past: SceneDesignerManifest[] = [];
   const future: SceneDesignerManifest[] = [];
   const assetPathByObject = new Map<string, string[]>();
@@ -230,6 +235,9 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     getMode() {
       return mode;
     },
+    getActiveTileSetId() {
+      return activeTileSetId;
+    },
     getActiveTileId() {
       return activeTileId;
     },
@@ -244,7 +252,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
       }
       selectedBehaviorId = Object.keys(manifest.behaviors ?? {})[0] ?? "";
       selection = selectedSceneId ? { type: "scene", sceneId: selectedSceneId } : undefined;
-      normalizeActiveTileId();
+      normalizeActiveTile();
       render();
       renderBehaviors();
       emitChange();
@@ -261,16 +269,27 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
         || nextSelection?.type === "behavior-area"
         ? mode
         : "select";
-      normalizeActiveTileId();
+      normalizeActiveTile();
       render();
       emitSelection();
       options.onModeChange?.(mode);
     },
-    setActiveTileId(tileId) {
-      if (!manifestHasTile(tileId) || activeTileId === tileId) return;
+    setActiveTile(tileSetId, tileId) {
+      const tileSet = manifest.tileSets?.[tileSetId];
+      if (!tileSet?.tiles[tileId]) return;
+      if (activeTileSetId === tileSetId && activeTileId === tileId) return;
+      activeTileSetId = tileSetId;
       activeTileId = tileId;
       renderEditor();
       renderBehaviors();
+    },
+    setActiveTileId(tileId) {
+      const currentTileSet = activeTileSetId ? manifest.tileSets?.[activeTileSetId] : undefined;
+      const tileSet = currentTileSet?.tiles[tileId]
+        ? currentTileSet
+        : tileSetDefinitions().find((candidate) => Boolean(candidate.tiles[tileId]));
+      if (!tileSet) return;
+      api.setActiveTile(tileSet.id, tileId);
     },
     setMode(nextMode) {
       if (mode === nextMode) return;
@@ -1566,6 +1585,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
       }
 
       const origin = areaMinimumPoint(platform);
+      activeTileSetId = tileSet.id;
       activeTileId = tileIdForSet(tileSet, activeTileId);
       if (!isTileEditorMode(mode)) {
         mode = "tile-brush";
@@ -1591,7 +1611,6 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
         platform,
         platform.paint,
         tileSets,
-        onPatch,
         tileEditingEnabled
       );
       return;
@@ -1637,44 +1656,10 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     platform: ScenePlatform,
     paint: ScenePlatformTileMapPaint,
     tileSets: SceneTileSetDefinition[],
-    onPatch: (patch: Partial<ScenePlatform>) => void,
     tileEditingEnabled: boolean
   ): void {
-    const tileSetLabel = document.createElement("label");
-    tileSetLabel.className = "scene-designer__label";
-    const tileSetText = document.createElement("span");
-    tileSetText.textContent = "Tile set";
-    const tileSetSelect = document.createElement("select");
-    tileSetSelect.className = "scene-designer__select";
-
-    for (const tileSet of tileSets) {
-      const option = document.createElement("option");
-      option.value = tileSet.id;
-      option.textContent = `${tileSet.name} (${tileSet.tileWidth}×${tileSet.tileHeight})`;
-      tileSetSelect.append(option);
-    }
-
-    tileSetSelect.value = paint.tileSetId;
-    tileSetSelect.addEventListener("change", () => {
-      const tileSet = manifest.tileSets?.[tileSetSelect.value];
-      if (!tileSet) return;
-      activeTileId = tileIdForSet(tileSet, activeTileId);
-      onPatch({
-        assetId: tileSet.assetId,
-        paint: {
-          mode: "tilemap",
-          tileSetId: tileSet.id,
-          originX: paint.originX,
-          originY: paint.originY,
-          cells: tileSet.id === paint.tileSetId ? structuredClone(paint.cells) : []
-        }
-      });
-    });
-    tileSetLabel.append(tileSetText, tileSetSelect);
-    container.append(tileSetLabel);
-
-    const tileSet = manifest.tileSets?.[paint.tileSetId];
-    if (!tileSet) {
+    const defaultTileSet = manifest.tileSets?.[paint.tileSetId];
+    if (!defaultTileSet) {
       const empty = document.createElement("div");
       empty.className = "scene-designer__empty";
       empty.textContent = "This tile map references a missing tile set.";
@@ -1682,10 +1667,44 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
       return;
     }
 
-    activeTileId = tileIdForSet(tileSet, activeTileId);
     if (tileEditingEnabled) {
+      const compatibleTileSets = tileSets.filter((tileSet) => (
+        tileSet.tileWidth === defaultTileSet.tileWidth
+        && tileSet.tileHeight === defaultTileSet.tileHeight
+      ));
+      const activeBrushTileSet = activeTileSetId ? manifest.tileSets?.[activeTileSetId] : undefined;
+      const brushTileSet = activeBrushTileSet
+        && compatibleTileSets.some((tileSet) => tileSet.id === activeBrushTileSet.id)
+        ? activeBrushTileSet
+        : defaultTileSet;
+      activeTileSetId = brushTileSet.id;
+      activeTileId = tileIdForSet(brushTileSet, activeTileId);
+
+      const tileSetLabel = document.createElement("label");
+      tileSetLabel.className = "scene-designer__label";
+      const tileSetText = document.createElement("span");
+      tileSetText.textContent = "Brush tile set";
+      const tileSetSelect = document.createElement("select");
+      tileSetSelect.className = "scene-designer__select";
+      for (const tileSet of compatibleTileSets) {
+        const option = document.createElement("option");
+        option.value = tileSet.id;
+        option.textContent = `${tileSet.name} (${tileSet.tileWidth}×${tileSet.tileHeight})`;
+        tileSetSelect.append(option);
+      }
+      tileSetSelect.value = brushTileSet.id;
+      tileSetSelect.addEventListener("change", () => {
+        const tileSet = manifest.tileSets?.[tileSetSelect.value];
+        if (!tileSet) return;
+        const tileId = tileIdForSet(tileSet, activeTileId);
+        if (!tileId) return;
+        api.setActiveTile(tileSet.id, tileId);
+      });
+      tileSetLabel.append(tileSetText, tileSetSelect);
+      container.append(tileSetLabel);
+
       appendTileToolbar(container);
-      appendTilePalette(container, tileSet);
+      appendTilePalette(container, brushTileSet);
     } else {
       const notice = document.createElement("div");
       notice.className = "scene-designer__empty";
@@ -1698,10 +1717,10 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     summary.textContent = `${paint.cells.length} painted tile${paint.cells.length === 1 ? "" : "s"} · origin ${paint.originX}, ${paint.originY}`;
     container.append(summary);
 
-    if (platform.assetId !== tileSet.assetId) {
+    if (platform.assetId !== defaultTileSet.assetId) {
       const warning = document.createElement("div");
       warning.className = "scene-designer__empty";
-      warning.textContent = "The tile map asset is out of sync with its tile set. Re-select the tile set to repair it.";
+      warning.textContent = "The tile map asset is out of sync with its default tile set.";
       container.append(warning);
     }
   }
@@ -1761,7 +1780,7 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
       label.className = "scene-designer__tile-name";
       label.textContent = tile.animation ? `${tile.name} ▶` : tile.name;
       tileButton.append(swatch, label);
-      tileButton.addEventListener("click", () => api.setActiveTileId(tile.id));
+      tileButton.addEventListener("click", () => api.setActiveTile(tileSet.id, tile.id));
       palette.append(tileButton);
     }
 
@@ -2253,15 +2272,13 @@ export function installSceneDesigner(options: SceneDesignerOptions): SceneDesign
     return tileSetDefinitions().find((tileSet) => tileSet.assetId === assetId);
   }
 
-  function manifestHasTile(tileId: string): boolean {
-    return tileSetDefinitions().some((tileSet) => (
-      Object.values(tileSet.tiles).some((tile) => tile.id === tileId)
-    ));
-  }
+  function normalizeActiveTile(): void {
+    const activeTileSet = activeTileSetId ? manifest.tileSets?.[activeTileSetId] : undefined;
+    if (activeTileSet && activeTileId && activeTileSet.tiles[activeTileId]) return;
 
-  function normalizeActiveTileId(): void {
-    if (activeTileId && manifestHasTile(activeTileId)) return;
-    activeTileId = firstManifestTileId(manifest);
+    const firstTileSet = firstManifestTileSet(manifest);
+    activeTileSetId = firstTileSet?.id;
+    activeTileId = firstTileId(firstTileSet);
   }
 
   function isAreaLikeAttribute(
@@ -2594,15 +2611,14 @@ function tileIdForSet(tileSet: SceneTileSetDefinition, preferredId: string | und
     : tiles[0]?.id;
 }
 
-function firstManifestTileId(manifest: SceneDesignerManifest): string | undefined {
-  const tileSets = Object.values(manifest.tileSets ?? {}).sort((a, b) => (
+function firstManifestTileSet(manifest: SceneDesignerManifest): SceneTileSetDefinition | undefined {
+  return Object.values(manifest.tileSets ?? {}).sort((a, b) => (
     a.name.localeCompare(b.name) || a.id.localeCompare(b.id)
-  ));
-  for (const tileSet of tileSets) {
-    const tileId = sortedTiles(tileSet)[0]?.id;
-    if (tileId) return tileId;
-  }
-  return undefined;
+  )).find((tileSet) => sortedTiles(tileSet).length > 0);
+}
+
+function firstTileId(tileSet: SceneTileSetDefinition | undefined): string | undefined {
+  return tileSet ? sortedTiles(tileSet)[0]?.id : undefined;
 }
 
 function areaMinimumPoint(area: SceneArea): { x: number; y: number } {

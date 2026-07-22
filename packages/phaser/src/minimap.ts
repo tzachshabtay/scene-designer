@@ -348,7 +348,10 @@ export class PhaserSceneDesignerMinimap {
           this.traceArea(context, area, scaleX, scaleY);
           context.clip();
           for (const cell of area.paint.cells) {
-            context.fillStyle = colorForId(cell.tileId, 0.72);
+            context.fillStyle = colorForId(
+              `${cell.tileSetId ?? area.paint.tileSetId}:${cell.tileId}`,
+              0.72
+            );
             context.fillRect(
               (area.paint.originX + cell.column * tileSet.tileWidth) * scaleX,
               (area.paint.originY + cell.row * tileSet.tileHeight) * scaleY,

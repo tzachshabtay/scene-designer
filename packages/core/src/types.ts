@@ -197,6 +197,7 @@ export type ScenePlatformTileMapPaint = {
 
 export type SceneTileMapCell = {
   id: string;
+  tileSetId?: string;
   tileId: string;
   column: number;
   row: number;

@@ -1325,7 +1325,10 @@ export class PhaserSceneDesignerCanvas {
     if (this.mode === "tile-pick") {
       const picked = target.paint.cells.find((candidate) => sameCell(candidate, cell));
       if (picked) {
-        this.options.designer.setActiveTileId(picked.tileId);
+        this.options.designer.setActiveTile(
+          picked.tileSetId ?? target.paint.tileSetId,
+          picked.tileId
+        );
         this.options.designer.setMode("tile-brush");
       }
       return true;
@@ -1428,11 +1431,28 @@ export class PhaserSceneDesignerCanvas {
         continue;
       }
       const tileId = this.options.designer.getActiveTileId();
-      if (!tileId || !interaction.target.tileSet.tiles[tileId]) continue;
+      const activeTileSetId = this.options.designer.getActiveTileSetId()
+        ?? interaction.target.paint.tileSetId;
+      const activeTileSet = this.manifest.tileSets?.[activeTileSetId];
+      if (
+        !tileId
+        || !activeTileSet?.tiles[tileId]
+        || activeTileSet.tileWidth !== interaction.target.tileSet.tileWidth
+        || activeTileSet.tileHeight !== interaction.target.tileSet.tileHeight
+      ) continue;
       const existing = interaction.cells.get(key);
-      if (existing?.tileId === tileId && !existing.rotation && !existing.flipX && !existing.flipY) continue;
+      if (
+        existing?.tileId === tileId
+        && (existing.tileSetId ?? interaction.target.paint.tileSetId) === activeTileSet.id
+        && !existing.rotation
+        && !existing.flipX
+        && !existing.flipY
+      ) continue;
       interaction.cells.set(key, createTileMapCell({
         id: existing?.id,
+        tileSetId: activeTileSet.id === interaction.target.paint.tileSetId
+          ? undefined
+          : activeTileSet.id,
         tileId,
         column: cell.column,
         row: cell.row
@@ -1573,6 +1593,7 @@ export class PhaserSceneDesignerCanvas {
         const existing = sourceByPosition.get(positionKey);
         const resized = createTileMapCell({
           id: existing?.id ?? interaction.generatedCellIds.get(positionKey),
+          tileSetId: source.tileSetId,
           tileId: source.tileId,
           column,
           row,

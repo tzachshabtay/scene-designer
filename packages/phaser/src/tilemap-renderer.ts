@@ -72,10 +72,12 @@ export class SceneTileMapRenderer {
       return undefined;
     }
 
-    const tileSet = getTileSet(this.manifest, platform.paint.tileSetId);
+    const gridTileSet = getTileSet(this.manifest, platform.paint.tileSetId);
     // Resolve before allocating Phaser objects so a bad target/version mapping
     // cannot leak a mask and graphics object.
-    this.aiRuntime.key(tileSet.assetId);
+    for (const tileSet of referencedTileSets(this.manifest, platform)) {
+      this.aiRuntime.key(tileSet.assetId);
+    }
     const maskGraphics = this.scene.make.graphics({}, false);
     drawPlatformMask(maskGraphics, platform);
     const layer = this.scene.add.layer();
@@ -109,7 +111,7 @@ export class SceneTileMapRenderer {
     let currentPlatform = platform;
     let currentGeometrySignature = platformGeometrySignature(platform);
     let currentIndex = options.index ?? 0;
-    let currentContentSignature = tileMapContentSignature(platform, tileSet, currentIndex);
+    let currentContentSignature = tileMapContentSignature(this.manifest, platform, currentIndex);
     let destroyed = false;
 
     const created: CreatedSceneTileMap = {
@@ -125,7 +127,7 @@ export class SceneTileMapRenderer {
           throw new Error("Scene tile maps must use tilemap paint and have a closed platform with at least three vertices.");
         }
 
-        const nextTileSet = getTileSet(this.manifest, nextPlatform.paint.tileSetId);
+        const nextGridTileSet = getTileSet(this.manifest, nextPlatform.paint.tileSetId);
         const nextGeometrySignature = platformGeometrySignature(nextPlatform);
         if (nextGeometrySignature !== currentGeometrySignature) {
           maskGraphics.clear();
@@ -140,7 +142,7 @@ export class SceneTileMapRenderer {
           currentIndex = nextOptions.index;
         }
         layer.setVisible(nextPlatform.visible);
-        const nextContentSignature = tileMapContentSignature(nextPlatform, nextTileSet, currentIndex);
+        const nextContentSignature = tileMapContentSignature(this.manifest, nextPlatform, currentIndex);
         if (nextContentSignature === currentContentSignature) {
           currentPlatform = nextPlatform;
           return;
@@ -152,7 +154,8 @@ export class SceneTileMapRenderer {
           if (retainedCellIds.has(cell.id)) continue;
           retainedCellIds.add(cell.id);
 
-          const tile = nextTileSet.tiles[cell.tileId];
+          const cellTileSet = tileSetForCell(this.manifest, nextPlatform, cell);
+          const tile = cellTileSet.tiles[cell.tileId];
           const existing = resourcesByCellId.get(cell.id);
           if (!tile) {
             if (existing) removeTileSprite(layer, resourcesByCellId, existing);
@@ -164,7 +167,8 @@ export class SceneTileMapRenderer {
             layer,
             this.aiRuntime,
             nextPlatform,
-            nextTileSet,
+            nextGridTileSet,
+            cellTileSet,
             tile,
             cell
           );
@@ -173,7 +177,8 @@ export class SceneTileMapRenderer {
             this.aiRuntime,
             resources,
             nextPlatform,
-            nextTileSet,
+            nextGridTileSet,
+            cellTileSet,
             tile,
             cell,
             currentIndex
@@ -212,7 +217,8 @@ export class SceneTileMapRenderer {
 
     try {
       for (const cell of platform.paint.cells) {
-        const tile = tileSet.tiles[cell.tileId];
+        const cellTileSet = tileSetForCell(this.manifest, platform, cell);
+        const tile = cellTileSet.tiles[cell.tileId];
         if (!tile || resourcesByCellId.has(cell.id)) continue;
 
         const resources = createTileSprite(
@@ -220,7 +226,8 @@ export class SceneTileMapRenderer {
           layer,
           this.aiRuntime,
           platform,
-          tileSet,
+          gridTileSet,
+          cellTileSet,
           tile,
           cell
         );
@@ -229,7 +236,8 @@ export class SceneTileMapRenderer {
           this.aiRuntime,
           resources,
           platform,
-          tileSet,
+          gridTileSet,
+          cellTileSet,
           tile,
           cell,
           currentIndex
@@ -261,12 +269,13 @@ function createTileSprite(
   layer: Phaser.GameObjects.Layer,
   aiRuntime: SceneDesignerAiRuntime,
   platform: SceneTileMapPlatform,
+  gridTileSet: SceneTileSetDefinition,
   tileSet: SceneTileSetDefinition,
   tile: SceneTileDefinition,
   cell: SceneTileMapCell
 ): SceneTileSpriteResources {
-  const x = platform.paint.originX + (cell.column + 0.5) * tileSet.tileWidth;
-  const y = platform.paint.originY + (cell.row + 0.5) * tileSet.tileHeight;
+  const x = platform.paint.originX + (cell.column + 0.5) * gridTileSet.tileWidth;
+  const y = platform.paint.originY + (cell.row + 0.5) * gridTileSet.tileHeight;
   const textureKey = aiRuntime.key(tileSet.assetId);
   const sprite = scene.add.sprite(x, y, textureKey) as CreatedSceneTileSprite;
   layer.add(sprite);
@@ -288,6 +297,7 @@ function syncTileSprite(
   aiRuntime: SceneDesignerAiRuntime,
   resources: SceneTileSpriteResources,
   platform: SceneTileMapPlatform,
+  gridTileSet: SceneTileSetDefinition,
   tileSet: SceneTileSetDefinition,
   tile: SceneTileDefinition,
   cell: SceneTileMapCell,
@@ -327,8 +337,8 @@ function syncTileSprite(
   }
 
   resources.sprite.setPosition(
-    platform.paint.originX + (cell.column + 0.5) * tileSet.tileWidth,
-    platform.paint.originY + (cell.row + 0.5) * tileSet.tileHeight
+    platform.paint.originX + (cell.column + 0.5) * gridTileSet.tileWidth,
+    platform.paint.originY + (cell.row + 0.5) * gridTileSet.tileHeight
   );
   resources.sprite.setOrigin(0.5, 0.5);
   const rotation = normalizedQuarterTurn(cell.rotation ?? 0);
@@ -337,8 +347,8 @@ function syncTileSprite(
   // display dimensions as well so its world-space bounds remain exactly
   // one grid cell instead of overlapping adjacent cells.
   resources.sprite.setDisplaySize(
-    swapsDimensions ? tileSet.tileHeight : tileSet.tileWidth,
-    swapsDimensions ? tileSet.tileWidth : tileSet.tileHeight
+    swapsDimensions ? gridTileSet.tileHeight : gridTileSet.tileWidth,
+    swapsDimensions ? gridTileSet.tileWidth : gridTileSet.tileHeight
   );
   resources.sprite.setAngle(rotation);
   resources.sprite.setFlip(Boolean(cell.flipX), Boolean(cell.flipY));
@@ -439,15 +449,34 @@ function platformGeometrySignature(platform: SceneTileMapPlatform): string {
   ]));
 }
 
-function tileMapContentSignature(
+function tileSetForCell(
+  manifest: SceneDesignerManifest,
   platform: SceneTileMapPlatform,
-  tileSet: SceneTileSetDefinition,
+  cell: SceneTileMapCell
+): SceneTileSetDefinition {
+  return getTileSet(manifest, cell.tileSetId ?? platform.paint.tileSetId);
+}
+
+function referencedTileSets(
+  manifest: SceneDesignerManifest,
+  platform: SceneTileMapPlatform
+): SceneTileSetDefinition[] {
+  const tileSetIds = new Set([
+    platform.paint.tileSetId,
+    ...platform.paint.cells.map((cell) => cell.tileSetId ?? platform.paint.tileSetId)
+  ]);
+  return [...tileSetIds].map((tileSetId) => getTileSet(manifest, tileSetId));
+}
+
+function tileMapContentSignature(
+  manifest: SceneDesignerManifest,
+  platform: SceneTileMapPlatform,
   index: number
 ): string {
   return JSON.stringify({
     visible: platform.visible,
     paint: platform.paint,
-    tileSet,
+    tileSets: referencedTileSets(manifest, platform),
     index
   });
 }

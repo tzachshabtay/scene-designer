@@ -3,6 +3,8 @@ import test from "node:test";
 
 import {
   assertSceneManifest,
+  createTileMapCell,
+  sceneTiles,
   sceneTilesAt
 } from "../dist/index.js";
 
@@ -24,6 +26,28 @@ function tileSet() {
         properties: { speed: 1 }
       }
     }
+  };
+}
+
+function propsTileSet(overrides = {}) {
+  return {
+    id: "props",
+    name: "Props",
+    assetId: "tiles.props",
+    tileWidth: 16,
+    tileHeight: 16,
+    columns: 1,
+    rows: 1,
+    tiles: {
+      chest: {
+        id: "chest",
+        name: "Chest",
+        frame: 0,
+        tags: ["interactive"],
+        properties: { loot: "key" }
+      }
+    },
+    ...overrides
   };
 }
 
@@ -147,4 +171,75 @@ test("sceneTilesAt invalidates cached coordinates when a cell moves", () => {
   assert.equal(moved.length, 1);
   assert.equal(moved[0].cell, cell);
   assert.equal(moved[0].x, 16);
+});
+
+test("tile map cells can resolve tiles from a compatible alternate tile set", () => {
+  const manifest = manifestWithAreas([platform()]);
+  manifest.tileSets.props = propsTileSet();
+  const cell = manifest.scenes.world.layers[0].areas[0].paint.cells[0];
+  cell.tileSetId = "props";
+  cell.tileId = "chest";
+
+  assertSceneManifest(manifest);
+
+  const [resolved] = sceneTiles(manifest, "world", { tileTag: "interactive" });
+  assert.equal(resolved.tileSet, manifest.tileSets.props);
+  assert.equal(resolved.tile.id, "chest");
+  assert.equal(resolved.cell, cell);
+  assert.equal(resolved.x, 0);
+  assert.equal(resolved.y, 0);
+  assert.equal(resolved.width, 16);
+  assert.equal(resolved.height, 16);
+  assert.deepEqual(resolved.properties, { loot: "key", spawn: true });
+
+  const [hit] = sceneTilesAt(manifest, "world", 8, 8);
+  assert.equal(hit.tileSet.id, "props");
+  assert.equal(hit.tile.id, "chest");
+});
+
+test("tile map cells reject unknown alternate tile sets", () => {
+  const terrain = platform();
+  terrain.paint.cells[0].tileSetId = "missing";
+
+  assert.throws(
+    () => assertSceneManifest(manifestWithAreas([terrain])),
+    /cells\.0\.tileSetId references unknown tile set "missing"/
+  );
+});
+
+test("tile map cells require alternate tile sets to match the map grid", () => {
+  const manifest = manifestWithAreas([platform()]);
+  manifest.tileSets.props = propsTileSet({ tileWidth: 32 });
+  const cell = manifest.scenes.world.layers[0].areas[0].paint.cells[0];
+  cell.tileSetId = "props";
+  cell.tileId = "chest";
+
+  assert.throws(
+    () => assertSceneManifest(manifest),
+    /cells\.0\.tileSetId must reference a tile set with 16x16 tiles/
+  );
+});
+
+test("tile map cells validate their tile against the selected tile set", () => {
+  const manifest = manifestWithAreas([platform()]);
+  manifest.tileSets.props = propsTileSet();
+  manifest.scenes.world.layers[0].areas[0].paint.cells[0].tileSetId = "props";
+
+  assert.throws(
+    () => assertSceneManifest(manifest),
+    /cells\.0\.tileId references unknown tile "grass"/
+  );
+});
+
+test("createTileMapCell preserves an alternate tile set id", () => {
+  const cell = createTileMapCell({
+    id: "chest-cell",
+    tileSetId: "props",
+    tileId: "chest",
+    column: 2,
+    row: 3
+  });
+
+  assert.equal(cell.tileSetId, "props");
+  assert.equal(cell.tileId, "chest");
 });

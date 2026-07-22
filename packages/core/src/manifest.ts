@@ -135,14 +135,28 @@ function assertTileMapReferences(manifest: SceneDesignerManifest): void {
     // resolved platform as a whole, not only its tile-set references.
     assertPlatformDefaults(platform, label);
     if (platform.paint.mode !== "tilemap") return;
-    const tileSet = manifest.tileSets?.[platform.paint.tileSetId];
-    if (!tileSet) {
+    const defaultTileSet = manifest.tileSets?.[platform.paint.tileSetId];
+    if (!defaultTileSet) {
       throw new Error(`${label}.paint.tileSetId references unknown tile set "${platform.paint.tileSetId}".`);
     }
-    if (platform.assetId !== tileSet.assetId) {
-      throw new Error(`${label}.assetId must match tile set asset "${tileSet.assetId}".`);
+    if (platform.assetId !== defaultTileSet.assetId) {
+      throw new Error(`${label}.assetId must match tile set asset "${defaultTileSet.assetId}".`);
     }
     for (const [index, cell] of platform.paint.cells.entries()) {
+      const tileSetId = cell.tileSetId ?? platform.paint.tileSetId;
+      const tileSet = manifest.tileSets?.[tileSetId];
+      if (!tileSet) {
+        throw new Error(`${label}.paint.cells.${index}.tileSetId references unknown tile set "${tileSetId}".`);
+      }
+      if (
+        tileSet.tileWidth !== defaultTileSet.tileWidth
+        || tileSet.tileHeight !== defaultTileSet.tileHeight
+      ) {
+        throw new Error(
+          `${label}.paint.cells.${index}.tileSetId must reference a tile set with `
+          + `${defaultTileSet.tileWidth}x${defaultTileSet.tileHeight} tiles.`
+        );
+      }
       if (!tileSet.tiles[cell.tileId]) {
         throw new Error(`${label}.paint.cells.${index}.tileId references unknown tile "${cell.tileId}".`);
       }
@@ -463,6 +477,7 @@ function assertPlatformPaint(paint: ScenePlatformPaint, label: string): void {
 
 function assertTileMapCell(cell: SceneTileMapCell, label: string): void {
   assertNonEmpty(cell.id, `${label}.id`);
+  if (cell.tileSetId !== undefined) assertNonEmpty(cell.tileSetId, `${label}.tileSetId`);
   assertNonEmpty(cell.tileId, `${label}.tileId`);
   assertInteger(cell.column, `${label}.column`);
   assertInteger(cell.row, `${label}.row`);
@@ -633,10 +648,12 @@ export function sceneTiles(
     for (const platform of sceneLayerPlatforms(manifest, layer)) {
       if (platform.paint.mode !== "tilemap") continue;
       if (options.platformTag !== undefined && platform.tag !== options.platformTag) continue;
-      const tileSet = manifest.tileSets?.[platform.paint.tileSetId];
-      if (!tileSet) continue;
+      const defaultTileSet = manifest.tileSets?.[platform.paint.tileSetId];
+      if (!defaultTileSet) continue;
 
       for (const cell of platform.paint.cells) {
+        const tileSet = manifest.tileSets?.[cell.tileSetId ?? platform.paint.tileSetId];
+        if (!tileSet) continue;
         const tile = tileSet.tiles[cell.tileId];
         if (!tile) continue;
         const tags = [...new Set(tile.tags ?? [])];
@@ -673,13 +690,15 @@ export function sceneTilesAt(
       if (platform.paint.mode !== "tilemap") continue;
       if (options.platformTag !== undefined && platform.tag !== options.platformTag) continue;
       if (!pointInArea(x, y, platform)) continue;
-      const tileSet = manifest.tileSets?.[platform.paint.tileSetId];
-      if (!tileSet) continue;
+      const defaultTileSet = manifest.tileSets?.[platform.paint.tileSetId];
+      if (!defaultTileSet) continue;
 
-      const column = Math.floor((x - platform.paint.originX) / tileSet.tileWidth);
-      const row = Math.floor((y - platform.paint.originY) / tileSet.tileHeight);
+      const column = Math.floor((x - platform.paint.originX) / defaultTileSet.tileWidth);
+      const row = Math.floor((y - platform.paint.originY) / defaultTileSet.tileHeight);
       const cell = tileMapCellIndex(platform.paint.cells).get(`${column},${row}`);
       if (!cell) continue;
+      const tileSet = manifest.tileSets?.[cell.tileSetId ?? platform.paint.tileSetId];
+      if (!tileSet) continue;
       const tile = tileSet.tiles[cell.tileId];
       if (!tile) continue;
       const tags = [...new Set(tile.tags ?? [])];
