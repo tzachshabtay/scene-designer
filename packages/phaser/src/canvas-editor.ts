@@ -36,6 +36,14 @@ import {
 } from "@scene-designer/core";
 import Phaser from "phaser";
 import type { SceneDesignerAiRuntime } from "./ai-runtime.js";
+import {
+  nearestObjectScaleHandle,
+  objectScaleHandlePoints,
+  resizeObjectFromEdge,
+  type ObjectCornerScaleHandle,
+  type ObjectEdgeScaleHandle,
+  type ObjectScaleHandle
+} from "./object-editing.js";
 import { applyObjectTransform } from "./runtime.js";
 import {
   moveTileCellsWithinArea,
@@ -63,8 +71,8 @@ export type PhaserSceneDesignerCanvasOptions = {
   areaDepth?: number;
 };
 
-type HandleKind = "move" | "scale-nw" | "scale-ne" | "scale-se" | "scale-sw" | "rotate" | "anchor";
-type GroupHandleKind = Exclude<HandleKind, "anchor">;
+type HandleKind = "move" | ObjectScaleHandle | "rotate" | "anchor";
+type GroupHandleKind = "move" | ObjectCornerScaleHandle | "rotate";
 type Bounds = {
   left: number;
   top: number;
@@ -575,7 +583,8 @@ export class PhaserSceneDesignerCanvas {
   }
 
   private drawObjectBox(object: SceneObject, color: number, handles: boolean): void {
-    const corners = objectCorners(object, this.objectSize(object));
+    const size = this.objectSize(object);
+    const corners = objectCorners(object, size);
     this.overlay.lineStyle(2, color, handles ? 1 : 0.62);
     this.overlay.beginPath();
     this.overlay.moveTo(corners[0].x, corners[0].y);
@@ -587,11 +596,11 @@ export class PhaserSceneDesignerCanvas {
 
     if (!handles) return;
 
-    for (const corner of corners) {
+    for (const handle of objectScaleHandlePoints(object, size)) {
       this.overlay.fillStyle(0x101216, 1);
-      this.overlay.fillRect(corner.x - 5, corner.y - 5, 10, 10);
+      this.overlay.fillRect(handle.point.x - 5, handle.point.y - 5, 10, 10);
       this.overlay.lineStyle(1, color, 1);
-      this.overlay.strokeRect(corner.x - 5, corner.y - 5, 10, 10);
+      this.overlay.strokeRect(handle.point.x - 5, handle.point.y - 5, 10, 10);
     }
 
     const top = midpoint(corners[0], corners[1]);
@@ -1099,9 +1108,17 @@ export class PhaserSceneDesignerCanvas {
           anchorX: Phaser.Math.Clamp(local.x / size.width + start.anchorX, 0, 1),
           anchorY: Phaser.Math.Clamp(start.anchorY - local.y / size.height, 0, 1)
         }, { history });
+      } else if (isObjectEdgeScaleHandle(drag.handle)) {
+        this.snapGridVisible = false;
+        this.options.designer.updateObject(drag.objectId, resizeObjectFromEdge(
+          start,
+          this.objectAssetSize(start),
+          drag.handle,
+          drag.startPointer,
+          point
+        ), { history });
       } else {
         this.snapGridVisible = false;
-        const size = this.objectSize(start);
         const anchor = objectPosition(start);
         const startDistance = Math.max(12, Phaser.Math.Distance.Between(
           drag.startPointer.x,
@@ -2057,12 +2074,9 @@ export class PhaserSceneDesignerCanvas {
     const bottom = object.anchorY * size.height;
     const inBody = local.x >= left && local.x <= right && local.y >= top && local.y <= bottom;
     const corners = objectCorners(object, size);
-    const handleNames: HandleKind[] = ["scale-nw", "scale-ne", "scale-se", "scale-sw"];
-
-    for (let index = 0; index < corners.length; index += 1) {
-      if (distance(point, corners[index]) < 12) {
-        return { object, layer, kind: handleNames[index] };
-      }
+    const scaleHandle = nearestObjectScaleHandle(point, objectScaleHandlePoints(object, size), 12);
+    if (scaleHandle) {
+      return { object, layer, kind: scaleHandle };
     }
 
     const topMid = midpoint(corners[0], corners[1]);
@@ -2162,13 +2176,18 @@ export class PhaserSceneDesignerCanvas {
   }
 
   private objectSize(object: SceneObject): { width: number; height: number } {
+    const size = this.objectAssetSize(object);
+    return {
+      width: size.width * Math.abs(object.scaleX),
+      height: size.height * Math.abs(object.scaleY)
+    };
+  }
+
+  private objectAssetSize(object: SceneObject): { width: number; height: number } {
     const asset = this.options.aiAssets.assets[object.assetId];
     const width = asset?.frameGrid?.frameWidth ?? asset?.dimensions?.width ?? 64;
     const height = asset?.frameGrid?.frameHeight ?? asset?.dimensions?.height ?? 64;
-    return {
-      width: width * Math.abs(object.scaleX),
-      height: height * Math.abs(object.scaleY)
-    };
+    return { width, height };
   }
 
   private stopEvent(): void {
@@ -2245,6 +2264,10 @@ function worldToObjectLocal(point: Phaser.Math.Vector2, object: SceneObject): Ph
   const cos = Math.cos(radians);
   const sin = Math.sin(radians);
   return new Phaser.Math.Vector2(dx * cos - dy * sin, dx * sin + dy * cos);
+}
+
+function isObjectEdgeScaleHandle(handle: HandleKind): handle is ObjectEdgeScaleHandle {
+  return handle === "scale-n" || handle === "scale-e" || handle === "scale-s" || handle === "scale-w";
 }
 
 function rotatePoint(
