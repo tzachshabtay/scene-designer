@@ -22,6 +22,7 @@ import {
 } from "@scene-designer/phaser";
 import Phaser from "phaser";
 import { tileCellKey } from "./tile-cell-key.js";
+import { isTileSampleWalkable } from "./tile-walkability.js";
 
 const tileSize = 32;
 const playerSpeed = 190;
@@ -419,9 +420,23 @@ export class TopDownScene extends Phaser.Scene {
       [x - halfWidth, y + halfHeight],
       [x + halfWidth, y + halfHeight]
     ];
-    return samples.every(([sampleX, sampleY]) => (
-      this.runtime.tilesAt(this.currentSceneId, sampleX, sampleY, { tileTag: "blocked" }).length === 0
-    ));
+    return samples.every(([sampleX, sampleY]) => {
+      const blockedTileCount = this.runtime.tilesAt(
+        this.currentSceneId,
+        sampleX,
+        sampleY,
+        { tileTag: "blocked" }
+      ).length;
+      if (blockedTileCount === 0) return true;
+
+      const portalTileCount = this.runtime.tilesAt(
+        this.currentSceneId,
+        sampleX,
+        sampleY,
+        { tileTag: "portal" }
+      ).length;
+      return isTileSampleWalkable(blockedTileCount, portalTileCount);
+    });
   }
 
   private handlePickups(): void {

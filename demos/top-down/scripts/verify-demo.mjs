@@ -2,6 +2,7 @@ import { access, readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { tileCellKey } from "../src/tile-cell-key.js";
+import { isTileSampleWalkable } from "../src/tile-walkability.js";
 
 const demoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const sourceRoot = path.join(demoRoot, "src");
@@ -156,6 +157,9 @@ for (const scene of Object.values(scenes).filter((candidate) => candidate.tags?.
     `${scene.id} walls and corners must have floor beneath them.`
   );
 }
+assert(isTileSampleWalkable(0, 0), "Empty and floor-only samples must remain walkable.");
+assert(!isTileSampleWalkable(1, 0), "Blocked samples without a portal must stop movement.");
+assert(isTileSampleWalkable(1, 1), "A portal must open an overlapping blocked tile.");
 const cottageCorners = forest.layers.flatMap((layer) => layer.areas)
   .flatMap((area) => area.paint.cells)
   .filter((cell) => cell.tileId === "wall-corner");
