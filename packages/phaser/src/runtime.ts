@@ -154,6 +154,10 @@ export function createSceneObjects(
       if (!object.visible || options.objectFilter?.(object) === false) return;
 
       const sprite = phaserScene.add.sprite(object.x, object.y, aiRuntime.key(object.assetId)) as CreatedSceneObject;
+      const textureBinding = aiRuntime.bindTexture(sprite, object.assetId, {
+        setInitialTexture: false
+      });
+      sprite.once("destroy", () => textureBinding.destroy());
       applyObjectTransform(sprite, object);
       sprite.setDepth(baseDepth + layerIndex * layerDepthStep + objectIndex);
       sprite.sceneDesignerObjectId = object.id;

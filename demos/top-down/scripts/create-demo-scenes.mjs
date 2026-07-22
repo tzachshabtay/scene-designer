@@ -96,6 +96,10 @@ function createForestScene() {
         rows,
         cells: buildings
       })),
+      objectLayer("layer-roofs", "Cottage Roofs", [
+        sceneObject("forest-roof-moss-cottage", "roof", 256, 192),
+        sceneObject("forest-roof-river-lodge", "roof", 1152, 768)
+      ]),
       tileLayer("layer-interactions", "Pickups & Doorways", platform({
         id: "forest-props",
         tag: "interactions",
@@ -243,6 +247,34 @@ function tileLayer(id, name, tilePlatform, locked = false) {
     locked,
     objects: [],
     areas: [tilePlatform]
+  };
+}
+
+function objectLayer(id, name, objects, locked = false) {
+  return {
+    id,
+    name,
+    visible: true,
+    locked,
+    objects,
+    areas: []
+  };
+}
+
+function sceneObject(id, assetId, x, y) {
+  return {
+    id,
+    tag: "roof",
+    assetId,
+    x,
+    y,
+    scaleX: 1,
+    scaleY: 1,
+    rotation: 0,
+    anchorX: 0,
+    anchorY: 1,
+    visible: true,
+    locked: false
   };
 }
 

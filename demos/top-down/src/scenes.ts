@@ -18688,6 +18688,43 @@ export const scenes = defineSceneManifest(
           ]
         },
         {
+          "id": "layer-roofs",
+          "name": "Cottage Roofs",
+          "visible": true,
+          "locked": false,
+          "objects": [
+            {
+              "id": "forest-roof-moss-cottage",
+              "tag": "roof",
+              "assetId": "roof",
+              "x": 256,
+              "y": 192,
+              "scaleX": 1,
+              "scaleY": 1,
+              "rotation": 0,
+              "anchorX": 0,
+              "anchorY": 1,
+              "visible": true,
+              "locked": false
+            },
+            {
+              "id": "forest-roof-river-lodge",
+              "tag": "roof",
+              "assetId": "roof",
+              "x": 1152,
+              "y": 768,
+              "scaleX": 1,
+              "scaleY": 1,
+              "rotation": 0,
+              "anchorX": 0,
+              "anchorY": 1,
+              "visible": true,
+              "locked": false
+            }
+          ],
+          "areas": []
+        },
+        {
           "id": "layer-interactions",
           "name": "Pickups & Doorways",
           "visible": true,

@@ -17,6 +17,7 @@ import {
   installPhaserSceneDesigner,
   SceneDesignerDebugClient,
   SceneDesignerRuntime,
+  type CreatedSceneObject,
   type CreatedSceneTileMap,
   type InstalledPhaserSceneDesigner
 } from "@scene-designer/phaser";
@@ -91,6 +92,7 @@ export class TopDownScene extends Phaser.Scene {
   private movementKeys!: MovementKeys;
   private facing: Facing = "down";
   private lastValidHeroPosition = { x: 0, y: 0 };
+  private renderedObjects: CreatedSceneObject[] = [];
   private renderedTileMaps: CreatedSceneTileMap[] = [];
   private readonly tileSprites = new Map<string, Phaser.GameObjects.Sprite>();
   private readonly collectedCells = new Set<string>();
@@ -179,7 +181,7 @@ export class TopDownScene extends Phaser.Scene {
       this.assetDesigner?.destroy();
       this.designer?.destroy();
       this.heroAnimationPlayback?.destroy();
-      this.destroyRenderedTileMaps();
+      this.destroyRenderedSceneContent();
       this.toastTimer?.destroy();
       if (this.reloadTimer !== undefined) {
         window.clearTimeout(this.reloadTimer);
@@ -283,7 +285,7 @@ export class TopDownScene extends Phaser.Scene {
         }
       : undefined;
 
-    this.destroyRenderedTileMaps();
+    this.destroyRenderedSceneContent();
     this.currentSceneId = sceneId;
     const definition = getScene(this.sceneManifest, sceneId);
     this.physics.world.setBounds(0, 0, definition.width, definition.height);
@@ -297,6 +299,10 @@ export class TopDownScene extends Phaser.Scene {
       depth: 0,
       layerDepthStep: 100,
       tileMapDepthStep: 1
+    });
+    this.renderedObjects = this.runtime.createObjects(sceneId, {
+      depth: 1000,
+      layerDepthStep: 100
     });
 
     for (const tileMap of this.renderedTileMaps) {
@@ -336,7 +342,9 @@ export class TopDownScene extends Phaser.Scene {
     this.updateHud();
   }
 
-  private destroyRenderedTileMaps(): void {
+  private destroyRenderedSceneContent(): void {
+    for (const object of this.renderedObjects) object.destroy();
+    this.renderedObjects = [];
     for (const tileMap of this.renderedTileMaps) tileMap.destroy();
     this.renderedTileMaps = [];
     this.tileSprites.clear();

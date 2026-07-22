@@ -12,6 +12,7 @@ const assetFiles = [
   "ai-assets/Graphics/Tiles/tiles.forest.json",
   "ai-assets/Graphics/Tiles/tiles.house.json",
   "ai-assets/Graphics/Tiles/tiles.props.json",
+  "ai-assets/Graphics/Buildings/roof.json",
   "ai-assets/Graphics/Hero/hero.explorer.json",
   "ai-assets/Graphics/Hero/hero.explorer.idle.json",
   "ai-assets/Graphics/Hero/hero.explorer.walk.down.json",
@@ -108,6 +109,12 @@ assertTileOrder(assets["tiles.props"], tileSets.props, [
   "potion",
   "doorway"
 ]);
+const roof = assets.roof;
+assert(roof?.kind === "image", "The cottage roof must be a normal image asset, not a tileset.");
+assert(roof.dimensions?.width === 224 && roof.dimensions?.height === 96, "The cottage roof must span exactly 7×3 32px tiles.");
+assert(roof.settings?.referenceAssetIds?.includes("tiles.house"), "The cottage roof should use the house tileset as generation context.");
+assert(!tileSets.roof, "The cottage roof must not be registered as a scene tileset.");
+await assertVersionFiles(roof);
 assert(tileSets.house.tiles["wall-corner"]?.tags?.includes("wall"), "The house corner tile must be tagged as a wall.");
 const sceneFiles = [
   "scenes/world/world.forest.json",
@@ -121,6 +128,29 @@ const scenes = Object.fromEntries(await Promise.all(sceneFiles.map(async (relati
 
 const forest = scenes["world.forest"];
 assert(forest.width > 960 && forest.height > 640, "The forest must be larger than the viewport.");
+const buildingsLayerIndex = forest.layers.findIndex((layer) => layer.id === "layer-buildings");
+const roofsLayerIndex = forest.layers.findIndex((layer) => layer.id === "layer-roofs");
+const interactionsLayerIndex = forest.layers.findIndex((layer) => layer.id === "layer-interactions");
+assert(
+  buildingsLayerIndex >= 0
+    && buildingsLayerIndex < roofsLayerIndex
+    && roofsLayerIndex < interactionsLayerIndex,
+  "The cottage roofs layer must render above buildings and below interactions."
+);
+const roofObjects = forest.layers[roofsLayerIndex]?.objects ?? [];
+assert(roofObjects.length === 2, "The forest must contain one roof object per cottage.");
+const expectedRoofs = new Map([
+  ["forest-roof-moss-cottage", { x: 256, y: 192 }],
+  ["forest-roof-river-lodge", { x: 1152, y: 768 }]
+]);
+for (const object of roofObjects) {
+  const expected = expectedRoofs.get(object.id);
+  assert(expected, `${object.id} is not a recognized cottage roof.`);
+  assert(object.assetId === "roof", `${object.id} must reference the normal roof image asset.`);
+  assert(object.x === expected.x && object.y === expected.y, `${object.id} must align to its 7×3 tile footprint.`);
+  assert(object.anchorX === 0 && object.anchorY === 1, `${object.id} must use a top-left anchor.`);
+  assert(object.scaleX === 1 && object.scaleY === 1 && object.rotation === 0, `${object.id} must preserve the roof asset's exact dimensions.`);
+}
 assert(Object.values(scenes).filter((scene) => scene.tags?.includes("house")).length >= 2, "At least two house scenes are required.");
 for (const scene of Object.values(scenes).filter((candidate) => candidate.tags?.includes("house"))) {
   const terrainLayerIndex = scene.layers.findIndex((layer) => layer.name === "Terrain");

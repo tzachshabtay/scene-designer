@@ -2,6 +2,41 @@ import { defineAiAssets } from "@ai-game-assets/core";
 
 export const assets = defineAiAssets(
 {
+  "roof": {
+    "id": "roof",
+    "kind": "image",
+    "prompt": "One complete orthographic top-down cottage roof overlay for a 2D pixel-art RPG: a single connected warm red-brown shingled roof with a strong horizontal ridge and dark timber eaves, sized to span exactly 7 columns by 3 rows of a 32-pixel world grid (224×96 pixels), matching the Woodland Quest cottage palette, with transparency outside the roof silhouette. This is one building image, not a tileset or a grid of separate tiles. Do not draw walls, doors, labels, borders, padding, or extra objects.",
+    "dimensions": {
+      "width": 224,
+      "height": 96
+    },
+    "settings": {
+      "model": "gpt-image-2",
+      "background": "auto",
+      "format": "png",
+      "referenceAssetIds": [
+        "tiles.house"
+      ]
+    },
+    "activeVersion": "default",
+    "versions": {
+      "default": {
+        "name": "default",
+        "file": "/assets/roof.default.svg",
+        "prompt": "One complete orthographic top-down cottage roof overlay for a 2D pixel-art RPG: a single connected warm red-brown shingled roof with a strong horizontal ridge and dark timber eaves, sized to span exactly 7 columns by 3 rows of a 32-pixel world grid (224×96 pixels), matching the Woodland Quest cottage palette, with transparency outside the roof silhouette. This is one building image, not a tileset or a grid of separate tiles. Do not draw walls, doors, labels, borders, padding, or extra objects.",
+        "createdAt": "2026-07-21T00:00:00.000Z",
+        "model": "manual-svg"
+      }
+    },
+    "tags": [
+      "roof",
+      "house",
+      "top-down"
+    ],
+    "audioSettings": {},
+    "audioPlayback": {},
+    "voiceSettings": {}
+  },
   "hero.explorer.idle": {
     "id": "hero.explorer.idle",
     "kind": "spritesheet",
@@ -628,6 +663,10 @@ export const assets = defineAiAssets(
 {}
 );
 assets.assetPaths = {
+  "roof": [
+    "Graphics",
+    "Buildings"
+  ],
   "hero.explorer.idle": [
     "Graphics",
     "Hero"
