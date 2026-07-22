@@ -62,6 +62,7 @@ export type {
   CreatedSceneTileMap,
   CreatedSceneTileSprite,
   CreateSceneTileMapOptions,
+  SyncSceneTileMapOptions,
   SceneTileMapPlatform
 } from "./tilemap-renderer.js";
 

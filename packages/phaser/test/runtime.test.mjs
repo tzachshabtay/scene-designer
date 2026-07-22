@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { createSceneObjects } from "../dist/runtime.js";
+import { applyObjectTransform, createSceneObjects } from "../dist/runtime.js";
 
-test("scene objects follow AI asset previews and release their texture bindings", () => {
+test("scene objects accept live transforms, follow previews, and release texture bindings", () => {
   const bindingCalls = [];
   let destroyedBindings = 0;
   const scene = fakeScene();
@@ -33,6 +33,29 @@ test("scene objects follow AI asset previews and release their texture bindings"
 
   bindingCalls[0].target.setTexture("roof.preview");
   assert.equal(created.texture, "roof.preview");
+
+  applyObjectTransform(created, {
+    ...sceneDefinition().layers[0].objects[0],
+    x: 128,
+    y: 144,
+    scaleX: 1.5,
+    scaleY: 0.75,
+    rotation: 90
+  });
+  assert.deepEqual(
+    {
+      x: created.x,
+      y: created.y,
+      scale: created.scale,
+      rotation: created.rotation
+    },
+    {
+      x: 128,
+      y: 144,
+      scale: { x: 1.5, y: 0.75 },
+      rotation: 90
+    }
+  );
 
   created.destroy();
   assert.equal(destroyedBindings, 1);

@@ -19,6 +19,8 @@ export type CreateSceneTileMapOptions = {
   index?: number;
 };
 
+export type SyncSceneTileMapOptions = CreateSceneTileMapOptions;
+
 export type CreatedSceneTileSprite = Phaser.GameObjects.Sprite & {
   sceneDesignerPlatformId: string;
   sceneDesignerTileSetId: string;
@@ -33,7 +35,20 @@ export type CreatedSceneTileSprite = Phaser.GameObjects.Sprite & {
 export type CreatedSceneTileMap = {
   readonly platform: SceneTileMapPlatform;
   readonly sprites: CreatedSceneTileSprite[];
+  sync(platform: ScenePlatform, options?: SyncSceneTileMapOptions): void;
   destroy(): void;
+};
+
+type SceneTileSpriteResources = {
+  sprite: CreatedSceneTileSprite;
+  binding: ReturnType<SceneDesignerAiRuntime["bindTexture"]>;
+  playback?: {
+    readonly animation?: unknown;
+    destroy(): void;
+  };
+  assetId: string;
+  frame: number;
+  animation?: string;
 };
 
 export class SceneTileMapRenderer {
@@ -41,9 +56,13 @@ export class SceneTileMapRenderer {
 
   constructor(
     private readonly scene: Phaser.Scene,
-    private readonly manifest: SceneDesignerManifest,
+    private manifest: SceneDesignerManifest,
     private readonly aiRuntime: SceneDesignerAiRuntime
   ) {}
+
+  setManifest(manifest: SceneDesignerManifest): void {
+    this.manifest = manifest;
+  }
 
   create(
     platform: ScenePlatform,
@@ -56,7 +75,7 @@ export class SceneTileMapRenderer {
     const tileSet = getTileSet(this.manifest, platform.paint.tileSetId);
     // Resolve before allocating Phaser objects so a bad target/version mapping
     // cannot leak a mask and graphics object.
-    const textureKey = this.aiRuntime.key(tileSet.assetId);
+    this.aiRuntime.key(tileSet.assetId);
     const maskGraphics = this.scene.make.graphics({}, false);
     drawPlatformMask(maskGraphics, platform);
     const layer = this.scene.add.layer();
@@ -86,23 +105,101 @@ export class SceneTileMapRenderer {
       throw error;
     }
     const sprites: CreatedSceneTileSprite[] = [];
-    const textureBindings: Array<{ destroy(): void }> = [];
-    const animationPlaybacks: Array<{ destroy(): void }> = [];
+    const resourcesByCellId = new Map<string, SceneTileSpriteResources>();
+    let currentPlatform = platform;
+    let currentGeometrySignature = platformGeometrySignature(platform);
+    let currentIndex = options.index ?? 0;
+    let currentContentSignature = tileMapContentSignature(platform, tileSet, currentIndex);
     let destroyed = false;
 
     const created: CreatedSceneTileMap = {
-      platform,
+      get platform() {
+        return currentPlatform;
+      },
       sprites,
+      sync: (nextPlatform, nextOptions = {}) => {
+        if (destroyed) {
+          throw new Error("Cannot sync a destroyed scene tile map.");
+        }
+        if (!isSceneTileMapPlatform(nextPlatform) || !nextPlatform.closed || nextPlatform.vertices.length < 3) {
+          throw new Error("Scene tile maps must use tilemap paint and have a closed platform with at least three vertices.");
+        }
+
+        const nextTileSet = getTileSet(this.manifest, nextPlatform.paint.tileSetId);
+        const nextGeometrySignature = platformGeometrySignature(nextPlatform);
+        if (nextGeometrySignature !== currentGeometrySignature) {
+          maskGraphics.clear();
+          drawPlatformMask(maskGraphics, nextPlatform);
+          currentGeometrySignature = nextGeometrySignature;
+        }
+
+        if (nextOptions.depth !== undefined) {
+          layer.setDepth(nextOptions.depth);
+        }
+        if (nextOptions.index !== undefined) {
+          currentIndex = nextOptions.index;
+        }
+        layer.setVisible(nextPlatform.visible);
+        const nextContentSignature = tileMapContentSignature(nextPlatform, nextTileSet, currentIndex);
+        if (nextContentSignature === currentContentSignature) {
+          currentPlatform = nextPlatform;
+          return;
+        }
+
+        const nextSprites: CreatedSceneTileSprite[] = [];
+        const retainedCellIds = new Set<string>();
+        for (const cell of nextPlatform.paint.cells) {
+          if (retainedCellIds.has(cell.id)) continue;
+          retainedCellIds.add(cell.id);
+
+          const tile = nextTileSet.tiles[cell.tileId];
+          const existing = resourcesByCellId.get(cell.id);
+          if (!tile) {
+            if (existing) removeTileSprite(layer, resourcesByCellId, existing);
+            continue;
+          }
+
+          const resources = existing ?? createTileSprite(
+            this.scene,
+            layer,
+            this.aiRuntime,
+            nextPlatform,
+            nextTileSet,
+            tile,
+            cell
+          );
+          if (!existing) resourcesByCellId.set(cell.id, resources);
+          syncTileSprite(
+            this.aiRuntime,
+            resources,
+            nextPlatform,
+            nextTileSet,
+            tile,
+            cell,
+            currentIndex
+          );
+          nextSprites.push(resources.sprite);
+        }
+
+        for (const [cellId, resources] of [...resourcesByCellId]) {
+          if (!retainedCellIds.has(cellId)) {
+            removeTileSprite(layer, resourcesByCellId, resources);
+          }
+        }
+
+        sprites.splice(0, sprites.length, ...nextSprites);
+        currentPlatform = nextPlatform;
+        currentContentSignature = nextContentSignature;
+      },
       destroy: () => {
         if (destroyed) return;
         destroyed = true;
 
-        for (const playback of animationPlaybacks) {
-          playback.destroy();
+        for (const resources of resourcesByCellId.values()) {
+          destroyTileSpriteResources(resources);
         }
-        for (const binding of textureBindings) {
-          binding.destroy();
-        }
+        resourcesByCellId.clear();
+        sprites.length = 0;
         if (geometryMask) {
           layer.clearMask(false);
           geometryMask.destroy();
@@ -116,48 +213,28 @@ export class SceneTileMapRenderer {
     try {
       for (const cell of platform.paint.cells) {
         const tile = tileSet.tiles[cell.tileId];
-        if (!tile) continue;
+        if (!tile || resourcesByCellId.has(cell.id)) continue;
 
-        const x = platform.paint.originX + (cell.column + 0.5) * tileSet.tileWidth;
-        const y = platform.paint.originY + (cell.row + 0.5) * tileSet.tileHeight;
-        const sprite = this.scene.add.sprite(x, y, textureKey) as CreatedSceneTileSprite;
-        sprites.push(sprite);
-        layer.add(sprite);
-
-        sprite.setFrame(tile.frame);
-        textureBindings.push(this.aiRuntime.bindTexture(sprite, tileSet.assetId, {
-          frame: tile.frame,
-          setInitialTexture: false
-        }));
-        sprite.setOrigin(0.5, 0.5);
-        const rotation = normalizedQuarterTurn(cell.rotation ?? 0);
-        const swapsDimensions = rotation === 90 || rotation === 270;
-        // A 90° turn swaps a rectangular sprite's axes. Swap its pre-rotation
-        // display dimensions as well so its world-space bounds remain exactly
-        // one grid cell instead of overlapping adjacent cells.
-        sprite.setDisplaySize(
-          swapsDimensions ? tileSet.tileHeight : tileSet.tileWidth,
-          swapsDimensions ? tileSet.tileWidth : tileSet.tileHeight
+        const resources = createTileSprite(
+          this.scene,
+          layer,
+          this.aiRuntime,
+          platform,
+          tileSet,
+          tile,
+          cell
         );
-        sprite.setAngle(rotation);
-        sprite.setFlip(Boolean(cell.flipX), Boolean(cell.flipY));
-        sprite.setVisible(platform.visible);
-
-        applyTileMetadata(sprite, platform, tileSet, tile, cell);
-        sprite.setData("sceneDesignerTileMapIndex", options.index ?? 0);
-
-        if (tile.animation && this.aiRuntime.playTilesetAnimation) {
-          const playback = this.aiRuntime.playTilesetAnimation(
-            sprite,
-            tileSet.assetId,
-            tile.frame,
-            tile.animation
-          );
-          animationPlaybacks.push(playback);
-          if (!playback.animation) {
-            sprite.setFrame(tile.frame);
-          }
-        }
+        resourcesByCellId.set(cell.id, resources);
+        syncTileSprite(
+          this.aiRuntime,
+          resources,
+          platform,
+          tileSet,
+          tile,
+          cell,
+          currentIndex
+        );
+        sprites.push(resources.sprite);
       }
     } catch (error) {
       created.destroy();
@@ -177,6 +254,112 @@ export class SceneTileMapRenderer {
   destroy(): void {
     this.clear();
   }
+}
+
+function createTileSprite(
+  scene: Phaser.Scene,
+  layer: Phaser.GameObjects.Layer,
+  aiRuntime: SceneDesignerAiRuntime,
+  platform: SceneTileMapPlatform,
+  tileSet: SceneTileSetDefinition,
+  tile: SceneTileDefinition,
+  cell: SceneTileMapCell
+): SceneTileSpriteResources {
+  const x = platform.paint.originX + (cell.column + 0.5) * tileSet.tileWidth;
+  const y = platform.paint.originY + (cell.row + 0.5) * tileSet.tileHeight;
+  const textureKey = aiRuntime.key(tileSet.assetId);
+  const sprite = scene.add.sprite(x, y, textureKey) as CreatedSceneTileSprite;
+  layer.add(sprite);
+  sprite.setTexture(textureKey, tile.frame);
+  const binding = aiRuntime.bindTexture(sprite, tileSet.assetId, {
+    frame: tile.frame,
+    setInitialTexture: false
+  });
+  return {
+    sprite,
+    binding,
+    assetId: tileSet.assetId,
+    frame: tile.frame,
+    animation: undefined
+  };
+}
+
+function syncTileSprite(
+  aiRuntime: SceneDesignerAiRuntime,
+  resources: SceneTileSpriteResources,
+  platform: SceneTileMapPlatform,
+  tileSet: SceneTileSetDefinition,
+  tile: SceneTileDefinition,
+  cell: SceneTileMapCell,
+  tileMapIndex: number
+): void {
+  const bindingChanged = resources.assetId !== tileSet.assetId || resources.frame !== tile.frame;
+  const animationChanged = bindingChanged || resources.animation !== tile.animation;
+  if (bindingChanged) {
+    resources.playback?.destroy();
+    resources.playback = undefined;
+    resources.binding.destroy();
+    resources.sprite.setTexture(aiRuntime.key(tileSet.assetId), tile.frame);
+    resources.binding = aiRuntime.bindTexture(resources.sprite, tileSet.assetId, {
+      frame: tile.frame,
+      setInitialTexture: false
+    });
+    resources.assetId = tileSet.assetId;
+    resources.frame = tile.frame;
+  }
+
+  if (animationChanged) {
+    resources.playback?.destroy();
+    resources.playback = undefined;
+    resources.sprite.setFrame(tile.frame);
+    if (tile.animation && aiRuntime.playTilesetAnimation) {
+      resources.playback = aiRuntime.playTilesetAnimation(
+        resources.sprite,
+        tileSet.assetId,
+        tile.frame,
+        tile.animation
+      );
+      if (!resources.playback.animation) {
+        resources.sprite.setFrame(tile.frame);
+      }
+    }
+    resources.animation = tile.animation;
+  }
+
+  resources.sprite.setPosition(
+    platform.paint.originX + (cell.column + 0.5) * tileSet.tileWidth,
+    platform.paint.originY + (cell.row + 0.5) * tileSet.tileHeight
+  );
+  resources.sprite.setOrigin(0.5, 0.5);
+  const rotation = normalizedQuarterTurn(cell.rotation ?? 0);
+  const swapsDimensions = rotation === 90 || rotation === 270;
+  // A 90° turn swaps a rectangular sprite's axes. Swap its pre-rotation
+  // display dimensions as well so its world-space bounds remain exactly
+  // one grid cell instead of overlapping adjacent cells.
+  resources.sprite.setDisplaySize(
+    swapsDimensions ? tileSet.tileHeight : tileSet.tileWidth,
+    swapsDimensions ? tileSet.tileWidth : tileSet.tileHeight
+  );
+  resources.sprite.setAngle(rotation);
+  resources.sprite.setFlip(Boolean(cell.flipX), Boolean(cell.flipY));
+  resources.sprite.setVisible(platform.visible);
+  applyTileMetadata(resources.sprite, platform, tileSet, tile, cell);
+  resources.sprite.setData("sceneDesignerTileMapIndex", tileMapIndex);
+}
+
+function removeTileSprite(
+  layer: Phaser.GameObjects.Layer,
+  resourcesByCellId: Map<string, SceneTileSpriteResources>,
+  resources: SceneTileSpriteResources
+): void {
+  resourcesByCellId.delete(resources.sprite.sceneDesignerTileCellId);
+  destroyTileSpriteResources(resources);
+  layer.remove(resources.sprite, true);
+}
+
+function destroyTileSpriteResources(resources: SceneTileSpriteResources): void {
+  resources.playback?.destroy();
+  resources.binding.destroy();
 }
 
 function normalizedQuarterTurn(rotation: number): 0 | 90 | 180 | 270 {
@@ -245,4 +428,26 @@ function drawPlatformMask(
 
   graphics.closePath();
   graphics.fillPath();
+}
+
+function platformGeometrySignature(platform: SceneTileMapPlatform): string {
+  return JSON.stringify(platform.vertices.map((vertex) => [
+    vertex.x,
+    vertex.y,
+    vertex.curve?.cx ?? null,
+    vertex.curve?.cy ?? null
+  ]));
+}
+
+function tileMapContentSignature(
+  platform: SceneTileMapPlatform,
+  tileSet: SceneTileSetDefinition,
+  index: number
+): string {
+  return JSON.stringify({
+    visible: platform.visible,
+    paint: platform.paint,
+    tileSet,
+    index
+  });
 }

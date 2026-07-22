@@ -10,10 +10,14 @@ import type {
 } from "@ai-game-assets/phaser";
 import {
   getScene,
+  isScenePlatform,
+  resolveSceneArea,
+  resolveSceneObject,
   type SceneDesignerManifest,
   type SceneTileProperty
 } from "@scene-designer/core";
 import {
+  applyObjectTransform,
   installPhaserSceneDesigner,
   SceneDesignerDebugClient,
   SceneDesignerRuntime,
@@ -171,6 +175,7 @@ export class TopDownScene extends Phaser.Scene {
       onSceneChange: (sceneId) => this.loadSceneById(sceneId),
       onManifestChange: (manifest) => {
         Object.assign(this.sceneManifest, manifest);
+        this.syncRenderedScenePreview();
         this.queueSceneReload();
       }
     });
@@ -305,20 +310,7 @@ export class TopDownScene extends Phaser.Scene {
       layerDepthStep: 100
     });
 
-    for (const tileMap of this.renderedTileMaps) {
-      for (const sprite of tileMap.sprites) {
-        const cellKey = tileCellKey(
-          sceneId,
-          tileMap.platform.id,
-          sprite.sceneDesignerTileCellId
-        );
-        this.tileSprites.set(cellKey, sprite);
-        if (this.collectedCells.has(cellKey)) {
-          sprite.setVisible(false);
-          continue;
-        }
-      }
-    }
+    this.indexRenderedTileSprites();
 
     const destination = options.spawn ?? defaultSpawn(sceneId);
     this.hero.setPosition(
@@ -348,6 +340,58 @@ export class TopDownScene extends Phaser.Scene {
     for (const tileMap of this.renderedTileMaps) tileMap.destroy();
     this.renderedTileMaps = [];
     this.tileSprites.clear();
+  }
+
+  private syncRenderedScenePreview(): void {
+    for (const sprite of this.renderedObjects) {
+      try {
+        const resolved = resolveSceneObject(
+          this.sceneManifest,
+          this.currentSceneId,
+          sprite.sceneDesignerObjectId
+        );
+        applyObjectTransform(sprite, resolved.object);
+        sprite.setVisible(resolved.layer.visible && resolved.object.visible);
+      } catch {
+        sprite.setVisible(false);
+      }
+    }
+
+    for (const tileMap of this.renderedTileMaps) {
+      try {
+        const resolved = resolveSceneArea(
+          this.sceneManifest,
+          this.currentSceneId,
+          tileMap.platform.id
+        );
+        if (!isScenePlatform(resolved.area) || resolved.area.paint.mode !== "tilemap") {
+          for (const sprite of tileMap.sprites) sprite.setVisible(false);
+          continue;
+        }
+        tileMap.sync(resolved.area);
+        for (const sprite of tileMap.sprites) {
+          sprite.setVisible(resolved.layer.visible && resolved.area.visible);
+        }
+      } catch {
+        for (const sprite of tileMap.sprites) sprite.setVisible(false);
+      }
+    }
+    this.indexRenderedTileSprites();
+  }
+
+  private indexRenderedTileSprites(): void {
+    this.tileSprites.clear();
+    for (const tileMap of this.renderedTileMaps) {
+      for (const sprite of tileMap.sprites) {
+        const key = tileCellKey(
+          this.currentSceneId,
+          tileMap.platform.id,
+          sprite.sceneDesignerTileCellId
+        );
+        this.tileSprites.set(key, sprite);
+        if (this.collectedCells.has(key)) sprite.setVisible(false);
+      }
+    }
   }
 
   private updateMovement(): void {
