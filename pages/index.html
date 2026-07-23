@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Playable demos built with Scene Designer for Phaser."
+    />
+    <title>Scene Designer Demos</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="page-shell">
+      <header class="hero">
+        <p class="eyebrow">Scene Designer</p>
+        <h1>Two worlds.<br />One live canvas.</h1>
+        <p class="intro">
+          Explore two independently built Phaser games showcasing editable
+          scenes, generated assets, and runtime game logic.
+        </p>
+      </header>
+
+      <section class="demo-grid" aria-label="Playable demos">
+        <a class="demo-card demo-card--forest" href="./top-down/">
+          <span class="card-number">01</span>
+          <span class="card-art card-art--forest" aria-hidden="true">
+            <span class="tree tree--one"></span>
+            <span class="tree tree--two"></span>
+            <span class="cottage">
+              <span class="roof"></span>
+              <span class="door"></span>
+            </span>
+            <span class="path"></span>
+          </span>
+          <span class="card-copy">
+            <span class="card-kicker">Top-down adventure</span>
+            <strong>Woodland Quest</strong>
+            <span>
+              Wander through a tile-built forest, enter cottages, and explore
+              a world larger than the screen.
+            </span>
+          </span>
+          <span class="play-link">
+            Play demo
+            <span aria-hidden="true">↗</span>
+          </span>
+        </a>
+
+        <a class="demo-card demo-card--arcade" href="./breakout/">
+          <span class="card-number">02</span>
+          <span class="card-art card-art--arcade" aria-hidden="true">
+            <span class="brick-row brick-row--one"></span>
+            <span class="brick-row brick-row--two"></span>
+            <span class="ball"></span>
+            <span class="paddle"></span>
+          </span>
+          <span class="card-copy">
+            <span class="card-kicker">Arcade action</span>
+            <strong>Jungle Breakout</strong>
+            <span>
+              Smash through a shifting jungle wall while enemies and power-ups
+              turn a familiar arcade loop into a living level.
+            </span>
+          </span>
+          <span class="play-link">
+            Play demo
+            <span aria-hidden="true">↗</span>
+          </span>
+        </a>
+      </section>
+
+      <footer>
+        <span>Built with Scene Designer</span>
+        <span class="footer-rule"></span>
+        <span>Phaser</span>
+      </footer>
+    </main>
+  </body>
+</html>

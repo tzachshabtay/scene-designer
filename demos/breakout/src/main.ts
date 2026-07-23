@@ -74,7 +74,8 @@ async function loadAiAssetsManifest(): Promise<LoadedAiAssets> {
   }
 
   return {
-    manifest: (await import("./assets.js")).assets
+    manifest: (await import("./assets.js")).assets,
+    assetBaseUrl: import.meta.env.BASE_URL
   };
 }
 

@@ -8,6 +8,7 @@
     "dev": "npm run generate && vite --host 127.0.0.1",
     "dev:server": "npm run generate && node dev-server.mjs",
     "build": "npm run generate && vite build",
+    "build:pages": "npm run generate && vite build --base=./",
     "typecheck": "npm run generate && tsc --noEmit"
   },
   "dependencies": {
