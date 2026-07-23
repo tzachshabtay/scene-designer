@@ -32,7 +32,7 @@ export const scenes = defineSceneManifest(
           "id": "interior.house-one-layer-terrain",
           "name": "Terrain",
           "visible": true,
-          "locked": false,
+          "locked": true,
           "objects": [],
           "areas": [
             {
@@ -228,57 +228,84 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-1-1",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 1,
-                    "row": 1
+                    "row": 1,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-2-1",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 2,
-                    "row": 1
+                    "row": 1,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-3-1",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 3,
-                    "row": 1
+                    "row": 1,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-4-1",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 4,
-                    "row": 1
+                    "row": 1,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-5-1",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 5,
-                    "row": 1
+                    "row": 1,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-6-1",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 6,
-                    "row": 1
+                    "row": 1,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-7-1",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 7,
-                    "row": 1
+                    "row": 1,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-8-1",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 8,
-                    "row": 1
+                    "row": 1,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-9-1",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 9,
-                    "row": 1
+                    "row": 1,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-10-1",
@@ -312,57 +339,84 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-15-1",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 15,
-                    "row": 1
+                    "row": 1,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-16-1",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 16,
-                    "row": 1
+                    "row": 1,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-17-1",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 17,
-                    "row": 1
+                    "row": 1,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-18-1",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 18,
-                    "row": 1
+                    "row": 1,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-19-1",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 19,
-                    "row": 1
+                    "row": 1,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-20-1",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 20,
-                    "row": 1
+                    "row": 1,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-21-1",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 21,
-                    "row": 1
+                    "row": 1,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-22-1",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 22,
-                    "row": 1
+                    "row": 1,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-23-1",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 23,
-                    "row": 1
+                    "row": 1,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-24-1",
@@ -378,39 +432,57 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-1-2",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 1,
-                    "row": 2
+                    "row": 2,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-2-2",
                     "tileId": "wood-floor",
                     "column": 2,
-                    "row": 2
+                    "row": 2,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-3-2",
                     "tileId": "wood-floor",
                     "column": 3,
-                    "row": 2
+                    "row": 2,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-4-2",
                     "tileId": "wood-floor",
                     "column": 4,
-                    "row": 2
+                    "row": 2,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-5-2",
                     "tileId": "wood-floor",
                     "column": 5,
-                    "row": 2
+                    "row": 2,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-6-2",
                     "tileId": "wood-floor",
                     "column": 6,
-                    "row": 2
+                    "row": 2,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-7-2",
@@ -426,9 +498,12 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-9-2",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 9,
-                    "row": 2
+                    "row": 2,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-10-2",
@@ -462,9 +537,12 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-15-2",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 15,
-                    "row": 2
+                    "row": 2,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-16-2",
@@ -486,9 +564,12 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-19-2",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 19,
-                    "row": 2
+                    "row": 2,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-20-2",
@@ -510,9 +591,12 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-23-2",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 23,
-                    "row": 2
+                    "row": 2,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-24-2",
@@ -528,45 +612,66 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-1-3",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 1,
-                    "row": 3
+                    "row": 3,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-2-3",
                     "tileId": "wood-floor",
                     "column": 2,
-                    "row": 3
+                    "row": 3,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-3-3",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 3,
-                    "row": 3
+                    "row": 3,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-4-3",
                     "tileId": "wood-floor",
                     "column": 4,
-                    "row": 3
+                    "row": 3,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-5-3",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 5,
-                    "row": 3
+                    "row": 3,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-6-3",
                     "tileId": "wood-floor",
                     "column": 6,
-                    "row": 3
+                    "row": 3,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-7-3",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 7,
-                    "row": 3
+                    "row": 3,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-8-3",
@@ -576,9 +681,12 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-9-3",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 9,
-                    "row": 3
+                    "row": 3,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-10-3",
@@ -612,9 +720,12 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-15-3",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 15,
-                    "row": 3
+                    "row": 3,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-16-3",
@@ -636,9 +747,12 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-19-3",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 19,
-                    "row": 3
+                    "row": 3,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-20-3",
@@ -660,9 +774,12 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-23-3",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 23,
-                    "row": 3
+                    "row": 3,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-24-3",
@@ -678,39 +795,57 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-1-4",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 1,
-                    "row": 4
+                    "row": 4,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-2-4",
                     "tileId": "wood-floor",
                     "column": 2,
-                    "row": 4
+                    "row": 4,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-3-4",
                     "tileId": "wood-floor",
                     "column": 3,
-                    "row": 4
+                    "row": 4,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-4-4",
                     "tileId": "wood-floor",
                     "column": 4,
-                    "row": 4
+                    "row": 4,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-5-4",
                     "tileId": "wood-floor",
                     "column": 5,
-                    "row": 4
+                    "row": 4,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-6-4",
                     "tileId": "wood-floor",
                     "column": 6,
-                    "row": 4
+                    "row": 4,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-7-4",
@@ -726,9 +861,12 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-9-4",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 9,
-                    "row": 4
+                    "row": 4,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-10-4",
@@ -762,9 +900,12 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-15-4",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 15,
-                    "row": 4
+                    "row": 4,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-16-4",
@@ -786,9 +927,12 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-19-4",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 19,
-                    "row": 4
+                    "row": 4,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-20-4",
@@ -810,9 +954,12 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-23-4",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 23,
-                    "row": 4
+                    "row": 4,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-24-4",
@@ -828,45 +975,66 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-1-5",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 1,
-                    "row": 5
+                    "row": 5,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-2-5",
                     "tileId": "wood-floor",
                     "column": 2,
-                    "row": 5
+                    "row": 5,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-3-5",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 3,
-                    "row": 5
+                    "row": 5,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-4-5",
                     "tileId": "wood-floor",
                     "column": 4,
-                    "row": 5
+                    "row": 5,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-5-5",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 5,
-                    "row": 5
+                    "row": 5,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-6-5",
                     "tileId": "wood-floor",
                     "column": 6,
-                    "row": 5
+                    "row": 5,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-7-5",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 7,
-                    "row": 5
+                    "row": 5,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-8-5",
@@ -876,9 +1044,12 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-9-5",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 9,
-                    "row": 5
+                    "row": 5,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-10-5",
@@ -912,9 +1083,12 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-15-5",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 15,
-                    "row": 5
+                    "row": 5,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-16-5",
@@ -936,9 +1110,12 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-19-5",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 19,
-                    "row": 5
+                    "row": 5,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-20-5",
@@ -960,9 +1137,12 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-23-5",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 23,
-                    "row": 5
+                    "row": 5,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-24-5",
@@ -978,9 +1158,12 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-1-6",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 1,
-                    "row": 6
+                    "row": 6,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-2-6",
@@ -1026,45 +1209,66 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-9-6",
-                    "tileId": "rug",
+                    "tileId": "stone-floor",
                     "column": 9,
-                    "row": 6
+                    "row": 6,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-10-6",
-                    "tileId": "rug",
+                    "tileId": "wood-floor",
                     "column": 10,
-                    "row": 6
+                    "row": 6,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-11-6",
-                    "tileId": "rug",
+                    "tileId": "wood-floor",
                     "column": 11,
-                    "row": 6
+                    "row": 6,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-12-6",
-                    "tileId": "rug",
+                    "tileId": "wood-floor",
                     "column": 12,
-                    "row": 6
+                    "row": 6,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-13-6",
-                    "tileId": "rug",
+                    "tileId": "wood-floor",
                     "column": 13,
-                    "row": 6
+                    "row": 6,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-14-6",
-                    "tileId": "rug",
+                    "tileId": "wood-floor",
                     "column": 14,
-                    "row": 6
+                    "row": 6,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-15-6",
-                    "tileId": "rug",
+                    "tileId": "stone-floor",
                     "column": 15,
-                    "row": 6
+                    "row": 6,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-16-6",
@@ -1086,9 +1290,12 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-19-6",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 19,
-                    "row": 6
+                    "row": 6,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-20-6",
@@ -1110,9 +1317,12 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-23-6",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 23,
-                    "row": 6
+                    "row": 6,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-24-6",
@@ -1128,9 +1338,12 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-1-7",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 1,
-                    "row": 7
+                    "row": 7,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-2-7",
@@ -1140,9 +1353,12 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-3-7",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 3,
-                    "row": 7
+                    "row": 7,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-4-7",
@@ -1152,9 +1368,12 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-5-7",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 5,
-                    "row": 7
+                    "row": 7,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-6-7",
@@ -1164,9 +1383,12 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-7-7",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 7,
-                    "row": 7
+                    "row": 7,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-8-7",
@@ -1176,45 +1398,66 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-9-7",
-                    "tileId": "rug",
+                    "tileId": "stone-floor",
                     "column": 9,
-                    "row": 7
+                    "row": 7,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-10-7",
-                    "tileId": "rug",
+                    "tileId": "wood-floor",
                     "column": 10,
-                    "row": 7
+                    "row": 7,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-11-7",
-                    "tileId": "rug",
+                    "tileId": "wood-floor",
                     "column": 11,
-                    "row": 7
+                    "row": 7,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-12-7",
-                    "tileId": "rug",
+                    "tileId": "wood-floor",
                     "column": 12,
-                    "row": 7
+                    "row": 7,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-13-7",
-                    "tileId": "rug",
+                    "tileId": "wood-floor",
                     "column": 13,
-                    "row": 7
+                    "row": 7,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-14-7",
-                    "tileId": "rug",
+                    "tileId": "wood-floor",
                     "column": 14,
-                    "row": 7
+                    "row": 7,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-15-7",
-                    "tileId": "rug",
+                    "tileId": "stone-floor",
                     "column": 15,
-                    "row": 7
+                    "row": 7,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-16-7",
@@ -1260,9 +1503,12 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-23-7",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 23,
-                    "row": 7
+                    "row": 7,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-24-7",
@@ -1278,93 +1524,138 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-1-8",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 1,
-                    "row": 8
+                    "row": 8,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
-                    "id": "interior.house-one-terrain-2-8",
+                    "id": "tile-mrwns7wq-zxfzuw",
                     "tileId": "wood-floor",
                     "column": 2,
-                    "row": 8
+                    "row": 8,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
-                    "id": "interior.house-one-terrain-3-8",
+                    "id": "tile-mrwns829-ax66oo",
                     "tileId": "wood-floor",
                     "column": 3,
-                    "row": 8
+                    "row": 8,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
-                    "id": "interior.house-one-terrain-4-8",
+                    "id": "tile-mrwns843-egf0j4",
                     "tileId": "wood-floor",
                     "column": 4,
-                    "row": 8
+                    "row": 8,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
-                    "id": "interior.house-one-terrain-5-8",
+                    "id": "tile-mrwns85y-z39e4w",
                     "tileId": "wood-floor",
                     "column": 5,
-                    "row": 8
+                    "row": 8,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
-                    "id": "interior.house-one-terrain-6-8",
+                    "id": "tile-mrwns89n-i152nl",
                     "tileId": "wood-floor",
                     "column": 6,
-                    "row": 8
+                    "row": 8,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
-                    "id": "interior.house-one-terrain-7-8",
+                    "id": "tile-mrwns8dc-klig1h",
                     "tileId": "wood-floor",
                     "column": 7,
-                    "row": 8
+                    "row": 8,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
-                    "id": "interior.house-one-terrain-8-8",
+                    "id": "tile-mrwns8hz-0db3ik",
                     "tileId": "wood-floor",
                     "column": 8,
-                    "row": 8
+                    "row": 8,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-9-8",
-                    "tileId": "rug",
+                    "tileId": "stone-floor",
                     "column": 9,
-                    "row": 8
+                    "row": 8,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-10-8",
-                    "tileId": "rug",
+                    "tileId": "wood-floor",
                     "column": 10,
-                    "row": 8
+                    "row": 8,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-11-8",
-                    "tileId": "rug",
+                    "tileId": "wood-floor",
                     "column": 11,
-                    "row": 8
+                    "row": 8,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-12-8",
-                    "tileId": "rug",
+                    "tileId": "wood-floor",
                     "column": 12,
-                    "row": 8
+                    "row": 8,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-13-8",
-                    "tileId": "rug",
+                    "tileId": "wood-floor",
                     "column": 13,
-                    "row": 8
+                    "row": 8,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-14-8",
-                    "tileId": "rug",
+                    "tileId": "wood-floor",
                     "column": 14,
-                    "row": 8
+                    "row": 8,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-15-8",
-                    "tileId": "rug",
+                    "tileId": "stone-floor",
                     "column": 15,
-                    "row": 8
+                    "row": 8,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-16-8",
@@ -1410,9 +1701,12 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-23-8",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 23,
-                    "row": 8
+                    "row": 8,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-24-8",
@@ -1428,105 +1722,156 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-1-9",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 1,
-                    "row": 9
+                    "row": 9,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-2-9",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 2,
-                    "row": 9
+                    "row": 9,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-3-9",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 3,
-                    "row": 9
+                    "row": 9,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
-                    "id": "interior.house-one-terrain-4-9",
+                    "id": "tile-mrwnubl6-nwasg5",
                     "tileId": "wood-floor",
                     "column": 4,
-                    "row": 9
+                    "row": 9,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
-                    "id": "interior.house-one-terrain-5-9",
+                    "id": "tile-mrwnubt2-jvtwc0",
                     "tileId": "wood-floor",
                     "column": 5,
-                    "row": 9
+                    "row": 9,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
-                    "id": "interior.house-one-terrain-6-9",
+                    "id": "tile-mrwnuc6m-al3wac",
                     "tileId": "wood-floor",
                     "column": 6,
-                    "row": 9
+                    "row": 9,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-7-9",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 7,
-                    "row": 9
+                    "row": 9,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-8-9",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 8,
-                    "row": 9
+                    "row": 9,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-9-9",
-                    "tileId": "rug",
+                    "tileId": "stone-floor",
                     "column": 9,
-                    "row": 9
+                    "row": 9,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-10-9",
-                    "tileId": "rug",
+                    "tileId": "wood-floor",
                     "column": 10,
-                    "row": 9
+                    "row": 9,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-11-9",
-                    "tileId": "rug",
+                    "tileId": "wood-floor",
                     "column": 11,
-                    "row": 9
+                    "row": 9,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-12-9",
-                    "tileId": "rug",
+                    "tileId": "wood-floor",
                     "column": 12,
-                    "row": 9
+                    "row": 9,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-13-9",
-                    "tileId": "rug",
+                    "tileId": "wood-floor",
                     "column": 13,
-                    "row": 9
+                    "row": 9,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-14-9",
-                    "tileId": "rug",
+                    "tileId": "wood-floor",
                     "column": 14,
-                    "row": 9
+                    "row": 9,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-15-9",
-                    "tileId": "rug",
+                    "tileId": "stone-floor",
                     "column": 15,
-                    "row": 9
+                    "row": 9,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-16-9",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 16,
-                    "row": 9
+                    "row": 9,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-17-9",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 17,
-                    "row": 9
+                    "row": 9,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-18-9",
@@ -1548,21 +1893,30 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-21-9",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 21,
-                    "row": 9
+                    "row": 9,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-22-9",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 22,
-                    "row": 9
+                    "row": 9,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-23-9",
-                    "tileId": "wood-floor",
+                    "tileId": "stone-floor",
                     "column": 23,
-                    "row": 9
+                    "row": 9,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-24-9",
@@ -1626,45 +1980,66 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-9-10",
-                    "tileId": "rug",
+                    "tileId": "wood-floor",
                     "column": 9,
-                    "row": 10
+                    "row": 10,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-10-10",
-                    "tileId": "rug",
+                    "tileId": "wood-floor",
                     "column": 10,
-                    "row": 10
+                    "row": 10,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-11-10",
-                    "tileId": "rug",
+                    "tileId": "wood-floor",
                     "column": 11,
-                    "row": 10
+                    "row": 10,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-12-10",
-                    "tileId": "rug",
+                    "tileId": "wood-floor",
                     "column": 12,
-                    "row": 10
+                    "row": 10,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-13-10",
-                    "tileId": "rug",
+                    "tileId": "wood-floor",
                     "column": 13,
-                    "row": 10
+                    "row": 10,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-14-10",
-                    "tileId": "rug",
+                    "tileId": "wood-floor",
                     "column": 14,
-                    "row": 10
+                    "row": 10,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-15-10",
-                    "tileId": "rug",
+                    "tileId": "wood-floor",
                     "column": 15,
-                    "row": 10
+                    "row": 10,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-16-10",
@@ -1776,45 +2151,66 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-9-11",
-                    "tileId": "rug",
+                    "tileId": "wood-floor",
                     "column": 9,
-                    "row": 11
+                    "row": 11,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-10-11",
-                    "tileId": "rug",
+                    "tileId": "wood-floor",
                     "column": 10,
-                    "row": 11
+                    "row": 11,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-11-11",
-                    "tileId": "rug",
+                    "tileId": "wood-floor",
                     "column": 11,
-                    "row": 11
+                    "row": 11,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-12-11",
-                    "tileId": "rug",
+                    "tileId": "wood-floor",
                     "column": 12,
-                    "row": 11
+                    "row": 11,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-13-11",
-                    "tileId": "rug",
+                    "tileId": "wood-floor",
                     "column": 13,
-                    "row": 11
+                    "row": 11,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-14-11",
-                    "tileId": "rug",
+                    "tileId": "wood-floor",
                     "column": 14,
-                    "row": 11
+                    "row": 11,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-15-11",
-                    "tileId": "rug",
+                    "tileId": "wood-floor",
                     "column": 15,
-                    "row": 11
+                    "row": 11,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-16-11",
@@ -1944,9 +2340,12 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-12-12",
-                    "tileId": "wood-floor",
+                    "tileId": "rug",
                     "column": 12,
-                    "row": 12
+                    "row": 12,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-13-12",
@@ -2094,9 +2493,12 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-12-13",
-                    "tileId": "wood-floor",
+                    "tileId": "rug",
                     "column": 12,
-                    "row": 13
+                    "row": 13,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-13-13",
@@ -2244,9 +2646,12 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-12-14",
-                    "tileId": "wood-floor",
+                    "tileId": "rug",
                     "column": 12,
-                    "row": 14
+                    "row": 14,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-13-14",
@@ -2394,9 +2799,12 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-12-15",
-                    "tileId": "wood-floor",
+                    "tileId": "rug",
                     "column": 12,
-                    "row": 15
+                    "row": 15,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-13-15",
@@ -2544,9 +2952,12 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-12-16",
-                    "tileId": "wood-floor",
+                    "tileId": "rug",
                     "column": 12,
-                    "row": 16
+                    "row": 16,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-terrain-13-16",
@@ -2822,152 +3233,175 @@ export const scenes = defineSceneManifest(
                     "tileId": "wall-corner",
                     "column": 0,
                     "row": 0,
-                    "rotation": 0
+                    "rotation": 270
                   },
                   {
                     "id": "interior.house-one-interior-1-0",
                     "tileId": "timber-wall",
                     "column": 1,
-                    "row": 0
+                    "row": 0,
+                    "rotation": 180
                   },
                   {
                     "id": "interior.house-one-interior-2-0",
                     "tileId": "wall",
                     "column": 2,
-                    "row": 0
+                    "row": 0,
+                    "rotation": 180
                   },
                   {
                     "id": "interior.house-one-interior-3-0",
                     "tileId": "timber-wall",
                     "column": 3,
-                    "row": 0
+                    "row": 0,
+                    "rotation": 180
                   },
                   {
                     "id": "interior.house-one-interior-4-0",
                     "tileId": "wall",
                     "column": 4,
-                    "row": 0
+                    "row": 0,
+                    "rotation": 180
                   },
                   {
                     "id": "interior.house-one-interior-5-0",
                     "tileId": "timber-wall",
                     "column": 5,
-                    "row": 0
+                    "row": 0,
+                    "rotation": 180
                   },
                   {
                     "id": "interior.house-one-interior-6-0",
                     "tileId": "wall",
                     "column": 6,
-                    "row": 0
+                    "row": 0,
+                    "rotation": 180
                   },
                   {
                     "id": "interior.house-one-interior-7-0",
                     "tileId": "timber-wall",
                     "column": 7,
-                    "row": 0
+                    "row": 0,
+                    "rotation": 180
                   },
                   {
                     "id": "interior.house-one-interior-8-0",
                     "tileId": "wall",
                     "column": 8,
-                    "row": 0
+                    "row": 0,
+                    "rotation": 180
                   },
                   {
                     "id": "interior.house-one-interior-9-0",
                     "tileId": "timber-wall",
                     "column": 9,
-                    "row": 0
+                    "row": 0,
+                    "rotation": 180
                   },
                   {
                     "id": "interior.house-one-interior-10-0",
                     "tileId": "wall",
                     "column": 10,
-                    "row": 0
+                    "row": 0,
+                    "rotation": 180
                   },
                   {
                     "id": "interior.house-one-interior-11-0",
                     "tileId": "timber-wall",
                     "column": 11,
-                    "row": 0
+                    "row": 0,
+                    "rotation": 180
                   },
                   {
                     "id": "interior.house-one-interior-12-0",
                     "tileId": "wall",
                     "column": 12,
-                    "row": 0
+                    "row": 0,
+                    "rotation": 180
                   },
                   {
                     "id": "interior.house-one-interior-13-0",
                     "tileId": "timber-wall",
                     "column": 13,
-                    "row": 0
+                    "row": 0,
+                    "rotation": 180
                   },
                   {
                     "id": "interior.house-one-interior-14-0",
                     "tileId": "wall",
                     "column": 14,
-                    "row": 0
+                    "row": 0,
+                    "rotation": 180
                   },
                   {
                     "id": "interior.house-one-interior-15-0",
                     "tileId": "timber-wall",
                     "column": 15,
-                    "row": 0
+                    "row": 0,
+                    "rotation": 180
                   },
                   {
                     "id": "interior.house-one-interior-16-0",
                     "tileId": "wall",
                     "column": 16,
-                    "row": 0
+                    "row": 0,
+                    "rotation": 180
                   },
                   {
                     "id": "interior.house-one-interior-17-0",
                     "tileId": "timber-wall",
                     "column": 17,
-                    "row": 0
+                    "row": 0,
+                    "rotation": 180
                   },
                   {
                     "id": "interior.house-one-interior-18-0",
                     "tileId": "wall",
                     "column": 18,
-                    "row": 0
+                    "row": 0,
+                    "rotation": 180
                   },
                   {
                     "id": "interior.house-one-interior-19-0",
                     "tileId": "timber-wall",
                     "column": 19,
-                    "row": 0
+                    "row": 0,
+                    "rotation": 180
                   },
                   {
                     "id": "interior.house-one-interior-20-0",
                     "tileId": "wall",
                     "column": 20,
-                    "row": 0
+                    "row": 0,
+                    "rotation": 180
                   },
                   {
                     "id": "interior.house-one-interior-21-0",
                     "tileId": "timber-wall",
                     "column": 21,
-                    "row": 0
+                    "row": 0,
+                    "rotation": 180
                   },
                   {
                     "id": "interior.house-one-interior-22-0",
                     "tileId": "wall",
                     "column": 22,
-                    "row": 0
+                    "row": 0,
+                    "rotation": 180
                   },
                   {
                     "id": "interior.house-one-interior-23-0",
                     "tileId": "timber-wall",
                     "column": 23,
-                    "row": 0
+                    "row": 0,
+                    "rotation": 180
                   },
                   {
                     "id": "interior.house-one-interior-24-0",
                     "tileId": "wall-corner",
                     "column": 24,
                     "row": 0,
-                    "rotation": 90
+                    "rotation": 0
                   },
                   {
                     "id": "interior.house-one-interior-0-1",
@@ -2991,6 +3425,24 @@ export const scenes = defineSceneManifest(
                     "rotation": 90
                   },
                   {
+                    "id": "tile-mrwnz483-6kf1t2",
+                    "tileId": "hearth",
+                    "column": 17,
+                    "row": 2,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
+                  },
+                  {
+                    "id": "tile-mrwnz58h-86ggst",
+                    "tileId": "hearth",
+                    "column": 21,
+                    "row": 2,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
+                  },
+                  {
                     "id": "interior.house-one-interior-24-2",
                     "tileId": "wall",
                     "column": 24,
@@ -3005,10 +3457,49 @@ export const scenes = defineSceneManifest(
                     "rotation": 90
                   },
                   {
-                    "id": "interior.house-one-interior-3-3",
-                    "tileId": "hearth",
+                    "id": "tile-mrwnsoq3-a742ee",
+                    "tileId": "table",
                     "column": 3,
-                    "row": 3
+                    "row": 3,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
+                  },
+                  {
+                    "id": "tile-mrwnspsn-k1jpt9",
+                    "tileId": "table",
+                    "column": 5,
+                    "row": 3,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
+                  },
+                  {
+                    "id": "tile-mrwnsqml-h4yrva",
+                    "tileId": "table",
+                    "column": 7,
+                    "row": 3,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
+                  },
+                  {
+                    "id": "tile-mrwnz7mx-0k8nta",
+                    "tileId": "bed",
+                    "column": 17,
+                    "row": 3,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
+                  },
+                  {
+                    "id": "tile-mrwnz8b7-w9c54r",
+                    "tileId": "bed",
+                    "column": 21,
+                    "row": 3,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-interior-24-3",
@@ -3025,6 +3516,24 @@ export const scenes = defineSceneManifest(
                     "rotation": 90
                   },
                   {
+                    "id": "tile-mrwnza8t-yv5opx",
+                    "tileId": "rug",
+                    "column": 17,
+                    "row": 4,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
+                  },
+                  {
+                    "id": "tile-mrwnzb0f-ugwb52",
+                    "tileId": "rug",
+                    "column": 21,
+                    "row": 4,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
+                  },
+                  {
                     "id": "interior.house-one-interior-24-4",
                     "tileId": "wall",
                     "column": 24,
@@ -3037,6 +3546,51 @@ export const scenes = defineSceneManifest(
                     "column": 0,
                     "row": 5,
                     "rotation": 90
+                  },
+                  {
+                    "id": "tile-mrwnst2r-al4bni",
+                    "tileId": "table",
+                    "column": 3,
+                    "row": 5,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
+                  },
+                  {
+                    "id": "tile-mrwnstlz-rav9nw",
+                    "tileId": "table",
+                    "column": 5,
+                    "row": 5,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
+                  },
+                  {
+                    "id": "tile-mrwnsr8a-zqscnd",
+                    "tileId": "table",
+                    "column": 7,
+                    "row": 5,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
+                  },
+                  {
+                    "id": "tile-mrwnzetp-lg17bp",
+                    "tileId": "rug",
+                    "column": 17,
+                    "row": 5,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
+                  },
+                  {
+                    "id": "tile-mrwnzfx2-vkhs2x",
+                    "tileId": "rug",
+                    "column": 21,
+                    "row": 5,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-interior-24-5",
@@ -3053,18 +3607,6 @@ export const scenes = defineSceneManifest(
                     "rotation": 90
                   },
                   {
-                    "id": "interior.house-one-interior-7-6",
-                    "tileId": "table",
-                    "column": 7,
-                    "row": 6
-                  },
-                  {
-                    "id": "interior.house-one-interior-8-6",
-                    "tileId": "table",
-                    "column": 8,
-                    "row": 6
-                  },
-                  {
                     "id": "interior.house-one-interior-24-6",
                     "tileId": "wall",
                     "column": 24,
@@ -3077,6 +3619,33 @@ export const scenes = defineSceneManifest(
                     "column": 0,
                     "row": 7,
                     "rotation": 90
+                  },
+                  {
+                    "id": "tile-mrwnssb5-kgz580",
+                    "tileId": "table",
+                    "column": 3,
+                    "row": 7,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
+                  },
+                  {
+                    "id": "tile-mrwnsrua-in0bsc",
+                    "tileId": "table",
+                    "column": 5,
+                    "row": 7,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
+                  },
+                  {
+                    "id": "tile-mrwnsudt-kvwd8o",
+                    "tileId": "table",
+                    "column": 7,
+                    "row": 7,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "interior.house-one-interior-24-7",
@@ -3133,12 +3702,6 @@ export const scenes = defineSceneManifest(
                     "column": 0,
                     "row": 11,
                     "rotation": 90
-                  },
-                  {
-                    "id": "interior.house-one-interior-19-11",
-                    "tileId": "bed",
-                    "column": 19,
-                    "row": 11
                   },
                   {
                     "id": "interior.house-one-interior-24-11",
@@ -3222,7 +3785,7 @@ export const scenes = defineSceneManifest(
                     "tileId": "wall-corner",
                     "column": 0,
                     "row": 17,
-                    "rotation": 270
+                    "rotation": 180
                   },
                   {
                     "id": "interior.house-one-interior-1-17",
@@ -3367,7 +3930,7 @@ export const scenes = defineSceneManifest(
                     "tileId": "wall-corner",
                     "column": 24,
                     "row": 17,
-                    "rotation": 180
+                    "rotation": 90
                   }
                 ]
               }
@@ -3417,24 +3980,24 @@ export const scenes = defineSceneManifest(
                 "originY": 0,
                 "cells": [
                   {
+                    "id": "tile-mrwo12go-7bx3ef",
+                    "tileId": "key",
+                    "column": 22,
+                    "row": 2,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
+                  },
+                  {
                     "id": "interior.house-one-props-12-16",
                     "tileId": "doorway",
                     "column": 12,
-                    "row": 16,
+                    "row": 17,
                     "properties": {
                       "destination": "world.forest",
                       "destinationColumn": 11,
                       "destinationRow": 10,
                       "label": "Return to Whispering Forest"
-                    }
-                  },
-                  {
-                    "id": "interior.house-one-props-19-5",
-                    "tileId": "key",
-                    "column": 19,
-                    "row": 5,
-                    "properties": {
-                      "label": "Cottage key"
                     }
                   }
                 ]
@@ -18339,54 +18902,58 @@ export const scenes = defineSceneManifest(
                 "originY": 0,
                 "cells": [
                   {
-                    "id": "moss-cottage-8-6",
-                    "tileId": "wall-corner",
-                    "column": 8,
-                    "row": 6,
-                    "rotation": 90
-                  },
-                  {
                     "id": "moss-cottage-9-6",
-                    "tileId": "wall",
+                    "tileId": "wood-floor",
                     "column": 9,
-                    "row": 6
+                    "row": 6,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "moss-cottage-10-6",
-                    "tileId": "timber-wall",
+                    "tileId": "wood-floor",
                     "column": 10,
-                    "row": 6
+                    "row": 6,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "moss-cottage-11-6",
-                    "tileId": "wall",
+                    "tileId": "wood-floor",
                     "column": 11,
-                    "row": 6
+                    "row": 6,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "moss-cottage-12-6",
-                    "tileId": "timber-wall",
+                    "tileId": "wood-floor",
                     "column": 12,
-                    "row": 6
+                    "row": 6,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "moss-cottage-13-6",
-                    "tileId": "wall",
+                    "tileId": "wood-floor",
                     "column": 13,
-                    "row": 6
-                  },
-                  {
-                    "id": "moss-cottage-14-6",
-                    "tileId": "wall-corner",
-                    "column": 14,
                     "row": 6,
-                    "rotation": 180
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "moss-cottage-8-7",
-                    "tileId": "wall",
+                    "tileId": "wood-floor",
                     "column": 8,
-                    "row": 7
+                    "row": 7,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "moss-cottage-9-7",
@@ -18420,15 +18987,21 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "moss-cottage-14-7",
-                    "tileId": "wall",
+                    "tileId": "wood-floor",
                     "column": 14,
-                    "row": 7
+                    "row": 7,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "moss-cottage-8-8",
-                    "tileId": "timber-wall",
+                    "tileId": "wood-floor",
                     "column": 8,
-                    "row": 8
+                    "row": 8,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "moss-cottage-9-8",
@@ -18462,16 +19035,21 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "moss-cottage-14-8",
-                    "tileId": "timber-wall",
+                    "tileId": "wood-floor",
                     "column": 14,
-                    "row": 8
+                    "row": 8,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "moss-cottage-8-9",
-                    "tileId": "wall-corner",
+                    "tileId": "wall",
                     "column": 8,
                     "row": 9,
-                    "rotation": 0
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "moss-cottage-9-9",
@@ -18487,9 +19065,12 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "moss-cottage-11-9",
-                    "tileId": "wood-floor",
+                    "tileId": "wall",
                     "column": 11,
-                    "row": 9
+                    "row": 9,
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "moss-cottage-12-9",
@@ -18505,60 +19086,68 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "moss-cottage-14-9",
-                    "tileId": "wall-corner",
+                    "tileId": "wall",
                     "column": 14,
                     "row": 9,
-                    "rotation": 270
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "river-lodge-36-24",
                     "tileId": "wall-corner",
                     "column": 36,
                     "row": 24,
-                    "rotation": 90
+                    "rotation": 180
                   },
                   {
                     "id": "river-lodge-37-24",
                     "tileId": "wall",
                     "column": 37,
-                    "row": 24
+                    "row": 24,
+                    "rotation": 180
                   },
                   {
                     "id": "river-lodge-38-24",
                     "tileId": "timber-wall",
                     "column": 38,
-                    "row": 24
+                    "row": 24,
+                    "rotation": 180
                   },
                   {
                     "id": "river-lodge-39-24",
                     "tileId": "wall",
                     "column": 39,
-                    "row": 24
+                    "row": 24,
+                    "rotation": 180
                   },
                   {
                     "id": "river-lodge-40-24",
                     "tileId": "timber-wall",
                     "column": 40,
-                    "row": 24
+                    "row": 24,
+                    "rotation": 180
                   },
                   {
                     "id": "river-lodge-41-24",
                     "tileId": "wall",
                     "column": 41,
-                    "row": 24
+                    "row": 24,
+                    "rotation": 180
                   },
                   {
                     "id": "river-lodge-42-24",
                     "tileId": "wall-corner",
                     "column": 42,
                     "row": 24,
-                    "rotation": 180
+                    "rotation": 270
                   },
                   {
                     "id": "river-lodge-36-25",
                     "tileId": "wall",
                     "column": 36,
-                    "row": 25
+                    "row": 25,
+                    "rotation": 90
                   },
                   {
                     "id": "river-lodge-37-25",
@@ -18594,13 +19183,15 @@ export const scenes = defineSceneManifest(
                     "id": "river-lodge-42-25",
                     "tileId": "wall",
                     "column": 42,
-                    "row": 25
+                    "row": 25,
+                    "rotation": 270
                   },
                   {
                     "id": "river-lodge-36-26",
                     "tileId": "timber-wall",
                     "column": 36,
-                    "row": 26
+                    "row": 26,
+                    "rotation": 90
                   },
                   {
                     "id": "river-lodge-37-26",
@@ -18636,14 +19227,17 @@ export const scenes = defineSceneManifest(
                     "id": "river-lodge-42-26",
                     "tileId": "timber-wall",
                     "column": 42,
-                    "row": 26
+                    "row": 26,
+                    "rotation": 270
                   },
                   {
                     "id": "river-lodge-36-27",
-                    "tileId": "wall-corner",
+                    "tileId": "wall",
                     "column": 36,
                     "row": 27,
-                    "rotation": 0
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   },
                   {
                     "id": "river-lodge-37-27",
@@ -18677,10 +19271,12 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "river-lodge-42-27",
-                    "tileId": "wall-corner",
+                    "tileId": "wall",
                     "column": 42,
                     "row": 27,
-                    "rotation": 270
+                    "rotation": 0,
+                    "flipX": false,
+                    "flipY": false
                   }
                 ]
               }
@@ -18697,10 +19293,10 @@ export const scenes = defineSceneManifest(
               "id": "forest-roof-moss-cottage",
               "tag": "roof",
               "assetId": "roof",
-              "x": 256,
-              "y": 192,
-              "scaleX": 1,
-              "scaleY": 1,
+              "x": 224.81632653061223,
+              "y": 161.14264360771887,
+              "scaleX": 1.2950951236882937,
+              "scaleY": 1.7633916179976759,
               "rotation": 0,
               "anchorX": 0,
               "anchorY": 1,
@@ -18711,10 +19307,10 @@ export const scenes = defineSceneManifest(
               "id": "forest-roof-river-lodge",
               "tag": "roof",
               "assetId": "roof",
-              "x": 1152,
-              "y": 768,
-              "scaleX": 1,
-              "scaleY": 1,
+              "x": 1119.591836734694,
+              "y": 740.4896189892528,
+              "scaleX": 1.2950951236882937,
+              "scaleY": 1.7633916179976759,
               "rotation": 0,
               "anchorX": 0,
               "anchorY": 1,
@@ -18857,6 +19453,7 @@ export const scenes = defineSceneManifest(
           "id": "grass",
           "name": "Grass",
           "frame": 0,
+          "animation": "tiles.forest.water",
           "tags": [
             "walkable"
           ],
@@ -18868,6 +19465,7 @@ export const scenes = defineSceneManifest(
           "id": "path",
           "name": "Dirt Path",
           "frame": 1,
+          "animation": "tiles.forest.water",
           "tags": [
             "walkable"
           ],
@@ -18892,6 +19490,7 @@ export const scenes = defineSceneManifest(
           "id": "reeds",
           "name": "River Reeds",
           "frame": 3,
+          "animation": "tiles.forest.water",
           "tags": [
             "blocked",
             "water",
@@ -18905,6 +19504,7 @@ export const scenes = defineSceneManifest(
           "id": "tree",
           "name": "Tree",
           "frame": 4,
+          "animation": "tiles.forest.water",
           "tags": [
             "blocked",
             "tree"
@@ -18917,6 +19517,7 @@ export const scenes = defineSceneManifest(
           "id": "flowers",
           "name": "Wildflowers",
           "frame": 5,
+          "animation": "tiles.forest.water",
           "tags": [
             "walkable",
             "decoration"
@@ -18929,6 +19530,7 @@ export const scenes = defineSceneManifest(
           "id": "rock",
           "name": "Rock",
           "frame": 6,
+          "animation": "tiles.forest.water",
           "tags": [
             "blocked",
             "rock"
@@ -18941,6 +19543,7 @@ export const scenes = defineSceneManifest(
           "id": "bridge",
           "name": "Wood Bridge",
           "frame": 7,
+          "animation": "tiles.forest.water",
           "tags": [
             "walkable",
             "bridge"

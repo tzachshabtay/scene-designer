@@ -20,29 +20,29 @@
         "prompt": "Wood floor: seamless top-down warm-brown horizontal floorboards with restrained grain; walkable."
       },
       {
-        "prompt": "Plaster wall: a straight horizontal top-down pale-plaster cottage wall segment with dark timber trim, connecting cleanly at the left and right cell edges; blocked."
+        "prompt": "Plaster wall: a straight horizontal top-down pale-plaster cottage wall segment with dark timber trim, connecting cleanly at the left and right cell edges and should only go down 90%; blocked."
       },
       {
-        "prompt": "Timber wall: a straight horizontal top-down cottage wall segment with exposed dark beams and pale infill, connecting cleanly at the left and right cell edges; blocked."
+        "prompt": "Timber wall: a straight horizontal top-down cottage wall segment with exposed dark beams and pale infill, connecting cleanly at the left and right cell edges and should only go down 90%; blocked."
       },
       {
         "prompt": "Rug: a centered top-down red cottage rug with gold bands, should be a looping tile texture; walkable decoration."
       },
       {
-        "prompt": "Hearth: a centered top-down stone-and-timber fireplace with a warm flame over a floor base; blocked furniture."
+        "prompt": "Hearth: a centered top-down stone-and-timber fireplace with a warm flame over a transparent base; blocked furniture."
       },
       {
-        "prompt": "Table: a centered round wooden cottage table viewed from above over a wood-floor base; blocked furniture."
+        "prompt": "Table: a centered round wooden cottage table viewed from above over a transparent base; blocked furniture."
       },
       {
-        "prompt": "Bed: a centered top-down single wooden bed with pale bedding and a blue pillow over a wood-floor base; blocked furniture."
+        "prompt": "Bed: a centered top-down single wooden bed with pale bedding and a blue pillow over a transparent base; blocked furniture."
       },
       {
-        "prompt": "Wall corner: one 90-degree L-shaped top-down plaster-and-timber cottage wall corner whose arms exit through the top and right cell edges, matching the thickness, palette, and connectors of the straight wall tiles; blocked and designed to rotate in quarter turns."
+        "prompt": "Wall corner: one 90-degree L-shaped top-down plaster-and-timber cottage wall corner whose arms exit through the top and right cell edges, matching the thickness, palette, and connectors of the straight wall tiles; blocked and designed to rotate in quarter turns. should cover 90% in each direction and the rest 10% should be transparent"
       }
     ]
   },
-  "activeVersion": "promoted-1784348132920",
+  "activeVersion": "promoted-1784846598225-1",
   "versions": {
     "default": {
       "name": "default",
@@ -118,6 +118,256 @@
       "voiceSettings": {},
       "parentVersion": "promoted-1784345513618",
       "notes": "Promoted from the AI asset designer."
+    },
+    "promoted-1784387528630": {
+      "name": "promoted-1784387528630",
+      "file": "/assets/tiles.house.promoted-1784387528630.png",
+      "prompt": "Top-down cottage interior tiles in a consistent hand-authored pixel-art style.",
+      "createdAt": "2026-07-18T15:12:08.653Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "format": "png",
+        "model": "gpt-image-2",
+        "background": "auto"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "promoted-1784348132920",
+      "notes": "Promoted from the AI asset designer."
+    },
+    "promoted-1784389812411": {
+      "name": "promoted-1784389812411",
+      "file": "/assets/tiles.house.promoted-1784389812411.png",
+      "prompt": "Top-down cottage interior tiles in a consistent hand-authored pixel-art style.",
+      "createdAt": "2026-07-18T15:50:12.477Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "format": "png",
+        "model": "gpt-image-2",
+        "background": "auto"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "promoted-1784387528630",
+      "notes": "Promoted from the AI asset designer."
+    },
+    "promoted-1784413525558": {
+      "name": "promoted-1784413525558",
+      "file": "/assets/tiles.house.promoted-1784413525558.png",
+      "prompt": "Top-down cottage interior tiles in a consistent hand-authored pixel-art style.",
+      "createdAt": "2026-07-18T22:25:25.589Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "format": "png",
+        "model": "gpt-image-2",
+        "background": "auto"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "promoted-1784389812411",
+      "notes": "Promoted from the AI asset designer."
+    },
+    "promoted-1784415384008": {
+      "name": "promoted-1784415384008",
+      "file": "/assets/tiles.house.promoted-1784415384008.png",
+      "prompt": "Top-down cottage interior tiles in a consistent hand-authored pixel-art style.",
+      "createdAt": "2026-07-18T22:56:24.066Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "format": "png",
+        "model": "gpt-image-2",
+        "background": "auto"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "promoted-1784413525558",
+      "notes": "Promoted from the AI asset designer."
+    },
+    "promoted-1784415526599": {
+      "name": "promoted-1784415526599",
+      "file": "/assets/tiles.house.promoted-1784415526599.png",
+      "prompt": "Top-down cottage interior tiles in a consistent hand-authored pixel-art style.",
+      "createdAt": "2026-07-18T22:58:46.638Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "format": "png",
+        "model": "gpt-image-2",
+        "background": "auto"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "promoted-1784415384008",
+      "notes": "Promoted from the AI asset designer."
+    },
+    "promoted-1784423558755-3": {
+      "name": "promoted-1784423558755-3",
+      "file": "/assets/tiles.house.promoted-1784423558755-3.png",
+      "prompt": "Top-down cottage interior tiles in a consistent hand-authored pixel-art style.",
+      "createdAt": "2026-07-19T01:12:38.757Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "format": "png",
+        "model": "gpt-image-2",
+        "background": "auto"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "promoted-1784415526599",
+      "notes": "Promoted from the AI asset designer with Promote all."
+    },
+    "promoted-1784846089126": {
+      "name": "promoted-1784846089126",
+      "file": "/assets/tiles.house.promoted-1784846089126.png",
+      "prompt": "Top-down cottage interior tiles in a consistent hand-authored pixel-art style.",
+      "createdAt": "2026-07-23T22:34:49.278Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "format": "png",
+        "model": "gpt-image-2",
+        "background": "auto"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "promoted-1784423558755-3",
+      "notes": "Promoted from the AI asset designer.",
+      "tilesetSourceFile": "/assets/tiles.house.promoted-1784846089126.tileset-source.png",
+      "tilesetTransforms": [
+        {
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1
+        }
+      ]
+    },
+    "promoted-1784846598225-1": {
+      "name": "promoted-1784846598225-1",
+      "file": "/assets/tiles.house.promoted-1784846598225-1.png",
+      "prompt": "Top-down cottage interior tiles in a consistent hand-authored pixel-art style.",
+      "createdAt": "2026-07-23T22:43:18.309Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "format": "png",
+        "model": "gpt-image-2",
+        "background": "auto"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "promoted-1784846089126",
+      "notes": "Promoted from the AI asset designer with Promote all.",
+      "tilesetSourceFile": "/assets/tiles.house.promoted-1784846598225-1.tileset-source.png",
+      "tilesetTransforms": [
+        {
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1
+        }
+      ]
     }
   },
   "tags": [

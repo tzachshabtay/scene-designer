@@ -1,0 +1,10 @@
+{
+  "prompt": "2d top view rpg tile based game",
+  "images": [
+    {
+      "name": "rpg_style.png",
+      "file": "/assets/style-guide.1784423552569.1.png",
+      "mimeType": "image/png"
+    }
+  ]
+}

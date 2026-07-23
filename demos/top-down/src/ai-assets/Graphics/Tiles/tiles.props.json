@@ -17,17 +17,17 @@
         "prompt": "Sunberry: a centered cluster of ripe red berries with a few green leaves, viewed from above on a transparent background; collectible."
       },
       {
-        "prompt": "Brass key: one centered old-fashioned golden-brass key viewed from above on a transparent background; collectible."
+        "prompt": "Brass key: one centered old-fashioned golden-brass key with contrasted outline viewed from above on a transparent background; collectible."
       },
       {
         "prompt": "Forest tonic: one centered corked violet potion bottle with a pale label, viewed from above on a transparent background; collectible."
       },
       {
-        "prompt": "Doorway: one centered rustic wooden cottage doorway and arch viewed from above, open and dark in the middle, on a transparent background; scene-transition portal."
+        "prompt": "Doorway: one centered rustic closed wooden cottage doorway and arch viewed from above, on a transparent background; scene-transition portal."
       }
     ]
   },
-  "activeVersion": "default",
+  "activeVersion": "promoted-1784678659598",
   "versions": {
     "default": {
       "name": "default",
@@ -35,6 +35,152 @@
       "prompt": "Top-down quest objects in a consistent hand-authored pixel-art style.",
       "createdAt": "2026-07-15T00:00:00.000Z",
       "model": "manual-svg"
+    },
+    "promoted-1784423558761-4": {
+      "name": "promoted-1784423558761-4",
+      "file": "/assets/tiles.props.promoted-1784423558761-4.png",
+      "prompt": "Top-down quest objects in a consistent hand-authored pixel-art style.",
+      "createdAt": "2026-07-19T01:12:38.768Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "model": "gpt-image-2",
+        "background": "auto",
+        "format": "png"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "default",
+      "notes": "Promoted from the AI asset designer with Promote all."
+    },
+    "promoted-1784601072274-1": {
+      "name": "promoted-1784601072274-1",
+      "file": "/assets/tiles.props.promoted-1784601072274-1.png",
+      "prompt": "Top-down quest objects in a consistent hand-authored pixel-art style.",
+      "createdAt": "2026-07-21T02:31:12.323Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "model": "gpt-image-2",
+        "background": "auto",
+        "format": "png"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "promoted-1784423558761-4",
+      "notes": "Promoted from the AI asset designer with Promote all."
+    },
+    "promoted-1784601208998-1": {
+      "name": "promoted-1784601208998-1",
+      "file": "/assets/tiles.props.promoted-1784601208998-1.png",
+      "prompt": "Top-down quest objects in a consistent hand-authored pixel-art style.",
+      "createdAt": "2026-07-21T02:33:29.016Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "model": "gpt-image-2",
+        "background": "auto",
+        "format": "png"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "promoted-1784601072274-1",
+      "notes": "Promoted from the AI asset designer with Promote all."
+    },
+    "promoted-1784601348597-1": {
+      "name": "promoted-1784601348597-1",
+      "file": "/assets/tiles.props.promoted-1784601348597-1.png",
+      "prompt": "Top-down quest objects in a consistent hand-authored pixel-art style.",
+      "createdAt": "2026-07-21T02:35:48.633Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "model": "gpt-image-2",
+        "background": "auto",
+        "format": "png"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "promoted-1784601208998-1",
+      "notes": "Promoted from the AI asset designer with Promote all."
+    },
+    "promoted-1784601560187-1": {
+      "name": "promoted-1784601560187-1",
+      "file": "/assets/tiles.props.promoted-1784601560187-1.png",
+      "prompt": "Top-down quest objects in a consistent hand-authored pixel-art style.",
+      "createdAt": "2026-07-21T02:39:20.209Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "model": "gpt-image-2",
+        "background": "auto",
+        "format": "png"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "promoted-1784601348597-1",
+      "notes": "Promoted from the AI asset designer with Promote all."
+    },
+    "promoted-1784603614816": {
+      "name": "promoted-1784603614816",
+      "file": "/assets/tiles.props.promoted-1784603614816.png",
+      "prompt": "Top-down quest objects in a consistent hand-authored pixel-art style.",
+      "createdAt": "2026-07-21T03:13:34.858Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "model": "gpt-image-2",
+        "background": "auto",
+        "format": "png"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "promoted-1784601560187-1",
+      "notes": "Promoted from the AI asset designer."
+    },
+    "promoted-1784678659598": {
+      "name": "promoted-1784678659598",
+      "file": "/assets/tiles.props.promoted-1784678659598.png",
+      "prompt": "Top-down quest objects in a consistent hand-authored pixel-art style.",
+      "createdAt": "2026-07-22T00:04:19.671Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "model": "gpt-image-2",
+        "background": "auto",
+        "format": "png"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "promoted-1784603614816",
+      "notes": "Promoted from the AI asset designer.",
+      "tilesetSourceFile": "/assets/tiles.props.promoted-1784678659598.tileset-source.png",
+      "tilesetTransforms": [
+        {
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "offsetX": 0,
+          "offsetY": 3,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1
+        }
+      ]
     }
   },
   "tags": [
@@ -42,5 +188,13 @@
     "props",
     "pickups",
     "top-down"
-  ]
+  ],
+  "settings": {
+    "model": "gpt-image-2",
+    "background": "auto",
+    "format": "png"
+  },
+  "audioSettings": {},
+  "audioPlayback": {},
+  "voiceSettings": {}
 }

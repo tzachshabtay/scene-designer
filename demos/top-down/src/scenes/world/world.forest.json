@@ -11499,54 +11499,58 @@
             "originY": 0,
             "cells": [
               {
-                "id": "moss-cottage-8-6",
-                "tileId": "wall-corner",
-                "column": 8,
-                "row": 6,
-                "rotation": 90
-              },
-              {
                 "id": "moss-cottage-9-6",
-                "tileId": "wall",
+                "tileId": "wood-floor",
                 "column": 9,
-                "row": 6
+                "row": 6,
+                "rotation": 0,
+                "flipX": false,
+                "flipY": false
               },
               {
                 "id": "moss-cottage-10-6",
-                "tileId": "timber-wall",
+                "tileId": "wood-floor",
                 "column": 10,
-                "row": 6
+                "row": 6,
+                "rotation": 0,
+                "flipX": false,
+                "flipY": false
               },
               {
                 "id": "moss-cottage-11-6",
-                "tileId": "wall",
+                "tileId": "wood-floor",
                 "column": 11,
-                "row": 6
+                "row": 6,
+                "rotation": 0,
+                "flipX": false,
+                "flipY": false
               },
               {
                 "id": "moss-cottage-12-6",
-                "tileId": "timber-wall",
+                "tileId": "wood-floor",
                 "column": 12,
-                "row": 6
+                "row": 6,
+                "rotation": 0,
+                "flipX": false,
+                "flipY": false
               },
               {
                 "id": "moss-cottage-13-6",
-                "tileId": "wall",
+                "tileId": "wood-floor",
                 "column": 13,
-                "row": 6
-              },
-              {
-                "id": "moss-cottage-14-6",
-                "tileId": "wall-corner",
-                "column": 14,
                 "row": 6,
-                "rotation": 180
+                "rotation": 0,
+                "flipX": false,
+                "flipY": false
               },
               {
                 "id": "moss-cottage-8-7",
-                "tileId": "wall",
+                "tileId": "wood-floor",
                 "column": 8,
-                "row": 7
+                "row": 7,
+                "rotation": 0,
+                "flipX": false,
+                "flipY": false
               },
               {
                 "id": "moss-cottage-9-7",
@@ -11580,15 +11584,21 @@
               },
               {
                 "id": "moss-cottage-14-7",
-                "tileId": "wall",
+                "tileId": "wood-floor",
                 "column": 14,
-                "row": 7
+                "row": 7,
+                "rotation": 0,
+                "flipX": false,
+                "flipY": false
               },
               {
                 "id": "moss-cottage-8-8",
-                "tileId": "timber-wall",
+                "tileId": "wood-floor",
                 "column": 8,
-                "row": 8
+                "row": 8,
+                "rotation": 0,
+                "flipX": false,
+                "flipY": false
               },
               {
                 "id": "moss-cottage-9-8",
@@ -11622,16 +11632,21 @@
               },
               {
                 "id": "moss-cottage-14-8",
-                "tileId": "timber-wall",
+                "tileId": "wood-floor",
                 "column": 14,
-                "row": 8
+                "row": 8,
+                "rotation": 0,
+                "flipX": false,
+                "flipY": false
               },
               {
                 "id": "moss-cottage-8-9",
-                "tileId": "wall-corner",
+                "tileId": "wall",
                 "column": 8,
                 "row": 9,
-                "rotation": 0
+                "rotation": 0,
+                "flipX": false,
+                "flipY": false
               },
               {
                 "id": "moss-cottage-9-9",
@@ -11647,9 +11662,12 @@
               },
               {
                 "id": "moss-cottage-11-9",
-                "tileId": "wood-floor",
+                "tileId": "wall",
                 "column": 11,
-                "row": 9
+                "row": 9,
+                "rotation": 0,
+                "flipX": false,
+                "flipY": false
               },
               {
                 "id": "moss-cottage-12-9",
@@ -11665,60 +11683,68 @@
               },
               {
                 "id": "moss-cottage-14-9",
-                "tileId": "wall-corner",
+                "tileId": "wall",
                 "column": 14,
                 "row": 9,
-                "rotation": 270
+                "rotation": 0,
+                "flipX": false,
+                "flipY": false
               },
               {
                 "id": "river-lodge-36-24",
                 "tileId": "wall-corner",
                 "column": 36,
                 "row": 24,
-                "rotation": 90
+                "rotation": 180
               },
               {
                 "id": "river-lodge-37-24",
                 "tileId": "wall",
                 "column": 37,
-                "row": 24
+                "row": 24,
+                "rotation": 180
               },
               {
                 "id": "river-lodge-38-24",
                 "tileId": "timber-wall",
                 "column": 38,
-                "row": 24
+                "row": 24,
+                "rotation": 180
               },
               {
                 "id": "river-lodge-39-24",
                 "tileId": "wall",
                 "column": 39,
-                "row": 24
+                "row": 24,
+                "rotation": 180
               },
               {
                 "id": "river-lodge-40-24",
                 "tileId": "timber-wall",
                 "column": 40,
-                "row": 24
+                "row": 24,
+                "rotation": 180
               },
               {
                 "id": "river-lodge-41-24",
                 "tileId": "wall",
                 "column": 41,
-                "row": 24
+                "row": 24,
+                "rotation": 180
               },
               {
                 "id": "river-lodge-42-24",
                 "tileId": "wall-corner",
                 "column": 42,
                 "row": 24,
-                "rotation": 180
+                "rotation": 270
               },
               {
                 "id": "river-lodge-36-25",
                 "tileId": "wall",
                 "column": 36,
-                "row": 25
+                "row": 25,
+                "rotation": 90
               },
               {
                 "id": "river-lodge-37-25",
@@ -11754,13 +11780,15 @@
                 "id": "river-lodge-42-25",
                 "tileId": "wall",
                 "column": 42,
-                "row": 25
+                "row": 25,
+                "rotation": 270
               },
               {
                 "id": "river-lodge-36-26",
                 "tileId": "timber-wall",
                 "column": 36,
-                "row": 26
+                "row": 26,
+                "rotation": 90
               },
               {
                 "id": "river-lodge-37-26",
@@ -11796,14 +11824,17 @@
                 "id": "river-lodge-42-26",
                 "tileId": "timber-wall",
                 "column": 42,
-                "row": 26
+                "row": 26,
+                "rotation": 270
               },
               {
                 "id": "river-lodge-36-27",
-                "tileId": "wall-corner",
+                "tileId": "wall",
                 "column": 36,
                 "row": 27,
-                "rotation": 0
+                "rotation": 0,
+                "flipX": false,
+                "flipY": false
               },
               {
                 "id": "river-lodge-37-27",
@@ -11837,10 +11868,12 @@
               },
               {
                 "id": "river-lodge-42-27",
-                "tileId": "wall-corner",
+                "tileId": "wall",
                 "column": 42,
                 "row": 27,
-                "rotation": 270
+                "rotation": 0,
+                "flipX": false,
+                "flipY": false
               }
             ]
           }
@@ -11857,10 +11890,10 @@
           "id": "forest-roof-moss-cottage",
           "tag": "roof",
           "assetId": "roof",
-          "x": 256,
-          "y": 192,
-          "scaleX": 1,
-          "scaleY": 1,
+          "x": 224.81632653061223,
+          "y": 161.14264360771887,
+          "scaleX": 1.2950951236882937,
+          "scaleY": 1.7633916179976759,
           "rotation": 0,
           "anchorX": 0,
           "anchorY": 1,
@@ -11871,10 +11904,10 @@
           "id": "forest-roof-river-lodge",
           "tag": "roof",
           "assetId": "roof",
-          "x": 1152,
-          "y": 768,
-          "scaleX": 1,
-          "scaleY": 1,
+          "x": 1119.591836734694,
+          "y": 740.4896189892528,
+          "scaleX": 1.2950951236882937,
+          "scaleY": 1.7633916179976759,
           "rotation": 0,
           "anchorX": 0,
           "anchorY": 1,

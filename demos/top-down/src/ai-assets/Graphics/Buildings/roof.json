@@ -1,7 +1,7 @@
 {
   "id": "roof",
   "kind": "image",
-  "prompt": "One complete orthographic top-down cottage roof overlay for a 2D pixel-art RPG: a single connected warm red-brown shingled roof with a strong horizontal ridge and dark timber eaves, sized to span exactly 7 columns by 3 rows of a 32-pixel world grid (224×96 pixels), matching the Woodland Quest cottage palette, with transparency outside the roof silhouette. This is one building image, not a tileset or a grid of separate tiles. Do not draw walls, doors, labels, borders, padding, or extra objects.",
+  "prompt": "One complete orthographic top-down cottage roof overlay for a 2D pixel-art RPG: a single connected warm red-brown shingled roof with a strong horizontal ridge and dark timber eaves, matching the Woodland Quest cottage palette, with transparency outside the roof silhouette (but there should be almost no transparency, the image need to cover the input size as much as possible). This is one building image, not a tileset or a grid of separate tiles. Do not draw walls, doors, labels, borders, padding, or extra objects.",
   "dimensions": {
     "width": 224,
     "height": 96
@@ -14,7 +14,7 @@
       "tiles.house"
     ]
   },
-  "activeVersion": "default",
+  "activeVersion": "promoted-1784688688508",
   "versions": {
     "default": {
       "name": "default",
@@ -22,6 +22,26 @@
       "prompt": "One complete orthographic top-down cottage roof overlay for a 2D pixel-art RPG: a single connected warm red-brown shingled roof with a strong horizontal ridge and dark timber eaves, sized to span exactly 7 columns by 3 rows of a 32-pixel world grid (224×96 pixels), matching the Woodland Quest cottage palette, with transparency outside the roof silhouette. This is one building image, not a tileset or a grid of separate tiles. Do not draw walls, doors, labels, borders, padding, or extra objects.",
       "createdAt": "2026-07-21T00:00:00.000Z",
       "model": "manual-svg"
+    },
+    "promoted-1784688688508": {
+      "name": "promoted-1784688688508",
+      "file": "/assets/roof.promoted-1784688688508.png",
+      "prompt": "One complete orthographic top-down cottage roof overlay for a 2D pixel-art RPG: a single connected warm red-brown shingled roof with a strong horizontal ridge and dark timber eaves, matching the Woodland Quest cottage palette, with transparency outside the roof silhouette (but there should be almost no transparency, the image need to cover the input size as much as possible). This is one building image, not a tileset or a grid of separate tiles. Do not draw walls, doors, labels, borders, padding, or extra objects.",
+      "createdAt": "2026-07-22T02:51:28.565Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "model": "gpt-image-2",
+        "background": "auto",
+        "format": "png",
+        "referenceAssetIds": [
+          "tiles.house"
+        ]
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "default",
+      "notes": "Promoted from the AI asset designer."
     }
   },
   "tags": [

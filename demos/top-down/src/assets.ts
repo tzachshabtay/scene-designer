@@ -5,7 +5,7 @@ export const assets = defineAiAssets(
   "roof": {
     "id": "roof",
     "kind": "image",
-    "prompt": "One complete orthographic top-down cottage roof overlay for a 2D pixel-art RPG: a single connected warm red-brown shingled roof with a strong horizontal ridge and dark timber eaves, sized to span exactly 7 columns by 3 rows of a 32-pixel world grid (224×96 pixels), matching the Woodland Quest cottage palette, with transparency outside the roof silhouette. This is one building image, not a tileset or a grid of separate tiles. Do not draw walls, doors, labels, borders, padding, or extra objects.",
+    "prompt": "One complete orthographic top-down cottage roof overlay for a 2D pixel-art RPG: a single connected warm red-brown shingled roof with a strong horizontal ridge and dark timber eaves, matching the Woodland Quest cottage palette, with transparency outside the roof silhouette (but there should be almost no transparency, the image need to cover the input size as much as possible). This is one building image, not a tileset or a grid of separate tiles. Do not draw walls, doors, labels, borders, padding, or extra objects.",
     "dimensions": {
       "width": 224,
       "height": 96
@@ -18,7 +18,7 @@ export const assets = defineAiAssets(
         "tiles.house"
       ]
     },
-    "activeVersion": "default",
+    "activeVersion": "promoted-1784688688508",
     "versions": {
       "default": {
         "name": "default",
@@ -26,6 +26,26 @@ export const assets = defineAiAssets(
         "prompt": "One complete orthographic top-down cottage roof overlay for a 2D pixel-art RPG: a single connected warm red-brown shingled roof with a strong horizontal ridge and dark timber eaves, sized to span exactly 7 columns by 3 rows of a 32-pixel world grid (224×96 pixels), matching the Woodland Quest cottage palette, with transparency outside the roof silhouette. This is one building image, not a tileset or a grid of separate tiles. Do not draw walls, doors, labels, borders, padding, or extra objects.",
         "createdAt": "2026-07-21T00:00:00.000Z",
         "model": "manual-svg"
+      },
+      "promoted-1784688688508": {
+        "name": "promoted-1784688688508",
+        "file": "/assets/roof.promoted-1784688688508.png",
+        "prompt": "One complete orthographic top-down cottage roof overlay for a 2D pixel-art RPG: a single connected warm red-brown shingled roof with a strong horizontal ridge and dark timber eaves, matching the Woodland Quest cottage palette, with transparency outside the roof silhouette (but there should be almost no transparency, the image need to cover the input size as much as possible). This is one building image, not a tileset or a grid of separate tiles. Do not draw walls, doors, labels, borders, padding, or extra objects.",
+        "createdAt": "2026-07-22T02:51:28.565Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "model": "gpt-image-2",
+          "background": "auto",
+          "format": "png",
+          "referenceAssetIds": [
+            "tiles.house"
+          ]
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "default",
+        "notes": "Promoted from the AI asset designer."
       }
     },
     "tags": [
@@ -40,60 +60,96 @@ export const assets = defineAiAssets(
   "hero.explorer.idle": {
     "id": "hero.explorer.idle",
     "kind": "spritesheet",
-    "prompt": "Four-frame seamless idle animation for the referenced woodland explorer facing down. Use subtle breathing, a gentle weight shift, and an occasional blink while keeping the character centered and visually consistent with the base image. Transparent background.",
+    "prompt": "seamless idle animation for the referenced woodland explorer facing down. Use subtle breathing, a gentle weight shift, and an occasional blink while keeping the character centered and visually consistent with the base image. It should stand, not walk, movement should be subtle. Transparent background.",
     "dimensions": {
-      "width": 64,
-      "height": 64
+      "width": 96,
+      "height": 96
     },
     "frameGrid": {
-      "frameCount": 4,
+      "frameCount": 8,
       "frameWidth": 32,
       "frameHeight": 32,
-      "columns": 2,
-      "rows": 2
+      "columns": 3,
+      "rows": 3
     },
     "animations": [
       {
         "key": "hero.explorer.idle",
+        "frameRate": 4,
+        "repeat": -1,
         "frames": [
           0,
           1,
           2,
-          3
+          3,
+          4,
+          5,
+          6,
+          7
         ],
-        "frameRate": 4,
-        "repeat": -1,
         "frameTimings": [
           {
-            "delayMs": 300,
+            "delayMs": 250,
             "offsetX": 0,
             "offsetY": 0,
-            "scaleX": 1,
-            "scaleY": 1,
+            "scaleX": 1.25,
+            "scaleY": 1.25,
             "rotation": 0
           },
           {
-            "delayMs": 300,
-            "offsetX": 0,
-            "offsetY": -1,
-            "scaleX": 1,
-            "scaleY": 1,
-            "rotation": 0
-          },
-          {
-            "delayMs": 300,
+            "delayMs": 250,
             "offsetX": 0,
             "offsetY": 0,
-            "scaleX": 1,
-            "scaleY": 1,
+            "scaleX": 1.25,
+            "scaleY": 1.25,
             "rotation": 0
           },
           {
-            "delayMs": 300,
+            "delayMs": 250,
             "offsetX": 0,
-            "offsetY": 1,
-            "scaleX": 1,
-            "scaleY": 1,
+            "offsetY": 0,
+            "scaleX": 1.25,
+            "scaleY": 1.25,
+            "rotation": 0
+          },
+          {
+            "delayMs": 250,
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1.25,
+            "scaleY": 1.25,
+            "rotation": 0
+          },
+          {
+            "delayMs": 250,
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1.25,
+            "scaleY": 1.25,
+            "rotation": 0
+          },
+          {
+            "delayMs": 250,
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1.25,
+            "scaleY": 1.25,
+            "rotation": 0
+          },
+          {
+            "delayMs": 250,
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1.25,
+            "scaleY": 1.25,
+            "rotation": 0
+          },
+          {
+            "delayMs": 250,
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1.25,
+            "scaleY": 1.25,
             "rotation": 0
           }
         ]
@@ -108,7 +164,7 @@ export const assets = defineAiAssets(
         "hero.explorer"
       ]
     },
-    "activeVersion": "default",
+    "activeVersion": "promoted-1784430762837",
     "versions": {
       "default": {
         "name": "default",
@@ -116,6 +172,27 @@ export const assets = defineAiAssets(
         "prompt": "Four-frame seamless idle animation for the referenced woodland explorer facing down. Use subtle breathing, a gentle weight shift, and an occasional blink while keeping the character centered and visually consistent with the base image. Transparent background.",
         "createdAt": "2026-07-19T00:00:00.000Z",
         "model": "manual-svg"
+      },
+      "promoted-1784430762837": {
+        "name": "promoted-1784430762837",
+        "file": "/assets/hero.explorer.idle.promoted-1784430762837.png",
+        "prompt": "seamless idle animation for the referenced woodland explorer facing down. Use subtle breathing, a gentle weight shift, and an occasional blink while keeping the character centered and visually consistent with the base image. It should stand, not walk, movement should be subtle. Transparent background.",
+        "createdAt": "2026-07-19T03:12:42.859Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "model": "gpt-image-2",
+          "background": "auto",
+          "format": "png",
+          "frameAlignment": "center",
+          "referenceAssetIds": [
+            "hero.explorer"
+          ]
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "default",
+        "notes": "Promoted from the AI asset designer."
       }
     },
     "tags": [
@@ -123,12 +200,15 @@ export const assets = defineAiAssets(
       "animation",
       "top-down",
       "idle"
-    ]
+    ],
+    "audioSettings": {},
+    "audioPlayback": {},
+    "voiceSettings": {}
   },
   "hero.explorer": {
     "id": "hero.explorer",
     "kind": "image",
-    "prompt": "Top-down 32 pixel woodland explorer standing still and facing down, readable silhouette, transparent background.",
+    "prompt": "Top-down 32 pixel woodland explorer standing still and facing down, readable silhouette, should cover most of the screen, transparent background.",
     "dimensions": {
       "width": 32,
       "height": 32
@@ -138,7 +218,7 @@ export const assets = defineAiAssets(
       "background": "auto",
       "format": "png"
     },
-    "activeVersion": "default",
+    "activeVersion": "promoted-1784426015455",
     "versions": {
       "default": {
         "name": "default",
@@ -146,6 +226,23 @@ export const assets = defineAiAssets(
         "prompt": "Top-down 32 pixel woodland explorer standing still and facing down, readable silhouette, transparent background.",
         "createdAt": "2026-07-15T00:00:00.000Z",
         "model": "manual-svg"
+      },
+      "promoted-1784426015455": {
+        "name": "promoted-1784426015455",
+        "file": "/assets/hero.explorer.promoted-1784426015455.png",
+        "prompt": "Top-down 32 pixel woodland explorer standing still and facing down, readable silhouette, should cover most of the screen, transparent background.",
+        "createdAt": "2026-07-19T01:53:35.476Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "model": "gpt-image-2",
+          "background": "auto",
+          "format": "png"
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "default",
+        "notes": "Promoted from the AI asset designer."
       }
     },
     "linkedAnimationAssets": {
@@ -173,34 +270,71 @@ export const assets = defineAiAssets(
     "tags": [
       "hero",
       "top-down"
-    ]
+    ],
+    "audioSettings": {},
+    "audioPlayback": {},
+    "voiceSettings": {}
   },
   "hero.explorer.walk.down": {
     "id": "hero.explorer.walk.down",
     "kind": "spritesheet",
     "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving down toward the camera. Keep the character centered, facing down, and visually consistent with the base image. Transparent background.",
     "dimensions": {
-      "width": 128,
-      "height": 32
+      "width": 64,
+      "height": 64
     },
     "frameGrid": {
       "frameCount": 4,
       "frameWidth": 32,
       "frameHeight": 32,
-      "columns": 4,
-      "rows": 1
+      "columns": 2,
+      "rows": 2
     },
     "animations": [
       {
         "key": "hero.explorer.walk.down",
+        "frameRate": 8,
+        "repeat": -1,
         "frames": [
           0,
           1,
           2,
           3
         ],
-        "frameRate": 8,
-        "repeat": -1
+        "frameTimings": [
+          {
+            "delayMs": 125,
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1.25,
+            "scaleY": 1.25,
+            "rotation": 0
+          },
+          {
+            "delayMs": 125,
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1.25,
+            "scaleY": 1.25,
+            "rotation": 0
+          },
+          {
+            "delayMs": 125,
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1.25,
+            "scaleY": 1.25,
+            "rotation": 0
+          },
+          {
+            "delayMs": 125,
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1.25,
+            "scaleY": 1.25,
+            "rotation": 0
+          }
+        ]
       }
     ],
     "settings": {
@@ -212,7 +346,7 @@ export const assets = defineAiAssets(
         "hero.explorer"
       ]
     },
-    "activeVersion": "default",
+    "activeVersion": "promoted-1784430010355",
     "versions": {
       "default": {
         "name": "default",
@@ -220,6 +354,90 @@ export const assets = defineAiAssets(
         "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving down toward the camera. Keep the character centered, facing down, and visually consistent with the base image. Transparent background.",
         "createdAt": "2026-07-15T00:00:00.000Z",
         "model": "manual-svg"
+      },
+      "promoted-1784426075056": {
+        "name": "promoted-1784426075056",
+        "file": "/assets/hero.explorer.walk.down.promoted-1784426075056.png",
+        "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving down toward the camera. Keep the character centered, facing down, and visually consistent with the base image. Transparent background.",
+        "createdAt": "2026-07-19T01:54:35.077Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "model": "gpt-image-2",
+          "background": "auto",
+          "format": "png",
+          "frameAlignment": "center",
+          "referenceAssetIds": [
+            "hero.explorer"
+          ]
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "default",
+        "notes": "Promoted from the AI asset designer."
+      },
+      "promoted-1784426336184": {
+        "name": "promoted-1784426336184",
+        "file": "/assets/hero.explorer.walk.down.promoted-1784426336184.png",
+        "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving down toward the camera. Keep the character centered, facing down, and visually consistent with the base image. Transparent background.",
+        "createdAt": "2026-07-19T01:58:56.195Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "model": "gpt-image-2",
+          "background": "auto",
+          "format": "png",
+          "frameAlignment": "center",
+          "referenceAssetIds": [
+            "hero.explorer"
+          ]
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1784426075056",
+        "notes": "Promoted from the AI asset designer."
+      },
+      "promoted-1784426748911": {
+        "name": "promoted-1784426748911",
+        "file": "/assets/hero.explorer.walk.down.promoted-1784426748911.png",
+        "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving down toward the camera. Keep the character centered, facing down, and visually consistent with the base image. Transparent background.",
+        "createdAt": "2026-07-19T02:05:48.971Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "model": "gpt-image-2",
+          "background": "auto",
+          "format": "png",
+          "frameAlignment": "center",
+          "referenceAssetIds": [
+            "hero.explorer"
+          ]
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1784426336184",
+        "notes": "Promoted from the AI asset designer."
+      },
+      "promoted-1784430010355": {
+        "name": "promoted-1784430010355",
+        "file": "/assets/hero.explorer.walk.down.promoted-1784430010355.png",
+        "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving down toward the camera. Keep the character centered, facing down, and visually consistent with the base image. Transparent background.",
+        "createdAt": "2026-07-19T03:00:10.373Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "model": "gpt-image-2",
+          "background": "auto",
+          "format": "png",
+          "frameAlignment": "center",
+          "referenceAssetIds": [
+            "hero.explorer"
+          ]
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1784426748911",
+        "notes": "Promoted from the AI asset designer."
       }
     },
     "tags": [
@@ -228,34 +446,71 @@ export const assets = defineAiAssets(
       "top-down",
       "walk",
       "down"
-    ]
+    ],
+    "audioSettings": {},
+    "audioPlayback": {},
+    "voiceSettings": {}
   },
   "hero.explorer.walk.left": {
     "id": "hero.explorer.walk.left",
     "kind": "spritesheet",
-    "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving left. Keep the character centered, facing left, and visually consistent with the base image. Transparent background.",
+    "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving left. Keep the character centered, facing left, and visually consistent with the base image. should cover most of the screen.Transparent background.",
     "dimensions": {
-      "width": 128,
-      "height": 32
+      "width": 64,
+      "height": 64
     },
     "frameGrid": {
       "frameCount": 4,
       "frameWidth": 32,
       "frameHeight": 32,
-      "columns": 4,
-      "rows": 1
+      "columns": 2,
+      "rows": 2
     },
     "animations": [
       {
         "key": "hero.explorer.walk.left",
+        "frameRate": 8,
+        "repeat": -1,
         "frames": [
           0,
           1,
           2,
           3
         ],
-        "frameRate": 8,
-        "repeat": -1
+        "frameTimings": [
+          {
+            "delayMs": 125,
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1.25,
+            "scaleY": 1.25,
+            "rotation": 0
+          },
+          {
+            "delayMs": 125,
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1.25,
+            "scaleY": 1.25,
+            "rotation": 0
+          },
+          {
+            "delayMs": 125,
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1.25,
+            "scaleY": 1.25,
+            "rotation": 0
+          },
+          {
+            "delayMs": 125,
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1.25,
+            "scaleY": 1.25,
+            "rotation": 0
+          }
+        ]
       }
     ],
     "settings": {
@@ -267,7 +522,7 @@ export const assets = defineAiAssets(
         "hero.explorer"
       ]
     },
-    "activeVersion": "default",
+    "activeVersion": "promoted-1784430031274",
     "versions": {
       "default": {
         "name": "default",
@@ -275,6 +530,48 @@ export const assets = defineAiAssets(
         "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving left. Keep the character centered, facing left, and visually consistent with the base image. Transparent background.",
         "createdAt": "2026-07-15T00:00:00.000Z",
         "model": "manual-svg"
+      },
+      "promoted-1784426188688": {
+        "name": "promoted-1784426188688",
+        "file": "/assets/hero.explorer.walk.left.promoted-1784426188688.png",
+        "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving left. Keep the character centered, facing left, and visually consistent with the base image. should cover most of the screen.Transparent background.",
+        "createdAt": "2026-07-19T01:56:28.721Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "model": "gpt-image-2",
+          "background": "auto",
+          "format": "png",
+          "frameAlignment": "center",
+          "referenceAssetIds": [
+            "hero.explorer"
+          ]
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "default",
+        "notes": "Promoted from the AI asset designer."
+      },
+      "promoted-1784430031274": {
+        "name": "promoted-1784430031274",
+        "file": "/assets/hero.explorer.walk.left.promoted-1784430031274.png",
+        "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving left. Keep the character centered, facing left, and visually consistent with the base image. should cover most of the screen.Transparent background.",
+        "createdAt": "2026-07-19T03:00:31.295Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "model": "gpt-image-2",
+          "background": "auto",
+          "format": "png",
+          "frameAlignment": "center",
+          "referenceAssetIds": [
+            "hero.explorer"
+          ]
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1784426188688",
+        "notes": "Promoted from the AI asset designer."
       }
     },
     "tags": [
@@ -283,34 +580,71 @@ export const assets = defineAiAssets(
       "top-down",
       "walk",
       "left"
-    ]
+    ],
+    "audioSettings": {},
+    "audioPlayback": {},
+    "voiceSettings": {}
   },
   "hero.explorer.walk.right": {
     "id": "hero.explorer.walk.right",
     "kind": "spritesheet",
-    "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving right. Keep the character centered, facing right, and visually consistent with the base image. Transparent background.",
+    "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving right. Keep the character centered, facing right, and visually consistent with the base image. should cover most of the screen. Transparent background.",
     "dimensions": {
-      "width": 128,
-      "height": 32
+      "width": 64,
+      "height": 64
     },
     "frameGrid": {
       "frameCount": 4,
       "frameWidth": 32,
       "frameHeight": 32,
-      "columns": 4,
-      "rows": 1
+      "columns": 2,
+      "rows": 2
     },
     "animations": [
       {
         "key": "hero.explorer.walk.right",
+        "frameRate": 8,
+        "repeat": -1,
         "frames": [
           0,
           1,
           2,
           3
         ],
-        "frameRate": 8,
-        "repeat": -1
+        "frameTimings": [
+          {
+            "delayMs": 125,
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1.25,
+            "scaleY": 1.25,
+            "rotation": 0
+          },
+          {
+            "delayMs": 125,
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1.25,
+            "scaleY": 1.25,
+            "rotation": 0
+          },
+          {
+            "delayMs": 125,
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1.25,
+            "scaleY": 1.25,
+            "rotation": 0
+          },
+          {
+            "delayMs": 125,
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1.25,
+            "scaleY": 1.25,
+            "rotation": 0
+          }
+        ]
       }
     ],
     "settings": {
@@ -322,7 +656,7 @@ export const assets = defineAiAssets(
         "hero.explorer"
       ]
     },
-    "activeVersion": "default",
+    "activeVersion": "promoted-1784430045341",
     "versions": {
       "default": {
         "name": "default",
@@ -330,6 +664,48 @@ export const assets = defineAiAssets(
         "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving right. Keep the character centered, facing right, and visually consistent with the base image. Transparent background.",
         "createdAt": "2026-07-15T00:00:00.000Z",
         "model": "manual-svg"
+      },
+      "promoted-1784426241413": {
+        "name": "promoted-1784426241413",
+        "file": "/assets/hero.explorer.walk.right.promoted-1784426241413.png",
+        "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving right. Keep the character centered, facing right, and visually consistent with the base image. should cover most of the screen. Transparent background.",
+        "createdAt": "2026-07-19T01:57:21.439Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "model": "gpt-image-2",
+          "background": "auto",
+          "format": "png",
+          "frameAlignment": "center",
+          "referenceAssetIds": [
+            "hero.explorer"
+          ]
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "default",
+        "notes": "Promoted from the AI asset designer."
+      },
+      "promoted-1784430045341": {
+        "name": "promoted-1784430045341",
+        "file": "/assets/hero.explorer.walk.right.promoted-1784430045341.png",
+        "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving right. Keep the character centered, facing right, and visually consistent with the base image. should cover most of the screen. Transparent background.",
+        "createdAt": "2026-07-19T03:00:45.355Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "model": "gpt-image-2",
+          "background": "auto",
+          "format": "png",
+          "frameAlignment": "center",
+          "referenceAssetIds": [
+            "hero.explorer"
+          ]
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1784426241413",
+        "notes": "Promoted from the AI asset designer."
       }
     },
     "tags": [
@@ -338,34 +714,71 @@ export const assets = defineAiAssets(
       "top-down",
       "walk",
       "right"
-    ]
+    ],
+    "audioSettings": {},
+    "audioPlayback": {},
+    "voiceSettings": {}
   },
   "hero.explorer.walk.up": {
     "id": "hero.explorer.walk.up",
     "kind": "spritesheet",
-    "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving up away from the camera. Keep the character centered, facing up, and visually consistent with the base image. Transparent background.",
+    "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving up away from the camera. Keep the character centered, facing up, and visually consistent with the base image. should cover most of the screen. Transparent background.",
     "dimensions": {
-      "width": 128,
-      "height": 32
+      "width": 64,
+      "height": 64
     },
     "frameGrid": {
       "frameCount": 4,
       "frameWidth": 32,
       "frameHeight": 32,
-      "columns": 4,
-      "rows": 1
+      "columns": 2,
+      "rows": 2
     },
     "animations": [
       {
         "key": "hero.explorer.walk.up",
+        "frameRate": 8,
+        "repeat": -1,
         "frames": [
           0,
           1,
           2,
           3
         ],
-        "frameRate": 8,
-        "repeat": -1
+        "frameTimings": [
+          {
+            "delayMs": 125,
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1.25,
+            "scaleY": 1.25,
+            "rotation": 0
+          },
+          {
+            "delayMs": 125,
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1.25,
+            "scaleY": 1.25,
+            "rotation": 0
+          },
+          {
+            "delayMs": 125,
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1.25,
+            "scaleY": 1.25,
+            "rotation": 0
+          },
+          {
+            "delayMs": 125,
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1.25,
+            "scaleY": 1.25,
+            "rotation": 0
+          }
+        ]
       }
     ],
     "settings": {
@@ -377,7 +790,7 @@ export const assets = defineAiAssets(
         "hero.explorer"
       ]
     },
-    "activeVersion": "default",
+    "activeVersion": "promoted-1784430004887",
     "versions": {
       "default": {
         "name": "default",
@@ -385,6 +798,69 @@ export const assets = defineAiAssets(
         "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving up away from the camera. Keep the character centered, facing up, and visually consistent with the base image. Transparent background.",
         "createdAt": "2026-07-15T00:00:00.000Z",
         "model": "manual-svg"
+      },
+      "promoted-1784426289961": {
+        "name": "promoted-1784426289961",
+        "file": "/assets/hero.explorer.walk.up.promoted-1784426289961.png",
+        "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving up away from the camera. Keep the character centered, facing up, and visually consistent with the base image. should cover most of the screen. Transparent background.",
+        "createdAt": "2026-07-19T01:58:09.978Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "model": "gpt-image-2",
+          "background": "auto",
+          "format": "png",
+          "frameAlignment": "center",
+          "referenceAssetIds": [
+            "hero.explorer"
+          ]
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "default",
+        "notes": "Promoted from the AI asset designer."
+      },
+      "promoted-1784426320738": {
+        "name": "promoted-1784426320738",
+        "file": "/assets/hero.explorer.walk.up.promoted-1784426320738.png",
+        "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving up away from the camera. Keep the character centered, facing up, and visually consistent with the base image. should cover most of the screen. Transparent background.",
+        "createdAt": "2026-07-19T01:58:40.759Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "model": "gpt-image-2",
+          "background": "auto",
+          "format": "png",
+          "frameAlignment": "center",
+          "referenceAssetIds": [
+            "hero.explorer"
+          ]
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1784426289961",
+        "notes": "Promoted from the AI asset designer."
+      },
+      "promoted-1784430004887": {
+        "name": "promoted-1784430004887",
+        "file": "/assets/hero.explorer.walk.up.promoted-1784430004887.png",
+        "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving up away from the camera. Keep the character centered, facing up, and visually consistent with the base image. should cover most of the screen. Transparent background.",
+        "createdAt": "2026-07-19T03:00:04.940Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "model": "gpt-image-2",
+          "background": "auto",
+          "format": "png",
+          "frameAlignment": "center",
+          "referenceAssetIds": [
+            "hero.explorer"
+          ]
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1784426320738",
+        "notes": "Promoted from the AI asset designer."
       }
     },
     "tags": [
@@ -393,7 +869,10 @@ export const assets = defineAiAssets(
       "top-down",
       "walk",
       "up"
-    ]
+    ],
+    "audioSettings": {},
+    "audioPlayback": {},
+    "voiceSettings": {}
   },
   "tiles.forest": {
     "id": "tiles.forest",
@@ -438,11 +917,54 @@ export const assets = defineAiAssets(
       "animations": [
         {
           "key": "tiles.forest.water",
-          "prompt": "Create two full-sheet animation frames from the provided base tileset. Preserve the exact 4-column × 2-row layout and this exact row-major order: Frame 0 — Grass: unchanged; Frame 1 — Dirt path: unchanged; Frame 2 — Water: animate only its horizontal ripple highlights with a subtle looping shimmer; Frame 3 — River reeds: unchanged; Frame 4 — Tree: unchanged; Frame 5 — Wildflowers: unchanged; Frame 6 — Rock: unchanged; Frame 7 — Wood bridge: unchanged. Keep frames 0, 1, and 3–7 pixel-aligned and visually identical to the base sheet. Do not resize, redraw, add, remove, or reorder tiles.",
-          "frameCount": 2,
+          "tiles": [
+            {
+              "prompt": "Grass: tiny movements from the wind, preserve continuity."
+            },
+            {
+              "prompt": "Dirt path: keep every pixel unchanged from the base tileset in every animation frame."
+            },
+            {
+              "prompt": "Water: animate only the horizontal ripple highlights with a subtle seamless looping shimmer while preserving the water palette and edge continuity."
+            },
+            {
+              "prompt": "River reeds: tiny movements from the wind, preserve continuity."
+            },
+            {
+              "prompt": "Tree: tiny leaf movements from the wind, the root should stand still, preserve continuity."
+            },
+            {
+              "prompt": "Wildflowers: tiny movements from the wind, preserve continuity."
+            },
+            {
+              "prompt": "Rock: keep every pixel unchanged from the base tileset in every animation frame."
+            },
+            {
+              "prompt": "Wood bridge: animate the water underneath the bridge, the bridge should stand still"
+            }
+          ],
+          "frameCount": 8,
           "frameRate": 2,
           "repeat": -1,
           "frameTimings": [
+            {
+              "delayMs": 500
+            },
+            {
+              "delayMs": 500
+            },
+            {
+              "delayMs": 500
+            },
+            {
+              "delayMs": 500
+            },
+            {
+              "delayMs": 500
+            },
+            {
+              "delayMs": 500
+            },
             {
               "delayMs": 500
             },
@@ -453,7 +975,7 @@ export const assets = defineAiAssets(
         }
       ]
     },
-    "activeVersion": "default",
+    "activeVersion": "promoted-1784484518041",
     "versions": {
       "default": {
         "name": "default",
@@ -469,13 +991,150 @@ export const assets = defineAiAssets(
             ]
           }
         }
+      },
+      "promoted-1784423558743-2": {
+        "name": "promoted-1784423558743-2",
+        "file": "/assets/tiles.forest.promoted-1784423558743-2.png",
+        "prompt": "Top-down woodland terrain tiles in a consistent hand-authored pixel-art style.",
+        "createdAt": "2026-07-19T01:12:38.749Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "model": "gpt-image-2",
+          "background": "auto",
+          "format": "png"
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "default",
+        "notes": "Promoted from the AI asset designer with Promote all."
+      },
+      "promoted-1784431053996": {
+        "name": "promoted-1784431053996",
+        "file": "/assets/tiles.forest.promoted-1784431053996.e6799da9.png",
+        "prompt": "Top-down woodland terrain tiles in a consistent hand-authored pixel-art style.",
+        "createdAt": "2026-07-19T03:17:34.039Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "model": "gpt-image-2",
+          "background": "auto",
+          "format": "png"
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1784423558743-2",
+        "notes": "Mixed per tile from three generated animation candidates.",
+        "tilesetAnimations": {
+          "tiles.forest.water": {
+            "files": [
+              "/assets/tiles.forest.promoted-1784431053996.e6799da9.tileset.tiles.forest.water.1.png",
+              "/assets/tiles.forest.promoted-1784431053996.e6799da9.tileset.tiles.forest.water.2.png"
+            ]
+          }
+        }
+      },
+      "promoted-1784475226781": {
+        "name": "promoted-1784475226781",
+        "file": "/assets/tiles.forest.promoted-1784475226781.a36de200.png",
+        "prompt": "Top-down woodland terrain tiles in a consistent hand-authored pixel-art style.",
+        "createdAt": "2026-07-19T15:33:46.822Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "model": "gpt-image-2",
+          "background": "auto",
+          "format": "png"
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1784431053996",
+        "notes": "Promoted from a selected or mixed tileset animation preview.",
+        "tilesetAnimations": {
+          "tiles.forest.water": {
+            "files": [
+              "/assets/tiles.forest.promoted-1784475226781.a36de200.tileset.tiles.forest.water.1.png",
+              "/assets/tiles.forest.promoted-1784475226781.a36de200.tileset.tiles.forest.water.2.png"
+            ]
+          }
+        }
+      },
+      "promoted-1784476134886": {
+        "name": "promoted-1784476134886",
+        "file": "/assets/tiles.forest.promoted-1784476134886.5e2e9f1a.png",
+        "prompt": "Top-down woodland terrain tiles in a consistent hand-authored pixel-art style.",
+        "createdAt": "2026-07-19T15:48:54.947Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "model": "gpt-image-2",
+          "background": "auto",
+          "format": "png"
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1784475226781",
+        "notes": "Promoted from a selected or mixed tileset animation preview.",
+        "tilesetAnimations": {
+          "tiles.forest.water": {
+            "files": [
+              "/assets/tiles.forest.promoted-1784476134886.5e2e9f1a.tileset.tiles.forest.water.1.png",
+              "/assets/tiles.forest.promoted-1784476134886.5e2e9f1a.tileset.tiles.forest.water.2.png",
+              "/assets/tiles.forest.promoted-1784476134886.5e2e9f1a.tileset.tiles.forest.water.3.png",
+              "/assets/tiles.forest.promoted-1784476134886.5e2e9f1a.tileset.tiles.forest.water.4.png",
+              "/assets/tiles.forest.promoted-1784476134886.5e2e9f1a.tileset.tiles.forest.water.5.png",
+              "/assets/tiles.forest.promoted-1784476134886.5e2e9f1a.tileset.tiles.forest.water.6.png",
+              "/assets/tiles.forest.promoted-1784476134886.5e2e9f1a.tileset.tiles.forest.water.7.png",
+              "/assets/tiles.forest.promoted-1784476134886.5e2e9f1a.tileset.tiles.forest.water.8.png"
+            ]
+          }
+        }
+      },
+      "promoted-1784484518041": {
+        "name": "promoted-1784484518041",
+        "file": "/assets/tiles.forest.promoted-1784484518041.c0194604.png",
+        "prompt": "Top-down woodland terrain tiles in a consistent hand-authored pixel-art style.",
+        "createdAt": "2026-07-19T18:08:38.203Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "model": "gpt-image-2",
+          "background": "auto",
+          "format": "png"
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1784476134886",
+        "notes": "Promoted from a selected or mixed tileset animation preview.",
+        "tilesetAnimations": {
+          "tiles.forest.water": {
+            "files": [
+              "/assets/tiles.forest.promoted-1784484518041.c0194604.tileset.tiles.forest.water.1.png",
+              "/assets/tiles.forest.promoted-1784484518041.c0194604.tileset.tiles.forest.water.2.png",
+              "/assets/tiles.forest.promoted-1784484518041.c0194604.tileset.tiles.forest.water.3.png",
+              "/assets/tiles.forest.promoted-1784484518041.c0194604.tileset.tiles.forest.water.4.png",
+              "/assets/tiles.forest.promoted-1784484518041.c0194604.tileset.tiles.forest.water.5.png",
+              "/assets/tiles.forest.promoted-1784484518041.c0194604.tileset.tiles.forest.water.6.png",
+              "/assets/tiles.forest.promoted-1784484518041.c0194604.tileset.tiles.forest.water.7.png",
+              "/assets/tiles.forest.promoted-1784484518041.c0194604.tileset.tiles.forest.water.8.png"
+            ]
+          }
+        }
       }
     },
     "tags": [
       "tiles",
       "forest",
       "top-down"
-    ]
+    ],
+    "settings": {
+      "model": "gpt-image-2",
+      "background": "auto",
+      "format": "png"
+    },
+    "audioSettings": {},
+    "audioPlayback": {},
+    "voiceSettings": {}
   },
   "tiles.house": {
     "id": "tiles.house",
@@ -499,29 +1158,29 @@ export const assets = defineAiAssets(
           "prompt": "Wood floor: seamless top-down warm-brown horizontal floorboards with restrained grain; walkable."
         },
         {
-          "prompt": "Plaster wall: a straight horizontal top-down pale-plaster cottage wall segment with dark timber trim, connecting cleanly at the left and right cell edges; blocked."
+          "prompt": "Plaster wall: a straight horizontal top-down pale-plaster cottage wall segment with dark timber trim, connecting cleanly at the left and right cell edges and should only go down 90%; blocked."
         },
         {
-          "prompt": "Timber wall: a straight horizontal top-down cottage wall segment with exposed dark beams and pale infill, connecting cleanly at the left and right cell edges; blocked."
+          "prompt": "Timber wall: a straight horizontal top-down cottage wall segment with exposed dark beams and pale infill, connecting cleanly at the left and right cell edges and should only go down 90%; blocked."
         },
         {
           "prompt": "Rug: a centered top-down red cottage rug with gold bands, should be a looping tile texture; walkable decoration."
         },
         {
-          "prompt": "Hearth: a centered top-down stone-and-timber fireplace with a warm flame over a floor base; blocked furniture."
+          "prompt": "Hearth: a centered top-down stone-and-timber fireplace with a warm flame over a transparent base; blocked furniture."
         },
         {
-          "prompt": "Table: a centered round wooden cottage table viewed from above over a wood-floor base; blocked furniture."
+          "prompt": "Table: a centered round wooden cottage table viewed from above over a transparent base; blocked furniture."
         },
         {
-          "prompt": "Bed: a centered top-down single wooden bed with pale bedding and a blue pillow over a wood-floor base; blocked furniture."
+          "prompt": "Bed: a centered top-down single wooden bed with pale bedding and a blue pillow over a transparent base; blocked furniture."
         },
         {
-          "prompt": "Wall corner: one 90-degree L-shaped top-down plaster-and-timber cottage wall corner whose arms exit through the top and right cell edges, matching the thickness, palette, and connectors of the straight wall tiles; blocked and designed to rotate in quarter turns."
+          "prompt": "Wall corner: one 90-degree L-shaped top-down plaster-and-timber cottage wall corner whose arms exit through the top and right cell edges, matching the thickness, palette, and connectors of the straight wall tiles; blocked and designed to rotate in quarter turns. should cover 90% in each direction and the rest 10% should be transparent"
         }
       ]
     },
-    "activeVersion": "promoted-1784348132920",
+    "activeVersion": "promoted-1784846598225-1",
     "versions": {
       "default": {
         "name": "default",
@@ -597,6 +1256,256 @@ export const assets = defineAiAssets(
         "voiceSettings": {},
         "parentVersion": "promoted-1784345513618",
         "notes": "Promoted from the AI asset designer."
+      },
+      "promoted-1784387528630": {
+        "name": "promoted-1784387528630",
+        "file": "/assets/tiles.house.promoted-1784387528630.png",
+        "prompt": "Top-down cottage interior tiles in a consistent hand-authored pixel-art style.",
+        "createdAt": "2026-07-18T15:12:08.653Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "format": "png",
+          "model": "gpt-image-2",
+          "background": "auto"
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1784348132920",
+        "notes": "Promoted from the AI asset designer."
+      },
+      "promoted-1784389812411": {
+        "name": "promoted-1784389812411",
+        "file": "/assets/tiles.house.promoted-1784389812411.png",
+        "prompt": "Top-down cottage interior tiles in a consistent hand-authored pixel-art style.",
+        "createdAt": "2026-07-18T15:50:12.477Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "format": "png",
+          "model": "gpt-image-2",
+          "background": "auto"
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1784387528630",
+        "notes": "Promoted from the AI asset designer."
+      },
+      "promoted-1784413525558": {
+        "name": "promoted-1784413525558",
+        "file": "/assets/tiles.house.promoted-1784413525558.png",
+        "prompt": "Top-down cottage interior tiles in a consistent hand-authored pixel-art style.",
+        "createdAt": "2026-07-18T22:25:25.589Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "format": "png",
+          "model": "gpt-image-2",
+          "background": "auto"
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1784389812411",
+        "notes": "Promoted from the AI asset designer."
+      },
+      "promoted-1784415384008": {
+        "name": "promoted-1784415384008",
+        "file": "/assets/tiles.house.promoted-1784415384008.png",
+        "prompt": "Top-down cottage interior tiles in a consistent hand-authored pixel-art style.",
+        "createdAt": "2026-07-18T22:56:24.066Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "format": "png",
+          "model": "gpt-image-2",
+          "background": "auto"
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1784413525558",
+        "notes": "Promoted from the AI asset designer."
+      },
+      "promoted-1784415526599": {
+        "name": "promoted-1784415526599",
+        "file": "/assets/tiles.house.promoted-1784415526599.png",
+        "prompt": "Top-down cottage interior tiles in a consistent hand-authored pixel-art style.",
+        "createdAt": "2026-07-18T22:58:46.638Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "format": "png",
+          "model": "gpt-image-2",
+          "background": "auto"
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1784415384008",
+        "notes": "Promoted from the AI asset designer."
+      },
+      "promoted-1784423558755-3": {
+        "name": "promoted-1784423558755-3",
+        "file": "/assets/tiles.house.promoted-1784423558755-3.png",
+        "prompt": "Top-down cottage interior tiles in a consistent hand-authored pixel-art style.",
+        "createdAt": "2026-07-19T01:12:38.757Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "format": "png",
+          "model": "gpt-image-2",
+          "background": "auto"
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1784415526599",
+        "notes": "Promoted from the AI asset designer with Promote all."
+      },
+      "promoted-1784846089126": {
+        "name": "promoted-1784846089126",
+        "file": "/assets/tiles.house.promoted-1784846089126.png",
+        "prompt": "Top-down cottage interior tiles in a consistent hand-authored pixel-art style.",
+        "createdAt": "2026-07-23T22:34:49.278Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "format": "png",
+          "model": "gpt-image-2",
+          "background": "auto"
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1784423558755-3",
+        "notes": "Promoted from the AI asset designer.",
+        "tilesetSourceFile": "/assets/tiles.house.promoted-1784846089126.tileset-source.png",
+        "tilesetTransforms": [
+          {
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          },
+          {
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          },
+          {
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          },
+          {
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          },
+          {
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          },
+          {
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          },
+          {
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          },
+          {
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          },
+          {
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          }
+        ]
+      },
+      "promoted-1784846598225-1": {
+        "name": "promoted-1784846598225-1",
+        "file": "/assets/tiles.house.promoted-1784846598225-1.png",
+        "prompt": "Top-down cottage interior tiles in a consistent hand-authored pixel-art style.",
+        "createdAt": "2026-07-23T22:43:18.309Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "format": "png",
+          "model": "gpt-image-2",
+          "background": "auto"
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1784846089126",
+        "notes": "Promoted from the AI asset designer with Promote all.",
+        "tilesetSourceFile": "/assets/tiles.house.promoted-1784846598225-1.tileset-source.png",
+        "tilesetTransforms": [
+          {
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          },
+          {
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          },
+          {
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          },
+          {
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          },
+          {
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          },
+          {
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          },
+          {
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          },
+          {
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          },
+          {
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          }
+        ]
       }
     },
     "tags": [
@@ -632,17 +1541,17 @@ export const assets = defineAiAssets(
           "prompt": "Sunberry: a centered cluster of ripe red berries with a few green leaves, viewed from above on a transparent background; collectible."
         },
         {
-          "prompt": "Brass key: one centered old-fashioned golden-brass key viewed from above on a transparent background; collectible."
+          "prompt": "Brass key: one centered old-fashioned golden-brass key with contrasted outline viewed from above on a transparent background; collectible."
         },
         {
           "prompt": "Forest tonic: one centered corked violet potion bottle with a pale label, viewed from above on a transparent background; collectible."
         },
         {
-          "prompt": "Doorway: one centered rustic wooden cottage doorway and arch viewed from above, open and dark in the middle, on a transparent background; scene-transition portal."
+          "prompt": "Doorway: one centered rustic closed wooden cottage doorway and arch viewed from above, on a transparent background; scene-transition portal."
         }
       ]
     },
-    "activeVersion": "default",
+    "activeVersion": "promoted-1784678659598",
     "versions": {
       "default": {
         "name": "default",
@@ -650,6 +1559,152 @@ export const assets = defineAiAssets(
         "prompt": "Top-down quest objects in a consistent hand-authored pixel-art style.",
         "createdAt": "2026-07-15T00:00:00.000Z",
         "model": "manual-svg"
+      },
+      "promoted-1784423558761-4": {
+        "name": "promoted-1784423558761-4",
+        "file": "/assets/tiles.props.promoted-1784423558761-4.png",
+        "prompt": "Top-down quest objects in a consistent hand-authored pixel-art style.",
+        "createdAt": "2026-07-19T01:12:38.768Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "model": "gpt-image-2",
+          "background": "auto",
+          "format": "png"
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "default",
+        "notes": "Promoted from the AI asset designer with Promote all."
+      },
+      "promoted-1784601072274-1": {
+        "name": "promoted-1784601072274-1",
+        "file": "/assets/tiles.props.promoted-1784601072274-1.png",
+        "prompt": "Top-down quest objects in a consistent hand-authored pixel-art style.",
+        "createdAt": "2026-07-21T02:31:12.323Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "model": "gpt-image-2",
+          "background": "auto",
+          "format": "png"
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1784423558761-4",
+        "notes": "Promoted from the AI asset designer with Promote all."
+      },
+      "promoted-1784601208998-1": {
+        "name": "promoted-1784601208998-1",
+        "file": "/assets/tiles.props.promoted-1784601208998-1.png",
+        "prompt": "Top-down quest objects in a consistent hand-authored pixel-art style.",
+        "createdAt": "2026-07-21T02:33:29.016Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "model": "gpt-image-2",
+          "background": "auto",
+          "format": "png"
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1784601072274-1",
+        "notes": "Promoted from the AI asset designer with Promote all."
+      },
+      "promoted-1784601348597-1": {
+        "name": "promoted-1784601348597-1",
+        "file": "/assets/tiles.props.promoted-1784601348597-1.png",
+        "prompt": "Top-down quest objects in a consistent hand-authored pixel-art style.",
+        "createdAt": "2026-07-21T02:35:48.633Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "model": "gpt-image-2",
+          "background": "auto",
+          "format": "png"
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1784601208998-1",
+        "notes": "Promoted from the AI asset designer with Promote all."
+      },
+      "promoted-1784601560187-1": {
+        "name": "promoted-1784601560187-1",
+        "file": "/assets/tiles.props.promoted-1784601560187-1.png",
+        "prompt": "Top-down quest objects in a consistent hand-authored pixel-art style.",
+        "createdAt": "2026-07-21T02:39:20.209Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "model": "gpt-image-2",
+          "background": "auto",
+          "format": "png"
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1784601348597-1",
+        "notes": "Promoted from the AI asset designer with Promote all."
+      },
+      "promoted-1784603614816": {
+        "name": "promoted-1784603614816",
+        "file": "/assets/tiles.props.promoted-1784603614816.png",
+        "prompt": "Top-down quest objects in a consistent hand-authored pixel-art style.",
+        "createdAt": "2026-07-21T03:13:34.858Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "model": "gpt-image-2",
+          "background": "auto",
+          "format": "png"
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1784601560187-1",
+        "notes": "Promoted from the AI asset designer."
+      },
+      "promoted-1784678659598": {
+        "name": "promoted-1784678659598",
+        "file": "/assets/tiles.props.promoted-1784678659598.png",
+        "prompt": "Top-down quest objects in a consistent hand-authored pixel-art style.",
+        "createdAt": "2026-07-22T00:04:19.671Z",
+        "model": "gpt-image-2",
+        "settings": {
+          "model": "gpt-image-2",
+          "background": "auto",
+          "format": "png"
+        },
+        "audioSettings": {},
+        "audioPlayback": {},
+        "voiceSettings": {},
+        "parentVersion": "promoted-1784603614816",
+        "notes": "Promoted from the AI asset designer.",
+        "tilesetSourceFile": "/assets/tiles.props.promoted-1784678659598.tileset-source.png",
+        "tilesetTransforms": [
+          {
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          },
+          {
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          },
+          {
+            "offsetX": 0,
+            "offsetY": 3,
+            "scaleX": 1,
+            "scaleY": 1
+          },
+          {
+            "offsetX": 0,
+            "offsetY": 0,
+            "scaleX": 1,
+            "scaleY": 1
+          }
+        ]
       }
     },
     "tags": [
@@ -657,10 +1712,29 @@ export const assets = defineAiAssets(
       "props",
       "pickups",
       "top-down"
-    ]
+    ],
+    "settings": {
+      "model": "gpt-image-2",
+      "background": "auto",
+      "format": "png"
+    },
+    "audioSettings": {},
+    "audioPlayback": {},
+    "voiceSettings": {}
   }
 },
-{}
+{
+  "styleGuide": {
+    "prompt": "2d top view rpg tile based game",
+    "images": [
+      {
+        "name": "rpg_style.png",
+        "file": "/assets/style-guide.1784423552569.1.png",
+        "mimeType": "image/png"
+      }
+    ]
+  }
+}
 );
 assets.assetPaths = {
   "roof": [

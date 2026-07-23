@@ -1,24 +1,63 @@
 {
   "id": "hero.explorer.walk.left",
   "kind": "spritesheet",
-  "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving left. Keep the character centered, facing left, and visually consistent with the base image. Transparent background.",
+  "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving left. Keep the character centered, facing left, and visually consistent with the base image. should cover most of the screen.Transparent background.",
   "dimensions": {
-    "width": 128,
-    "height": 32
+    "width": 64,
+    "height": 64
   },
   "frameGrid": {
     "frameCount": 4,
     "frameWidth": 32,
     "frameHeight": 32,
-    "columns": 4,
-    "rows": 1
+    "columns": 2,
+    "rows": 2
   },
   "animations": [
     {
       "key": "hero.explorer.walk.left",
-      "frames": [0, 1, 2, 3],
       "frameRate": 8,
-      "repeat": -1
+      "repeat": -1,
+      "frames": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "frameTimings": [
+        {
+          "delayMs": 125,
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1.25,
+          "scaleY": 1.25,
+          "rotation": 0
+        },
+        {
+          "delayMs": 125,
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1.25,
+          "scaleY": 1.25,
+          "rotation": 0
+        },
+        {
+          "delayMs": 125,
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1.25,
+          "scaleY": 1.25,
+          "rotation": 0
+        },
+        {
+          "delayMs": 125,
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1.25,
+          "scaleY": 1.25,
+          "rotation": 0
+        }
+      ]
     }
   ],
   "settings": {
@@ -26,9 +65,11 @@
     "background": "auto",
     "format": "png",
     "frameAlignment": "center",
-    "referenceAssetIds": ["hero.explorer"]
+    "referenceAssetIds": [
+      "hero.explorer"
+    ]
   },
-  "activeVersion": "default",
+  "activeVersion": "promoted-1784430031274",
   "versions": {
     "default": {
       "name": "default",
@@ -36,7 +77,58 @@
       "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving left. Keep the character centered, facing left, and visually consistent with the base image. Transparent background.",
       "createdAt": "2026-07-15T00:00:00.000Z",
       "model": "manual-svg"
+    },
+    "promoted-1784426188688": {
+      "name": "promoted-1784426188688",
+      "file": "/assets/hero.explorer.walk.left.promoted-1784426188688.png",
+      "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving left. Keep the character centered, facing left, and visually consistent with the base image. should cover most of the screen.Transparent background.",
+      "createdAt": "2026-07-19T01:56:28.721Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "model": "gpt-image-2",
+        "background": "auto",
+        "format": "png",
+        "frameAlignment": "center",
+        "referenceAssetIds": [
+          "hero.explorer"
+        ]
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "default",
+      "notes": "Promoted from the AI asset designer."
+    },
+    "promoted-1784430031274": {
+      "name": "promoted-1784430031274",
+      "file": "/assets/hero.explorer.walk.left.promoted-1784430031274.png",
+      "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving left. Keep the character centered, facing left, and visually consistent with the base image. should cover most of the screen.Transparent background.",
+      "createdAt": "2026-07-19T03:00:31.295Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "model": "gpt-image-2",
+        "background": "auto",
+        "format": "png",
+        "frameAlignment": "center",
+        "referenceAssetIds": [
+          "hero.explorer"
+        ]
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "promoted-1784426188688",
+      "notes": "Promoted from the AI asset designer."
     }
   },
-  "tags": ["hero", "animation", "top-down", "walk", "left"]
+  "tags": [
+    "hero",
+    "animation",
+    "top-down",
+    "walk",
+    "left"
+  ],
+  "audioSettings": {},
+  "audioPlayback": {},
+  "voiceSettings": {}
 }

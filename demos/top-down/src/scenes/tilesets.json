@@ -13,64 +13,103 @@
         "name": "Grass",
         "frame": 0,
         "animation": "tiles.forest.water",
-        "tags": ["walkable"],
-        "properties": { "terrain": "grass" }
+        "tags": [
+          "walkable"
+        ],
+        "properties": {
+          "terrain": "grass"
+        }
       },
       "path": {
         "id": "path",
         "name": "Dirt Path",
         "frame": 1,
         "animation": "tiles.forest.water",
-        "tags": ["walkable"],
-        "properties": { "terrain": "path" }
+        "tags": [
+          "walkable"
+        ],
+        "properties": {
+          "terrain": "path"
+        }
       },
       "water": {
         "id": "water",
         "name": "Animated Water",
         "frame": 2,
         "animation": "tiles.forest.water",
-        "tags": ["blocked", "water"],
-        "properties": { "terrain": "water" }
+        "tags": [
+          "blocked",
+          "water"
+        ],
+        "properties": {
+          "terrain": "water"
+        }
       },
       "reeds": {
         "id": "reeds",
         "name": "River Reeds",
         "frame": 3,
         "animation": "tiles.forest.water",
-        "tags": ["blocked", "water", "decoration"],
-        "properties": { "terrain": "wetland" }
+        "tags": [
+          "blocked",
+          "water",
+          "decoration"
+        ],
+        "properties": {
+          "terrain": "wetland"
+        }
       },
       "tree": {
         "id": "tree",
         "name": "Tree",
         "frame": 4,
         "animation": "tiles.forest.water",
-        "tags": ["blocked", "tree"],
-        "properties": { "terrain": "forest" }
+        "tags": [
+          "blocked",
+          "tree"
+        ],
+        "properties": {
+          "terrain": "forest"
+        }
       },
       "flowers": {
         "id": "flowers",
         "name": "Wildflowers",
         "frame": 5,
         "animation": "tiles.forest.water",
-        "tags": ["walkable", "decoration"],
-        "properties": { "terrain": "grass" }
+        "tags": [
+          "walkable",
+          "decoration"
+        ],
+        "properties": {
+          "terrain": "grass"
+        }
       },
       "rock": {
         "id": "rock",
         "name": "Rock",
         "frame": 6,
         "animation": "tiles.forest.water",
-        "tags": ["blocked", "rock"],
-        "properties": { "terrain": "stone" }
+        "tags": [
+          "blocked",
+          "rock"
+        ],
+        "properties": {
+          "terrain": "stone"
+        }
       },
       "bridge": {
         "id": "bridge",
         "name": "Wood Bridge",
         "frame": 7,
         "animation": "tiles.forest.water",
-        "tags": ["walkable", "bridge"],
-        "properties": { "terrain": "bridge" }
+        "tags": [
+          "walkable",
+          "bridge"
+        ],
+        "properties": {
+          "terrain": "bridge"
+        }
       }
     }
   },
@@ -87,57 +126,86 @@
         "id": "stone-floor",
         "name": "Stone Floor",
         "frame": 0,
-        "tags": ["walkable"],
-        "properties": { "terrain": "floor" }
+        "tags": [
+          "walkable"
+        ],
+        "properties": {
+          "terrain": "floor"
+        }
       },
       "wood-floor": {
         "id": "wood-floor",
         "name": "Wood Floor",
         "frame": 1,
-        "tags": ["walkable"],
-        "properties": { "terrain": "floor" }
+        "tags": [
+          "walkable"
+        ],
+        "properties": {
+          "terrain": "floor"
+        }
       },
       "wall": {
         "id": "wall",
         "name": "Plaster Wall",
         "frame": 2,
-        "tags": ["blocked", "wall"]
+        "tags": [
+          "blocked",
+          "wall"
+        ]
       },
       "timber-wall": {
         "id": "timber-wall",
         "name": "Timber Wall",
         "frame": 3,
-        "tags": ["blocked", "wall"]
+        "tags": [
+          "blocked",
+          "wall"
+        ]
       },
       "rug": {
         "id": "rug",
         "name": "Rug",
         "frame": 4,
-        "tags": ["walkable", "decoration"]
+        "tags": [
+          "walkable",
+          "decoration"
+        ]
       },
       "hearth": {
         "id": "hearth",
         "name": "Hearth",
         "frame": 5,
-        "tags": ["blocked", "furniture"]
+        "tags": [
+          "blocked",
+          "furniture"
+        ]
       },
       "table": {
         "id": "table",
         "name": "Table",
         "frame": 6,
-        "tags": ["blocked", "furniture"]
+        "tags": [
+          "blocked",
+          "furniture"
+        ]
       },
       "bed": {
         "id": "bed",
         "name": "Bed",
         "frame": 7,
-        "tags": ["blocked", "furniture"]
+        "tags": [
+          "blocked",
+          "furniture"
+        ]
       },
       "wall-corner": {
         "id": "wall-corner",
         "name": "Wall Corner",
         "frame": 8,
-        "tags": ["blocked", "wall"]
+        "tags": [
+          "blocked",
+          "wall"
+        ]
       }
     }
   },
@@ -154,29 +222,48 @@
         "id": "berry",
         "name": "Sunberry",
         "frame": 0,
-        "tags": ["pickup"],
-        "properties": { "pickupKind": "berry", "value": 1 }
+        "tags": [
+          "pickup"
+        ],
+        "properties": {
+          "pickupKind": "berry",
+          "value": 1
+        }
       },
       "key": {
         "id": "key",
         "name": "Brass Key",
         "frame": 1,
-        "tags": ["pickup"],
-        "properties": { "pickupKind": "key", "value": 5 }
+        "tags": [
+          "pickup"
+        ],
+        "properties": {
+          "pickupKind": "key",
+          "value": 5
+        }
       },
       "potion": {
         "id": "potion",
         "name": "Forest Tonic",
         "frame": 2,
-        "tags": ["pickup"],
-        "properties": { "pickupKind": "potion", "value": 3 }
+        "tags": [
+          "pickup"
+        ],
+        "properties": {
+          "pickupKind": "potion",
+          "value": 3
+        }
       },
       "doorway": {
         "id": "doorway",
         "name": "Doorway",
         "frame": 3,
-        "tags": ["portal"],
-        "properties": { "interaction": "scene-transition" }
+        "tags": [
+          "portal"
+        ],
+        "properties": {
+          "interaction": "scene-transition"
+        }
       }
     }
   }

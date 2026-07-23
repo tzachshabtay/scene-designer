@@ -1,55 +1,96 @@
 {
   "id": "hero.explorer.idle",
   "kind": "spritesheet",
-  "prompt": "Four-frame seamless idle animation for the referenced woodland explorer facing down. Use subtle breathing, a gentle weight shift, and an occasional blink while keeping the character centered and visually consistent with the base image. Transparent background.",
+  "prompt": "seamless idle animation for the referenced woodland explorer facing down. Use subtle breathing, a gentle weight shift, and an occasional blink while keeping the character centered and visually consistent with the base image. It should stand, not walk, movement should be subtle. Transparent background.",
   "dimensions": {
-    "width": 64,
-    "height": 64
+    "width": 96,
+    "height": 96
   },
   "frameGrid": {
-    "frameCount": 4,
+    "frameCount": 8,
     "frameWidth": 32,
     "frameHeight": 32,
-    "columns": 2,
-    "rows": 2
+    "columns": 3,
+    "rows": 3
   },
   "animations": [
     {
       "key": "hero.explorer.idle",
-      "frames": [0, 1, 2, 3],
       "frameRate": 4,
       "repeat": -1,
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
       "frameTimings": [
         {
-          "delayMs": 300,
+          "delayMs": 250,
           "offsetX": 0,
           "offsetY": 0,
-          "scaleX": 1,
-          "scaleY": 1,
+          "scaleX": 1.25,
+          "scaleY": 1.25,
           "rotation": 0
         },
         {
-          "delayMs": 300,
-          "offsetX": 0,
-          "offsetY": -1,
-          "scaleX": 1,
-          "scaleY": 1,
-          "rotation": 0
-        },
-        {
-          "delayMs": 300,
+          "delayMs": 250,
           "offsetX": 0,
           "offsetY": 0,
-          "scaleX": 1,
-          "scaleY": 1,
+          "scaleX": 1.25,
+          "scaleY": 1.25,
           "rotation": 0
         },
         {
-          "delayMs": 300,
+          "delayMs": 250,
           "offsetX": 0,
-          "offsetY": 1,
-          "scaleX": 1,
-          "scaleY": 1,
+          "offsetY": 0,
+          "scaleX": 1.25,
+          "scaleY": 1.25,
+          "rotation": 0
+        },
+        {
+          "delayMs": 250,
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1.25,
+          "scaleY": 1.25,
+          "rotation": 0
+        },
+        {
+          "delayMs": 250,
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1.25,
+          "scaleY": 1.25,
+          "rotation": 0
+        },
+        {
+          "delayMs": 250,
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1.25,
+          "scaleY": 1.25,
+          "rotation": 0
+        },
+        {
+          "delayMs": 250,
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1.25,
+          "scaleY": 1.25,
+          "rotation": 0
+        },
+        {
+          "delayMs": 250,
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1.25,
+          "scaleY": 1.25,
           "rotation": 0
         }
       ]
@@ -60,9 +101,11 @@
     "background": "auto",
     "format": "png",
     "frameAlignment": "center",
-    "referenceAssetIds": ["hero.explorer"]
+    "referenceAssetIds": [
+      "hero.explorer"
+    ]
   },
-  "activeVersion": "default",
+  "activeVersion": "promoted-1784430762837",
   "versions": {
     "default": {
       "name": "default",
@@ -70,7 +113,36 @@
       "prompt": "Four-frame seamless idle animation for the referenced woodland explorer facing down. Use subtle breathing, a gentle weight shift, and an occasional blink while keeping the character centered and visually consistent with the base image. Transparent background.",
       "createdAt": "2026-07-19T00:00:00.000Z",
       "model": "manual-svg"
+    },
+    "promoted-1784430762837": {
+      "name": "promoted-1784430762837",
+      "file": "/assets/hero.explorer.idle.promoted-1784430762837.png",
+      "prompt": "seamless idle animation for the referenced woodland explorer facing down. Use subtle breathing, a gentle weight shift, and an occasional blink while keeping the character centered and visually consistent with the base image. It should stand, not walk, movement should be subtle. Transparent background.",
+      "createdAt": "2026-07-19T03:12:42.859Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "model": "gpt-image-2",
+        "background": "auto",
+        "format": "png",
+        "frameAlignment": "center",
+        "referenceAssetIds": [
+          "hero.explorer"
+        ]
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "default",
+      "notes": "Promoted from the AI asset designer."
     }
   },
-  "tags": ["hero", "animation", "top-down", "idle"]
+  "tags": [
+    "hero",
+    "animation",
+    "top-down",
+    "idle"
+  ],
+  "audioSettings": {},
+  "audioPlayback": {},
+  "voiceSettings": {}
 }

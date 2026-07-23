@@ -43,7 +43,7 @@
         "key": "tiles.forest.water",
         "tiles": [
           {
-            "prompt": "Grass: keep every pixel unchanged from the base tileset in every animation frame."
+            "prompt": "Grass: tiny movements from the wind, preserve continuity."
           },
           {
             "prompt": "Dirt path: keep every pixel unchanged from the base tileset in every animation frame."
@@ -52,25 +52,43 @@
             "prompt": "Water: animate only the horizontal ripple highlights with a subtle seamless looping shimmer while preserving the water palette and edge continuity."
           },
           {
-            "prompt": "River reeds: keep every pixel unchanged from the base tileset in every animation frame."
+            "prompt": "River reeds: tiny movements from the wind, preserve continuity."
           },
           {
-            "prompt": "Tree: keep every pixel unchanged from the base tileset in every animation frame."
+            "prompt": "Tree: tiny leaf movements from the wind, the root should stand still, preserve continuity."
           },
           {
-            "prompt": "Wildflowers: keep every pixel unchanged from the base tileset in every animation frame."
+            "prompt": "Wildflowers: tiny movements from the wind, preserve continuity."
           },
           {
             "prompt": "Rock: keep every pixel unchanged from the base tileset in every animation frame."
           },
           {
-            "prompt": "Wood bridge: keep every pixel unchanged from the base tileset in every animation frame."
+            "prompt": "Wood bridge: animate the water underneath the bridge, the bridge should stand still"
           }
         ],
-        "frameCount": 2,
+        "frameCount": 8,
         "frameRate": 2,
         "repeat": -1,
         "frameTimings": [
+          {
+            "delayMs": 500
+          },
+          {
+            "delayMs": 500
+          },
+          {
+            "delayMs": 500
+          },
+          {
+            "delayMs": 500
+          },
+          {
+            "delayMs": 500
+          },
+          {
+            "delayMs": 500
+          },
           {
             "delayMs": 500
           },
@@ -81,7 +99,7 @@
       }
     ]
   },
-  "activeVersion": "default",
+  "activeVersion": "promoted-1784484518041",
   "versions": {
     "default": {
       "name": "default",
@@ -97,11 +115,148 @@
           ]
         }
       }
+    },
+    "promoted-1784423558743-2": {
+      "name": "promoted-1784423558743-2",
+      "file": "/assets/tiles.forest.promoted-1784423558743-2.png",
+      "prompt": "Top-down woodland terrain tiles in a consistent hand-authored pixel-art style.",
+      "createdAt": "2026-07-19T01:12:38.749Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "model": "gpt-image-2",
+        "background": "auto",
+        "format": "png"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "default",
+      "notes": "Promoted from the AI asset designer with Promote all."
+    },
+    "promoted-1784431053996": {
+      "name": "promoted-1784431053996",
+      "file": "/assets/tiles.forest.promoted-1784431053996.e6799da9.png",
+      "prompt": "Top-down woodland terrain tiles in a consistent hand-authored pixel-art style.",
+      "createdAt": "2026-07-19T03:17:34.039Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "model": "gpt-image-2",
+        "background": "auto",
+        "format": "png"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "promoted-1784423558743-2",
+      "notes": "Mixed per tile from three generated animation candidates.",
+      "tilesetAnimations": {
+        "tiles.forest.water": {
+          "files": [
+            "/assets/tiles.forest.promoted-1784431053996.e6799da9.tileset.tiles.forest.water.1.png",
+            "/assets/tiles.forest.promoted-1784431053996.e6799da9.tileset.tiles.forest.water.2.png"
+          ]
+        }
+      }
+    },
+    "promoted-1784475226781": {
+      "name": "promoted-1784475226781",
+      "file": "/assets/tiles.forest.promoted-1784475226781.a36de200.png",
+      "prompt": "Top-down woodland terrain tiles in a consistent hand-authored pixel-art style.",
+      "createdAt": "2026-07-19T15:33:46.822Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "model": "gpt-image-2",
+        "background": "auto",
+        "format": "png"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "promoted-1784431053996",
+      "notes": "Promoted from a selected or mixed tileset animation preview.",
+      "tilesetAnimations": {
+        "tiles.forest.water": {
+          "files": [
+            "/assets/tiles.forest.promoted-1784475226781.a36de200.tileset.tiles.forest.water.1.png",
+            "/assets/tiles.forest.promoted-1784475226781.a36de200.tileset.tiles.forest.water.2.png"
+          ]
+        }
+      }
+    },
+    "promoted-1784476134886": {
+      "name": "promoted-1784476134886",
+      "file": "/assets/tiles.forest.promoted-1784476134886.5e2e9f1a.png",
+      "prompt": "Top-down woodland terrain tiles in a consistent hand-authored pixel-art style.",
+      "createdAt": "2026-07-19T15:48:54.947Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "model": "gpt-image-2",
+        "background": "auto",
+        "format": "png"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "promoted-1784475226781",
+      "notes": "Promoted from a selected or mixed tileset animation preview.",
+      "tilesetAnimations": {
+        "tiles.forest.water": {
+          "files": [
+            "/assets/tiles.forest.promoted-1784476134886.5e2e9f1a.tileset.tiles.forest.water.1.png",
+            "/assets/tiles.forest.promoted-1784476134886.5e2e9f1a.tileset.tiles.forest.water.2.png",
+            "/assets/tiles.forest.promoted-1784476134886.5e2e9f1a.tileset.tiles.forest.water.3.png",
+            "/assets/tiles.forest.promoted-1784476134886.5e2e9f1a.tileset.tiles.forest.water.4.png",
+            "/assets/tiles.forest.promoted-1784476134886.5e2e9f1a.tileset.tiles.forest.water.5.png",
+            "/assets/tiles.forest.promoted-1784476134886.5e2e9f1a.tileset.tiles.forest.water.6.png",
+            "/assets/tiles.forest.promoted-1784476134886.5e2e9f1a.tileset.tiles.forest.water.7.png",
+            "/assets/tiles.forest.promoted-1784476134886.5e2e9f1a.tileset.tiles.forest.water.8.png"
+          ]
+        }
+      }
+    },
+    "promoted-1784484518041": {
+      "name": "promoted-1784484518041",
+      "file": "/assets/tiles.forest.promoted-1784484518041.c0194604.png",
+      "prompt": "Top-down woodland terrain tiles in a consistent hand-authored pixel-art style.",
+      "createdAt": "2026-07-19T18:08:38.203Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "model": "gpt-image-2",
+        "background": "auto",
+        "format": "png"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "promoted-1784476134886",
+      "notes": "Promoted from a selected or mixed tileset animation preview.",
+      "tilesetAnimations": {
+        "tiles.forest.water": {
+          "files": [
+            "/assets/tiles.forest.promoted-1784484518041.c0194604.tileset.tiles.forest.water.1.png",
+            "/assets/tiles.forest.promoted-1784484518041.c0194604.tileset.tiles.forest.water.2.png",
+            "/assets/tiles.forest.promoted-1784484518041.c0194604.tileset.tiles.forest.water.3.png",
+            "/assets/tiles.forest.promoted-1784484518041.c0194604.tileset.tiles.forest.water.4.png",
+            "/assets/tiles.forest.promoted-1784484518041.c0194604.tileset.tiles.forest.water.5.png",
+            "/assets/tiles.forest.promoted-1784484518041.c0194604.tileset.tiles.forest.water.6.png",
+            "/assets/tiles.forest.promoted-1784484518041.c0194604.tileset.tiles.forest.water.7.png",
+            "/assets/tiles.forest.promoted-1784484518041.c0194604.tileset.tiles.forest.water.8.png"
+          ]
+        }
+      }
     }
   },
   "tags": [
     "tiles",
     "forest",
     "top-down"
-  ]
+  ],
+  "settings": {
+    "model": "gpt-image-2",
+    "background": "auto",
+    "format": "png"
+  },
+  "audioSettings": {},
+  "audioPlayback": {},
+  "voiceSettings": {}
 }

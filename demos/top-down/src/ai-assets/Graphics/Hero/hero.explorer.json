@@ -1,7 +1,7 @@
 {
   "id": "hero.explorer",
   "kind": "image",
-  "prompt": "Top-down 32 pixel woodland explorer standing still and facing down, readable silhouette, transparent background.",
+  "prompt": "Top-down 32 pixel woodland explorer standing still and facing down, readable silhouette, should cover most of the screen, transparent background.",
   "dimensions": {
     "width": 32,
     "height": 32
@@ -11,7 +11,7 @@
     "background": "auto",
     "format": "png"
   },
-  "activeVersion": "default",
+  "activeVersion": "promoted-1784426015455",
   "versions": {
     "default": {
       "name": "default",
@@ -19,6 +19,23 @@
       "prompt": "Top-down 32 pixel woodland explorer standing still and facing down, readable silhouette, transparent background.",
       "createdAt": "2026-07-15T00:00:00.000Z",
       "model": "manual-svg"
+    },
+    "promoted-1784426015455": {
+      "name": "promoted-1784426015455",
+      "file": "/assets/hero.explorer.promoted-1784426015455.png",
+      "prompt": "Top-down 32 pixel woodland explorer standing still and facing down, readable silhouette, should cover most of the screen, transparent background.",
+      "createdAt": "2026-07-19T01:53:35.476Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "model": "gpt-image-2",
+        "background": "auto",
+        "format": "png"
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "default",
+      "notes": "Promoted from the AI asset designer."
     }
   },
   "linkedAnimationAssets": {
@@ -46,5 +63,8 @@
   "tags": [
     "hero",
     "top-down"
-  ]
+  ],
+  "audioSettings": {},
+  "audioPlayback": {},
+  "voiceSettings": {}
 }

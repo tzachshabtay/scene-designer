@@ -3,22 +3,61 @@
   "kind": "spritesheet",
   "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving down toward the camera. Keep the character centered, facing down, and visually consistent with the base image. Transparent background.",
   "dimensions": {
-    "width": 128,
-    "height": 32
+    "width": 64,
+    "height": 64
   },
   "frameGrid": {
     "frameCount": 4,
     "frameWidth": 32,
     "frameHeight": 32,
-    "columns": 4,
-    "rows": 1
+    "columns": 2,
+    "rows": 2
   },
   "animations": [
     {
       "key": "hero.explorer.walk.down",
-      "frames": [0, 1, 2, 3],
       "frameRate": 8,
-      "repeat": -1
+      "repeat": -1,
+      "frames": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "frameTimings": [
+        {
+          "delayMs": 125,
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1.25,
+          "scaleY": 1.25,
+          "rotation": 0
+        },
+        {
+          "delayMs": 125,
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1.25,
+          "scaleY": 1.25,
+          "rotation": 0
+        },
+        {
+          "delayMs": 125,
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1.25,
+          "scaleY": 1.25,
+          "rotation": 0
+        },
+        {
+          "delayMs": 125,
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1.25,
+          "scaleY": 1.25,
+          "rotation": 0
+        }
+      ]
     }
   ],
   "settings": {
@@ -26,9 +65,11 @@
     "background": "auto",
     "format": "png",
     "frameAlignment": "center",
-    "referenceAssetIds": ["hero.explorer"]
+    "referenceAssetIds": [
+      "hero.explorer"
+    ]
   },
-  "activeVersion": "default",
+  "activeVersion": "promoted-1784430010355",
   "versions": {
     "default": {
       "name": "default",
@@ -36,7 +77,100 @@
       "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving down toward the camera. Keep the character centered, facing down, and visually consistent with the base image. Transparent background.",
       "createdAt": "2026-07-15T00:00:00.000Z",
       "model": "manual-svg"
+    },
+    "promoted-1784426075056": {
+      "name": "promoted-1784426075056",
+      "file": "/assets/hero.explorer.walk.down.promoted-1784426075056.png",
+      "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving down toward the camera. Keep the character centered, facing down, and visually consistent with the base image. Transparent background.",
+      "createdAt": "2026-07-19T01:54:35.077Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "model": "gpt-image-2",
+        "background": "auto",
+        "format": "png",
+        "frameAlignment": "center",
+        "referenceAssetIds": [
+          "hero.explorer"
+        ]
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "default",
+      "notes": "Promoted from the AI asset designer."
+    },
+    "promoted-1784426336184": {
+      "name": "promoted-1784426336184",
+      "file": "/assets/hero.explorer.walk.down.promoted-1784426336184.png",
+      "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving down toward the camera. Keep the character centered, facing down, and visually consistent with the base image. Transparent background.",
+      "createdAt": "2026-07-19T01:58:56.195Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "model": "gpt-image-2",
+        "background": "auto",
+        "format": "png",
+        "frameAlignment": "center",
+        "referenceAssetIds": [
+          "hero.explorer"
+        ]
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "promoted-1784426075056",
+      "notes": "Promoted from the AI asset designer."
+    },
+    "promoted-1784426748911": {
+      "name": "promoted-1784426748911",
+      "file": "/assets/hero.explorer.walk.down.promoted-1784426748911.png",
+      "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving down toward the camera. Keep the character centered, facing down, and visually consistent with the base image. Transparent background.",
+      "createdAt": "2026-07-19T02:05:48.971Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "model": "gpt-image-2",
+        "background": "auto",
+        "format": "png",
+        "frameAlignment": "center",
+        "referenceAssetIds": [
+          "hero.explorer"
+        ]
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "promoted-1784426336184",
+      "notes": "Promoted from the AI asset designer."
+    },
+    "promoted-1784430010355": {
+      "name": "promoted-1784430010355",
+      "file": "/assets/hero.explorer.walk.down.promoted-1784430010355.png",
+      "prompt": "Four-frame seamless walk cycle for the referenced woodland explorer moving down toward the camera. Keep the character centered, facing down, and visually consistent with the base image. Transparent background.",
+      "createdAt": "2026-07-19T03:00:10.373Z",
+      "model": "gpt-image-2",
+      "settings": {
+        "model": "gpt-image-2",
+        "background": "auto",
+        "format": "png",
+        "frameAlignment": "center",
+        "referenceAssetIds": [
+          "hero.explorer"
+        ]
+      },
+      "audioSettings": {},
+      "audioPlayback": {},
+      "voiceSettings": {},
+      "parentVersion": "promoted-1784426748911",
+      "notes": "Promoted from the AI asset designer."
     }
   },
-  "tags": ["hero", "animation", "top-down", "walk", "down"]
+  "tags": [
+    "hero",
+    "animation",
+    "top-down",
+    "walk",
+    "down"
+  ],
+  "audioSettings": {},
+  "audioPlayback": {},
+  "voiceSettings": {}
 }
