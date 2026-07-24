@@ -915,7 +915,7 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-17-4",
-                    "tileId": "wood-floor",
+                    "tileId": "rug",
                     "column": 17,
                     "row": 4
                   },
@@ -942,7 +942,7 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-21-4",
-                    "tileId": "wood-floor",
+                    "tileId": "rug",
                     "column": 21,
                     "row": 4
                   },
@@ -1098,7 +1098,7 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-17-5",
-                    "tileId": "wood-floor",
+                    "tileId": "rug",
                     "column": 17,
                     "row": 5
                   },
@@ -1125,7 +1125,7 @@ export const scenes = defineSceneManifest(
                   },
                   {
                     "id": "interior.house-one-terrain-21-5",
-                    "tileId": "wood-floor",
+                    "tileId": "rug",
                     "column": 21,
                     "row": 5
                   },
@@ -3516,24 +3516,6 @@ export const scenes = defineSceneManifest(
                     "rotation": 90
                   },
                   {
-                    "id": "tile-mrwnza8t-yv5opx",
-                    "tileId": "rug",
-                    "column": 17,
-                    "row": 4,
-                    "rotation": 0,
-                    "flipX": false,
-                    "flipY": false
-                  },
-                  {
-                    "id": "tile-mrwnzb0f-ugwb52",
-                    "tileId": "rug",
-                    "column": 21,
-                    "row": 4,
-                    "rotation": 0,
-                    "flipX": false,
-                    "flipY": false
-                  },
-                  {
                     "id": "interior.house-one-interior-24-4",
                     "tileId": "wall",
                     "column": 24,
@@ -3569,24 +3551,6 @@ export const scenes = defineSceneManifest(
                     "id": "tile-mrwnsr8a-zqscnd",
                     "tileId": "table",
                     "column": 7,
-                    "row": 5,
-                    "rotation": 0,
-                    "flipX": false,
-                    "flipY": false
-                  },
-                  {
-                    "id": "tile-mrwnzetp-lg17bp",
-                    "tileId": "rug",
-                    "column": 17,
-                    "row": 5,
-                    "rotation": 0,
-                    "flipX": false,
-                    "flipY": false
-                  },
-                  {
-                    "id": "tile-mrwnzfx2-vkhs2x",
-                    "tileId": "rug",
-                    "column": 21,
                     "row": 5,
                     "rotation": 0,
                     "flipX": false,
