@@ -140,17 +140,54 @@ assert(
 const roofObjects = forest.layers[roofsLayerIndex]?.objects ?? [];
 assert(roofObjects.length === 2, "The forest must contain one roof object per cottage.");
 const expectedRoofs = new Map([
-  ["forest-roof-moss-cottage", { x: 256, y: 192 }],
-  ["forest-roof-river-lodge", { x: 1152, y: 768 }]
+  ["forest-roof-moss-cottage", "moss-cottage-"],
+  ["forest-roof-river-lodge", "river-lodge-"]
 ]);
+const buildingsPaint = forest.layers[buildingsLayerIndex]?.areas
+  .map((area) => area.paint)
+  .find((paint) => paint.mode === "tilemap");
+assert(buildingsPaint, "The forest buildings layer requires a tilemap.");
+const buildingsTileSet = tileSets[buildingsPaint.tileSetId];
+assert(buildingsTileSet, "The forest buildings layer references a missing tile set.");
+const seenRoofIds = new Set();
 for (const object of roofObjects) {
-  const expected = expectedRoofs.get(object.id);
-  assert(expected, `${object.id} is not a recognized cottage roof.`);
+  const cottageCellPrefix = expectedRoofs.get(object.id);
+  assert(cottageCellPrefix, `${object.id} is not a recognized cottage roof.`);
+  assert(!seenRoofIds.has(object.id), `${object.id} must be unique.`);
+  seenRoofIds.add(object.id);
   assert(object.assetId === "roof", `${object.id} must reference the normal roof image asset.`);
-  assert(object.x === expected.x && object.y === expected.y, `${object.id} must align to its 7×3 tile footprint.`);
-  assert(object.anchorX === 0 && object.anchorY === 1, `${object.id} must use a top-left anchor.`);
-  assert(object.scaleX === 1 && object.scaleY === 1 && object.rotation === 0, `${object.id} must preserve the roof asset's exact dimensions.`);
+  assert(object.visible, `${object.id} must remain visible.`);
+  assert(
+    [object.x, object.y, object.scaleX, object.scaleY, object.anchorX, object.anchorY]
+      .every(Number.isFinite),
+    `${object.id} must have a finite transform.`
+  );
+  assert(object.scaleX > 0 && object.scaleY > 0, `${object.id} must have positive scale.`);
+  assert(object.rotation === 0, `${object.id} must remain upright.`);
+
+  const cottageCells = buildingsPaint.cells.filter((cell) => cell.id.startsWith(cottageCellPrefix));
+  assert(cottageCells.length > 0, `${object.id} requires matching cottage tiles.`);
+  const footprintLeft = buildingsPaint.originX
+    + Math.min(...cottageCells.map((cell) => cell.column)) * buildingsTileSet.tileWidth;
+  const footprintTop = buildingsPaint.originY
+    + Math.min(...cottageCells.map((cell) => cell.row)) * buildingsTileSet.tileHeight;
+  const footprintRight = footprintLeft + roof.dimensions.width;
+  const footprintBottom = footprintTop + roof.dimensions.height;
+  const renderedWidth = roof.dimensions.width * object.scaleX;
+  const renderedHeight = roof.dimensions.height * object.scaleY;
+  const roofLeft = object.x - object.anchorX * renderedWidth;
+  const roofTop = object.y - (1 - object.anchorY) * renderedHeight;
+  const roofRight = roofLeft + renderedWidth;
+  const roofBottom = roofTop + renderedHeight;
+  assert(
+    roofLeft <= footprintLeft
+      && roofTop <= footprintTop
+      && roofRight >= footprintRight
+      && roofBottom >= footprintBottom,
+    `${object.id} must cover its cottage's 7×3 roof footprint.`
+  );
 }
+assert(seenRoofIds.size === expectedRoofs.size, "Every cottage must have one recognized roof.");
 assert(Object.values(scenes).filter((scene) => scene.tags?.includes("house")).length >= 2, "At least two house scenes are required.");
 for (const scene of Object.values(scenes).filter((candidate) => candidate.tags?.includes("house"))) {
   const terrainLayerIndex = scene.layers.findIndex((layer) => layer.name === "Terrain");

@@ -23,6 +23,6 @@
     "@scene-designer/core": "0.1.0"
   },
   "peerDependencies": {
-    "@ai-game-assets/core": "^0.6.0"
+    "@ai-game-assets/core": "^0.7.0"
   }
 }
